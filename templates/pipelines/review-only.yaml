@@ -1,0 +1,17 @@
+name: "Review Only"
+description: "Code review pipeline — read-only analysis, no changes."
+
+stages:
+  - name: review
+    label: "Code Review"
+    type: claude-p
+    template: code_review
+    model: opus
+    budget_usd: 3.0
+    timeout_min: 30
+    auto_advance: false
+    depends_on: []
+    prompt_template: |
+      Review the current codebase for correctness, security, performance, and style.
+
+      {user_prompt}

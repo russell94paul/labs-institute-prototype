@@ -1,0 +1,78 @@
+name: "Standard Phase Pipeline"
+description: "Plan, implement, test, review gate, deploy — the default pipeline for any phase."
+
+stages:
+  - name: plan
+    label: "Plan Implementation"
+    type: claude-p
+    template: plan
+    model: sonnet
+    budget_usd: 2.0
+    timeout_min: 30
+    auto_advance: true
+    depends_on: []
+    prompt_template: |
+      Read the phase specification below. Produce a detailed implementation plan:
+      - What files to create or modify
+      - What order to work in
+      - Key design decisions
+      - Dependencies and risks
+
+      Do NOT implement — plan only.
+
+      ## Phase {phase_number}: {phase_name}
+
+      {phase_readme}
+
+  - name: implement
+    label: "Implement Deliverables"
+    type: claude-p
+    template: implement
+    model: sonnet
+    budget_usd: 8.0
+    timeout_min: 90
+    auto_advance: true
+    depends_on: [plan]
+    prompt_template: |
+      Implement the deliverables for Phase {phase_number}: {phase_name}.
+      Follow the plan from the previous stage. Read existing code first to understand patterns.
+      Commit your work when done.
+
+      {phase_readme}
+
+  - name: test
+    label: "Test & Verify"
+    type: claude-p
+    template: implement
+    model: sonnet
+    budget_usd: 3.0
+    timeout_min: 45
+    auto_advance: true
+    depends_on: [implement]
+    prompt_template: |
+      Run tests for the code implemented in Phase {phase_number}: {phase_name}.
+      Fix any failures. Verify acceptance criteria from the phase spec.
+      Write new tests for untested deliverables.
+
+      {phase_readme}
+
+  - name: review
+    label: "Code Review Gate"
+    type: gate
+    gate_type: manual
+    auto_advance: true
+    depends_on: [test]
+
+  - name: deploy
+    label: "Deploy"
+    type: claude-p
+    template: implement
+    model: sonnet
+    budget_usd: 2.0
+    timeout_min: 30
+    auto_advance: false
+    depends_on: [review]
+    prompt_template: |
+      Deploy Phase {phase_number}: {phase_name} to staging.
+      Follow the project's deployment process if one exists.
+      If no deployment process is defined, document the manual steps needed.

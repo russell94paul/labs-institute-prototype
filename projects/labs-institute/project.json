@@ -1,0 +1,13 @@
+{
+  "slug": "labs-institute",
+  "name": "LABS Institute Growth & Gig Intelligence Platform",
+  "description": "SaaS platform for DJ collectives, promoters, venues, and collaborative electronic music event teams",
+  "repo_path": null,
+  "tech_stack": {
+    "frontend": "react-vite",
+    "backend": "fastapi",
+    "database": "postgres"
+  },
+  "status": "requirements",
+  "created_at": "2026-05-17T00:00:00Z"
+}

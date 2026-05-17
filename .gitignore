@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.conductor-sessions/
+dashboard/data/sessions/
+dashboard/data/sessions.json
+dashboard/data/pipelines.json
+*.tmp
+.env
+.venv/
+node_modules/

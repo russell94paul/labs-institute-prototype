@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Board — Conductor</title>
+    <link rel="stylesheet" href="../styles/base.css">
+    <style>
+        /* --- Page-specific styles --- */
+        .board-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 24px 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .board-header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .board-header-left h1 {
+            font-size: 1.4rem;
+            text-align: left;
+        }
+        .board-header-stats {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        .board-stat {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .board-stat-val {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .board-body {
+            padding: 0 24px 24px;
+        }
+
+        /* Session detail panel (slide-in) */
+        .detail-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5,10,16,0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 400;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .detail-overlay.open {
+            display: block;
+            opacity: 1;
+        }
+        .detail-panel {
+            position: fixed;
+            top: 0; right: 0; bottom: 0;
+            width: 520px;
+            max-width: 90vw;
+            background: linear-gradient(180deg, #12202e, #0d1820);
+            border-left: 1px solid var(--border-medium);
+            z-index: 401;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.25s cubic-bezier(0.22,1,0.36,1);
+            padding: 24px;
+        }
+        .detail-overlay.open .detail-panel {
+            transform: translateX(0);
+        }
+        .detail-close {
+            position: absolute;
+            top: 16px; right: 16px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border-medium);
+            border-radius: 8px;
+            color: var(--text-muted);
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-family: var(--font-family);
+        }
+        .detail-close:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--text-primary);
+        }
+        .detail-section {
+            margin-bottom: 20px;
+        }
+        .detail-section-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 0.8rem;
+        }
+        .detail-row-label { color: var(--text-dim); }
+        .detail-row-val { color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.78rem; }
+
+        .detail-output {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .quality-gates {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .gate-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-subtle);
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+        }
+        .gate-item:hover {
+            border-color: var(--border-medium);
+        }
+        .gate-item input[type="checkbox"] {
+            accent-color: var(--accent-green);
+            width: 14px;
+            height: 14px;
+        }
+        .gate-item.checked {
+            border-color: rgba(74,222,128,0.3);
+            background: rgba(74,222,128,0.04);
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-subtle);
+        }
+    </style>
+</head>
+<body>
+    <div class="board-header">
+        <div class="board-header-left">
+            <h1>Session Board</h1>
+            <button class="btn btn-primary btn-sm" onclick="window.openNewSessionModal()">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                New Session
+            </button>
+        </div>
+        <div class="board-header-stats">
+            <div class="board-stat">Total: <span class="board-stat-val" id="bs-total">0</span></div>
+            <div class="board-stat">
+                <span class="status-dot running"></span>
+                Running: <span class="board-stat-val" id="bs-running">0</span>
+            </div>
+            <div class="board-stat">Cost: <span class="board-stat-val text-gold" id="bs-cost">$0.00</span></div>
+        </div>
+    </div>
+
+    <div class="board-body">
+        <div class="kanban-board" id="kanban-board">
+            <div class="kanban-column" data-status="queued">
+                <div class="kanban-column-header queued">
+                    <span class="kanban-column-title">
+                        <span class="status-dot gray"></span> Queued
+                    </span>
+                    <span class="kanban-column-count" id="col-count-queued">0</span>
+                </div>
+                <div class="kanban-cards" id="col-queued"></div>
+            </div>
+            <div class="kanban-column" data-status="running">
+                <div class="kanban-column-header running">
+                    <span class="kanban-column-title">
+                        <span class="status-dot running"></span> Running
+                    </span>
+                    <span class="kanban-column-count" id="col-count-running">0</span>
+                </div>
+                <div class="kanban-cards" id="col-running"></div>
+            </div>
+            <div class="kanban-column" data-status="complete">
+                <div class="kanban-column-header complete">
+                    <span class="kanban-column-title">
+                        <span class="status-dot green"></span> Succeeded
+                        <span style="color:var(--text-faint);margin:0 2px;">/</span>
+                        <span class="status-dot red"></span> Failed
+                    </span>
+                    <span class="kanban-column-count" id="col-count-complete">0</span>
+                </div>
+                <div class="kanban-cards" id="col-complete"></div>
+            </div>
+            <div class="kanban-column" data-status="reviewing">
+                <div class="kanban-column-header review">
+                    <span class="kanban-column-title">
+                        <span class="status-dot purple"></span> Review
+                    </span>
+                    <span class="kanban-column-count" id="col-count-reviewing">0</span>
+                </div>
+                <div class="kanban-cards" id="col-reviewing"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Session Modal -->
+    <div class="modal-overlay" id="new-session-modal">
+        <div class="modal">
+            <h2>Launch New Session</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Project</label>
+                    <select class="form-select" id="ns-project">
+                        <option value="">Select project...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Template</label>
+                    <select class="form-select" id="ns-template">
+                        <option value="plan">Plan</option>
+                        <option value="implement" selected>Implement</option>
+                        <option value="fix_bug">Fix Bug</option>
+                        <option value="code_review">Code Review</option>
+                        <option value="analyze">Analyze</option>
+                        <option value="investigate">Investigate</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Prompt</label>
+                <textarea class="form-textarea form-input" id="ns-prompt" rows="4" placeholder="Describe the task..."></textarea>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Model</label>
+                    <select class="form-select" id="ns-model">
+                        <option value="sonnet" selected>Sonnet</option>
+                        <option value="opus">Opus</option>
+                        <option value="haiku">Haiku</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Budget (USD)</label>
+                    <input type="number" class="form-input" id="ns-budget" value="5.00" min="0.10" step="0.50">
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Timeout (minutes)</label>
+                    <input type="number" class="form-input" id="ns-timeout" value="60" min="1" max="480">
+                </div>
+                <div class="form-group" style="display:flex;align-items:flex-end;padding-bottom:14px;">
+                    <label class="form-checkbox">
+                        <input type="checkbox" id="ns-worktree" checked>
+                        Use worktree
+                    </label>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-back btn-sm" onclick="window.closeNewSessionModal()">Cancel</button>
+                <button class="btn btn-primary btn-sm" onclick="window.createSession()">
+                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    Launch Session
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Session Detail Panel -->
+    <div class="detail-overlay" id="detail-overlay">
+        <div class="detail-panel" id="detail-panel">
+            <button class="detail-close" onclick="window.closeDetail()">Close</button>
+            <div id="detail-content"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+    (function() {
+        // --- State ---
+        var sessions = [];
+        var pollTimer = null;
+        var selectedId = null;
+
+        // --- Helpers ---
+        function $(id) { return document.getElementById(id); }
+
+        function formatDuration(sec) {
+            if (!sec || sec < 0) return '--';
+            var m = Math.floor(sec / 60);
+            var s = Math.floor(sec % 60);
+            return m + ':' + (s < 10 ? '0' : '') + s;
+        }
+
+        function formatCost(c) {
+            return '$' + (c || 0).toFixed(2);
+        }
+
+        function truncate(str, len) {
+            if (!str) return '';
+            return str.length > len ? str.substring(0, len) + '...' : str;
+        }
+
+        function elapsed(startIso) {
+            if (!startIso) return 0;
+            return (Date.now() - new Date(startIso).getTime()) / 1000;
+        }
+
+        function showToast(msg, isError) {
+            var t = $('toast');
+            t.textContent = msg;
+            t.className = 'toast' + (isError ? ' error' : '') + ' show';
+            setTimeout(function() { t.className = 'toast'; }, 3000);
+        }
+
+        // --- Kanban rendering ---
+        function renderBoard() {
+            var buckets = { queued: [], running: [], complete: [], reviewing: [] };
+
+            sessions.forEach(function(s) {
+                if (s.status === 'queued') buckets.queued.push(s);
+                else if (s.status === 'running') buckets.running.push(s);
+                else if (s.status === 'succeeded' || s.status === 'failed') buckets.complete.push(s);
+                else if (s.status === 'reviewing') buckets.reviewing.push(s);
+                else buckets.queued.push(s);
+            });
+
+            Object.keys(buckets).forEach(function(key) {
+                var container = $('col-' + key);
+                var countEl = $('col-count-' + key);
+                if (countEl) countEl.textContent = buckets[key].length;
+
+                if (buckets[key].length === 0) {
+                    container.innerHTML = '<div class="kanban-empty">No sessions</div>';
+                    return;
+                }
+
+                container.innerHTML = buckets[key].map(function(s) {
+                    var modelClass = (s.model || 'sonnet').toLowerCase();
+                    var statusClass = 'status-' + (s.status || 'queued');
+                    var durationStr = '';
+                    if (s.status === 'running' && s.started_at) {
+                        durationStr = formatDuration(elapsed(s.started_at));
+                    } else if (s.duration_seconds) {
+                        durationStr = formatDuration(s.duration_seconds);
+                    }
+
+                    return '<div class="session-card ' + statusClass + '" onclick="window.openDetail(\'' + s.id + '\')">' +
+                        '<div class="session-card-row">' +
+                            '<span class="session-card-id" title="' + s.id + '">' + truncate(s.id, 12) + '</span>' +
+                            '<span class="session-card-model ' + modelClass + '">' + (s.model || 'sonnet') + '</span>' +
+                            (s.template ? '<span class="session-card-template">' + s.template + '</span>' : '') +
+                        '</div>' +
+                        '<div class="session-card-preview">' + truncate(s.last_output || s.prompt || '', 60) + '</div>' +
+                        '<div class="session-card-meta">' +
+                            '<span class="session-card-cost">' + formatCost(s.cost_usd) + '</span>' +
+                            (durationStr ? '<span class="session-card-duration">' + durationStr + '</span>' : '') +
+                        '</div>' +
+                    '</div>';
+                }).join('');
+            });
+
+            // Update header stats
+            var running = sessions.filter(function(s) { return s.status === 'running'; }).length;
+            var cost = sessions.reduce(function(sum, s) { return sum + (s.cost_usd || 0); }, 0);
+            $('bs-total').textContent = sessions.length;
+            $('bs-running').textContent = running;
+            $('bs-cost').textContent = formatCost(cost);
+
+            // Fire event for status bar in shell
+            window.dispatchEvent(new CustomEvent('conductor-sessions-updated'));
+        }
+
+        // --- Data loading ---
+        function loadSessions() {
+            // Try API first, then ConductorData, then static file
+            fetch('/api/sessions')
+                .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+                .then(function(data) {
+                    sessions = Array.isArray(data) ? data : (data.sessions || []);
+                    window.ConductorData.sessions = sessions;
+                    renderBoard();
+                    if (selectedId) refreshDetail(selectedId);
+                })
+                .catch(function() {
+                    // Fallback: ConductorData from preloader
+                    if (window.ConductorData.sessions) {
+                        sessions = window.ConductorData.sessions;
+                        renderBoard();
+                        return;
+                    }
+                    // Fallback: static file
+                    fetch('../data/sessions.json')
+                        .then(function(r) { return r.ok ? r.json() : []; })
+                        .then(function(data) {
+                            sessions = Array.isArray(data) ? data : (data.sessions || []);
+                            window.ConductorData.sessions = sessions;
+                            renderBoard();
+                        })
+                        .catch(function() {
+                            sessions = [];
+                            renderBoard();
+                        });
+                });
+        }
+
+        // --- Auto-refresh polling ---
+        function startPolling() {
+            if (pollTimer) clearInterval(pollTimer);
+            pollTimer = setInterval(loadSessions, 3000);
+        }
+
+        // --- Modal: New Session ---
+        window.openNewSessionModal = function() {
+            populateProjectSelector();
+            $('new-session-modal').classList.add('open');
+        };
+
+        window.closeNewSessionModal = function() {
+            $('new-session-modal').classList.remove('open');
+        };
+
+        function populateProjectSelector() {
+            var sel = $('ns-project');
+            var projects = window.ConductorData.projects;
+            // Keep first placeholder option, remove the rest
+            while (sel.options.length > 1) sel.remove(1);
+            if (projects && Array.isArray(projects)) {
+                projects.forEach(function(p) {
+                    var opt = document.createElement('option');
+                    opt.value = p.id || p.name;
+                    opt.textContent = p.name || p.id;
+                    sel.appendChild(opt);
+                });
+            }
+        }
+
+        window.createSession = function() {
+            var project = $('ns-project').value;
+            var prompt = $('ns-prompt').value.trim();
+            var template = $('ns-template').value;
+            var model = $('ns-model').value;
+            var budget = parseFloat($('ns-budget').value) || 5.00;
+            var timeout = parseInt($('ns-timeout').value) || 60;
+            var worktree = $('ns-worktree').checked;
+
+            if (!prompt) {
+                showToast('Prompt is required', true);
+                return;
+            }
+
+            var payload = {
+                project_id: project || null,
+                prompt: prompt,
+                template: template,
+                model: model,
+                max_budget_usd: budget,
+                timeout_minutes: timeout,
+                use_worktree: worktree
+            };
+
+            fetch('/api/sessions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(function(r) {
+                if (!r.ok) throw new Error('Failed to create session');
+                return r.json();
+            })
+            .then(function(data) {
+                showToast('Session launched');
+                window.closeNewSessionModal();
+                $('ns-prompt').value = '';
+                loadSessions();
+            })
+            .catch(function(err) {
+                showToast('Error: ' + err.message, true);
+            });
+        };
+
+        // Click outside modal to close
+        $('new-session-modal').addEventListener('click', function(e) {
+            if (e.target === this) window.closeNewSessionModal();
+        });
+
+        // --- Detail Panel ---
+        window.openDetail = function(sessionId) {
+            selectedId = sessionId;
+            refreshDetail(sessionId);
+            $('detail-overlay').classList.add('open');
+        };
+
+        window.closeDetail = function() {
+            selectedId = null;
+            $('detail-overlay').classList.remove('open');
+        };
+
+        // Click overlay (not panel) to close
+        $('detail-overlay').addEventListener('click', function(e) {
+            if (e.target === this) window.closeDetail();
+        });
+
+        function refreshDetail(sessionId) {
+            var s = sessions.find(function(x) { return x.id === sessionId; });
+            if (!s) return;
+
+            var gates = s.quality_gates || {};
+            var gateKeys = ['compiles', 'tests_pass', 'requirements_met', 'no_security_issues'];
+
+            var html = '';
+            html += '<h2 style="font-size:1.1rem;margin-bottom:4px;">Session Detail</h2>';
+            html += '<div style="font-family:var(--font-mono);font-size:0.78rem;color:var(--accent-blue);margin-bottom:16px;">' + s.id + '</div>';
+
+            // Info section
+            html += '<div class="detail-section">';
+            html += '<div class="detail-section-title">Info</div>';
+            html += '<div class="detail-row"><span class="detail-row-label">Status</span><span class="detail-row-val"><span class="status-dot ' + s.status + '" style="margin-right:4px;"></span>' + s.status + '</span></div>';
+            html += '<div class="detail-row"><span class="detail-row-label">Model</span><span class="detail-row-val">' + (s.model || 'sonnet') + '</span></div>';
+            html += '<div class="detail-row"><span class="detail-row-label">Template</span><span class="detail-row-val">' + (s.template || '--') + '</span></div>';
+            html += '<div class="detail-row"><span class="detail-row-label">Cost</span><span class="detail-row-val">' + formatCost(s.cost_usd) + '</span></div>';
+            if (s.tokens_in || s.tokens_out) {
+                html += '<div class="detail-row"><span class="detail-row-label">Tokens</span><span class="detail-row-val">' + (s.tokens_in || 0).toLocaleString() + ' in / ' + (s.tokens_out || 0).toLocaleString() + ' out</span></div>';
+            }
+            if (s.started_at) {
+                html += '<div class="detail-row"><span class="detail-row-label">Started</span><span class="detail-row-val">' + new Date(s.started_at).toLocaleString() + '</span></div>';
+            }
+            if (s.completed_at) {
+                html += '<div class="detail-row"><span class="detail-row-label">Completed</span><span class="detail-row-val">' + new Date(s.completed_at).toLocaleString() + '</span></div>';
+            }
+            if (s.duration_seconds) {
+                html += '<div class="detail-row"><span class="detail-row-label">Duration</span><span class="detail-row-val">' + formatDuration(s.duration_seconds) + '</span></div>';
+            }
+            html += '</div>';
+
+            // Output section
+            html += '<div class="detail-section">';
+            html += '<div class="detail-section-title">Output</div>';
+            html += '<div class="detail-output" id="detail-output">Loading output...</div>';
+            html += '</div>';
+
+            // Quality gates
+            html += '<div class="detail-section">';
+            html += '<div class="detail-section-title">Quality Gates</div>';
+            html += '<div class="quality-gates">';
+            gateKeys.forEach(function(key) {
+                var checked = gates[key] === true;
+                var label = key.replace(/_/g, ' ').replace(/\b\w/g, function(l) { return l.toUpperCase(); });
+                html += '<label class="gate-item' + (checked ? ' checked' : '') + '">' +
+                    '<input type="checkbox"' + (checked ? ' checked' : '') + ' onchange="window.updateGate(\'' + sessionId + '\', \'' + key + '\', this.checked)">' +
+                    label +
+                '</label>';
+            });
+            html += '</div></div>';
+
+            // Learnings
+            html += '<div class="detail-section">';
+            html += '<div class="detail-section-title">Learnings</div>';
+            html += '<textarea class="form-textarea form-input" id="detail-learnings" rows="3" placeholder="Capture learnings from this session..." onblur="window.saveLearnings(\'' + sessionId + '\')">' + (s.learnings || '') + '</textarea>';
+            html += '</div>';
+
+            // Actions
+            html += '<div class="detail-actions">';
+            if (s.status === 'running') {
+                html += '<button class="btn btn-danger btn-sm" onclick="window.cancelSession(\'' + sessionId + '\')">Cancel</button>';
+            }
+            html += '<button class="btn btn-ghost btn-sm" onclick="window.deleteSession(\'' + sessionId + '\')">Delete</button>';
+            html += '</div>';
+
+            $('detail-content').innerHTML = html;
+
+            // Fetch output
+            fetch('/api/sessions/' + sessionId + '/output')
+                .then(function(r) { return r.ok ? r.text() : ''; })
+                .then(function(text) {
+                    var outputEl = $('detail-output');
+                    if (!outputEl) return;
+                    if (!text) { outputEl.textContent = 'No output yet.'; return; }
+
+                    // Parse JSONL: extract assistant text and tool calls
+                    var lines = text.trim().split('\n');
+                    var parts = [];
+                    lines.forEach(function(line) {
+                        try {
+                            var obj = JSON.parse(line);
+                            if (obj.type === 'assistant' && obj.text) {
+                                parts.push(obj.text);
+                            } else if (obj.type === 'tool_call') {
+                                parts.push('[tool: ' + (obj.tool || 'unknown') + ']');
+                            } else if (obj.content) {
+                                parts.push(typeof obj.content === 'string' ? obj.content : JSON.stringify(obj.content));
+                            }
+                        } catch(e) {
+                            parts.push(line);
+                        }
+                    });
+                    outputEl.textContent = parts.join('\n') || 'No output yet.';
+                })
+                .catch(function() {
+                    var outputEl = $('detail-output');
+                    if (outputEl) outputEl.textContent = 'Unable to fetch output.';
+                });
+        }
+
+        // --- API actions ---
+        window.updateGate = function(sessionId, gate, value) {
+            var payload = {};
+            payload['quality_gates.' + gate] = value;
+            fetch('/api/sessions/' + sessionId, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(function(r) {
+                if (r.ok) showToast('Gate updated');
+                else showToast('Failed to update gate', true);
+                loadSessions();
+            }).catch(function() { showToast('Network error', true); });
+        };
+
+        window.saveLearnings = function(sessionId) {
+            var text = $('detail-learnings').value;
+            fetch('/api/sessions/' + sessionId, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ learnings: text })
+            }).then(function(r) {
+                if (r.ok) showToast('Learnings saved');
+            }).catch(function() {});
+        };
+
+        window.cancelSession = function(sessionId) {
+            fetch('/api/sessions/' + sessionId + '/cancel', { method: 'POST' })
+                .then(function(r) {
+                    if (r.ok) { showToast('Session cancelled'); window.closeDetail(); loadSessions(); }
+                    else showToast('Failed to cancel', true);
+                })
+                .catch(function() { showToast('Network error', true); });
+        };
+
+        window.deleteSession = function(sessionId) {
+            if (!confirm('Delete this session? This cannot be undone.')) return;
+            fetch('/api/sessions/' + sessionId, { method: 'DELETE' })
+                .then(function(r) {
+                    if (r.ok) { showToast('Session deleted'); window.closeDetail(); loadSessions(); }
+                    else showToast('Failed to delete', true);
+                })
+                .catch(function() { showToast('Network error', true); });
+        };
+
+        // --- Init ---
+        function init() {
+            loadSessions();
+            startPolling();
+        }
+
+        // If ConductorData is already loaded, use it immediately
+        if (window.ConductorData && window.ConductorData.sessions) {
+            sessions = window.ConductorData.sessions;
+            renderBoard();
+        }
+
+        init();
+
+        // Cleanup polling when page is unloaded (SPA navigation)
+        window.addEventListener('beforeunload', function() {
+            if (pollTimer) clearInterval(pollTimer);
+        });
+    })();
+    </script>
+</body>
+</html>
