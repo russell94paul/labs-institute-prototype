@@ -9,3 +9,5 @@ dashboard/data/pipelines.json
 .venv/
 node_modules/
 .claude/settings.local.json
+local-inputs/research-inbox/*
+!local-inputs/research-inbox/README.md
