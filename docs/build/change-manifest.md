@@ -1,5 +1,37 @@
 # Change Manifest
 
+## Deep Research Ingestion — Topics 01, 02, 08 (2026-05-19)
+
+### Files Created
+
+**docs/research/syntheses/**
+- `01-multi-tenant-saas-rls-client-portals.synthesis.md` — Synthesis: multi-tenant architecture, RLS, client portals
+- `02-agent-orchestration-dag-parallelization.synthesis.md` — Synthesis: DAG engine, parallelization, worktrees, events
+- `08-hybrid-context-fabric-wiki-memory-knowledge-graph.synthesis.md` — Synthesis: context fabric, memory governance, knowledge graph
+
+**docs/research/decisions/**
+- `DEC-001-default-tenancy-model.md` — Default tenancy model decision
+- `DEC-002-secrets-management-backend.md` — Secrets management backend decision
+- `DEC-003-worktree-isolation-model.md` — Worktree isolation model decision
+- `DEC-004-event-store-technology.md` — Event store technology decision
+- `DEC-005-vector-store-for-context-fabric.md` — Vector store for context fabric decision
+- `DEC-006-wiki-repo-role.md` — Wiki repo role decision
+- `DEC-007-memory-provider-integration.md` — Memory provider integration decision
+
+**docs/build/**
+- `deep-research-ingestion-01-02-08-report.md` — Ingestion build report
+- `session-handoffs/deep-research-ingestion-01-02-08-handoff.md` — Session handoff
+
+### Files Modified
+
+- `docs/research/research-status.md` — Moved topics 01, 02, 08 to Synthesized
+- `docs/research/research-index.md` — Added output/synthesis links, decisions table, next recommendation
+- `docs/research/synthesis-log.md` — Added three synthesis entries
+- `config/research-topics.json` — Set status to synthesized, updated lastUpdated and decisionsCreated for topics 01, 02, 08
+- `docs/build/change-manifest.md` — Added this section
+
+---
+
 ## P0 Pipeline DAG Engine (2026-05-18)
 
 ### Files Created

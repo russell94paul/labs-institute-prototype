@@ -2,12 +2,12 @@
   {
     "id": "01",
     "title": "Multi-Tenant SaaS, RLS & Client Portals",
-    "status": "pending",
+    "status": "synthesized",
     "priority": 1,
     "promptPath": "docs/research/prompts/01-multi-tenant-saas-rls-client-portals.md",
     "expectedOutputFile": "01-multi-tenant-saas-rls-client-portals.report.md",
     "inboxPath": "local-inputs/research-inbox/",
-    "synthesisPath": "docs/research/syntheses/01-multi-tenant-saas-synthesis.md",
+    "synthesisPath": "docs/research/syntheses/01-multi-tenant-saas-rls-client-portals.synthesis.md",
     "affectsModules": [
       "engine/server.py",
       "engine/sessions.py",
@@ -17,18 +17,19 @@
     ],
     "dependsOn": [],
     "recommendedOrder": 1,
-    "lastUpdated": "2026-05-18",
+    "lastUpdated": "2026-05-19",
+    "decisionsCreated": ["DEC-001", "DEC-002"],
     "notes": "Foundational — most other topics depend on the tenancy model decision."
   },
   {
     "id": "02",
     "title": "Agent Orchestration, DAGs & Parallelization",
-    "status": "pending",
+    "status": "synthesized",
     "priority": 1,
     "promptPath": "docs/research/prompts/02-agent-orchestration-dag-parallelization.md",
     "expectedOutputFile": "02-agent-orchestration-dag-parallelization.report.md",
     "inboxPath": "local-inputs/research-inbox/",
-    "synthesisPath": "docs/research/syntheses/02-agent-orchestration-synthesis.md",
+    "synthesisPath": "docs/research/syntheses/02-agent-orchestration-dag-parallelization.synthesis.md",
     "affectsModules": [
       "engine/pipelines.py",
       "engine/phases.py",
@@ -38,7 +39,8 @@
     ],
     "dependsOn": [],
     "recommendedOrder": 2,
-    "lastUpdated": "2026-05-18",
+    "lastUpdated": "2026-05-19",
+    "decisionsCreated": ["DEC-003", "DEC-004"],
     "notes": "Core differentiator — the orchestration engine is the heart of Conductor."
   },
   {
@@ -145,7 +147,7 @@
   {
     "id": "08-hybrid-context-fabric-wiki-memory-knowledge-graph",
     "title": "Hybrid Context Fabric: Wiki, Memory, Knowledge Graph, and Project Context Packs",
-    "status": "pending",
+    "status": "synthesized",
     "priority": 1,
     "promptPath": "docs/research/prompts/08-hybrid-context-fabric-wiki-memory-knowledge-graph.md",
     "expectedOutputFile": "08-hybrid-context-fabric-wiki-memory-knowledge-graph.report.md",
@@ -166,7 +168,8 @@
       "05-context-memory-vector-db-self-improvement"
     ],
     "recommendedOrder": 3,
-    "lastUpdated": "2026-05-18",
+    "lastUpdated": "2026-05-19",
+    "decisionsCreated": ["DEC-005", "DEC-006", "DEC-007"],
     "notes": "Evaluate a hybrid context fabric combining repos/wiki, zeus-memory, generated structured knowledge, knowledge graphs, vector search, project-specific memory, metadata-first retrieval, and evaluation-gated self-improvement."
   }
 ]
