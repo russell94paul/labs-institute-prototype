@@ -1,5 +1,35 @@
 # Change Manifest
 
+## Bootstrap Orchestration Console (2026-05-18)
+
+### Files Created
+
+**engine/**
+- `bootstrap.py` — Phase dependency engine (eligible, blocked, parallelizable, critical path, next recommendation)
+
+**dashboard/pages/**
+- `bootstrap.html` — Bootstrap Console SPA page (10 tabbed views: Roadmap, Dependencies, Work Queue, Blockers, Approvals, Reports, Parallelization, Changes, Rollback, Quarantine)
+
+**docs/build/**
+- `bootstrap-orchestration-console-build-report.md` — Phase 5 build report
+- `rollback/bootstrap-orchestration-console-rollback.md` — Rollback instructions
+- `session-handoffs/bootstrap-orchestration-console-handoff.md` — Session handoff for next phase
+
+**docs/decisions/**
+- `bootstrap-orchestration-console.md` — ADR for bootstrap console architecture decisions
+
+### Files Modified
+
+- `engine/server.py` — Added bootstrap API routes (GET/PATCH/POST for phases, summary, blockers)
+- `dashboard/index.html` — Added "Bootstrap" nav link and route entry
+- `config/phase-status.json` — Marked 00-bootstrap as completed
+- `docs/build/change-manifest.md` — Added Phase 5 section
+- `docs/build/blockers.md` — Updated with current state
+- `docs/build/approval-requests.md` — Updated with current state
+- `docs/build/parallelization-status.md` — Updated for post-bootstrap state
+
+---
+
 ## Research + Inputs Intake System (2026-05-18)
 
 ### Files Created

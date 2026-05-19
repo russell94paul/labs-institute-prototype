@@ -1,29 +1,46 @@
 # Parallelization Status
 
-## Current Phase: Bootstrap Setup Complete — Research Ready
+## Current Phase: Bootstrap Console Complete — P0 Pipeline DAG Next
 
-### Can Run in Parallel
+### Eligible Now
 
-| Work item | Status | Dependencies | Notes |
-|-----------|--------|-------------|-------|
-| Deep Research Topic 01 (Multi-Tenant SaaS) | Ready to start | None | Priority 1 |
-| Deep Research Topic 02 (Agent Orchestration) | Ready to start | None | Priority 1 |
-| Deep Research Topic 08 (Hybrid Context Fabric) | Ready to start | None (soft dep on 05) | Priority 1 |
-| Fill in service inventory (`05-current-aldc-service-inventory.md`) | Ready to start | None | Manual |
-| Fill in migration notes (`06-current-client-migration-notes.md`) | Ready to start | None | Manual |
-| Review product vision (`01-product-vision.md`) | Ready to start | None | Manual |
-| Review demo script (`08-demo-script.md`) | Ready to start | None | Manual |
+| Work item | Status | Branch | Notes |
+|-----------|--------|--------|-------|
+| P0 Pipeline DAG Engine | Eligible (approval-gated) | `conductor/p0-pipeline-engine` | Core engine — blocks all downstream |
+| Deep Research Topic 01 (Multi-Tenant SaaS) | Ready to start | N/A | Manual ChatGPT |
+| Deep Research Topic 02 (Agent Orchestration) | Ready to start | N/A | Manual ChatGPT |
+| Deep Research Topic 08 (Hybrid Context Fabric) | Ready to start | N/A | Manual ChatGPT |
 
-### Must Wait
+### Safe to Parallelize
 
-| Work item | Blocked by | Notes |
-|-----------|-----------|-------|
-| Deep Research Topic 05 (Memory) | Topics 01, 02 | Depends on architecture decisions |
-| Deep Research Topic 04 (Data Modernization) | Topics 01, 02 | Depends on architecture decisions |
-| Deep Research Topic 03 (Onboarding) | Topics 01, 02, 05 | Depends on architecture + memory |
-| Deep Research Topic 06 (Credentials) | Topics 01, 04 | Depends on tenancy + migration |
-| Deep Research Topic 07 (Market Intelligence) | Topics 01, 02, 03 | Depends on core platform |
-| Research synthesis | Completed research outputs | Run ingestion prompt after each |
-| Roadmap synthesis | Multiple syntheses completed | Run after 2-3 topics synthesized |
-| P0 Pipeline DAG Engine | Bootstrap Console complete | Next implementation phase |
-| Design Hybrid Context Fabric (from repos) | Topic 08 research synthesized | Future Claude prompt |
+| Work A | Work B | Reason |
+|--------|--------|--------|
+| Deep Research Topics | P0 Pipeline DAG design/planning | Research is docs-only, no code overlap |
+| Service inventory fill-in | P0 Pipeline DAG design/planning | Manual input vs. code work |
+
+### Must Serialize
+
+| Work item | Reason |
+|-----------|--------|
+| P0 Pipeline DAG Engine | Core engine — touches engine/pipelines.py, engine/phases.py |
+| P0 Event System | Depends on P0 Pipeline DAG completion |
+| P1 Build Studio | Depends on P0 Pipeline DAG + P0 Events |
+| P2 Product Onboarding | Depends on P1 Build Studio |
+
+### Blocked and Why
+
+| Work item | Blocked by | Missing |
+|-----------|-----------|---------|
+| P0-events | P0-pipeline-dag | P0 Pipeline DAG Engine not started |
+| P1-build-studio | P0-pipeline-dag, P0-events | Both prerequisites not started |
+| P2-onboarding | P1-build-studio | Build Studio not started |
+
+### Recommended Max Concurrency
+
+**2** — One code implementation track (P0 Pipeline DAG) + one research/docs track (Deep Research topics)
+
+### Next 3 Recommended Actions
+
+1. **Get approval for P0 Pipeline DAG Engine** — approval-gated, high-risk phase
+2. **Run Deep Research Topics 01 + 02** — unblocks synthesis needed for P0 design
+3. **Fill in service inventory** — unblocks Topic 04 research

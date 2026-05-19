@@ -20,6 +20,7 @@ from typing import Any, Dict, Optional
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from engine import sessions
+from engine import bootstrap
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DASHBOARD_ROOT = REPO_ROOT / "dashboard"
@@ -154,6 +155,57 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return self._send_error_json(404, f"Session {sid} not found")
         self._send_json({"ok": True})
 
+    # --- Bootstrap handlers ---
+
+    def _handle_get_bootstrap_phases(self) -> None:
+        phases = bootstrap.get_all_phases()
+        self._send_json(phases)
+
+    def _handle_get_bootstrap_summary(self) -> None:
+        summary = bootstrap.get_summary()
+        self._send_json(summary)
+
+    def _handle_get_bootstrap_phase(self, phase_id: str) -> None:
+        phase = bootstrap.get_phase(phase_id)
+        if not phase:
+            return self._send_error_json(404, f"Phase {phase_id} not found")
+        self._send_json(phase)
+
+    def _handle_patch_bootstrap_phase(self, phase_id: str) -> None:
+        body = self._json_body()
+        if not body:
+            return self._send_error_json(400, "Request body required")
+        new_status = body.get("status")
+        if not new_status:
+            return self._send_error_json(400, "status is required")
+        result = bootstrap.update_phase_status(phase_id, new_status, **{
+            k: body[k] for k in ("nextRecommendedAction", "activeSessionId", "lastUpdated")
+            if k in body
+        })
+        if not result:
+            return self._send_error_json(404, f"Phase {phase_id} not found")
+        self._send_json(result)
+
+    def _handle_post_bootstrap_blocker(self, phase_id: str) -> None:
+        body = self._json_body()
+        if not body or "blockerPhaseId" not in body:
+            return self._send_error_json(400, "blockerPhaseId is required")
+        action = body.get("action", "add")
+        if action == "clear":
+            result = bootstrap.clear_blocker(phase_id, body["blockerPhaseId"])
+        else:
+            result = bootstrap.add_blocker(phase_id, body["blockerPhaseId"])
+        if not result:
+            return self._send_error_json(404, f"Phase {phase_id} not found")
+        self._send_json(result)
+
+    def _match_bootstrap_route(self) -> Optional[tuple]:
+        path = self.path.split("?")[0]
+        m = re.match(r"^/api/bootstrap/phases/([a-zA-Z0-9_-]+)(?:/(\w+))?$", path)
+        if m:
+            return m.group(1), m.group(2)
+        return None
+
     # --- Config handler ---
 
     def _handle_get_config(self) -> None:
@@ -168,6 +220,17 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return self._handle_get_sessions()
         if path == "/api/config":
             return self._handle_get_config()
+        if path == "/api/bootstrap/phases":
+            return self._handle_get_bootstrap_phases()
+        if path == "/api/bootstrap/summary":
+            return self._handle_get_bootstrap_summary()
+
+        bmatch = self._match_bootstrap_route()
+        if bmatch:
+            phase_id, action = bmatch
+            if action is None:
+                return self._handle_get_bootstrap_phase(phase_id)
+            return self._send_error_json(404, f"Unknown action: {action}")
 
         match = self._match_session_route()
         if match:
@@ -186,6 +249,13 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
         if path == "/api/sessions":
             return self._handle_post_sessions()
 
+        bmatch = self._match_bootstrap_route()
+        if bmatch:
+            phase_id, action = bmatch
+            if action == "blocker":
+                return self._handle_post_bootstrap_blocker(phase_id)
+            return self._send_error_json(404, f"Unknown action: {action}")
+
         match = self._match_session_route()
         if match:
             sid, action = match
@@ -196,6 +266,13 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
         return self._send_error_json(404, "Not found")
 
     def do_PATCH(self) -> None:
+        bmatch = self._match_bootstrap_route()
+        if bmatch:
+            phase_id, action = bmatch
+            if action is None:
+                return self._handle_patch_bootstrap_phase(phase_id)
+            return self._send_error_json(404, f"Unknown action: {action}")
+
         match = self._match_session_route()
         if match:
             sid, action = match
