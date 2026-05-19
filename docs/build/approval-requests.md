@@ -14,6 +14,7 @@
 | # | Request | Approver | Date | Notes |
 |---|---------|----------|------|-------|
 | 4 | P0 Pipeline DAG Engine start | Paul | 2026-05-18 | Approved via direct session launch |
+| 5 | P0.5 Work Guard implementation | Paul | 2026-05-19 | User-initiated session — P0.5 executed and completed |
 
 ## Rejected
 

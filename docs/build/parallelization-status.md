@@ -1,49 +1,50 @@
 # Parallelization Status
 
-## Current Phase: Bootstrap Console Complete — P0 Pipeline DAG Next
+## Current Phase: P0.5 Work Guard Complete — P0 Events or P1 Build Studio Next
 
 ### Eligible Now
 
 | Work item | Status | Branch | Notes |
 |-----------|--------|--------|-------|
-| P0 Pipeline DAG Engine | Eligible (approval-gated) | `conductor/p0-pipeline-engine` | Core engine — blocks all downstream |
-| Deep Research Topic 01 (Multi-Tenant SaaS) | Ready to start | N/A | Manual ChatGPT |
-| Deep Research Topic 02 (Agent Orchestration) | Ready to start | N/A | Manual ChatGPT |
-| Deep Research Topic 08 (Hybrid Context Fabric) | Ready to start | N/A | Manual ChatGPT |
+| P0 Event System + SSE | Eligible | `conductor/p0-events` | Real-time pipeline event streaming |
+| Deep Research Topics 03-07 | Ready to start | N/A | Manual ChatGPT |
 
 ### Safe to Parallelize
 
 | Work A | Work B | Reason |
 |--------|--------|--------|
-| Deep Research Topics | P0 Pipeline DAG design/planning | Research is docs-only, no code overlap |
-| Service inventory fill-in | P0 Pipeline DAG design/planning | Manual input vs. code work |
+| Deep Research Topics 03-07 | P0 Events implementation | Research is docs-only, no code overlap |
+| Service inventory fill-in | Any code work | Manual input vs. code work |
 
 ### Must Serialize
 
 | Work item | Reason |
 |-----------|--------|
-| P0 Pipeline DAG Engine | Core engine — touches engine/pipelines.py, engine/phases.py |
-| P0 Event System | Depends on P0 Pipeline DAG completion |
-| P1 Build Studio | Depends on P0 Pipeline DAG + P0 Events |
+| P0 Event System | Touches engine/events.py, dashboard — serialize with engine work |
+| P1 Build Studio | Depends on P0 Events completion |
 | P2 Product Onboarding | Depends on P1 Build Studio |
 
 ### Blocked and Why
 
 | Work item | Blocked by | Missing |
 |-----------|-----------|---------|
-| P0-events | P0-pipeline-dag | P0 Pipeline DAG Engine not started |
-| P1-build-studio | P0-pipeline-dag, P0-events | Both prerequisites not started |
+| P1-build-studio | P0-events | P0 Events not started |
 | P2-onboarding | P1-build-studio | Build Studio not started |
 
-### Autonomous / Parallel Execution Hold
+### Work Guard Now Active
 
-**Autonomous and parallel execution should remain limited until P0.5 (Repo Work Guard, Session Lock, and Execution Queue) is implemented.** P0.5 adds the repo-level lock, dirty-tree gate, commit checkpoints, and queue model needed to safely run concurrent or autonomous tasks. Until then:
+P0.5 Work Guard is now implemented. The Work Guard provides:
 
-- Only one code-modifying session at a time.
-- Research ingestion is safe only if it touches docs-only paths and no config files.
-- Manual edits must be committed before starting any autonomous phase.
+- **Status API** (`GET /api/work-guard/status`) — check repo state before starting work
+- **Safety gate** (`GET /api/work-guard/safe-to-run`) — automated safe-to-run check
+- **Session lock** (`POST/DELETE /api/work-guard/lock`) — acquire/release repo lock
+- **Bootstrap Console** — live Work Guard status banner + detail panel
 
-See: `docs/architecture/repo-work-guard-session-lock.md`, `docs/decisions/ADR-0009-repo-work-guard-session-lock.md`
+Future integration (not yet implemented):
+- Session lifecycle auto-lock (engine/sessions.py integration)
+- Pipeline stage auto-lock (engine/pipelines.py integration)
+- Job queue management
+- Worktree orchestration
 
 ### Recommended Max Concurrency
 
@@ -51,6 +52,6 @@ See: `docs/architecture/repo-work-guard-session-lock.md`, `docs/decisions/ADR-00
 
 ### Next 3 Recommended Actions
 
-1. **Review and approve P0.5 Work Guard ADR** — safety layer before autonomous execution
-2. **Implement P0.5 minimal Work Guard** — enables safe parallel and autonomous work
-3. **Run Deep Research Topics 03–07** — unblocks synthesis for downstream phases
+1. **Run Deep Research Topics 03–07** — unblocks synthesis for downstream phases
+2. **Implement P0 Event System** — SSE + live dashboard for pipeline execution
+3. **Begin P1 Build Studio design** — plan the full build studio UI

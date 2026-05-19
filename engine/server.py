@@ -22,6 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from engine import sessions
 from engine import bootstrap
 from engine import pipelines
+from engine import work_guard
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DASHBOARD_ROOT = REPO_ROOT / "dashboard"
@@ -316,6 +317,45 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return self._send_error_json(400, err)
         self._send_json(result)
 
+    # --- Work Guard handlers ---
+
+    def _handle_get_work_guard_status(self) -> None:
+        status = work_guard.get_status(str(REPO_ROOT))
+        self._send_json(status)
+
+    def _handle_get_work_guard_safe_to_run(self) -> None:
+        result = work_guard.safe_to_run(str(REPO_ROOT))
+        self._send_json(result)
+
+    def _handle_post_work_guard_lock(self) -> None:
+        body = self._json_body()
+        if not body:
+            return self._send_error_json(400, "Request body required")
+        ok = work_guard.acquire_lock(str(REPO_ROOT), body)
+        if not ok:
+            return self._send_error_json(409, "Lock already held — cannot acquire")
+        self._send_json({"ok": True, "lock": work_guard.read_lock(str(REPO_ROOT))}, 201)
+
+    def _handle_delete_work_guard_lock(self) -> None:
+        body = self._json_body()
+        lock_id = (body or {}).get("lockId", "")
+        if not lock_id:
+            return self._send_error_json(400, "lockId is required")
+        ok = work_guard.release_lock(str(REPO_ROOT), lock_id)
+        if not ok:
+            return self._send_error_json(409, "Lock not found or lockId mismatch")
+        self._send_json({"ok": True})
+
+    def _handle_post_work_guard_heartbeat(self) -> None:
+        body = self._json_body()
+        lock_id = (body or {}).get("lockId", "")
+        if not lock_id:
+            return self._send_error_json(400, "lockId is required")
+        ok = work_guard.update_heartbeat(str(REPO_ROOT), lock_id)
+        if not ok:
+            return self._send_error_json(409, "Lock not found or lockId mismatch")
+        self._send_json({"ok": True})
+
     # --- Config handler ---
 
     def _handle_get_config(self) -> None:
@@ -336,6 +376,10 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return self._handle_get_templates()
         if path == "/api/pipelines/dry-run":
             return self._handle_get_pipeline_dry_run()
+        if path == "/api/work-guard/status":
+            return self._handle_get_work_guard_status()
+        if path == "/api/work-guard/safe-to-run":
+            return self._handle_get_work_guard_safe_to_run()
         if path == "/api/bootstrap/phases":
             return self._handle_get_bootstrap_phases()
         if path == "/api/bootstrap/summary":
@@ -375,6 +419,10 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return self._handle_post_sessions()
         if path == "/api/pipelines":
             return self._handle_post_pipelines()
+        if path == "/api/work-guard/lock":
+            return self._handle_post_work_guard_lock()
+        if path == "/api/work-guard/heartbeat":
+            return self._handle_post_work_guard_heartbeat()
 
         pmatch = self._match_pipeline_route()
         if pmatch:
@@ -429,6 +477,9 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
         return self._send_error_json(404, "Not found")
 
     def do_DELETE(self) -> None:
+        path = self.path.split("?")[0]
+        if path == "/api/work-guard/lock":
+            return self._handle_delete_work_guard_lock()
         match = self._match_session_route()
         if match:
             sid, action = match

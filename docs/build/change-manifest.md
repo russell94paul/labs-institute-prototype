@@ -1,5 +1,29 @@
 # Change Manifest
 
+## P0.5 — Work Guard Implementation (2026-05-19)
+
+### Files Created
+
+**engine/**
+- `work_guard.py` — Work Guard module: git status checks, session lock lifecycle (acquire/release/heartbeat), stale lock detection, PID liveness, safe-to-run gate, full status reporting
+
+**docs/build/**
+- `work-guard-build-report.md` — P0.5 build report
+- `rollback/work-guard-rollback.md` — Rollback plan
+- `session-handoffs/p0-5-work-guard-handoff.md` — Session handoff
+
+### Files Modified
+
+- `engine/server.py` — Added `work_guard` import + 5 API routes (`GET /api/work-guard/status`, `GET /api/work-guard/safe-to-run`, `POST /api/work-guard/lock`, `DELETE /api/work-guard/lock`, `POST /api/work-guard/heartbeat`)
+- `dashboard/pages/bootstrap.html` — Added Work Guard CSS, banner (lock status + safe-to-run badge), "Work Guard" tab, detail panel (Git State, Session Lock, Safety Checks, Recommended Action), JS fetch/render functions
+- `config/phase-status.json` — Updated P0.5 status from "pending" to "completed"
+- `docs/build/change-manifest.md` — Added this section
+- `docs/build/blockers.md` — Updated: P0 approval blocker resolved
+- `docs/build/approval-requests.md` — Updated for P0.5
+- `docs/build/parallelization-status.md` — Updated for post-P0.5 state
+
+---
+
 ## P0.5 — Repo Work Guard, Session Lock, and Execution Queue — Roadmap/Docs/Config Setup (2026-05-19)
 
 ### Files Created

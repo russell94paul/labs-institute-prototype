@@ -153,7 +153,7 @@
     "phaseId": "p0-5-repo-work-guard-session-lock",
     "name": "P0.5 — Repo Work Guard, Session Lock, and Execution Queue",
     "description": "Adds repo/session safety checks, lock model, queue policy, and dirty-tree gates before semi-autonomous or parallel execution.",
-    "status": "pending",
+    "status": "completed",
     "priority": "P0.5",
     "dependencies": ["P0-pipeline-dag"],
     "blockedBy": [],
@@ -167,7 +167,7 @@
     "requiredArtifacts": ["ADR-0009"],
     "approvalRequired": true,
     "promptPath": "docs/prompts/00-p0-5-repo-work-guard-session-lock.md",
-    "reportPath": null,
+    "reportPath": "docs/build/work-guard-build-report.md",
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": false,
@@ -179,7 +179,7 @@
       "Build Studio execution controls"
     ],
     "lastUpdated": "2026-05-19",
-    "nextRecommendedAction": "Review and approve ADR-0009, then implement minimal Work Guard"
+    "nextRecommendedAction": null
   },
   {
     "phaseId": "P0-events",
