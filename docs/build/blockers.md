@@ -16,3 +16,4 @@
 | — | Bootstrap Console not built | 2026-05-18 | Phase 5 completed — console now available at #bootstrap |
 | — | P0.5 Work Guard not yet implemented | 2026-05-19 | P0.5 completed — Work Guard status + lock API + Bootstrap Console integration |
 | — | P0-events not yet implemented | 2026-05-19 | P0-events completed — Event system + SSE + live dashboard |
+| — | P1 Build Studio not yet implemented | 2026-05-19 | P1 completed — Build Studio MVP with 10 tabbed views |

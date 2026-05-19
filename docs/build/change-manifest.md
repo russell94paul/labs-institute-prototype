@@ -1,5 +1,35 @@
 # Change Manifest
 
+## P1 Build Studio MVP (2026-05-19)
+
+### Files Created
+
+**dashboard/pages/**
+- `build-studio.html` — Build Studio MVP: 10 tabbed views (Overview, Roadmap, Dependencies, Work Queue, Approvals, Blockers, Events, Work Guard, Reports, Changes), SSE live event feed, decision queue (DEC-001–010), build progress tracking, phase detail overlay
+
+**docs/build/**
+- `p1-build-studio-build-report.md` — P1 build report
+- `rollback/p1-build-studio-rollback.md` — Rollback plan
+- `session-handoffs/p1-build-studio-handoff.md` — Session handoff
+
+### Files Modified
+
+- `dashboard/index.html` — Added "Build Studio" nav link + route entry in SPA router
+- `config/phase-status.json` — Marked P1-build-studio as completed, cleared blockedBy, updated reportPath and branchName
+- `docs/build/change-manifest.md` — Added this section
+- `docs/build/blockers.md` — Added P1 to resolved blockers
+- `docs/build/approval-requests.md` — Moved P1 Build Studio start (#8) from Pending to Approved
+
+### Constraints Verified
+
+- No engine code modified
+- No new Python dependencies
+- No secrets/env files read or modified
+- Bootstrap Console still fully functional
+- All existing API endpoints unchanged
+
+---
+
 ## Deep Research Ingestion — Topic 05 (2026-05-19)
 
 ### Files Created
