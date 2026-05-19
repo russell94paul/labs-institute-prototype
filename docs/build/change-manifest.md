@@ -1,5 +1,39 @@
 # Change Manifest
 
+## P2 Product Onboarding Studio (2026-05-19)
+
+### Files Created
+
+**dashboard/pages/**
+- `onboarding-studio.html` — Product Onboarding Studio: 6 tabbed views (Start, Intake, Features, Simulator, Scenarios, Summary), 3 onboarding paths, 11-section intake form, 30-feature selection matrix, 6 dynamic sliders, 3 recommendation cards, scenario save/compare with radar chart, JSON export
+
+**docs/build/**
+- `p2-product-onboarding-studio-build-report.md` — P2 build report
+- `rollback/p2-product-onboarding-studio-rollback.md` — Rollback plan
+- `session-handoffs/p2-product-onboarding-studio-handoff.md` — Session handoff
+
+### Files Modified
+
+- `dashboard/index.html` — Added "Onboarding" nav link + route entry in SPA router
+- `config/phase-status.json` — Marked P2-onboarding as completed, cleared blockedBy, updated reportPath/branchName/lastUpdated
+- `docs/build/change-manifest.md` — Added this section
+- `docs/build/blockers.md` — Updated (no changes to open blockers)
+- `docs/build/approval-requests.md` — Added P2 approval to approved
+- `docs/build/parallelization-status.md` — Updated for post-P2 state
+
+### Constraints Verified
+
+- No engine code modified
+- No new Python dependencies
+- No secrets/env files read or modified
+- Build Studio still fully functional
+- Bootstrap Console still fully functional
+- All existing API endpoints unchanged
+- No raw research reports tracked
+- No real credentials collected or stored
+
+---
+
 ## Local Dev Startup Utility + Skill (2026-05-19)
 
 ### Files Created

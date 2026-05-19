@@ -1,41 +1,38 @@
 # Parallelization Status
 
-## Current Phase: P0-events Complete — P1 Build Studio Next
+## Current Phase: P2 Complete — All Defined Phases Built
 
 ### Eligible Now
 
 | Work item | Status | Branch | Notes |
 |-----------|--------|--------|-------|
-| P1 Build Studio MVP | Eligible (approval-gated) | `conductor/p1-build-studio` | Full build studio replacing bootstrap console |
 | Deep Research Topics 03-07 | Ready to start | N/A | Manual ChatGPT |
+| DEC-001–010 batch review | Pending Paul's review | N/A | `docs/build/decision-review-summary.md` |
 
 ### Safe to Parallelize
 
 | Work A | Work B | Reason |
 |--------|--------|--------|
-| Deep Research Topics 03-07 | P1 Build Studio design | Research is docs-only, no code overlap |
-| Service inventory fill-in | Any code work | Manual input vs. code work |
+| Deep Research Topics 03-07 | DEC review | Research is docs-only, no code overlap |
+| Service inventory fill-in | Any research work | Manual input vs. docs work |
 
 ### Must Serialize
 
-| Work item | Reason |
-|-----------|--------|
-| P1 Build Studio | Major UI + API work — serialize with engine changes |
-| P2 Product Onboarding | Depends on P1 Build Studio |
+No code phases currently pending — all 10 defined phases are complete.
 
 ### Blocked and Why
 
-| Work item | Blocked by | Missing |
-|-----------|-----------|---------|
-| P2-onboarding | P1-build-studio | Build Studio not started |
+No phases currently blocked.
 
 ### Completed Infrastructure
 
-All P0 phases are now complete:
+All phases are now complete:
 
 - **P0 Pipeline DAG Engine** — Core execution engine
 - **P0.5 Work Guard** — Repo safety, session locks, execution gating
 - **P0 Event System** — Real-time SSE, event history, live dashboard
+- **P1 Build Studio** — Main control surface with 10 tabbed views
+- **P2 Product Onboarding Studio** — Guided intake, feature matrix, decision simulator, scenario comparison
 
 ### Recommended Max Concurrency
 
@@ -43,6 +40,6 @@ All P0 phases are now complete:
 
 ### Next 3 Recommended Actions
 
-1. **Review DEC-001 through DEC-007** — validate research decisions before P1
-2. **Run Deep Research Topics 03–07** — unblocks synthesis for downstream phases
-3. **Start P1 Build Studio design** — plan the full build studio UI (approval required)
+1. **Review DEC-001 through DEC-010** — validate research decisions
+2. **Run Deep Research Topics 03–07** — unblocks synthesis for downstream work
+3. **Plan next build phases** — define phases beyond P2 (client portal, agent runtime, context fabric)
