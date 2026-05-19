@@ -7,7 +7,8 @@
 | 1 | Product vision draft review | Claude | Paul | 2026-05-18 | Pending | Review `docs/inputs/01-product-vision.md` |
 | 2 | Research topic priorities | Claude | Paul | 2026-05-18 | Pending | Confirm order in `config/research-topics.json` |
 | 3 | Demo script review | Claude | Paul | 2026-05-18 | Pending | Review `docs/inputs/08-demo-script.md` |
-| 4 | P0 Pipeline DAG Engine start | Claude | Paul | 2026-05-18 | Approved | User-initiated session — P0 executed and completed |
+| 7 | DEC-001 through DEC-007 batch review | Claude | Paul | 2026-05-19 | Pending | Review `docs/build/decision-review-summary.md` — approve/defer/revise each |
+| 8 | P1 Build Studio start | Claude | Paul | 2026-05-19 | Pending | Phase requires approval per config; see `docs/build/p1-readiness-checklist.md` |
 
 ## Approved
 

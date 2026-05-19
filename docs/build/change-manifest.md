@@ -1,5 +1,64 @@
 # Change Manifest
 
+## Deep Research Ingestion — Topic 05 (2026-05-19)
+
+### Files Created
+
+**docs/research/syntheses/**
+- `05-context-memory-vector-db-self-improvement.synthesis.md` — Synthesis: memory as governed evidence system, PostgreSQL+pgvector MVP, 5-level hierarchy, hybrid retrieval, context packs, attribution
+
+**docs/research/decisions/**
+- `DEC-008-memory-store-mvp-scope.md` — Memory store MVP scope: minimal 3-table ledger vs. full 10-table schema
+- `DEC-009-memory-extraction-trigger.md` — Memory extraction trigger: async post-build vs. inline vs. event-driven
+- `DEC-010-evaluation-harness-mvp-scope.md` — Evaluation harness MVP: evidence+contradiction only vs. full replay suite
+
+**docs/build/**
+- `deep-research-ingestion-05-report.md` — Ingestion report
+- `session-handoffs/deep-research-ingestion-05-handoff.md` — Session handoff
+
+### Files Modified
+
+- `docs/research/research-status.md` — Moved Topic 05 from Pending to Synthesized
+- `docs/research/research-index.md` — Added output/synthesis links for Topic 05, added DEC-008/009/010, updated recommended next topic to 04
+- `docs/research/synthesis-log.md` — Added Topic 05 synthesis entry
+- `config/research-topics.json` — Set Topic 05 status to synthesized, updated synthesisPath, lastUpdated, decisionsCreated
+- `docs/build/change-manifest.md` — Added this section
+
+### Constraints Verified
+
+- No engine code modified
+- No dashboard code modified
+- No secrets/env files read or modified
+- Raw reports remain in gitignored `local-inputs/research-inbox/`
+- No sensitive raw content copied into committed docs
+
+---
+
+## Decision Review Before P1 (2026-05-19)
+
+### Files Created
+
+**docs/build/**
+- `decision-review-summary.md` — Review of DEC-001 through DEC-007: per-decision analysis, P1 gating assessment, deferral recommendations, synthesis cross-reference
+- `p1-readiness-checklist.md` — P1 Build Studio readiness: prerequisites, decision readiness, research readiness, blocker/approval status, recommended pre-P1 actions
+- `session-handoffs/decision-review-before-p1-handoff.md` — Session handoff
+
+### Files Modified
+
+- `docs/build/blockers.md` — Added P1 non-blocking clarifications to Affects column for all 3 open blockers
+- `docs/build/approval-requests.md` — Moved #4 from Pending to Approved (was already approved), added #7 (DEC batch review) and #8 (P1 Build Studio start)
+- `docs/build/change-manifest.md` — Added this section
+
+### Constraints Verified
+
+- No engine code modified
+- No dashboard code modified
+- No secrets/env files read or modified
+- No config JSON modified
+- All 7 decisions (DEC-001 through DEC-007) represented in summary
+
+---
+
 ## P0-events — Event System + SSE + Live Dashboard (2026-05-19)
 
 ### Files Created

@@ -1,10 +1,9 @@
 # Research Status Board
 
-Last updated: 2026-05-19
+Last updated: 2026-05-19 (Topic 05 ingested)
 
 ## Pending
 
-- [ ] **05 — Context, Memory, Vector DB & Self-Improvement** (Priority 3)
 - [ ] **04 — Data Platform Modernization Factory** (Priority 4)
 - [ ] **03 — AI-Guided Onboarding & Decision Simulation** (Priority 5)
 - [ ] **06 — Secure Credential & Artifact Workflows** (Priority 6)
@@ -22,6 +21,7 @@ Last updated: 2026-05-19
 
 - [x] **01 — Multi-Tenant SaaS, RLS & Client Portals** (Priority 1) — Synthesized 2026-05-19
 - [x] **02 — Agent Orchestration, DAGs & Parallelization** (Priority 1) — Synthesized 2026-05-19
+- [x] **05 — Context, Memory, Vector DB & Self-Improvement** (Priority 3) — Synthesized 2026-05-19
 - [x] **08 — Hybrid Context Fabric: Wiki, Memory, Knowledge Graph & Project Context Packs** (Priority 1) — Synthesized 2026-05-19
 
 ## Applied to Roadmap

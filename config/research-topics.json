@@ -87,12 +87,12 @@
   {
     "id": "05",
     "title": "Context, Memory, Vector DB & Self-Improvement",
-    "status": "pending",
+    "status": "synthesized",
     "priority": 3,
     "promptPath": "docs/research/prompts/05-context-memory-vector-db-self-improvement.md",
     "expectedOutputFile": "05-context-memory-vector-db-self-improvement.report.md",
     "inboxPath": "local-inputs/research-inbox/",
-    "synthesisPath": "docs/research/syntheses/05-memory-context-synthesis.md",
+    "synthesisPath": "docs/research/syntheses/05-context-memory-vector-db-self-improvement.synthesis.md",
     "affectsModules": [
       "engine/context.py",
       "vector DB infrastructure",
@@ -101,7 +101,8 @@
     ],
     "dependsOn": ["01", "02"],
     "recommendedOrder": 3,
-    "lastUpdated": "2026-05-18",
+    "lastUpdated": "2026-05-19",
+    "decisionsCreated": ["DEC-008", "DEC-009", "DEC-010"],
     "notes": "Critical for self-improvement capability — Conductor's long-term moat."
   },
   {
