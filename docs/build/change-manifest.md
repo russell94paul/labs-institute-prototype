@@ -1,5 +1,30 @@
 # Change Manifest
 
+## Minimal Claude Skill Layer (2026-05-19)
+
+### Files Created
+
+**.claude/skills/conductor-start/**
+- `SKILL.md` — Read-only session start skill: reports branch, phase status, blockers, approvals, lock state, safe-to-run, recommended next action
+
+**.claude/skills/conductor-work-guard/**
+- `SKILL.md` — Read-only safety gate skill: reports lock status, dirty/clean tree, safe-to-run, recommended action
+
+**.claude/skills/conductor-handoff/**
+- `SKILL.md` — Session handoff skill: creates handoff docs under `docs/build/session-handoffs/`, may append to change manifest
+
+**docs/architecture/**
+- `claude-minimal-skill-layer.md` — Architecture doc: rationale for minimal skills, deferred skills list, available skills reference, modification constraints
+
+**docs/prompts/**
+- `setup-minimal-claude-skill-layer.md` — Reusable setup prompt for recreating the skill layer
+
+### Files Modified
+
+- `docs/build/change-manifest.md` — Added this section
+
+---
+
 ## P0.5 — Work Guard Implementation (2026-05-19)
 
 ### Files Created
