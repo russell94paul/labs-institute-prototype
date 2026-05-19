@@ -1,5 +1,30 @@
 # Change Manifest
 
+## P0 Pipeline DAG Engine (2026-05-18)
+
+### Files Created
+
+**engine/**
+- `pipelines.py` — Core pipeline DAG engine: dependency resolution, stage lifecycle, session integration, failure propagation, retry/skip/cancel, gate approval, template loading, dry run, atomic persistence
+- `phases.py` — Phase definition loader: markdown+YAML frontmatter parser, variable extraction, directory scanner
+
+**dashboard/pages/**
+- `pipelines.html` — Pipeline dashboard: list, templates, dry run, detail overlay, stage actions, KPI strip
+
+**docs/build/**
+- `p0-pipeline-dag-engine-build-report.md` — P0 build report
+- `rollback/p0-pipeline-dag-engine-rollback.md` — Rollback plan
+- `session-handoffs/p0-pipeline-dag-engine-handoff.md` — Session handoff
+
+### Files Modified
+
+- `engine/server.py` — Added 12 pipeline API routes, session launcher, pipeline module initialization, shutdown integration
+- `config/phase-status.json` — Marked P0-pipeline-dag as completed
+- `docs/build/change-manifest.md` — Added P0 section
+- `docs/build/approval-requests.md` — Marked P0 approval as fulfilled
+
+---
+
 ## Bootstrap Orchestration Console (2026-05-18)
 
 ### Files Created

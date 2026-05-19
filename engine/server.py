@@ -21,6 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from engine import sessions
 from engine import bootstrap
+from engine import pipelines
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DASHBOARD_ROOT = REPO_ROOT / "dashboard"
@@ -206,6 +207,115 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return m.group(1), m.group(2)
         return None
 
+    # --- Pipeline handlers ---
+
+    def _match_pipeline_route(self) -> Optional[tuple]:
+        path = self.path.split("?")[0]
+        m = re.match(r"^/api/pipelines/(pipe_[a-f0-9]+)(?:/(.+))?$", path)
+        if m:
+            return m.group(1), m.group(2)
+        return None
+
+    def _handle_get_pipelines(self) -> None:
+        query = self.path.split("?", 1)[1] if "?" in self.path else ""
+        params = dict(p.split("=", 1) for p in query.split("&") if "=" in p)
+        result = pipelines.list_pipelines(
+            project_slug=params.get("project"),
+            status=params.get("status"),
+        )
+        self._send_json(result)
+
+    def _handle_post_pipelines(self) -> None:
+        body = self._json_body()
+        if not body:
+            return self._send_error_json(400, "Request body required")
+
+        name = body.get("name", "")
+        template = body.get("template", "")
+        if not name or not template:
+            return self._send_error_json(400, "name and template are required")
+
+        pipe, err = pipelines.create_pipeline(
+            name=name,
+            template_slug=template,
+            project_slug=body.get("project_slug", ""),
+            repo_path=body.get("repo_path", str(REPO_ROOT)),
+            variables=body.get("variables", {}),
+            model=body.get("model", DEFAULT_CONFIG["default_model"]),
+            budget_usd=float(body.get("budget_usd", DEFAULT_CONFIG["default_budget_usd"])),
+            timeout_min=int(body.get("timeout_min", DEFAULT_CONFIG["default_timeout_min"])),
+        )
+        if err:
+            return self._send_error_json(400, err)
+
+        if body.get("auto_start"):
+            pipelines.start_pipeline(pipe["id"], session_launcher=_pipeline_session_launcher)
+
+        print(f"[conductor] Created pipeline {pipe['id']}")
+        self._send_json(pipe, 201)
+
+    def _handle_get_pipeline(self, pid: str) -> None:
+        pipe = pipelines.get_pipeline(pid)
+        if not pipe:
+            return self._send_error_json(404, f"Pipeline {pid} not found")
+        self._send_json(pipe)
+
+    def _handle_get_pipeline_summary(self, pid: str) -> None:
+        summary = pipelines.get_pipeline_summary(pid)
+        if not summary:
+            return self._send_error_json(404, f"Pipeline {pid} not found")
+        self._send_json(summary)
+
+    def _handle_post_pipeline_start(self, pid: str) -> None:
+        ok, msg = pipelines.start_pipeline(pid, session_launcher=_pipeline_session_launcher)
+        if not ok:
+            return self._send_error_json(409, msg)
+        self._send_json({"ok": True, "message": msg})
+
+    def _handle_post_pipeline_advance(self, pid: str) -> None:
+        ok, msg = pipelines.advance_pipeline(pid, session_launcher=_pipeline_session_launcher)
+        if not ok:
+            return self._send_error_json(409, msg)
+        self._send_json({"ok": True, "message": msg})
+
+    def _handle_post_pipeline_cancel(self, pid: str) -> None:
+        ok, msg = pipelines.cancel_pipeline(pid)
+        if not ok:
+            return self._send_error_json(409, msg)
+        self._send_json({"ok": True, "message": msg})
+
+    def _handle_post_stage_retry(self, pid: str, stage_name: str) -> None:
+        ok, msg = pipelines.retry_stage(pid, stage_name, session_launcher=_pipeline_session_launcher)
+        if not ok:
+            return self._send_error_json(409, msg)
+        self._send_json({"ok": True, "message": msg})
+
+    def _handle_post_stage_skip(self, pid: str, stage_name: str) -> None:
+        ok, msg = pipelines.skip_stage(pid, stage_name, session_launcher=_pipeline_session_launcher)
+        if not ok:
+            return self._send_error_json(409, msg)
+        self._send_json({"ok": True, "message": msg})
+
+    def _handle_post_gate_approve(self, pid: str, stage_name: str) -> None:
+        ok, msg = pipelines.approve_gate(pid, stage_name, session_launcher=_pipeline_session_launcher)
+        if not ok:
+            return self._send_error_json(409, msg)
+        self._send_json({"ok": True, "message": msg})
+
+    def _handle_get_templates(self) -> None:
+        self._send_json(pipelines.list_templates())
+
+    def _handle_get_pipeline_dry_run(self) -> None:
+        query = self.path.split("?", 1)[1] if "?" in self.path else ""
+        params = dict(p.split("=", 1) for p in query.split("&") if "=" in p)
+        template = params.get("template", "")
+        if not template:
+            return self._send_error_json(400, "template query param required")
+        result, err = pipelines.dry_run(template)
+        if err:
+            return self._send_error_json(400, err)
+        self._send_json(result)
+
     # --- Config handler ---
 
     def _handle_get_config(self) -> None:
@@ -220,10 +330,25 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return self._handle_get_sessions()
         if path == "/api/config":
             return self._handle_get_config()
+        if path == "/api/pipelines":
+            return self._handle_get_pipelines()
+        if path == "/api/templates":
+            return self._handle_get_templates()
+        if path == "/api/pipelines/dry-run":
+            return self._handle_get_pipeline_dry_run()
         if path == "/api/bootstrap/phases":
             return self._handle_get_bootstrap_phases()
         if path == "/api/bootstrap/summary":
             return self._handle_get_bootstrap_summary()
+
+        pmatch = self._match_pipeline_route()
+        if pmatch:
+            pid, action = pmatch
+            if action is None:
+                return self._handle_get_pipeline(pid)
+            if action == "summary":
+                return self._handle_get_pipeline_summary(pid)
+            return self._send_error_json(404, f"Unknown action: {action}")
 
         bmatch = self._match_bootstrap_route()
         if bmatch:
@@ -248,6 +373,28 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
 
         if path == "/api/sessions":
             return self._handle_post_sessions()
+        if path == "/api/pipelines":
+            return self._handle_post_pipelines()
+
+        pmatch = self._match_pipeline_route()
+        if pmatch:
+            pid, action = pmatch
+            if action == "start":
+                return self._handle_post_pipeline_start(pid)
+            if action == "advance":
+                return self._handle_post_pipeline_advance(pid)
+            if action == "cancel":
+                return self._handle_post_pipeline_cancel(pid)
+            m = re.match(r"^stages/([a-zA-Z0-9_-]+)/(retry|skip|approve)$", action or "")
+            if m:
+                stage_name, op = m.group(1), m.group(2)
+                if op == "retry":
+                    return self._handle_post_stage_retry(pid, stage_name)
+                if op == "skip":
+                    return self._handle_post_stage_skip(pid, stage_name)
+                if op == "approve":
+                    return self._handle_post_gate_approve(pid, stage_name)
+            return self._send_error_json(404, f"Unknown action: {action}")
 
         bmatch = self._match_bootstrap_route()
         if bmatch:
@@ -307,8 +454,39 @@ class ThreadingHTTPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     daemon_threads = True
 
 
+def _pipeline_session_launcher(pipeline: Dict[str, Any], stage: Dict[str, Any]) -> str:
+    """Create a session for a pipeline stage.  Returns the session ID."""
+    session = sessions.create_session(
+        project_slug=pipeline.get("project_slug", ""),
+        repo_path=pipeline.get("repo_path", str(REPO_ROOT)),
+        prompt=stage.get("prompt", ""),
+        template=stage.get("template", "implement"),
+        model=stage.get("model", DEFAULT_CONFIG["default_model"]),
+        budget_usd=float(stage.get("budget_usd", DEFAULT_CONFIG["default_budget_usd"])),
+        timeout_min=int(stage.get("timeout_min", DEFAULT_CONFIG["default_timeout_min"])),
+        use_worktree=True,
+        task_id=f"{pipeline['id']}/{stage['name']}",
+        task_title=stage.get("label", stage["name"]),
+    )
+
+    def _on_complete(sess):
+        success = sess.get("status") == "succeeded"
+        pipelines.handle_stage_complete(
+            pid=pipeline["id"],
+            stage_name=stage["name"],
+            success=success,
+            error=sess.get("error"),
+            cost_usd=sess.get("cost_usd", 0.0),
+            session_launcher=_pipeline_session_launcher,
+        )
+
+    sessions.set_on_complete(_on_complete)
+    return session["id"]
+
+
 def _shutdown() -> None:
     print("[conductor] Shutting down — cleaning up sessions...")
+    pipelines.shutdown()
     sessions.shutdown()
     print("[conductor] Shutdown complete.")
 
@@ -331,9 +509,18 @@ def main() -> None:
         default_config=DEFAULT_CONFIG,
     )
 
+    pipelines.configure(
+        data_dir=DATA_DIR,
+        sessions_dir=SESSIONS_DIR,
+        repo_root=REPO_ROOT,
+    )
+    pipelines.load_state()
+
     print(f"[conductor] Conductor — Product Orchestrator")
     print(f"[conductor] Dashboard:  http://127.0.0.1:{PORT}/")
     print(f"[conductor] API:        http://127.0.0.1:{PORT}/api/sessions")
+    print(f"[conductor] Pipelines:  http://127.0.0.1:{PORT}/api/pipelines")
+    print(f"[conductor] Templates:  http://127.0.0.1:{PORT}/api/templates")
     print(f"[conductor] Max parallel: {DEFAULT_CONFIG['max_parallel']}")
     print()
 
