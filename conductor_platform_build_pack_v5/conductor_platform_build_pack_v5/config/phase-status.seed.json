@@ -1,0 +1,64 @@
+{
+  "version": "1.0",
+  "mode": "manual_assisted",
+  "phases": [
+    {
+      "phaseId": "preflight_autonomy_rollback_policy",
+      "status": "not_started",
+      "dependencies": [],
+      "riskLevel": "low",
+      "canRunInParallel": false,
+      "parallelizationReason": "First phase; establishes policy and checkpoint expectations.",
+      "branchName": "chore/conductor-platform-clean-start",
+      "nextRecommendedAction": "Run preflight prompt or manually confirm checklist."
+    },
+    {
+      "phaseId": "clean_start_reset",
+      "status": "not_started",
+      "dependencies": [
+        "preflight_autonomy_rollback_policy"
+      ],
+      "riskLevel": "high",
+      "canRunInParallel": false,
+      "parallelizationReason": "Repo cleanup and deletion/quarantine work must be serialized.",
+      "branchName": "chore/conductor-platform-clean-start",
+      "nextRecommendedAction": "Run clean-start reset prompt."
+    },
+    {
+      "phaseId": "repo_restructure",
+      "status": "not_started",
+      "dependencies": [
+        "clean_start_reset"
+      ],
+      "riskLevel": "high",
+      "canRunInParallel": false,
+      "parallelizationReason": "Repo structure changes must be serialized.",
+      "branchName": "chore/conductor-platform-restructure",
+      "nextRecommendedAction": "Run repo restructure and roadmap ingestion prompt."
+    },
+    {
+      "phaseId": "bootstrap_orchestration_console",
+      "status": "not_started",
+      "dependencies": [
+        "repo_restructure"
+      ],
+      "riskLevel": "medium",
+      "canRunInParallel": false,
+      "parallelizationReason": "Bootstrap console establishes visibility and parallelization logic.",
+      "branchName": "conductor/bootstrap-console",
+      "nextRecommendedAction": "Build bootstrap console."
+    },
+    {
+      "phaseId": "pipeline_dag_engine",
+      "status": "not_started",
+      "dependencies": [
+        "bootstrap_orchestration_console"
+      ],
+      "riskLevel": "high",
+      "canRunInParallel": false,
+      "parallelizationReason": "Core engine/state changes must be serialized.",
+      "branchName": "conductor/p0-pipeline-engine",
+      "nextRecommendedAction": "Run P0 pipeline DAG engine prompt."
+    }
+  ]
+}

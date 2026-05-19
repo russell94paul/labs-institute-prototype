@@ -1,0 +1,84 @@
+{
+  "name": "Conductor Platform Build Roadmap",
+  "version": "5.0",
+  "principle": "Build the reusable Conductor platform spine first, then use it to build client products and the CEO knowledge/analytics product. Use broad reversible autonomy with mandatory checkpoints, change manifests, rollback plans, and approval gates for high-risk actions.",
+  "onboarding_modes": [
+    "new_product_build",
+    "existing_product_improvement",
+    "data_platform_service_modernization"
+  ],
+  "sequence": [
+    [
+      "preflight_autonomy_rollback_policy",
+      "Preflight Autonomy / Approval / Rollback Policy"
+    ],
+    [
+      "clean_start_reset",
+      "Clean Start Reset Branch"
+    ],
+    [
+      "repo_restructure",
+      "Repo Restructure + Roadmap Ingestion"
+    ],
+    [
+      "bootstrap_orchestration_console",
+      "Bootstrap Orchestration Console"
+    ],
+    [
+      "pipeline_dag_engine",
+      "P0 Pipeline DAG Engine"
+    ],
+    [
+      "events_sse_dashboard",
+      "P0 Events + SSE + Dashboard"
+    ],
+    [
+      "build_studio_mvp",
+      "P1 Build Studio MVP"
+    ],
+    [
+      "product_onboarding_studio",
+      "Product Onboarding + Guided Decision Simulator"
+    ],
+    [
+      "phase_template_os",
+      "Phase Template Operating System"
+    ],
+    [
+      "multitenant_rls",
+      "Multi-Tenant Security/RLS Foundation"
+    ],
+    [
+      "client_portal",
+      "Client Product Portal"
+    ],
+    [
+      "trust_aware_discovery",
+      "Trust-Aware Discovery & Access Manager"
+    ],
+    [
+      "data_platform_modernization",
+      "Data Platform Modernization Studio"
+    ],
+    [
+      "market_growth_engine",
+      "Market Intelligence + Growth Engine"
+    ],
+    [
+      "context_memory_core",
+      "Context + Memory Core MVP"
+    ],
+    [
+      "infra_deploy_ops",
+      "Infrastructure / Deploy / Ops"
+    ],
+    [
+      "self_improvement_loop",
+      "Self-Improvement Loop"
+    ],
+    [
+      "ceo_product_rebuild",
+      "CEO Enterprise Knowledge + Analytics Product Rebuild"
+    ]
+  ]
+}

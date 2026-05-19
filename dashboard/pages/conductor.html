@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Conductor Console</title>
+    <link rel="stylesheet" href="../styles/base.css">
+    <style>
+    /* ================================================================
+       Conductor Console — Styles
+       ================================================================ */
+
+    /* --- Shell --- */
+    .cd-shell { padding: 0; }
+
+    .cd-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 20px 24px 12px; flex-wrap: wrap; gap: 12px;
+    }
+    .cd-header-left { display: flex; align-items: center; gap: 14px; }
+    .cd-header-right { display: flex; align-items: center; gap: 10px; }
+
+    .cd-logo-wrap {
+        width: 42px; height: 42px; flex-shrink: 0; position: relative;
+    }
+    .cd-logo-wrap svg { width: 100%; height: 100%; }
+    .cd-logo-glow {
+        position: absolute; inset: -4px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(56,189,248,0.25) 0%, transparent 70%);
+        animation: cd-logo-pulse 3s ease-in-out infinite;
+    }
+
+    .cd-title-block { display: flex; flex-direction: column; gap: 1px; }
+    .cd-wordmark {
+        font-size: 1.1rem; font-weight: 800; letter-spacing: 0.18em;
+        background: linear-gradient(90deg, #38bdf8, #a78bfa, #4ade80, #38bdf8);
+        background-size: 300% 100%;
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: cd-shimmer-text 4s linear infinite;
+    }
+    .cd-subtitle-text {
+        font-size: 0.62rem; color: var(--text-dim); text-transform: uppercase;
+        letter-spacing: 0.14em; font-weight: 600;
+    }
+
+    .cd-env-badge {
+        font-size: 0.6rem; font-weight: 700; padding: 3px 10px; border-radius: 10px;
+        text-transform: uppercase; letter-spacing: 0.06em;
+        background: rgba(74,222,128,0.12); color: var(--accent-green);
+        border: 1px solid rgba(74,222,128,0.25);
+    }
+    .cd-release-badge {
+        font-size: 0.6rem; font-weight: 700; padding: 3px 10px; border-radius: 10px;
+        font-family: var(--font-mono);
+        background: rgba(56,189,248,0.1); color: var(--accent-blue);
+        border: 1px solid rgba(56,189,248,0.2);
+    }
+    .cd-agent-indicator {
+        display: flex; align-items: center; gap: 5px;
+        font-size: 0.65rem; color: var(--text-dim);
+    }
+    .cd-agent-dot {
+        width: 7px; height: 7px; border-radius: 50%; background: var(--accent-green);
+        animation: cd-agent-pulse 2s ease-in-out infinite;
+    }
+    .cd-search-box {
+        font-size: 0.72rem; padding: 5px 12px; border-radius: 8px;
+        background: rgba(255,255,255,0.04); border: 1px solid var(--border-light);
+        color: var(--text-dim); min-width: 140px; cursor: pointer;
+        font-family: var(--font-family);
+    }
+
+    /* --- KPI Strip --- */
+    .cd-kpi-strip {
+        display: flex; align-items: center; gap: 12px;
+        padding: 8px 24px 12px; flex-wrap: wrap;
+    }
+    .cd-kpi-item {
+        display: flex; align-items: center; gap: 6px;
+        font-size: 0.7rem; color: var(--text-dim);
+        background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle);
+        border-radius: 8px; padding: 5px 12px;
+    }
+    .cd-kpi-val {
+        font-family: var(--font-mono); font-weight: 800;
+        color: var(--text-secondary); font-size: 0.78rem;
+    }
+    .cd-ring-wrap { width: 28px; height: 28px; flex-shrink: 0; }
+    .cd-ring-wrap svg { width: 100%; height: 100%; }
+    .cd-ring-track { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 3; }
+    .cd-ring-fill {
+        fill: none; stroke-width: 3; stroke-linecap: round;
+        transition: stroke-dashoffset 1s ease;
+    }
+
+    /* --- Tagline --- */
+    .cd-tagline {
+        text-align: center; font-size: 0.68rem; color: var(--text-faint);
+        padding: 0 24px 8px; letter-spacing: 0.08em;
+    }
+    .cd-tagline-sep { margin: 0 8px; color: var(--text-faint); opacity: 0.4; }
+
+    /* --- View Tabs --- */
+    .cd-tabs {
+        display: flex; gap: 2px; padding: 0 24px;
+        border-bottom: 1px solid var(--border-light);
+    }
+    .cd-tab {
+        padding: 8px 16px; font-size: 0.72rem; font-weight: 600;
+        color: var(--text-dim); cursor: pointer; border: none; background: none;
+        border-bottom: 2px solid transparent; transition: all 0.2s;
+        font-family: var(--font-family); white-space: nowrap;
+    }
+    .cd-tab:hover { color: var(--text-secondary); }
+    .cd-tab.active {
+        color: var(--accent-blue); border-bottom-color: var(--accent-blue);
+    }
+
+    /* --- View Panels --- */
+    .cd-view { display: none; padding: 16px 24px; min-height: 400px; }
+    .cd-view.active { display: block; animation: fadeIn 0.3s ease; }
+
+    /* ================================================================
+       Board View
+       ================================================================ */
+    .cd-board-scroll {
+        overflow-x: auto; overflow-y: auto; max-height: calc(100vh - 300px);
+        border: 1px solid var(--border-subtle); border-radius: 10px;
+    }
+    .cd-board-grid {
+        display: grid;
+        grid-template-columns: 170px repeat(12, minmax(105px, 1fr));
+        min-width: 1430px;
+    }
+    .cd-board-corner {
+        position: sticky; left: 0; top: 0; z-index: 4;
+        background: var(--bg-darker); padding: 8px 10px;
+        border-bottom: 1px solid var(--border-medium);
+        border-right: 1px solid var(--border-subtle);
+        font-size: 0.6rem; color: var(--text-faint); text-transform: uppercase;
+        letter-spacing: 0.1em; font-weight: 700;
+    }
+    .cd-board-colhd {
+        position: sticky; top: 0; z-index: 3;
+        background: var(--bg-darker); padding: 8px 6px;
+        border-bottom: 1px solid var(--border-medium);
+        font-size: 0.58rem; color: var(--text-dim); text-transform: uppercase;
+        letter-spacing: 0.06em; font-weight: 700; text-align: center;
+        white-space: nowrap;
+    }
+    .cd-board-lanehd {
+        position: sticky; left: 0; z-index: 2;
+        background: linear-gradient(90deg, var(--bg-darker) 85%, transparent);
+        padding: 10px 10px; border-bottom: 1px solid var(--border-subtle);
+        border-right: 1px solid var(--border-subtle);
+        font-size: 0.68rem; font-weight: 600; color: var(--text-secondary);
+        display: flex; align-items: center; gap: 7px; white-space: nowrap;
+    }
+    .cd-lane-dot {
+        width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+    .cd-board-cell {
+        padding: 4px; border-bottom: 1px solid var(--border-subtle);
+        border-right: 1px solid rgba(255,255,255,0.015);
+        min-height: 48px; vertical-align: top;
+    }
+
+    /* Task Card (compact) */
+    .cd-tcard {
+        padding: 5px 7px; margin: 2px 0; border-radius: 6px;
+        background: var(--card-gradient); border: 1px solid var(--border-medium);
+        cursor: pointer; transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+        font-size: 0.62rem; position: relative; overflow: hidden;
+    }
+    .cd-tcard:hover {
+        transform: translateY(-1px); border-color: rgba(56,189,248,0.3);
+        box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+    }
+    .cd-tcard-title {
+        font-weight: 600; color: var(--text-secondary); line-height: 1.3;
+        margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis;
+        white-space: nowrap; max-width: 90px;
+    }
+    .cd-tcard-meta {
+        display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+    }
+    .cd-tcard-agent {
+        font-size: 0.55rem; color: var(--accent-blue); font-weight: 600;
+    }
+    .cd-tcard-priority {
+        font-size: 0.5rem; font-weight: 700; padding: 1px 5px;
+        border-radius: 6px; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .cd-tcard-priority.critical { background: rgba(248,113,113,0.2); color: var(--accent-red); }
+    .cd-tcard-priority.high { background: rgba(251,146,60,0.2); color: var(--accent-amber); }
+    .cd-tcard-priority.medium { background: rgba(56,189,248,0.15); color: var(--accent-blue); }
+    .cd-tcard-priority.low { background: rgba(255,255,255,0.06); color: var(--text-dim); }
+    .cd-tcard-flags { display: flex; gap: 3px; margin-top: 2px; }
+    .cd-tcard-flag {
+        font-size: 0.48rem; padding: 1px 4px; border-radius: 4px;
+        background: rgba(255,255,255,0.04); color: var(--text-faint);
+    }
+    .cd-tcard-flag.risk-high { background: rgba(248,113,113,0.12); color: var(--accent-red); }
+    .cd-tcard-flag.approval { background: rgba(250,204,21,0.12); color: var(--accent-gold); }
+    .cd-tcard-flag.pr { background: rgba(167,139,250,0.12); color: var(--accent-purple); }
+
+    /* Card status effects */
+    .cd-tcard.st-in_progress {
+        border-left: 2px solid var(--accent-blue);
+        animation: sessionRunPulse 3s ease-in-out infinite;
+    }
+    .cd-tcard.st-in_progress::after {
+        content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+        background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+        background-size: 200% 100%; animation: shimmer 2s linear infinite;
+    }
+    .cd-tcard.st-done, .cd-tcard.st-deployed, .cd-tcard.st-monitoring {
+        border-left: 2px solid var(--accent-green);
+        box-shadow: 0 0 8px rgba(74,222,128,0.1);
+    }
+    .cd-tcard.st-blocked {
+        border-left: 2px solid var(--accent-red);
+        border-color: rgba(248,113,113,0.3);
+    }
+    .cd-tcard.st-review {
+        border-left: 2px solid var(--accent-purple);
+    }
+    .cd-tcard.st-approved {
+        border-left: 2px solid var(--accent-gold);
+        animation: cd-approval-glow 2.5s ease-in-out infinite;
+    }
+
+    /* ================================================================
+       Roadmap View
+       ================================================================ */
+    .cd-rm-container { max-width: 1000px; }
+    .cd-rm-track {
+        position: relative; padding-left: 32px;
+        border-left: 2px solid var(--border-medium); margin-left: 16px;
+    }
+    .cd-rm-node {
+        position: relative; margin-bottom: 20px; padding: 14px 18px;
+        background: var(--card-gradient); border: 1px solid var(--border-medium);
+        border-radius: 10px; transition: border-color 0.2s;
+    }
+    .cd-rm-node:hover { border-color: rgba(56,189,248,0.25); }
+    .cd-rm-dot {
+        position: absolute; left: -41px; top: 16px;
+        width: 12px; height: 12px; border-radius: 50%;
+        border: 2px solid var(--bg-primary);
+    }
+    .cd-rm-dot.done { background: var(--accent-green); box-shadow: 0 0 8px rgba(74,222,128,0.4); }
+    .cd-rm-dot.active { background: var(--accent-blue); animation: pulse 2s infinite; }
+    .cd-rm-dot.pending { background: var(--accent-slate); }
+    .cd-rm-dot.blocked { background: var(--accent-red); }
+    .cd-rm-title { font-size: 0.88rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .cd-rm-date {
+        font-size: 0.65rem; color: var(--text-dim); font-family: var(--font-mono);
+        margin-bottom: 6px;
+    }
+    .cd-rm-tasks {
+        font-size: 0.72rem; color: var(--text-muted); margin-bottom: 6px;
+    }
+    .cd-rm-reco {
+        font-size: 0.68rem; padding: 8px 12px; border-radius: 8px;
+        background: rgba(56,189,248,0.06); border-left: 2px solid var(--accent-blue);
+        color: var(--text-body); margin-top: 8px; line-height: 1.5;
+    }
+    .cd-rm-badge {
+        font-size: 0.58rem; font-weight: 700; padding: 2px 8px;
+        border-radius: 8px; text-transform: uppercase; display: inline-block;
+    }
+    .cd-rm-badge.done { background: rgba(74,222,128,0.15); color: var(--accent-green); }
+    .cd-rm-badge.active { background: rgba(56,189,248,0.15); color: var(--accent-blue); }
+    .cd-rm-badge.pending { background: rgba(255,255,255,0.06); color: var(--text-dim); }
+    .cd-rm-badge.blocked { background: rgba(248,113,113,0.15); color: var(--accent-red); }
+
+    /* ================================================================
+       Task Development View
+       ================================================================ */
+    .cd-td-layout { display: flex; gap: 16px; min-height: 500px; }
+    .cd-td-list {
+        width: 260px; flex-shrink: 0; overflow-y: auto;
+        max-height: calc(100vh - 300px);
+        border: 1px solid var(--border-subtle); border-radius: 10px;
+        background: rgba(255,255,255,0.015);
+    }
+    .cd-td-list-header {
+        padding: 10px 14px; font-size: 0.7rem; font-weight: 700;
+        color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+    .cd-td-item {
+        padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border-subtle);
+        transition: background 0.15s;
+    }
+    .cd-td-item:hover { background: rgba(255,255,255,0.03); }
+    .cd-td-item.selected { background: rgba(56,189,248,0.06); border-left: 2px solid var(--accent-blue); }
+    .cd-td-item-title { font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); }
+    .cd-td-item-sub { font-size: 0.62rem; color: var(--text-dim); margin-top: 2px; }
+
+    .cd-td-detail {
+        flex: 1; border: 1px solid var(--border-subtle); border-radius: 10px;
+        background: rgba(255,255,255,0.015); overflow-y: auto;
+        max-height: calc(100vh - 300px);
+    }
+    .cd-td-empty {
+        display: flex; align-items: center; justify-content: center;
+        height: 100%; color: var(--text-faint); font-size: 0.82rem;
+    }
+    .cd-td-header {
+        padding: 16px 20px; border-bottom: 1px solid var(--border-subtle);
+    }
+    .cd-td-title { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .cd-td-id { font-size: 0.68rem; color: var(--accent-blue); font-family: var(--font-mono); }
+    .cd-td-tags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+
+    .cd-td-tabs {
+        display: flex; gap: 0; border-bottom: 1px solid var(--border-subtle);
+        padding: 0 20px;
+    }
+    .cd-td-tab {
+        padding: 8px 14px; font-size: 0.68rem; font-weight: 600;
+        color: var(--text-dim); cursor: pointer; border: none; background: none;
+        border-bottom: 2px solid transparent; font-family: var(--font-family);
+    }
+    .cd-td-tab:hover { color: var(--text-secondary); }
+    .cd-td-tab.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); }
+
+    .cd-td-body { padding: 16px 20px; }
+    .cd-td-section { margin-bottom: 16px; }
+    .cd-td-section-title {
+        font-size: 0.68rem; font-weight: 700; color: var(--text-dim);
+        text-transform: uppercase; letter-spacing: 0.08em;
+        margin-bottom: 8px; padding-bottom: 4px;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+    .cd-td-row {
+        display: flex; justify-content: space-between; padding: 3px 0;
+        font-size: 0.78rem;
+    }
+    .cd-td-row-label { color: var(--text-dim); }
+    .cd-td-row-val { color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.75rem; }
+    .cd-td-desc { font-size: 0.8rem; color: var(--text-body); line-height: 1.7; }
+    .cd-td-reco {
+        padding: 10px 14px; border-radius: 8px; font-size: 0.78rem;
+        background: rgba(56,189,248,0.06); border-left: 2px solid var(--accent-blue);
+        color: var(--text-body); line-height: 1.5;
+    }
+
+    /* ================================================================
+       DAG View
+       ================================================================ */
+    .cd-dag-wrap {
+        border: 1px solid var(--border-subtle); border-radius: 10px;
+        background: rgba(0,0,0,0.15); overflow: auto;
+        max-height: calc(100vh - 300px);
+    }
+    .cd-dag-svg { min-width: 1100px; min-height: 520px; display: block; }
+
+    .cd-dag-edge-line {
+        fill: none; stroke-width: 1.5; opacity: 0.4;
+    }
+    .cd-dag-edge-line.critical {
+        stroke-width: 2; opacity: 0.7;
+        stroke-dasharray: 6 3; animation: cd-dash-flow 1.5s linear infinite;
+    }
+
+    .cd-dag-node-rect {
+        rx: 8; ry: 8; stroke-width: 1.5;
+        transition: filter 0.2s;
+    }
+    .cd-dag-node-rect:hover { filter: brightness(1.2); cursor: pointer; }
+    .cd-dag-node-text {
+        font-size: 9px; font-family: var(--font-family);
+        font-weight: 600; text-anchor: middle; dominant-baseline: middle;
+    }
+    .cd-dag-node-sub {
+        font-size: 7px; font-family: var(--font-mono);
+        text-anchor: middle; dominant-baseline: middle;
+        fill: rgba(255,255,255,0.4);
+    }
+
+    .cd-dag-node-g.active .cd-dag-node-rect {
+        animation: cd-node-pulse 2.5s ease-in-out infinite;
+    }
+    .cd-dag-node-g.done .cd-dag-node-rect {
+        filter: drop-shadow(0 0 6px rgba(74,222,128,0.4));
+    }
+    .cd-dag-node-g.blocked .cd-dag-node-rect {
+        stroke-dasharray: 4 2;
+    }
+    .cd-dag-node-g.approval .cd-dag-node-rect {
+        animation: cd-approval-glow 2.5s ease-in-out infinite;
+    }
+
+    .cd-dag-legend {
+        display: flex; gap: 16px; padding: 10px 16px; flex-wrap: wrap;
+        border-top: 1px solid var(--border-subtle);
+        font-size: 0.62rem; color: var(--text-dim);
+    }
+    .cd-dag-legend-item { display: flex; align-items: center; gap: 5px; }
+    .cd-dag-legend-dot {
+        width: 10px; height: 10px; border-radius: 3px;
+    }
+
+    /* ================================================================
+       Deploy View
+       ================================================================ */
+    .cd-dep-container { max-width: 1000px; }
+    .cd-dep-header {
+        display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    }
+    .cd-dep-release {
+        font-size: 1.1rem; font-weight: 700; color: #fff;
+        font-family: var(--font-mono);
+    }
+    .cd-dep-envs {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px; margin-bottom: 24px;
+    }
+    .cd-dep-env {
+        background: var(--card-gradient); border: 1px solid var(--border-medium);
+        border-radius: 10px; padding: 14px 16px; position: relative; overflow: hidden;
+    }
+    .cd-dep-env-name {
+        font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.08em; margin-bottom: 6px;
+    }
+    .cd-dep-env-status {
+        display: flex; align-items: center; gap: 6px;
+        font-size: 0.75rem; color: var(--text-secondary);
+    }
+    .cd-dep-env-ver {
+        font-size: 0.65rem; color: var(--text-dim); font-family: var(--font-mono);
+        margin-top: 4px;
+    }
+    .cd-dep-env.active-env {
+        border-color: rgba(56,189,248,0.3);
+        box-shadow: 0 0 16px rgba(56,189,248,0.1);
+    }
+    .cd-dep-env.active-env::after {
+        content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+        background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+        animation: shimmer 2s linear infinite; background-size: 200% 100%;
+    }
+
+    .cd-dep-pipeline-title {
+        font-size: 0.82rem; font-weight: 700; color: #fff; margin-bottom: 12px;
+    }
+    .cd-dep-stages {
+        display: flex; gap: 2px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .cd-dep-stage {
+        flex: 1; min-width: 100px; padding: 10px 12px;
+        background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle);
+        border-radius: 8px; text-align: center; position: relative;
+    }
+    .cd-dep-stage-name {
+        font-size: 0.65rem; font-weight: 600; color: var(--text-secondary);
+        margin-bottom: 4px;
+    }
+    .cd-dep-stage-status { font-size: 0.58rem; }
+    .cd-dep-stage.done-stage {
+        border-color: rgba(74,222,128,0.2);
+        background: rgba(74,222,128,0.04);
+    }
+    .cd-dep-stage.active-stage {
+        border-color: rgba(56,189,248,0.3);
+        background: rgba(56,189,248,0.04);
+        animation: sessionRunPulse 3s ease-in-out infinite;
+    }
+    .cd-dep-stage.pending-stage { opacity: 0.5; }
+    .cd-dep-stage.blocked-stage {
+        border-color: rgba(251,146,60,0.3);
+        background: rgba(251,146,60,0.04);
+    }
+    .cd-dep-stage-arrow {
+        position: absolute; right: -10px; top: 50%; transform: translateY(-50%);
+        color: var(--text-faint); font-size: 0.7rem; z-index: 1;
+    }
+
+    .cd-dep-checks-title {
+        font-size: 0.82rem; font-weight: 700; color: #fff; margin-bottom: 12px;
+    }
+    .cd-dep-checks {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 8px; margin-bottom: 20px;
+    }
+    .cd-dep-check {
+        display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+        border-radius: 8px; background: rgba(255,255,255,0.02);
+        border: 1px solid var(--border-subtle); font-size: 0.72rem;
+        color: var(--text-secondary);
+    }
+    .cd-dep-check-icon { font-size: 0.82rem; flex-shrink: 0; }
+    .cd-dep-check.passed { border-color: rgba(74,222,128,0.2); }
+    .cd-dep-check.failed { border-color: rgba(248,113,113,0.2); }
+    .cd-dep-check.pending-chk { border-color: rgba(255,255,255,0.06); opacity: 0.6; }
+
+    .cd-dep-recos { display: flex; flex-direction: column; gap: 8px; }
+    .cd-dep-reco {
+        padding: 10px 14px; border-radius: 8px; font-size: 0.75rem;
+        line-height: 1.5;
+    }
+    .cd-dep-reco.info { background: rgba(56,189,248,0.06); border-left: 2px solid var(--accent-blue); color: var(--text-body); }
+    .cd-dep-reco.warn { background: rgba(251,146,60,0.06); border-left: 2px solid var(--accent-amber); color: var(--text-body); }
+    .cd-dep-reco.success { background: rgba(74,222,128,0.06); border-left: 2px solid var(--accent-green); color: var(--text-body); }
+
+    /* ================================================================
+       Review / PR View
+       ================================================================ */
+    .cd-rev-container { max-width: 1000px; }
+    .cd-rev-flow-bar {
+        display: flex; align-items: center; gap: 6px; margin-bottom: 20px;
+        padding: 12px 16px; background: rgba(255,255,255,0.02);
+        border: 1px solid var(--border-subtle); border-radius: 10px;
+        font-size: 0.68rem; color: var(--text-dim); flex-wrap: wrap;
+    }
+    .cd-rev-flow-step {
+        padding: 4px 10px; border-radius: 6px;
+        background: rgba(255,255,255,0.04);
+        color: var(--text-muted); font-weight: 600;
+    }
+    .cd-rev-flow-arrow { color: var(--text-faint); }
+    .cd-rev-cards { display: flex; flex-direction: column; gap: 10px; }
+    .cd-rev-pr {
+        background: var(--card-gradient); border: 1px solid var(--border-medium);
+        border-radius: 10px; padding: 14px 18px; cursor: pointer;
+        transition: border-color 0.2s, transform 0.15s;
+    }
+    .cd-rev-pr:hover {
+        border-color: rgba(56,189,248,0.25); transform: translateY(-1px);
+    }
+    .cd-rev-pr-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .cd-rev-pr-id {
+        font-family: var(--font-mono); font-weight: 700;
+        color: var(--accent-purple); font-size: 0.82rem;
+    }
+    .cd-rev-pr-title { font-size: 0.85rem; font-weight: 600; color: #fff; flex: 1; }
+    .cd-rev-pr-body { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.72rem; }
+    .cd-rev-pr-stat {
+        display: flex; align-items: center; gap: 4px; color: var(--text-dim);
+    }
+    .cd-rev-pr-stat-val { color: var(--text-secondary); font-family: var(--font-mono); }
+    .cd-rev-pr-actions { display: flex; gap: 6px; margin-top: 10px; }
+    .cd-rev-score-bar {
+        width: 60px; height: 4px; border-radius: 2px;
+        background: rgba(255,255,255,0.08); overflow: hidden;
+    }
+    .cd-rev-score-fill { height: 100%; border-radius: 2px; }
+
+    /* ================================================================
+       Approval Modal (extends base modal)
+       ================================================================ */
+    .cd-approval-body {
+        font-size: 0.85rem; color: var(--text-body); line-height: 1.7;
+        margin-bottom: 16px;
+    }
+    .cd-approval-detail {
+        font-size: 0.75rem; padding: 10px 14px; border-radius: 8px;
+        background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle);
+        margin-bottom: 12px; color: var(--text-muted);
+    }
+
+    /* ================================================================
+       Animations
+       ================================================================ */
+    @keyframes cd-logo-pulse {
+        0%, 100% { opacity: 0.5; transform: scale(1); }
+        50% { opacity: 0.8; transform: scale(1.05); }
+    }
+    @keyframes cd-shimmer-text {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 300% 50%; }
+    }
+    @keyframes cd-agent-pulse {
+        0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(74,222,128,0.5); }
+        50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(74,222,128,0); }
+    }
+    @keyframes cd-node-pulse {
+        0%, 100% { filter: drop-shadow(0 0 4px rgba(56,189,248,0.3)); }
+        50% { filter: drop-shadow(0 0 12px rgba(56,189,248,0.6)); }
+    }
+    @keyframes cd-approval-glow {
+        0%, 100% { box-shadow: 0 0 4px rgba(250,204,21,0.15); }
+        50% { box-shadow: 0 0 16px rgba(250,204,21,0.3); }
+    }
+    @keyframes cd-dash-flow {
+        0% { stroke-dashoffset: 0; }
+        100% { stroke-dashoffset: -18; }
+    }
+    @keyframes cd-deploy-progress {
+        0% { width: 0; }
+        100% { width: var(--progress); }
+    }
+    </style>
+</head>
+<body>
+    <div class="cd-shell">
+        <!-- Header -->
+        <div class="cd-header">
+            <div class="cd-header-left">
+                <div class="cd-logo-wrap">
+                    <div class="cd-logo-glow"></div>
+                    <svg viewBox="0 0 42 42" fill="none">
+                        <defs>
+                            <linearGradient id="cdGrad" x1="0" y1="0" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="#38bdf8"/>
+                                <stop offset="50%" stop-color="#a78bfa"/>
+                                <stop offset="100%" stop-color="#4ade80"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M30 7C18 7 9 14 9 21s9 14 21 14" stroke="url(#cdGrad)" stroke-width="3" stroke-linecap="round" fill="none"/>
+                        <circle cx="30" cy="7" r="3.5" fill="#38bdf8"/>
+                        <circle cx="9" cy="21" r="3" fill="#a78bfa"/>
+                        <circle cx="30" cy="35" r="3.5" fill="#4ade80"/>
+                        <circle cx="21" cy="12" r="2" fill="rgba(56,189,248,0.5)"/>
+                        <circle cx="21" cy="30" r="2" fill="rgba(167,139,250,0.5)"/>
+                        <line x1="30" y1="7" x2="21" y2="12" stroke="rgba(56,189,248,0.3)" stroke-width="1"/>
+                        <line x1="21" y1="12" x2="9" y2="21" stroke="rgba(167,139,250,0.3)" stroke-width="1"/>
+                        <line x1="9" y1="21" x2="21" y2="30" stroke="rgba(167,139,250,0.3)" stroke-width="1"/>
+                        <line x1="21" y1="30" x2="30" y2="35" stroke="rgba(74,222,128,0.3)" stroke-width="1"/>
+                    </svg>
+                </div>
+                <div class="cd-title-block">
+                    <span class="cd-wordmark">CONDUCTOR</span>
+                    <span class="cd-subtitle-text">Autonomous Delivery Console</span>
+                </div>
+            </div>
+            <div class="cd-header-right">
+                <div class="cd-agent-indicator">
+                    <span class="cd-agent-dot"></span>
+                    <span id="cd-active-agents">6 agents active</span>
+                </div>
+                <div class="cd-env-badge">Local</div>
+                <div class="cd-release-badge" id="cd-release">v2.4.0-rc1</div>
+                <input type="text" class="cd-search-box" placeholder="Search tasks..." readonly>
+            </div>
+        </div>
+
+        <!-- KPI Strip -->
+        <div class="cd-kpi-strip" id="cd-kpis"></div>
+
+        <!-- Tagline -->
+        <div class="cd-tagline">
+            Plan <span class="cd-tagline-sep">&rarr;</span>
+            Build <span class="cd-tagline-sep">&rarr;</span>
+            Review <span class="cd-tagline-sep">&rarr;</span>
+            Merge <span class="cd-tagline-sep">&rarr;</span>
+            Deploy
+        </div>
+
+        <!-- View Tabs -->
+        <div class="cd-tabs" id="cd-tabs">
+            <button class="cd-tab active" data-view="board">Board</button>
+            <button class="cd-tab" data-view="roadmap">Roadmap</button>
+            <button class="cd-tab" data-view="taskdev">Task Dev</button>
+            <button class="cd-tab" data-view="dag">DAG</button>
+            <button class="cd-tab" data-view="deploy">Deploy</button>
+            <button class="cd-tab" data-view="review">Review / PR</button>
+        </div>
+
+        <!-- Views -->
+        <div class="cd-view active" id="view-board"></div>
+        <div class="cd-view" id="view-roadmap"></div>
+        <div class="cd-view" id="view-taskdev"></div>
+        <div class="cd-view" id="view-dag"></div>
+        <div class="cd-view" id="view-deploy"></div>
+        <div class="cd-view" id="view-review"></div>
+    </div>
+
+    <!-- Approval Modal -->
+    <div class="modal-overlay" id="cd-approval-modal">
+        <div class="modal" style="max-width:480px;">
+            <h2 id="cd-approval-title"></h2>
+            <div id="cd-approval-content"></div>
+            <div class="modal-actions" id="cd-approval-actions"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="cd-toast"></div>
+
+    <script>
+    (function() {
+    'use strict';
+
+    /* ================================================================
+       Data Layer — Types + Mock Data
+       ================================================================ */
+
+    var LANES = [
+        { id: 'requests', name: 'Requests / Bugs', color: '#fb923c' },
+        { id: 'requirements', name: 'Requirements', color: '#a78bfa' },
+        { id: 'planning', name: 'Planning / Roadmap', color: '#38bdf8' },
+        { id: 'frontend', name: 'Frontend', color: '#f472b6' },
+        { id: 'backend', name: 'Backend', color: '#60a5fa' },
+        { id: 'infrastructure', name: 'Infrastructure', color: '#fbbf24' },
+        { id: 'qa', name: 'QA / Validation', color: '#34d399' },
+        { id: 'code_review', name: 'Code Review / PR', color: '#c084fc' },
+        { id: 'deployment', name: 'Deployment', color: '#22d3ee' },
+        { id: 'monitoring', name: 'Post-Deploy', color: '#4ade80' },
+        { id: 'approvals', name: 'Approvals', color: '#fbbf24' }
+    ];
+
+    var COLUMNS = [
+        { id: 'intake', name: 'Intake' },
+        { id: 'scoped', name: 'Scoped' },
+        { id: 'planned', name: 'Planned' },
+        { id: 'ready', name: 'Ready' },
+        { id: 'in_progress', name: 'In Progress' },
+        { id: 'blocked', name: 'Blocked' },
+        { id: 'review', name: 'Review' },
+        { id: 'approved', name: 'Approved' },
+        { id: 'merged', name: 'Merged' },
+        { id: 'deployed', name: 'Deployed' },
+        { id: 'monitoring', name: 'Monitoring' },
+        { id: 'done', name: 'Done' }
+    ];
+
+    var AGENTS = [
+        { id: 'request-bot', name: 'RequestBot', lane: 'requests', status: 'active' },
+        { id: 'spec-writer', name: 'SpecWriter', lane: 'requirements', status: 'idle' },
+        { id: 'planner', name: 'Planner', lane: 'planning', status: 'active' },
+        { id: 'ui-builder', name: 'UIBuilder', lane: 'frontend', status: 'active' },
+        { id: 'api-builder', name: 'APIBuilder', lane: 'backend', status: 'active' },
+        { id: 'infra-bot', name: 'InfraBot', lane: 'infrastructure', status: 'idle' },
+        { id: 'qa-bot', name: 'QABot', lane: 'qa', status: 'active' },
+        { id: 'review-bot', name: 'ReviewBot', lane: 'code_review', status: 'active' },
+        { id: 'deploy-bot', name: 'DeployBot', lane: 'deployment', status: 'idle' },
+        { id: 'monitor-bot', name: 'MonitorBot', lane: 'monitoring', status: 'idle' },
+        { id: 'approval-bot', name: 'ApprovalBot', lane: 'approvals', status: 'idle' }
+    ];
+
+    var TASKS = [
+        {
+            id: 'TASK-001', title: 'User profile data export',
+            description: 'Allow users to export their profile data as JSON or CSV for compliance and portability.',
+            lane: 'requests', column: 'scoped', priority: 'high',
+            assigneeAgent: 'request-bot', humanOwner: 'Paul Russell',
+            dependencies: [], blockedBy: [], linkedPR: null, environment: null,
+            riskLevel: 'medium', approvalRequired: false, approvalStatus: null,
+            recommendation: 'Classify as feature request. Consider splitting export formats into separate tasks.',
+            filesChanged: [], createdAt: '2026-05-15T09:00:00Z', updatedAt: '2026-05-16T14:30:00Z', completedAt: null,
+            acceptanceCriteria: ['User can export profile as JSON', 'User can export profile as CSV', 'Export includes all PII fields'],
+            testStatus: null, reviewFindings: []
+        },
+        {
+            id: 'TASK-002', title: 'Login timeout on mobile Safari',
+            description: 'Users report session timeout after 30s of inactivity on iOS Safari. Likely related to background tab throttling.',
+            lane: 'requests', column: 'in_progress', priority: 'critical',
+            assigneeAgent: 'request-bot', humanOwner: 'Paul Russell',
+            dependencies: [], blockedBy: [], linkedPR: 'PR-188', environment: 'production',
+            riskLevel: 'high', approvalRequired: false, approvalStatus: null,
+            recommendation: 'Investigate Safari background tab behavior. Consider heartbeat mechanism.',
+            filesChanged: ['src/auth/session.ts', 'src/hooks/useKeepAlive.ts'], createdAt: '2026-05-14T11:00:00Z', updatedAt: '2026-05-17T08:00:00Z', completedAt: null,
+            acceptanceCriteria: ['Session persists for 10+ min background', 'No timeout on iOS Safari 17+'],
+            testStatus: 'failing', reviewFindings: []
+        },
+        {
+            id: 'TASK-003', title: 'Export API specification',
+            description: 'Define OpenAPI spec for profile export endpoints including auth, rate limits, and response schemas.',
+            lane: 'requirements', column: 'done', priority: 'high',
+            assigneeAgent: 'spec-writer', humanOwner: 'Paul Russell',
+            dependencies: [], blockedBy: [], linkedPR: null, environment: null,
+            riskLevel: 'low', approvalRequired: false, approvalStatus: null,
+            recommendation: 'Specification complete. Ready for implementation.',
+            filesChanged: ['docs/api/export-spec.yaml'], createdAt: '2026-05-12T10:00:00Z', updatedAt: '2026-05-14T16:00:00Z', completedAt: '2026-05-14T16:00:00Z',
+            acceptanceCriteria: ['OpenAPI 3.1 spec defined', 'Auth requirements documented', 'Rate limits specified'],
+            testStatus: null, reviewFindings: []
+        },
+        {
+            id: 'TASK-004', title: 'Sprint 4 scope and planning',
+            description: 'Define sprint 4 scope, assign tasks to agents, identify critical path and parallelizable work.',
+            lane: 'planning', column: 'in_progress', priority: 'medium',
+            assigneeAgent: 'planner', humanOwner: 'Paul Russell',
+            dependencies: ['TASK-003'], blockedBy: [], linkedPR: null, environment: null,
+            riskLevel: 'low', approvalRequired: false, approvalStatus: null,
+            recommendation: 'Frontend and backend implementation can proceed in parallel after planning.',
+            filesChanged: [], createdAt: '2026-05-15T09:00:00Z', updatedAt: '2026-05-17T10:00:00Z', completedAt: null,
+            acceptanceCriteria: ['All sprint tasks scoped', 'Dependencies mapped', 'Agent assignments confirmed'],
+            testStatus: null, reviewFindings: []
+        },
+        {
+            id: 'TASK-005', title: 'Profile page redesign',
+            description: 'Redesign profile page with export button, data preview, and format selector.',
+            lane: 'frontend', column: 'in_progress', priority: 'high',
+            assigneeAgent: 'ui-builder', humanOwner: null,
+            dependencies: ['TASK-003'], blockedBy: [], linkedPR: 'PR-182', environment: null,
+            riskLevel: 'medium', approvalRequired: false, approvalStatus: null,
+            recommendation: 'Add loading and error states. Verify accessibility for export controls.',
+            filesChanged: ['src/pages/Profile.tsx', 'src/components/ExportPanel.tsx', 'src/styles/profile.css'],
+            createdAt: '2026-05-15T14:00:00Z', updatedAt: '2026-05-17T09:00:00Z', completedAt: null,
+            acceptanceCriteria: ['Export button visible on profile', 'Format selector works', 'Loading state shown during export'],
+            testStatus: 'passing', reviewFindings: []
+        },
+        {
+            id: 'TASK-006', title: 'Export API endpoint',
+            description: 'Implement /api/v2/profile/export endpoint with JSON and CSV support, auth, and rate limiting.',
+            lane: 'backend', column: 'review', priority: 'high',
+            assigneeAgent: 'api-builder', humanOwner: null,
+            dependencies: ['TASK-003'], blockedBy: [], linkedPR: 'PR-184', environment: null,
+            riskLevel: 'medium', approvalRequired: false, approvalStatus: null,
+            recommendation: 'Rate limit at 10 req/min per user. Add audit logging for compliance.',
+            filesChanged: ['src/api/export.ts', 'src/middleware/rateLimit.ts', 'src/services/profileExport.ts'],
+            createdAt: '2026-05-15T14:00:00Z', updatedAt: '2026-05-16T18:00:00Z', completedAt: null,
+            acceptanceCriteria: ['GET /api/v2/profile/export returns JSON', 'CSV format supported via Accept header', 'Rate limited to 10/min'],
+            testStatus: 'passing', reviewFindings: ['Add input validation for query params']
+        },
+        {
+            id: 'TASK-007', title: 'CDN configuration for static assets',
+            description: 'Configure CloudFront distribution for static asset caching with proper invalidation rules.',
+            lane: 'infrastructure', column: 'approved', priority: 'medium',
+            assigneeAgent: 'infra-bot', humanOwner: null,
+            dependencies: [], blockedBy: [], linkedPR: 'PR-186', environment: 'staging',
+            riskLevel: 'low', approvalRequired: false, approvalStatus: null,
+            recommendation: 'Verify cache TTL settings before production. Test invalidation flow.',
+            filesChanged: ['infra/cloudfront.tf', 'infra/variables.tf'],
+            createdAt: '2026-05-13T10:00:00Z', updatedAt: '2026-05-16T12:00:00Z', completedAt: null,
+            acceptanceCriteria: ['CloudFront distribution configured', 'Cache invalidation tested', 'HTTPS enforced'],
+            testStatus: 'passing', reviewFindings: []
+        },
+        {
+            id: 'TASK-008', title: 'Regression test suite v2.4',
+            description: 'Update and run full regression test suite for v2.4.0 release candidate.',
+            lane: 'qa', column: 'in_progress', priority: 'high',
+            assigneeAgent: 'qa-bot', humanOwner: null,
+            dependencies: ['TASK-005', 'TASK-006'], blockedBy: [], linkedPR: 'PR-190', environment: null,
+            riskLevel: 'medium', approvalRequired: false, approvalStatus: null,
+            recommendation: 'Prioritize export flow E2E tests. Add mobile Safari regression test.',
+            filesChanged: ['tests/e2e/export.spec.ts', 'tests/integration/api-export.test.ts'],
+            createdAt: '2026-05-16T09:00:00Z', updatedAt: '2026-05-17T11:00:00Z', completedAt: null,
+            acceptanceCriteria: ['All existing tests pass', 'New export E2E tests added', 'Mobile Safari test added'],
+            testStatus: 'running', reviewFindings: []
+        },
+        {
+            id: 'TASK-009', title: 'Code review: Export API (PR #184)',
+            description: 'Review PR #184 for code quality, security, performance, and test coverage.',
+            lane: 'code_review', column: 'review', priority: 'high',
+            assigneeAgent: 'review-bot', humanOwner: 'Paul Russell',
+            dependencies: ['TASK-006'], blockedBy: [], linkedPR: 'PR-184', environment: null,
+            riskLevel: 'medium', approvalRequired: true, approvalStatus: 'pending',
+            recommendation: 'Review rate limiting implementation. Verify SQL injection prevention in export query.',
+            filesChanged: [],
+            createdAt: '2026-05-16T18:00:00Z', updatedAt: '2026-05-17T09:00:00Z', completedAt: null,
+            acceptanceCriteria: ['No critical security issues', 'Test coverage above 80%', 'No performance regressions'],
+            testStatus: null, reviewFindings: ['Add input validation for query params', 'Consider pagination for large exports']
+        },
+        {
+            id: 'TASK-010', title: 'Merge PR #182 — Profile redesign',
+            description: 'PR #182 has been approved. Ready for merge into main.',
+            lane: 'code_review', column: 'approved', priority: 'medium',
+            assigneeAgent: 'review-bot', humanOwner: 'Paul Russell',
+            dependencies: ['TASK-009'], blockedBy: [], linkedPR: 'PR-182', environment: null,
+            riskLevel: 'low', approvalRequired: true, approvalStatus: 'approved',
+            recommendation: 'Safe to merge. No conflicts detected. All checks passing.',
+            filesChanged: [],
+            createdAt: '2026-05-16T10:00:00Z', updatedAt: '2026-05-17T08:00:00Z', completedAt: null,
+            acceptanceCriteria: ['All CI checks pass', 'No merge conflicts', 'Approved by reviewer'],
+            testStatus: 'passing', reviewFindings: []
+        },
+        {
+            id: 'TASK-011', title: 'Deploy v2.4.0-rc1 to staging',
+            description: 'Deploy release candidate to staging environment for smoke testing and QA validation.',
+            lane: 'deployment', column: 'deployed', priority: 'high',
+            assigneeAgent: 'deploy-bot', humanOwner: null,
+            dependencies: ['TASK-010'], blockedBy: [], linkedPR: null, environment: 'staging',
+            riskLevel: 'medium', approvalRequired: false, approvalStatus: null,
+            recommendation: 'Staging deploy complete. Run smoke tests before requesting production approval.',
+            filesChanged: [],
+            createdAt: '2026-05-17T06:00:00Z', updatedAt: '2026-05-17T07:30:00Z', completedAt: null,
+            acceptanceCriteria: ['Staging deploy succeeds', 'Health checks pass', 'Smoke tests pass'],
+            testStatus: 'passing', reviewFindings: []
+        },
+        {
+            id: 'TASK-012', title: 'Production deploy approval',
+            description: 'Request human approval for v2.3.1 production deployment after staging validation.',
+            lane: 'approvals', column: 'review', priority: 'critical',
+            assigneeAgent: 'approval-bot', humanOwner: 'Paul Russell',
+            dependencies: ['TASK-011'], blockedBy: [], linkedPR: null, environment: 'production',
+            riskLevel: 'high', approvalRequired: true, approvalStatus: 'pending',
+            recommendation: 'Staging healthy for 2h. Recommend canary deploy to 5% before full rollout.',
+            filesChanged: [],
+            createdAt: '2026-05-17T08:00:00Z', updatedAt: '2026-05-17T10:00:00Z', completedAt: null,
+            acceptanceCriteria: ['Staging verified healthy', 'Rollback plan documented', 'Human approval granted'],
+            testStatus: null, reviewFindings: []
+        },
+        {
+            id: 'TASK-013', title: 'v2.3.0 health monitoring',
+            description: 'Monitor production health for v2.3.0 release. Track error rates, latency, and user reports.',
+            lane: 'monitoring', column: 'monitoring', priority: 'medium',
+            assigneeAgent: 'monitor-bot', humanOwner: null,
+            dependencies: ['TASK-011'], blockedBy: [], linkedPR: null, environment: 'production',
+            riskLevel: 'low', approvalRequired: false, approvalStatus: null,
+            recommendation: 'All metrics nominal. P99 latency stable at 180ms. No error spike detected.',
+            filesChanged: [],
+            createdAt: '2026-05-16T12:00:00Z', updatedAt: '2026-05-17T11:00:00Z', completedAt: null,
+            acceptanceCriteria: ['Error rate below 0.1%', 'P99 latency below 500ms', 'No critical alerts'],
+            testStatus: null, reviewFindings: []
+        },
+        {
+            id: 'TASK-014', title: 'Database migration review',
+            description: 'Review and validate database migration for user export audit log table.',
+            lane: 'infrastructure', column: 'blocked', priority: 'high',
+            assigneeAgent: 'infra-bot', humanOwner: 'Paul Russell',
+            dependencies: [], blockedBy: ['TASK-012'], linkedPR: null, environment: 'staging',
+            riskLevel: 'high', approvalRequired: true, approvalStatus: 'pending',
+            recommendation: 'Blocked until production approval. Migration requires backup verification.',
+            filesChanged: ['migrations/0042_export_audit_log.sql'],
+            createdAt: '2026-05-16T14:00:00Z', updatedAt: '2026-05-17T09:00:00Z', completedAt: null,
+            acceptanceCriteria: ['Migration is reversible', 'Backup verified', 'No data loss risk'],
+            testStatus: null, reviewFindings: ['Verify index strategy for audit log queries']
+        },
+        {
+            id: 'TASK-015', title: 'E2E test automation setup',
+            description: 'Set up Playwright E2E test infrastructure for automated regression testing.',
+            lane: 'qa', column: 'planned', priority: 'medium',
+            assigneeAgent: 'qa-bot', humanOwner: null,
+            dependencies: [], blockedBy: [], linkedPR: null, environment: null,
+            riskLevel: 'low', approvalRequired: false, approvalStatus: null,
+            recommendation: 'Low risk. Can proceed in parallel with other QA work.',
+            filesChanged: [],
+            createdAt: '2026-05-15T10:00:00Z', updatedAt: '2026-05-15T10:00:00Z', completedAt: null,
+            acceptanceCriteria: ['Playwright configured', 'CI integration working', 'Sample test passes'],
+            testStatus: null, reviewFindings: []
+        }
+    ];
+
+    var PRS = [
+        {
+            id: 'PR-182', title: 'Profile page component refactor',
+            status: 'approved', author: 'UIBuilder', branch: 'feat/profile-redesign',
+            filesChanged: 8, additions: 342, deletions: 128,
+            riskLevel: 'low', testsPass: true, lintPass: true,
+            reviewers: ['ReviewBot', 'Paul Russell'], approvals: 2, required: 2,
+            mergeScore: 95, linkedTask: 'TASK-005',
+            findings: []
+        },
+        {
+            id: 'PR-184', title: 'Add export API endpoint',
+            status: 'in_review', author: 'APIBuilder', branch: 'feat/export-api',
+            filesChanged: 6, additions: 485, deletions: 12,
+            riskLevel: 'medium', testsPass: true, lintPass: true,
+            reviewers: ['ReviewBot'], approvals: 0, required: 2,
+            mergeScore: 62, linkedTask: 'TASK-006',
+            findings: ['Add input validation for query params', 'Consider pagination for large exports']
+        },
+        {
+            id: 'PR-186', title: 'CDN configuration for static assets',
+            status: 'approved', author: 'InfraBot', branch: 'infra/cdn-config',
+            filesChanged: 3, additions: 89, deletions: 4,
+            riskLevel: 'low', testsPass: true, lintPass: true,
+            reviewers: ['ReviewBot', 'Paul Russell'], approvals: 2, required: 2,
+            mergeScore: 90, linkedTask: 'TASK-007',
+            findings: []
+        },
+        {
+            id: 'PR-188', title: 'Fix mobile Safari login timeout',
+            status: 'draft', author: 'APIBuilder', branch: 'fix/safari-timeout',
+            filesChanged: 2, additions: 67, deletions: 8,
+            riskLevel: 'high', testsPass: false, lintPass: true,
+            reviewers: [], approvals: 0, required: 2,
+            mergeScore: 25, linkedTask: 'TASK-002',
+            findings: []
+        },
+        {
+            id: 'PR-190', title: 'Regression test updates for v2.4',
+            status: 'changes_requested', author: 'QABot', branch: 'test/regression-v24',
+            filesChanged: 4, additions: 256, deletions: 45,
+            riskLevel: 'low', testsPass: false, lintPass: true,
+            reviewers: ['ReviewBot'], approvals: 0, required: 1,
+            mergeScore: 40, linkedTask: 'TASK-008',
+            findings: ['Fix flaky timeout assertion in export test', 'Add retry logic for network calls']
+        }
+    ];
+
+    var MILESTONES = [
+        { id: 'MS-1', name: 'Requirements Locked', date: '2026-05-14', status: 'done', tasks: ['TASK-003'],
+          reco: 'All specifications finalized and approved.' },
+        { id: 'MS-2', name: 'UI Foundation Complete', date: '2026-05-18', status: 'active', tasks: ['TASK-005'],
+          reco: 'Frontend and backend tasks can proceed in parallel.' },
+        { id: 'MS-3', name: 'Backend Contracts Implemented', date: '2026-05-20', status: 'pending', tasks: ['TASK-006'],
+          reco: 'API endpoint in review. Expect completion after code review.' },
+        { id: 'MS-4', name: 'Infrastructure Ready', date: '2026-05-21', status: 'pending', tasks: ['TASK-007', 'TASK-014'],
+          reco: 'Infrastructure changes require staging verification before merge.' },
+        { id: 'MS-5', name: 'QA Complete', date: '2026-05-23', status: 'pending', tasks: ['TASK-008', 'TASK-015'],
+          reco: 'Deployment is blocked until QA validation and PR approval complete.' },
+        { id: 'MS-6', name: 'PRs Approved', date: '2026-05-24', status: 'pending', tasks: ['TASK-009', 'TASK-010'],
+          reco: 'Two PRs pending review. Prioritize security-sensitive PR-184.' },
+        { id: 'MS-7', name: 'Staging Deployed', date: '2026-05-25', status: 'pending', tasks: ['TASK-011'],
+          reco: 'Current RC deployed to staging. Awaiting smoke test results.' },
+        { id: 'MS-8', name: 'Production Deployed', date: '2026-05-27', status: 'pending', tasks: ['TASK-012', 'TASK-013'],
+          reco: 'Production deploy requires human approval and canary validation.' }
+    ];
+
+    var DEPLOYMENT = {
+        release: 'v2.4.0-rc1',
+        environments: [
+            { name: 'Local', status: 'running', version: 'v2.4.0-dev', healthy: true },
+            { name: 'Dev', status: 'deployed', version: 'v2.4.0-rc1', healthy: true },
+            { name: 'Staging', status: 'deploying', version: 'v2.4.0-rc1', healthy: true, active: true },
+            { name: 'Production', status: 'stable', version: 'v2.3.0', healthy: true }
+        ],
+        stages: [
+            { name: 'Build Artifact', status: 'done' },
+            { name: 'Staging Deploy', status: 'done' },
+            { name: 'Smoke Tests', status: 'active' },
+            { name: 'Awaiting Approval', status: 'blocked' },
+            { name: 'Production Deploy', status: 'pending' },
+            { name: 'Health Checks', status: 'pending' },
+            { name: 'Monitoring', status: 'pending' },
+            { name: 'Release Complete', status: 'pending' }
+        ],
+        checks: [
+            { name: 'Tests passed', passed: true },
+            { name: 'Lint passed', passed: true },
+            { name: 'Typecheck passed', passed: true },
+            { name: 'Migrations reviewed', passed: false },
+            { name: 'Env vars configured', passed: true },
+            { name: 'Rollback plan exists', passed: true },
+            { name: 'Monitoring enabled', passed: true },
+            { name: 'Approval granted', passed: false }
+        ]
+    };
+
+    /* ================================================================
+       State
+       ================================================================ */
+    var activeView = 'board';
+    var selectedTaskId = null;
+    var selectedTdTab = 'overview';
+
+    /* ================================================================
+       Helpers
+       ================================================================ */
+    function $(id) { return document.getElementById(id); }
+
+    function getTask(id) { return TASKS.find(function(t) { return t.id === id; }); }
+
+    function getTasksAt(lane, col) {
+        return TASKS.filter(function(t) { return t.lane === lane && t.column === col; });
+    }
+
+    function getLane(id) { return LANES.find(function(l) { return l.id === id; }); }
+
+    function getAgent(id) { return AGENTS.find(function(a) { return a.id === id; }); }
+
+    function showToast(msg, isError) {
+        var t = $('cd-toast');
+        t.textContent = msg;
+        t.className = 'toast' + (isError ? ' error' : '') + ' show';
+        setTimeout(function() { t.className = 'toast'; }, 3000);
+    }
+
+    function badgeClass(status) {
+        var map = { done: 'green', in_progress: 'blue', active: 'blue', review: 'purple',
+                    approved: 'gold', blocked: 'red', monitoring: 'green', deployed: 'green',
+                    merged: 'green', pending: '' };
+        return map[status] || '';
+    }
+
+    function prStatusLabel(s) {
+        var map = { approved: 'Approved', in_review: 'In Review', draft: 'Draft',
+                    changes_requested: 'Changes Requested', merged: 'Merged' };
+        return map[s] || s;
+    }
+
+    function prStatusClass(s) {
+        var map = { approved: 'green', in_review: 'purple', draft: '',
+                    changes_requested: 'amber', merged: 'green' };
+        return map[s] || '';
+    }
+
+    /* ================================================================
+       KPI Rendering
+       ================================================================ */
+    function renderKPIs() {
+        var total = TASKS.length;
+        var done = TASKS.filter(function(t) { return t.column === 'done' || t.column === 'deployed' || t.column === 'monitoring'; }).length;
+        var inProg = TASKS.filter(function(t) { return t.column === 'in_progress'; }).length;
+        var blocked = TASKS.filter(function(t) { return t.column === 'blocked'; }).length;
+        var approvals = TASKS.filter(function(t) { return t.approvalRequired && t.approvalStatus === 'pending'; }).length;
+        var mergeReady = PRS.filter(function(p) { return p.status === 'approved'; }).length;
+        var checksPass = DEPLOYMENT.checks.filter(function(c) { return c.passed; }).length;
+        var pct = total > 0 ? Math.round((done / total) * 100) : 0;
+        var circumference = 2 * Math.PI * 12;
+        var offset = circumference - (pct / 100) * circumference;
+
+        var html = '';
+        html += '<div class="cd-kpi-item"><div class="cd-ring-wrap"><svg viewBox="0 0 28 28">';
+        html += '<circle class="cd-ring-track" cx="14" cy="14" r="12"/>';
+        html += '<circle class="cd-ring-fill" cx="14" cy="14" r="12" stroke="var(--accent-green)"';
+        html += ' stroke-dasharray="' + circumference.toFixed(1) + '"';
+        html += ' stroke-dashoffset="' + offset.toFixed(1) + '"';
+        html += ' transform="rotate(-90 14 14)"/>';
+        html += '</svg></div><span class="cd-kpi-val">' + pct + '%</span> Complete</div>';
+        html += '<div class="cd-kpi-item">Total <span class="cd-kpi-val">' + total + '</span></div>';
+        html += '<div class="cd-kpi-item" style="color:var(--accent-blue);">In Progress <span class="cd-kpi-val">' + inProg + '</span></div>';
+        html += '<div class="cd-kpi-item" style="color:var(--accent-red);">Blocked <span class="cd-kpi-val">' + blocked + '</span></div>';
+        html += '<div class="cd-kpi-item" style="color:var(--accent-gold);">Approvals <span class="cd-kpi-val">' + approvals + '</span></div>';
+        html += '<div class="cd-kpi-item" style="color:var(--accent-purple);">Merge Ready <span class="cd-kpi-val">' + mergeReady + '</span></div>';
+        html += '<div class="cd-kpi-item" style="color:var(--accent-green);">Deploy Checks <span class="cd-kpi-val">' + checksPass + '/' + DEPLOYMENT.checks.length + '</span></div>';
+        html += '<div class="cd-kpi-item">Stability <span class="cd-kpi-val" style="color:var(--accent-green);">98.7</span></div>';
+        $('cd-kpis').innerHTML = html;
+
+        var activeAgents = AGENTS.filter(function(a) { return a.status === 'active'; }).length;
+        $('cd-active-agents').textContent = activeAgents + ' agents active';
+    }
+
+    /* ================================================================
+       View Switching
+       ================================================================ */
+    function switchView(view) {
+        activeView = view;
+        document.querySelectorAll('.cd-tab').forEach(function(t) {
+            t.classList.toggle('active', t.dataset.view === view);
+        });
+        document.querySelectorAll('.cd-view').forEach(function(v) {
+            v.classList.toggle('active', v.id === 'view-' + view);
+        });
+        var renderers = {
+            board: renderBoard, roadmap: renderRoadmap, taskdev: renderTaskDev,
+            dag: renderDAG, deploy: renderDeploy, review: renderReview
+        };
+        if (renderers[view]) renderers[view]();
+    }
+
+    /* ================================================================
+       Board View
+       ================================================================ */
+    function renderBoard() {
+        var html = '<div class="cd-board-scroll"><div class="cd-board-grid">';
+        html += '<div class="cd-board-corner">Lane \\ Stage</div>';
+        COLUMNS.forEach(function(c) {
+            html += '<div class="cd-board-colhd">' + c.name + '</div>';
+        });
+        LANES.forEach(function(lane) {
+            html += '<div class="cd-board-lanehd"><span class="cd-lane-dot" style="background:' + lane.color + '"></span>' + lane.name + '</div>';
+            COLUMNS.forEach(function(col) {
+                var tasks = getTasksAt(lane.id, col.id);
+                html += '<div class="cd-board-cell">';
+                tasks.forEach(function(t) {
+                    html += renderTaskCard(t);
+                });
+                html += '</div>';
+            });
+        });
+        html += '</div></div>';
+        $('view-board').innerHTML = html;
+    }
+
+    function renderTaskCard(t) {
+        var h = '<div class="cd-tcard st-' + t.column + '" onclick="window._cdSelectTask(\'' + t.id + '\')" title="' + t.title + '">';
+        h += '<div class="cd-tcard-title">' + t.title + '</div>';
+        h += '<div class="cd-tcard-meta">';
+        if (t.assigneeAgent) {
+            var agent = getAgent(t.assigneeAgent);
+            h += '<span class="cd-tcard-agent">' + (agent ? agent.name : t.assigneeAgent) + '</span>';
+        }
+        h += '<span class="cd-tcard-priority ' + t.priority + '">' + t.priority + '</span>';
+        h += '</div>';
+        h += '<div class="cd-tcard-flags">';
+        if (t.riskLevel === 'high' || t.riskLevel === 'critical') h += '<span class="cd-tcard-flag risk-high">RISK</span>';
+        if (t.approvalRequired) h += '<span class="cd-tcard-flag approval">APPROVAL</span>';
+        if (t.linkedPR) h += '<span class="cd-tcard-flag pr">' + t.linkedPR + '</span>';
+        if (t.dependencies.length > 0) h += '<span class="cd-tcard-flag">deps:' + t.dependencies.length + '</span>';
+        h += '</div></div>';
+        return h;
+    }
+
+    /* ================================================================
+       Roadmap View
+       ================================================================ */
+    function renderRoadmap() {
+        var html = '<div class="cd-rm-container">';
+        html += '<h2 style="margin-bottom:16px;">Delivery Roadmap</h2>';
+        html += '<div class="cd-rm-track">';
+        MILESTONES.forEach(function(ms) {
+            var tasksHtml = ms.tasks.map(function(tid) {
+                var t = getTask(tid);
+                return t ? '<span class="badge ' + badgeClass(t.column) + '" style="margin-right:4px;">' + t.id + '</span>' : '';
+            }).join('');
+            html += '<div class="cd-rm-node">';
+            html += '<div class="cd-rm-dot ' + ms.status + '"></div>';
+            html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">';
+            html += '<span class="cd-rm-title" style="margin:0;">' + ms.name + '</span>';
+            html += '<span class="cd-rm-badge ' + ms.status + '">' + ms.status + '</span>';
+            html += '</div>';
+            html += '<div class="cd-rm-date">' + ms.date + '</div>';
+            if (tasksHtml) html += '<div class="cd-rm-tasks">' + tasksHtml + '</div>';
+            if (ms.reco) html += '<div class="cd-rm-reco">' + ms.reco + '</div>';
+            html += '</div>';
+        });
+        html += '</div></div>';
+        $('view-roadmap').innerHTML = html;
+    }
+
+    /* ================================================================
+       Task Development View
+       ================================================================ */
+    function renderTaskDev() {
+        var html = '<div class="cd-td-layout">';
+        html += '<div class="cd-td-list"><div class="cd-td-list-header">All Tasks (' + TASKS.length + ')</div>';
+        TASKS.forEach(function(t) {
+            var sel = t.id === selectedTaskId ? ' selected' : '';
+            var lane = getLane(t.lane);
+            html += '<div class="cd-td-item' + sel + '" onclick="window._cdSelectTask(\'' + t.id + '\')">';
+            html += '<div class="cd-td-item-title">' + t.id + ' — ' + t.title + '</div>';
+            html += '<div class="cd-td-item-sub">' + (lane ? lane.name : '') + ' / ' + t.column + '</div>';
+            html += '</div>';
+        });
+        html += '</div>';
+        html += '<div class="cd-td-detail">';
+        if (!selectedTaskId) {
+            html += '<div class="cd-td-empty">Select a task to view details</div>';
+        } else {
+            html += renderTaskDetail(selectedTaskId);
+        }
+        html += '</div></div>';
+        $('view-taskdev').innerHTML = html;
+    }
+
+    function renderTaskDetail(taskId) {
+        var t = getTask(taskId);
+        if (!t) return '<div class="cd-td-empty">Task not found</div>';
+        var agent = getAgent(t.assigneeAgent);
+        var lane = getLane(t.lane);
+
+        var tabs = ['overview', 'requirements', 'implementation', 'files', 'tests', 'review', 'approvals', 'activity'];
+        var h = '';
+        h += '<div class="cd-td-header">';
+        h += '<div class="cd-td-id">' + t.id + '</div>';
+        h += '<div class="cd-td-title">' + t.title + '</div>';
+        h += '<div class="cd-td-tags">';
+        h += '<span class="badge ' + badgeClass(t.column) + '">' + t.column.replace(/_/g, ' ') + '</span>';
+        h += '<span class="badge ' + (t.priority === 'critical' ? 'red' : t.priority === 'high' ? 'amber' : 'blue') + '">' + t.priority + '</span>';
+        if (t.riskLevel === 'high') h += '<span class="badge red">High Risk</span>';
+        if (t.approvalRequired) h += '<span class="badge gold">Approval Required</span>';
+        h += '</div></div>';
+
+        h += '<div class="cd-td-tabs">';
+        tabs.forEach(function(tab) {
+            h += '<button class="cd-td-tab' + (tab === selectedTdTab ? ' active' : '') + '" onclick="window._cdSwitchTdTab(\'' + tab + '\')">' + tab.charAt(0).toUpperCase() + tab.slice(1) + '</button>';
+        });
+        h += '</div>';
+        h += '<div class="cd-td-body">';
+
+        if (selectedTdTab === 'overview') {
+            h += '<div class="cd-td-section"><div class="cd-td-section-title">Description</div>';
+            h += '<div class="cd-td-desc">' + t.description + '</div></div>';
+            h += '<div class="cd-td-section"><div class="cd-td-section-title">Details</div>';
+            h += '<div class="cd-td-row"><span class="cd-td-row-label">Lane</span><span class="cd-td-row-val">' + (lane ? lane.name : '--') + '</span></div>';
+            h += '<div class="cd-td-row"><span class="cd-td-row-label">Agent</span><span class="cd-td-row-val">' + (agent ? agent.name : '--') + '</span></div>';
+            h += '<div class="cd-td-row"><span class="cd-td-row-label">Human Owner</span><span class="cd-td-row-val">' + (t.humanOwner || '--') + '</span></div>';
+            h += '<div class="cd-td-row"><span class="cd-td-row-label">Environment</span><span class="cd-td-row-val">' + (t.environment || '--') + '</span></div>';
+            h += '<div class="cd-td-row"><span class="cd-td-row-label">Linked PR</span><span class="cd-td-row-val">' + (t.linkedPR || '--') + '</span></div>';
+            h += '<div class="cd-td-row"><span class="cd-td-row-label">Dependencies</span><span class="cd-td-row-val">' + (t.dependencies.length > 0 ? t.dependencies.join(', ') : 'None') + '</span></div>';
+            h += '<div class="cd-td-row"><span class="cd-td-row-label">Blocked By</span><span class="cd-td-row-val">' + (t.blockedBy.length > 0 ? t.blockedBy.join(', ') : 'None') + '</span></div>';
+            h += '<div class="cd-td-row"><span class="cd-td-row-label">Created</span><span class="cd-td-row-val">' + t.createdAt.split('T')[0] + '</span></div>';
+            h += '<div class="cd-td-row"><span class="cd-td-row-label">Updated</span><span class="cd-td-row-val">' + t.updatedAt.split('T')[0] + '</span></div>';
+            h += '</div>';
+            if (t.recommendation) {
+                h += '<div class="cd-td-section"><div class="cd-td-section-title">Recommendation</div>';
+                h += '<div class="cd-td-reco">' + t.recommendation + '</div></div>';
+            }
+        } else if (selectedTdTab === 'requirements') {
+            h += '<div class="cd-td-section"><div class="cd-td-section-title">Acceptance Criteria</div>';
+            if (t.acceptanceCriteria && t.acceptanceCriteria.length > 0) {
+                t.acceptanceCriteria.forEach(function(ac) {
+                    h += '<div style="padding:4px 0;font-size:0.78rem;color:var(--text-body);display:flex;align-items:center;gap:6px;">';
+                    h += '<span style="width:14px;height:14px;border-radius:3px;border:1px solid var(--border-medium);display:inline-block;flex-shrink:0;"></span>';
+                    h += ac + '</div>';
+                });
+            } else {
+                h += '<div style="color:var(--text-dim);font-size:0.78rem;">No acceptance criteria defined.</div>';
+            }
+            h += '</div>';
+        } else if (selectedTdTab === 'implementation') {
+            h += '<div class="cd-td-section"><div class="cd-td-section-title">Implementation Notes</div>';
+            h += '<div class="cd-td-desc">' + t.description + '</div></div>';
+            if (t.recommendation) {
+                h += '<div class="cd-td-section"><div class="cd-td-section-title">Agent Recommendation</div>';
+                h += '<div class="cd-td-reco">' + t.recommendation + '</div></div>';
+            }
+        } else if (selectedTdTab === 'files') {
+            h += '<div class="cd-td-section"><div class="cd-td-section-title">Files Changed</div>';
+            if (t.filesChanged.length > 0) {
+                t.filesChanged.forEach(function(f) {
+                    h += '<div style="padding:3px 0;font-size:0.75rem;font-family:var(--font-mono);color:var(--accent-blue);">' + f + '</div>';
+                });
+            } else {
+                h += '<div style="color:var(--text-dim);font-size:0.78rem;">No files changed yet.</div>';
+            }
+            h += '</div>';
+        } else if (selectedTdTab === 'tests') {
+            h += '<div class="cd-td-section"><div class="cd-td-section-title">Test Status</div>';
+            var ts = t.testStatus;
+            if (ts) {
+                var tsColor = ts === 'passing' ? 'var(--accent-green)' : ts === 'failing' ? 'var(--accent-red)' : 'var(--accent-blue)';
+                h += '<div style="display:flex;align-items:center;gap:6px;font-size:0.82rem;">';
+                h += '<span class="status-dot" style="background:' + tsColor + ';' + (ts === 'running' ? 'animation:pulse 2s infinite;' : '') + '"></span>';
+                h += '<span style="color:' + tsColor + ';font-weight:600;text-transform:capitalize;">' + ts + '</span></div>';
+            } else {
+                h += '<div style="color:var(--text-dim);font-size:0.78rem;">No tests configured.</div>';
+            }
+            h += '</div>';
+        } else if (selectedTdTab === 'review') {
+            h += '<div class="cd-td-section"><div class="cd-td-section-title">Review Findings</div>';
+            if (t.reviewFindings.length > 0) {
+                t.reviewFindings.forEach(function(f) {
+                    h += '<div class="callout warn" style="margin:6px 0;font-size:0.75rem;">' + f + '</div>';
+                });
+            } else {
+                h += '<div style="color:var(--text-dim);font-size:0.78rem;">No review findings.</div>';
+            }
+            h += '</div>';
+        } else if (selectedTdTab === 'approvals') {
+            h += '<div class="cd-td-section"><div class="cd-td-section-title">Approval Status</div>';
+            if (t.approvalRequired) {
+                h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">';
+                h += '<span class="badge ' + (t.approvalStatus === 'approved' ? 'green' : t.approvalStatus === 'pending' ? 'gold' : '') + '">' + (t.approvalStatus || 'Not Required') + '</span>';
+                h += '</div>';
+                if (t.approvalStatus === 'pending') {
+                    h += '<button class="btn btn-primary btn-sm" onclick="window._cdShowApproval(\'' + t.id + '\')">Review &amp; Approve</button>';
+                }
+            } else {
+                h += '<div style="color:var(--text-dim);font-size:0.78rem;">No approval required for this task.</div>';
+            }
+            h += '</div>';
+        } else if (selectedTdTab === 'activity') {
+            h += '<div class="cd-td-section"><div class="cd-td-section-title">Activity Log</div>';
+            h += '<div style="font-size:0.75rem;color:var(--text-muted);line-height:1.8;">';
+            h += '<div>' + t.createdAt.split('T')[0] + ' — Task created by ' + (t.assigneeAgent || 'system') + '</div>';
+            h += '<div>' + t.updatedAt.split('T')[0] + ' — Status updated to ' + t.column.replace(/_/g, ' ') + '</div>';
+            if (t.completedAt) h += '<div>' + t.completedAt.split('T')[0] + ' — Task completed</div>';
+            h += '</div></div>';
+        }
+
+        h += '</div>';
+        return h;
+    }
+
+    /* ================================================================
+       DAG View
+       ================================================================ */
+    function renderDAG() {
+        var colX = {};
+        var totalCols = COLUMNS.length;
+        COLUMNS.forEach(function(c, i) {
+            colX[c.id] = 60 + i * 90;
+        });
+        var laneY = {};
+        LANES.forEach(function(l, i) {
+            laneY[l.id] = 40 + i * 42;
+        });
+
+        var w = 60 + totalCols * 90 + 40;
+        var h = 40 + LANES.length * 42 + 40;
+
+        var svg = '<svg class="cd-dag-svg" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="xMidYMid meet">';
+
+        svg += '<defs><linearGradient id="dagEdgeGrad" x1="0" y1="0" x2="1" y2="0">';
+        svg += '<stop offset="0%" stop-color="#38bdf8" stop-opacity="0.6"/>';
+        svg += '<stop offset="100%" stop-color="#4ade80" stop-opacity="0.6"/>';
+        svg += '</linearGradient></defs>';
+
+        var nodePositions = {};
+        TASKS.forEach(function(t) {
+            nodePositions[t.id] = { x: colX[t.column] || 60, y: laneY[t.lane] || 40 };
+        });
+
+        var edges = [];
+        TASKS.forEach(function(t) {
+            t.dependencies.forEach(function(depId) {
+                if (nodePositions[depId]) {
+                    edges.push({ from: depId, to: t.id, type: 'depends' });
+                }
+            });
+            t.blockedBy.forEach(function(bId) {
+                if (nodePositions[bId]) {
+                    edges.push({ from: bId, to: t.id, type: 'blocks' });
+                }
+            });
+        });
+
+        edges.forEach(function(e) {
+            var from = nodePositions[e.from];
+            var to = nodePositions[e.to];
+            if (!from || !to) return;
+            var mx = (from.x + to.x) / 2;
+            var critical = e.type === 'depends';
+            svg += '<path class="cd-dag-edge-line' + (critical ? ' critical' : '') + '"';
+            svg += ' d="M' + from.x + ' ' + from.y + ' C' + mx + ' ' + from.y + ' ' + mx + ' ' + to.y + ' ' + to.x + ' ' + to.y + '"';
+            svg += ' stroke="' + (e.type === 'blocks' ? 'var(--accent-red)' : 'url(#dagEdgeGrad)') + '"/>';
+        });
+
+        TASKS.forEach(function(t) {
+            var pos = nodePositions[t.id];
+            if (!pos) return;
+            var lane = getLane(t.lane);
+            var nodeClass = 'cd-dag-node-g';
+            if (t.column === 'in_progress') nodeClass += ' active';
+            else if (t.column === 'done' || t.column === 'deployed' || t.column === 'monitoring') nodeClass += ' done';
+            else if (t.column === 'blocked') nodeClass += ' blocked';
+            else if (t.approvalRequired && t.approvalStatus === 'pending') nodeClass += ' approval';
+
+            var fillColor = lane ? lane.color : '#64748b';
+            svg += '<g class="' + nodeClass + '" onclick="window._cdSelectTask(\'' + t.id + '\')">';
+            svg += '<rect class="cd-dag-node-rect" x="' + (pos.x - 36) + '" y="' + (pos.y - 14) + '"';
+            svg += ' width="72" height="28" fill="rgba(15,25,35,0.9)" stroke="' + fillColor + '"/>';
+            svg += '<text class="cd-dag-node-text" x="' + pos.x + '" y="' + (pos.y - 2) + '" fill="' + fillColor + '">' + t.id + '</text>';
+            var shortTitle = t.title.length > 12 ? t.title.substring(0, 12) + '..' : t.title;
+            svg += '<text class="cd-dag-node-sub" x="' + pos.x + '" y="' + (pos.y + 8) + '">' + shortTitle + '</text>';
+            svg += '</g>';
+        });
+
+        svg += '</svg>';
+
+        var legendHtml = '<div class="cd-dag-legend">';
+        legendHtml += '<div class="cd-dag-legend-item"><div class="cd-dag-legend-dot" style="background:var(--accent-blue);animation:pulse 2s infinite;"></div> In Progress</div>';
+        legendHtml += '<div class="cd-dag-legend-item"><div class="cd-dag-legend-dot" style="background:var(--accent-green);box-shadow:0 0 6px rgba(74,222,128,0.4);"></div> Complete</div>';
+        legendHtml += '<div class="cd-dag-legend-item"><div class="cd-dag-legend-dot" style="background:var(--accent-red);"></div> Blocked</div>';
+        legendHtml += '<div class="cd-dag-legend-item"><div class="cd-dag-legend-dot" style="background:var(--accent-gold);animation:cd-approval-glow 2.5s infinite;"></div> Awaiting Approval</div>';
+        legendHtml += '<div class="cd-dag-legend-item"><div class="cd-dag-legend-dot" style="background:var(--accent-slate);"></div> Pending</div>';
+        legendHtml += '</div>';
+
+        $('view-dag').innerHTML = '<div class="cd-dag-wrap">' + svg + legendHtml + '</div>';
+    }
+
+    /* ================================================================
+       Deploy View
+       ================================================================ */
+    function renderDeploy() {
+        var d = DEPLOYMENT;
+        var html = '<div class="cd-dep-container">';
+
+        html += '<div class="cd-dep-header">';
+        html += '<span class="cd-dep-release">' + d.release + '</span>';
+        html += '<span class="badge blue">Release Candidate</span>';
+        html += '</div>';
+
+        html += '<div class="cd-dep-envs">';
+        d.environments.forEach(function(env) {
+            var activeClass = env.active ? ' active-env' : '';
+            var dotColor = env.healthy ? 'var(--accent-green)' : 'var(--accent-red)';
+            html += '<div class="cd-dep-env' + activeClass + '">';
+            html += '<div class="cd-dep-env-name" style="color:' + (env.active ? 'var(--accent-blue)' : 'var(--text-secondary)') + '">' + env.name + '</div>';
+            html += '<div class="cd-dep-env-status"><span class="status-dot" style="background:' + dotColor + ';' + (env.active ? 'animation:pulse 2s infinite;' : '') + '"></span>' + env.status + '</div>';
+            html += '<div class="cd-dep-env-ver">' + env.version + '</div>';
+            html += '</div>';
+        });
+        html += '</div>';
+
+        html += '<div class="cd-dep-pipeline-title">Deployment Pipeline</div>';
+        html += '<div class="cd-dep-stages">';
+        d.stages.forEach(function(s, i) {
+            var cls = s.status === 'done' ? 'done-stage' : s.status === 'active' ? 'active-stage' : s.status === 'blocked' ? 'blocked-stage' : 'pending-stage';
+            var icon = s.status === 'done' ? '<span style="color:var(--accent-green);">&#10003;</span>' :
+                       s.status === 'active' ? '<span class="status-dot blue pulse" style="display:inline-block;"></span>' :
+                       s.status === 'blocked' ? '<span style="color:var(--accent-amber);">&#9679;</span>' :
+                       '<span style="color:var(--text-faint);">&#9675;</span>';
+            html += '<div class="cd-dep-stage ' + cls + '">';
+            html += '<div class="cd-dep-stage-name">' + s.name + '</div>';
+            html += '<div class="cd-dep-stage-status">' + icon + '</div>';
+            if (i < d.stages.length - 1) html += '<span class="cd-dep-stage-arrow">&rarr;</span>';
+            html += '</div>';
+        });
+        html += '</div>';
+
+        html += '<div class="cd-dep-checks-title">Deployment Readiness</div>';
+        html += '<div class="cd-dep-checks">';
+        d.checks.forEach(function(c) {
+            var cls = c.passed ? 'passed' : 'failed';
+            var icon = c.passed ? '<span style="color:var(--accent-green);">&#10003;</span>' : '<span style="color:var(--accent-red);">&#10007;</span>';
+            html += '<div class="cd-dep-check ' + cls + '"><span class="cd-dep-check-icon">' + icon + '</span>' + c.name + '</div>';
+        });
+        html += '</div>';
+
+        html += '<div style="margin-bottom:12px;font-size:0.82rem;font-weight:700;color:#fff;">Recommendations</div>';
+        html += '<div class="cd-dep-recos">';
+        html += '<div class="cd-dep-reco info">Recommend canary deployment to 5% of traffic before full production rollout.</div>';
+        html += '<div class="cd-dep-reco warn">Database migration detected. Confirm backup and migration order before proceeding.</div>';
+        html += '<div class="cd-dep-reco success">Rollback plan verified. Previous version v2.3.0 available for instant rollback.</div>';
+        html += '<div class="cd-dep-reco warn">Production deployment requires human approval. 1 approval pending.</div>';
+        html += '</div>';
+
+        html += '<div style="margin-top:16px;"><button class="btn btn-primary btn-sm" onclick="window._cdShowApproval(\'TASK-012\')">Request Production Approval</button></div>';
+
+        html += '</div>';
+        $('view-deploy').innerHTML = html;
+    }
+
+    /* ================================================================
+       Review / PR View
+       ================================================================ */
+    function renderReview() {
+        var html = '<div class="cd-rev-container">';
+
+        html += '<div class="cd-rev-flow-bar">';
+        var flowSteps = ['Agent Implements', 'Agent Opens PR', 'Code Review', 'QA Validates', 'Human Approval', 'Merge Ready', 'Deploy'];
+        flowSteps.forEach(function(s, i) {
+            html += '<span class="cd-rev-flow-step">' + s + '</span>';
+            if (i < flowSteps.length - 1) html += '<span class="cd-rev-flow-arrow">&rarr;</span>';
+        });
+        html += '</div>';
+
+        html += '<h2 style="margin-bottom:16px;">Pull Requests (' + PRS.length + ')</h2>';
+        html += '<div class="cd-rev-cards">';
+        PRS.forEach(function(pr) {
+            var scoreColor = pr.mergeScore >= 80 ? 'var(--accent-green)' : pr.mergeScore >= 50 ? 'var(--accent-amber)' : 'var(--accent-red)';
+            html += '<div class="cd-rev-pr" onclick="window._cdSelectTask(\'' + pr.linkedTask + '\')">';
+            html += '<div class="cd-rev-pr-header">';
+            html += '<span class="cd-rev-pr-id">' + pr.id + '</span>';
+            html += '<span class="cd-rev-pr-title">' + pr.title + '</span>';
+            html += '<span class="badge ' + prStatusClass(pr.status) + '">' + prStatusLabel(pr.status) + '</span>';
+            html += '</div>';
+            html += '<div class="cd-rev-pr-body">';
+            html += '<div class="cd-rev-pr-stat">Files: <span class="cd-rev-pr-stat-val">' + pr.filesChanged + '</span></div>';
+            html += '<div class="cd-rev-pr-stat" style="color:var(--accent-green);">+' + pr.additions + '</div>';
+            html += '<div class="cd-rev-pr-stat" style="color:var(--accent-red);">-' + pr.deletions + '</div>';
+            html += '<div class="cd-rev-pr-stat">Risk: <span class="cd-rev-pr-stat-val" style="color:' + (pr.riskLevel === 'high' ? 'var(--accent-red)' : pr.riskLevel === 'medium' ? 'var(--accent-amber)' : 'var(--text-secondary)') + '">' + pr.riskLevel + '</span></div>';
+            html += '<div class="cd-rev-pr-stat">Tests: ' + (pr.testsPass ? '<span style="color:var(--accent-green);">Pass</span>' : '<span style="color:var(--accent-red);">Fail</span>') + '</div>';
+            html += '<div class="cd-rev-pr-stat">Approvals: <span class="cd-rev-pr-stat-val">' + pr.approvals + '/' + pr.required + '</span></div>';
+            html += '<div class="cd-rev-pr-stat">Merge Score: <span class="cd-rev-pr-stat-val" style="color:' + scoreColor + '">' + pr.mergeScore + '</span>';
+            html += '<div class="cd-rev-score-bar"><div class="cd-rev-score-fill" style="width:' + pr.mergeScore + '%;background:' + scoreColor + ';"></div></div></div>';
+            html += '</div>';
+            if (pr.findings.length > 0) {
+                html += '<div style="margin-top:8px;font-size:0.68rem;">';
+                pr.findings.forEach(function(f) {
+                    html += '<div style="color:var(--accent-amber);padding:2px 0;">&bull; ' + f + '</div>';
+                });
+                html += '</div>';
+            }
+            html += '<div class="cd-rev-pr-actions">';
+            if (pr.status === 'approved') {
+                html += '<button class="btn btn-success btn-sm" onclick="event.stopPropagation();window._cdShowMergeApproval(\'' + pr.id + '\')">Merge</button>';
+            }
+            if (pr.status === 'in_review') {
+                html += '<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showToast(\'Review submitted (mock)\')">Approve</button>';
+                html += '<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();showToast(\'Changes requested (mock)\')">Request Changes</button>';
+            }
+            html += '</div>';
+            html += '</div>';
+        });
+        html += '</div></div>';
+        $('view-review').innerHTML = html;
+    }
+
+    /* ================================================================
+       Approval System
+       ================================================================ */
+    function showApprovalModal(title, body, actions) {
+        $('cd-approval-title').textContent = title;
+        $('cd-approval-content').innerHTML = body;
+        $('cd-approval-actions').innerHTML = actions;
+        $('cd-approval-modal').classList.add('open');
+    }
+
+    function closeApprovalModal() {
+        $('cd-approval-modal').classList.remove('open');
+    }
+
+    window._cdShowApproval = function(taskId) {
+        var t = getTask(taskId);
+        if (!t) return;
+        var body = '<div class="cd-approval-body">' + t.recommendation + '</div>';
+        body += '<div class="cd-approval-detail">';
+        body += '<div><strong>Task:</strong> ' + t.id + ' — ' + t.title + '</div>';
+        body += '<div><strong>Risk:</strong> ' + t.riskLevel + '</div>';
+        body += '<div><strong>Environment:</strong> ' + (t.environment || 'N/A') + '</div>';
+        body += '</div>';
+        var actions = '<button class="btn btn-back btn-sm" onclick="window._cdCloseApproval()">Defer</button>';
+        actions += '<button class="btn btn-ghost btn-sm" onclick="window._cdApprovalAction(\'' + taskId + '\', \'changes\')">Request Changes</button>';
+        actions += '<button class="btn btn-success btn-sm" onclick="window._cdApprovalAction(\'' + taskId + '\', \'approve\')">Approve</button>';
+        showApprovalModal('Approval Required: ' + t.id, body, actions);
+    };
+
+    window._cdShowMergeApproval = function(prId) {
+        var pr = PRS.find(function(p) { return p.id === prId; });
+        if (!pr) return;
+        var body = '<div class="cd-approval-body">' + pr.id + ' — ' + pr.title + ' is ready to merge.</div>';
+        body += '<div class="cd-approval-detail">';
+        body += '<div><strong>Files Changed:</strong> ' + pr.filesChanged + ' (+' + pr.additions + ' / -' + pr.deletions + ')</div>';
+        body += '<div><strong>Approvals:</strong> ' + pr.approvals + '/' + pr.required + '</div>';
+        body += '<div><strong>Merge Score:</strong> ' + pr.mergeScore + '%</div>';
+        body += '</div>';
+        var actions = '<button class="btn btn-back btn-sm" onclick="window._cdCloseApproval()">Cancel</button>';
+        actions += '<button class="btn btn-success btn-sm" onclick="window._cdApprovalAction(\'' + prId + '\', \'merge\')">Confirm Merge</button>';
+        showApprovalModal('Merge ' + prId + '?', body, actions);
+    };
+
+    window._cdApprovalAction = function(id, action) {
+        closeApprovalModal();
+        var labels = { approve: 'Approved', changes: 'Changes requested', merge: 'Merge initiated' };
+        showToast((labels[action] || action) + ' — ' + id + ' (mock)');
+    };
+
+    window._cdCloseApproval = function() {
+        closeApprovalModal();
+    };
+
+    $('cd-approval-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeApprovalModal();
+    });
+
+    /* ================================================================
+       Global Interactions
+       ================================================================ */
+    window._cdSelectTask = function(taskId) {
+        selectedTaskId = taskId;
+        if (activeView !== 'taskdev') {
+            switchView('taskdev');
+        } else {
+            renderTaskDev();
+        }
+    };
+
+    window._cdSwitchTdTab = function(tab) {
+        selectedTdTab = tab;
+        renderTaskDev();
+    };
+
+    /* ================================================================
+       Init
+       ================================================================ */
+    function init() {
+        renderKPIs();
+
+        document.querySelectorAll('.cd-tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                switchView(this.dataset.view);
+            });
+        });
+
+        renderBoard();
+    }
+
+    init();
+
+    })();
+    </script>
+</body>
+</html>

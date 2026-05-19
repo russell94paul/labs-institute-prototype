@@ -1,0 +1,46 @@
+{
+  "version": "1.0",
+  "defaultMode": "assisted",
+  "allowedWithoutApproval": [
+    "read_files",
+    "classify_files",
+    "create_docs",
+    "create_configs",
+    "create_prompts",
+    "create_test_scaffolding",
+    "create_ui_scaffolding",
+    "edit_phase_scoped_files",
+    "quarantine_uncertain_files",
+    "delete_clearly_old_artifacts_with_checkpoint",
+    "update_build_reports",
+    "update_change_manifest",
+    "update_rollback_plan"
+  ],
+  "requiresApproval": [
+    "delete_uncertain_reusable_core_code",
+    "modify_secrets_or_env",
+    "modify_production_configs",
+    "destructive_database_migration",
+    "auth_or_rls_boundary_change",
+    "force_push",
+    "merge_to_main",
+    "delete_branch",
+    "add_paid_service_or_cloud_resource",
+    "modify_legal_license_ip_files",
+    "send_data_to_external_services",
+    "deploy_to_production",
+    "continue_to_next_phase"
+  ],
+  "decisionRule": {
+    "lowRiskReversible": "proceed_and_document",
+    "mediumRiskUncertain": "quarantine_and_report",
+    "highRiskIrreversible": "request_approval"
+  },
+  "mandatoryArtifacts": [
+    "docs/build/change-manifest.md",
+    "docs/build/blockers.md",
+    "docs/build/approval-requests.md",
+    "docs/build/rollback/<phase-id>-rollback.md"
+  ],
+  "secretsRule": "Never write raw secrets to prompts, docs, reports, logs, vector DB, context packs, or agent memory. Use secret references only."
+}

@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(New-Item *)",
+      "PowerShell(python engine/server.py)",
+      "PowerShell(try { $response = Invoke-WebRequest -Uri \"http://127.0.0.1:8888/\" -UseBasicParsing -TimeoutSec 5; \"Status: $\\($response.StatusCode\\)\" } catch { \"Error: $_\" })",
+      "PowerShell(try { $response = Invoke-WebRequest -Uri \"http://127.0.0.1:8888/#conductor\" -UseBasicParsing -TimeoutSec 5; \"Status: $\\($response.StatusCode\\), Length: $\\($response.Content.Length\\)\" } catch { \"Error: $_\" })",
+      "PowerShell(try { $response = Invoke-WebRequest -Uri \"http://127.0.0.1:8888/pages/conductor.html\" -UseBasicParsing -TimeoutSec 5; \"Status: $\\($response.StatusCode\\), Length: $\\($response.Content.Length\\)\" } catch { \"Error: $_\" })",
+      "Bash(start *)",
+      "PowerShell($html = \\(Invoke-WebRequest -Uri \"http://127.0.0.1:8888/pages/conductor.html\" -UseBasicParsing -TimeoutSec 5\\).Content; \"Page length: $\\($html.Length\\) chars\"; if \\($html -match '<body'\\) { \"Has body tag: yes\" } else { \"Has body tag: NO\" }; if \\($html -match '<style'\\) { \"Has style tag: yes\" } else { \"Has style tag: NO\" }; if \\($html -match '<script'\\) { \"Has script tag: yes\" } else { \"Has script tag: NO\" }; if \\($html -match 'cd-shell'\\) { \"Has cd-shell class: yes\" } else { \"Has cd-shell class: NO\" }; if \\($html -match 'view-board'\\) { \"Has board view: yes\" } else { \"Has board view: NO\" }; if \\($html -match 'view-dag'\\) { \"Has DAG view: yes\" } else { \"Has DAG view: NO\" }; if \\($html -match 'view-deploy'\\) { \"Has deploy view: yes\" } else { \"Has deploy view: NO\" })",
+      "PowerShell(git *)",
+      "PowerShell(gh repo list ALDC-io --limit 100 --json name,sshUrl --jq '.[].name' | Sort-Object)",
+      "PowerShell($missing = @\\('atlas','auth-api','concept-eminence-general','concept-f92-general','concept-gep-data','concept-j5-general','dispatcher','eclipse-demo','el-famoso-prototype','esapet-dashboard','experimental','fbc-partner-ecosystem-visualization','internal-business-model','kisti','mcp_server_memory','ohmco-dashboard','portal','quickstart-api','quickstarts','seattle-orcas-prototype','upventure-dashboard','zeus-chat-exp','zeus-decision-graph-visualization'\\); foreach \\($repo in $missing\\) { Write-Host \"Cloning $repo...\"; git clone \"https://github.com/ALDC-io/$repo.git\" \"C:\\\\Users\\\\PaulRussell\\\\repos\\\\$repo\" 2>&1 | Select-Object -Last 1; Write-Host \"\" })",
+      "PowerShell(Test-Path *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\PaulRussell\\\\repos\\\\conductor\" -Force)",
+      "Bash(Select-Object Name, Mode)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\PaulRussell\\\\repos\\\\zeus-memory\" -Force)",
+      "Bash(Select-Object Name, PSIsContainer)",
+      "Bash(Sort-Object PSIsContainer -Descending)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\PaulRussell\\\\repos\\\\claude_code_enhanced\" -Force)",
+      "Bash(Select-Object Name)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\PaulRussell\\\\repos\\\\ccx\" -Directory)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\PaulRussell\\\\repos\\\\wiki\" -Directory)",
+      "Bash(xargs -I {} head -30 \"{}\")",
+      "PowerShell(python C:\\\\Users\\\\PaulRussell\\\\repos\\\\conductor\\\\engine\\\\server.py)",
+      "PowerShell(try { $response = Invoke-WebRequest -Uri 'http://127.0.0.1:8888/api/config' -TimeoutSec 5 -UseBasicParsing; $response.Content } catch { $_.Exception.Message })",
+      "PowerShell(try { $response = Invoke-WebRequest -Uri 'http://127.0.0.1:8888/api/sessions' -TimeoutSec 5 -UseBasicParsing; $response.Content | ConvertFrom-Json | ConvertTo-Json -Depth 3 } catch { $_.Exception.Message })",
+      "PowerShell($env:ZEUS_ALDC_API_KEY)",
+      "PowerShell($key = \\(Get-Content C:\\\\Users\\\\PaulRussell\\\\.env | Select-String \"^ZEUS_API_KEY=\"\\).ToString\\(\\).Split\\(\"=\",2\\)[1]; $tenant = \"11111111-1111-1111-1111-111111111111\"; $body1 = @{ content = \"Confirmed: ALDC-io GitHub org has ~35 repos but only ~12 were cloned locally. Running `gh repo list ALDC-io --limit 100` is the reliable way to enumerate all repos. 23 new repos were cloned this session. The experimental chat repo is `zeus-chat-exp`, not `zeus-chat`.\"; source = \"cce_success_log\"; tags = @\\(\"conductor\",\"repo-management\",\"aldc-io\",\"discovery\"\\) } | ConvertTo-Json; Invoke-RestMethod -Uri \"https://zeus.aldc.io/api/v1/memory\" -Method POST -Headers @{\"X-API-Key\"=$key; \"X-Tenant-ID\"=$tenant; \"Content-Type\"=\"application/json\"} -Body $body1 -TimeoutSec 15 | ConvertTo-Json)",
+      "PowerShell($key = \\(Get-Content C:\\\\Users\\\\PaulRussell\\\\.env | Select-String \"^ZEUS_API_KEY=\"\\).ToString\\(\\).Split\\(\"=\",2\\)[1]; try { Invoke-RestMethod -Uri \"https://zeus.aldc.io/health\" -TimeoutSec 5 } catch { }; try { Invoke-RestMethod -Uri \"https://zeus.aldc.io/api/health\" -TimeoutSec 5 } catch { }; try { $r = Invoke-RestMethod -Uri \"https://zeus.aldc.io/api/memories\" -Method GET -Headers @{\"X-API-Key\"=$key} -TimeoutSec 5; \"memories endpoint ok\" } catch { $_.Exception.Message })",
+      "mcp__ccx__cce_memory_store"
+    ]
+  }
+}

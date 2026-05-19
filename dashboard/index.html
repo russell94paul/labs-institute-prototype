@@ -132,6 +132,10 @@
         </div>
 
         <div class="topnav-links" id="topnav-links">
+            <a class="topnav-link" data-route="conductor">
+                <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2" fill="currentColor" opacity="0.6"/><circle cx="12" cy="5" r="2" fill="currentColor" opacity="0.6"/><circle cx="19" cy="12" r="2" fill="currentColor" opacity="0.6"/><circle cx="12" cy="19" r="2" fill="currentColor" opacity="0.6"/><line x1="5" y1="12" x2="12" y2="5" opacity="0.4"/><line x1="12" y1="5" x2="19" y2="12" opacity="0.4"/><line x1="19" y1="12" x2="12" y2="19" opacity="0.4"/><line x1="12" y1="19" x2="5" y2="12" opacity="0.4"/></svg>
+                Conductor
+            </a>
             <a class="topnav-link" data-route="sessions">
                 <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="14" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
                 Sessions
@@ -203,6 +207,7 @@
     <script>
     (function() {
         var routes = {
+            'conductor':    { path: 'pages/conductor.html',    label: 'Conductor Console' },
             'sessions':     { path: 'pages/sessions.html',     label: 'Sessions' },
             'pipelines':    { path: 'pages/pipelines.html',    label: 'Pipelines' },
             'phases':       { path: 'pages/phases.html',       label: 'Phases' },
@@ -325,9 +330,9 @@
             });
         });
 
-        // Boot: route from hash or default to sessions
+        // Boot: route from hash or default to conductor
         var hash = window.location.hash.replace('#', '').split('&')[0];
-        window.navigateTo(hash && routes[hash] ? hash : 'sessions');
+        window.navigateTo(hash && routes[hash] ? hash : 'conductor');
 
         // Handle back/forward
         window.addEventListener('hashchange', function() {

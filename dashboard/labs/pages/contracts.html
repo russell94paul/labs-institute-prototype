@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+.contracts-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.contracts-kpi {
+    background: var(--card-gradient);
+    border: 1px solid var(--border-medium);
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.contracts-kpi-val {
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1;
+    color: #fff;
+}
+
+.contracts-kpi-label {
+    font-size: 0.66rem;
+    color: var(--text-label);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 6px;
+}
+
+.contracts-table-wrap {
+    overflow-x: auto;
+    margin-bottom: 24px;
+}
+
+.contracts-table-wrap .data-table {
+    min-width: 1100px;
+}
+
+.contracts-table-wrap .data-table th,
+.contracts-table-wrap .data-table td {
+    white-space: nowrap;
+}
+
+.contracts-table-wrap .data-table td.col-title {
+    white-space: normal;
+    max-width: 220px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.contracts-artist-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+
+.contracts-artist-tags .tag {
+    font-size: 0.62rem;
+    padding: 1px 6px;
+}
+
+.risk-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-red);
+    box-shadow: 0 0 6px rgba(248,113,113,0.5);
+}
+
+.deadline-urgent {
+    color: var(--accent-red);
+    font-weight: 700;
+}
+
+.billing-card {
+    background: var(--card-gradient);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--card-radius);
+    padding: var(--card-padding);
+}
+
+.billing-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 16px;
+}
+
+.billing-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.billing-summary-item {
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-subtle);
+}
+
+.billing-summary-val {
+    font-size: 1.1rem;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    line-height: 1;
+}
+
+.billing-summary-label {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 4px;
+}
+
+.billing-breakdown {
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 14px;
+}
+
+.billing-breakdown-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+}
+
+.billing-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 0.82rem;
+}
+
+.billing-row:last-child {
+    border-bottom: none;
+}
+
+.billing-row-label {
+    color: var(--text-secondary);
+    flex: 1;
+    min-width: 0;
+}
+
+.billing-row-val {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-align: right;
+    min-width: 80px;
+}
+
+.billing-row-deposit {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-align: right;
+    min-width: 100px;
+    color: var(--text-muted);
+}
+
+@media (max-width: 1024px) {
+    .contracts-kpi-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .billing-summary-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+<body>
+<div class="labs-page">
+    <div class="labs-page-header">
+        <div>
+            <div class="labs-page-title">Contracts & Billing</div>
+            <div class="labs-page-subtitle" id="contracts-subtitle"></div>
+        </div>
+    </div>
+
+    <div class="contracts-kpi-row" id="contracts-kpis"></div>
+    <div class="contracts-table-wrap" id="contracts-table-wrap"></div>
+    <div class="billing-card" id="billing-card"></div>
+</div>
+
+<script>
+(function() {
+    var data = window.LabsData;
+    var h = window.LabsHelpers;
+    var contracts = data.contracts || [];
+
+    var activeSigned = 0;
+    var awaitingSig = 0;
+    var totalValue = 0;
+    var depositsPaid = 0;
+    var depositsPending = 0;
+
+    contracts.forEach(function(c) {
+        if (c.status === 'Signed') activeSigned++;
+        if (c.signatureStatus && c.signatureStatus.indexOf('awaiting') !== -1) awaitingSig++;
+        totalValue += c.value || 0;
+        if (c.depositStatus === 'paid') depositsPaid += c.depositAmount || 0;
+        else depositsPending += c.depositAmount || 0;
+    });
+
+    document.getElementById('contracts-subtitle').textContent = contracts.length + ' contracts tracked';
+
+    var kpisEl = document.getElementById('contracts-kpis');
+    kpisEl.innerHTML =
+        '<div class="contracts-kpi"><div class="contracts-kpi-val text-blue">' + contracts.length + '</div><div class="contracts-kpi-label">Total Contracts</div></div>' +
+        '<div class="contracts-kpi"><div class="contracts-kpi-val text-green">' + activeSigned + '</div><div class="contracts-kpi-label">Active / Signed</div></div>' +
+        '<div class="contracts-kpi"><div class="contracts-kpi-val text-amber">' + awaitingSig + '</div><div class="contracts-kpi-label">Awaiting Signature</div></div>' +
+        '<div class="contracts-kpi"><div class="contracts-kpi-val text-purple">' + h.formatCurrency(totalValue) + '</div><div class="contracts-kpi-label">Total Value</div></div>' +
+        '<div class="contracts-kpi"><div class="contracts-kpi-val text-green">' + h.formatCurrency(depositsPaid) + '</div><div class="contracts-kpi-label">Deposits Received</div></div>' +
+        '<div class="contracts-kpi"><div class="contracts-kpi-val text-red">' + h.formatCurrency(depositsPending) + '</div><div class="contracts-kpi-label">Deposits Pending</div></div>';
+
+    function statusBadge(status) {
+        var map = { 'Draft': 'amber', 'Sent': 'blue', 'Signed': 'green', 'Internal Review': 'purple' };
+        return '<span class="badge ' + (map[status] || 'purple') + '">' + status + '</span>';
+    }
+
+    function depositBadge(ds) {
+        var map = { 'paid': 'green', 'pending': 'amber', 'not_invoiced': 'red' };
+        var labels = { 'paid': 'Paid', 'pending': 'Pending', 'not_invoiced': 'Not Invoiced' };
+        return '<span class="badge ' + (map[ds] || 'amber') + '">' + (labels[ds] || ds) + '</span>';
+    }
+
+    function sigBadge(ss) {
+        var map = {
+            'signed': 'green',
+            'awaiting_client': 'amber',
+            'awaiting_artist': 'amber',
+            'not_sent': 'red'
+        };
+        var labels = {
+            'signed': 'Signed',
+            'awaiting_client': 'Awaiting Client',
+            'awaiting_artist': 'Awaiting Artist',
+            'not_sent': 'Not Sent'
+        };
+        return '<span class="badge ' + (map[ss] || 'purple') + '">' + (labels[ss] || ss) + '</span>';
+    }
+
+    var tableHtml = '<table class="data-table"><thead><tr>' +
+        '<th>Contract</th>' +
+        '<th>Type</th>' +
+        '<th>Company</th>' +
+        '<th>Artists</th>' +
+        '<th>Value</th>' +
+        '<th>Status</th>' +
+        '<th>Deposit</th>' +
+        '<th>Signature</th>' +
+        '<th>Deadline</th>' +
+        '<th>Risk</th>' +
+        '<th>Ver</th>' +
+        '</tr></thead><tbody>';
+
+    contracts.forEach(function(c) {
+        var artistTags = '';
+        if (c.artists && c.artists.length) {
+            artistTags = '<div class="contracts-artist-tags">';
+            c.artists.forEach(function(a) {
+                artistTags += '<span class="tag purple">' + a + '</span>';
+            });
+            artistTags += '</div>';
+        }
+
+        var deadlineHtml = h.formatDate(c.deadline);
+        if (c.deadline) {
+            var daysLeft = h.daysUntil(c.deadline);
+            if (daysLeft !== null && daysLeft <= 14) {
+                deadlineHtml = '<span class="deadline-urgent">' + deadlineHtml + '</span>';
+            }
+        }
+
+        var riskHtml = c.riskFlag ? '<span class="risk-dot" title="Risk flagged"></span>' : '';
+
+        tableHtml += '<tr>' +
+            '<td class="col-title">' + c.title + '</td>' +
+            '<td><span class="tag">' + c.type + '</span></td>' +
+            '<td>' + c.company + '</td>' +
+            '<td>' + artistTags + '</td>' +
+            '<td style="font-family:var(--font-mono);font-weight:700">' + h.formatCurrency(c.value) + '</td>' +
+            '<td>' + statusBadge(c.status) + '</td>' +
+            '<td>' + depositBadge(c.depositStatus) + '</td>' +
+            '<td>' + sigBadge(c.signatureStatus) + '</td>' +
+            '<td>' + deadlineHtml + '</td>' +
+            '<td style="text-align:center">' + riskHtml + '</td>' +
+            '<td style="text-align:center;font-family:var(--font-mono);color:var(--text-muted)">v' + c.version + '</td>' +
+            '</tr>';
+    });
+
+    tableHtml += '</tbody></table>';
+    document.getElementById('contracts-table-wrap').innerHTML = tableHtml;
+
+    var billingEl = document.getElementById('billing-card');
+    var totalRevenue = totalValue;
+    var depositsCollected = depositsPaid;
+    var depositsOutstanding = depositsPending;
+
+    var billingHtml = '<div class="billing-title">Billing Summary</div>';
+
+    billingHtml += '<div class="billing-summary-grid">';
+    billingHtml += '<div class="billing-summary-item"><div class="billing-summary-val text-blue">' + h.formatCurrency(totalRevenue) + '</div><div class="billing-summary-label">Total Revenue</div></div>';
+    billingHtml += '<div class="billing-summary-item"><div class="billing-summary-val text-green">' + h.formatCurrency(depositsCollected) + '</div><div class="billing-summary-label">Deposits Collected</div></div>';
+    billingHtml += '<div class="billing-summary-item"><div class="billing-summary-val text-red">' + h.formatCurrency(depositsOutstanding) + '</div><div class="billing-summary-label">Deposits Outstanding</div></div>';
+    billingHtml += '</div>';
+
+    billingHtml += '<div class="billing-breakdown">';
+    billingHtml += '<div class="billing-breakdown-title">Per-Contract Breakdown</div>';
+
+    contracts.forEach(function(c) {
+        var depLabel = c.depositStatus === 'paid' ? 'Deposit paid' : c.depositStatus === 'pending' ? 'Deposit pending' : 'Not invoiced';
+        var depColor = c.depositStatus === 'paid' ? 'var(--accent-green)' : c.depositStatus === 'pending' ? 'var(--accent-amber)' : 'var(--accent-red)';
+
+        billingHtml += '<div class="billing-row">' +
+            '<span class="billing-row-label">' + c.title + '</span>' +
+            '<span class="billing-row-deposit" style="color:' + depColor + '">' + depLabel + ' (' + h.formatCurrency(c.depositAmount) + ')</span>' +
+            '<span class="billing-row-val text-blue">' + h.formatCurrency(c.value) + '</span>' +
+            '</div>';
+    });
+
+    billingHtml += '</div>';
+    billingEl.innerHTML = billingHtml;
+})();
+</script>
+</body>
+</html>

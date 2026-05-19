@@ -1,0 +1,62 @@
+{
+  "phase_lifecycle": [
+    "plan",
+    "execute",
+    "evaluate",
+    "approve",
+    "learn",
+    "recommend_next_phase"
+  ],
+  "phase_groups": {
+    "discovery": [
+      "research",
+      "repo_inspection",
+      "current_state_inventory",
+      "market_research",
+      "competitor_intelligence"
+    ],
+    "planning": [
+      "synthesis",
+      "product_planning",
+      "architecture_planning",
+      "infra_planning",
+      "security_planning",
+      "rollback_planning"
+    ],
+    "build": [
+      "implementation",
+      "refactor",
+      "migration",
+      "integration",
+      "infra_provisioning"
+    ],
+    "quality": [
+      "validation",
+      "testing",
+      "code_review",
+      "security_review",
+      "performance",
+      "cost_review",
+      "no_regression_review"
+    ],
+    "release": [
+      "deployment_prep",
+      "deployment",
+      "post_deploy_verification",
+      "observability_setup"
+    ],
+    "growth": [
+      "positioning",
+      "go_to_market",
+      "pricing",
+      "growth_experiment",
+      "incentive_rewards_design"
+    ],
+    "learning": [
+      "self_improvement",
+      "lessons_learned",
+      "memory_promotion_review",
+      "regression_analysis"
+    ]
+  }
+}

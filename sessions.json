@@ -1,0 +1,9 @@
+{
+  "sessions": [],
+  "config": {
+    "max_parallel": 8,
+    "default_budget_usd": 5.0,
+    "default_timeout_min": 60,
+    "default_model": "sonnet"
+  }
+}

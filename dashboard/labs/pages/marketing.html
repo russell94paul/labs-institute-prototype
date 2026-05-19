@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marketing Control Center — LABS Institute</title>
+<style>
+    .mkt-kpi-row {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .mkt-kpi {
+        background: var(--card-gradient);
+        border: 1px solid var(--border-medium);
+        border-radius: 10px;
+        padding: 16px;
+    }
+
+    .mkt-kpi-val {
+        font-size: 1.6rem;
+        font-weight: 800;
+        line-height: 1;
+        color: #fff;
+    }
+
+    .mkt-kpi-label {
+        font-size: 0.66rem;
+        color: var(--text-label);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-top: 6px;
+    }
+
+    .campaign-card {
+        background: var(--card-gradient);
+        border: 1px solid var(--border-medium);
+        border-radius: var(--card-radius);
+        padding: 20px;
+        transition: transform 0.15s, border-color 0.15s;
+    }
+
+    .campaign-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(167,139,250,0.3);
+    }
+
+    .campaign-card-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .campaign-card-name {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #fff;
+        line-height: 1.3;
+    }
+
+    .campaign-card-type {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+    }
+
+    .campaign-card-artists {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+    }
+
+    .campaign-card-platforms {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+    }
+
+    .platform-badge {
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.62rem;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 4px;
+        background: rgba(255,255,255,0.05);
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .campaign-card-style {
+        font-size: 0.72rem;
+        color: var(--text-dim);
+        margin-bottom: 10px;
+    }
+
+    .campaign-card-style span {
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
+
+    .campaign-progress {
+        margin-bottom: 10px;
+    }
+
+    .campaign-progress-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.72rem;
+        margin-bottom: 4px;
+    }
+
+    .campaign-progress-label-text {
+        color: var(--text-muted);
+    }
+
+    .campaign-progress-label-val {
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+    }
+
+    .campaign-progress-track {
+        height: 5px;
+        background: rgba(255,255,255,0.06);
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .campaign-progress-fill {
+        height: 100%;
+        border-radius: 3px;
+        background: var(--accent-purple);
+        transition: width 0.8s ease;
+    }
+
+    .campaign-card-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        margin-bottom: 10px;
+    }
+
+    .campaign-stat {
+        padding: 8px 10px;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border-subtle);
+    }
+
+    .campaign-stat-val {
+        font-size: 0.92rem;
+        font-weight: 700;
+        font-family: var(--font-mono);
+        color: var(--text-primary);
+    }
+
+    .campaign-stat-label {
+        font-size: 0.62rem;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-top: 2px;
+    }
+
+    .campaign-card-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-bottom: 10px;
+        font-size: 0.78rem;
+    }
+
+    .campaign-meta-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .campaign-meta-label {
+        color: var(--text-dim);
+    }
+
+    .campaign-meta-val {
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+    }
+
+    .campaign-card-deadline {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 10px;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--border-subtle);
+        margin-bottom: 10px;
+        font-size: 0.78rem;
+    }
+
+    .campaign-deadline-label {
+        color: var(--text-dim);
+    }
+
+    .campaign-deadline-val {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+    }
+
+    .campaign-card-action {
+        font-size: 0.78rem;
+        color: var(--accent-blue);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding-top: 8px;
+        border-top: 1px solid var(--border-subtle);
+    }
+
+    .campaign-card-action svg {
+        width: 12px;
+        height: 12px;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+    }
+
+    .post-styles-section {
+        margin-top: 28px;
+    }
+
+    .post-styles-title {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .post-styles-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .post-style-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: rgba(167,139,250,0.08);
+        border: 1px solid rgba(167,139,250,0.15);
+        color: var(--accent-purple);
+        transition: all 0.15s;
+    }
+
+    .post-style-chip:nth-child(3n+1) {
+        background: rgba(56,189,248,0.08);
+        border-color: rgba(56,189,248,0.15);
+        color: var(--accent-blue);
+    }
+
+    .post-style-chip:nth-child(3n+2) {
+        background: rgba(251,146,60,0.08);
+        border-color: rgba(251,146,60,0.15);
+        color: var(--accent-amber);
+    }
+
+    .post-style-chip:nth-child(4n) {
+        background: rgba(74,222,128,0.08);
+        border-color: rgba(74,222,128,0.15);
+        color: var(--accent-green);
+    }
+
+    .post-style-chip:nth-child(5n) {
+        background: rgba(248,113,113,0.08);
+        border-color: rgba(248,113,113,0.15);
+        color: var(--accent-red);
+    }
+
+    .post-style-chip:nth-child(6n+1) {
+        background: rgba(167,139,250,0.08);
+        border-color: rgba(167,139,250,0.15);
+        color: var(--accent-purple);
+    }
+
+    @media (max-width: 1200px) {
+        .mkt-kpi-row {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .mkt-kpi-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+</head>
+<body>
+    <div class="labs-page">
+        <div class="labs-page-header">
+            <div>
+                <div class="labs-page-title">Marketing Control Center</div>
+                <div class="labs-page-subtitle" id="mkt-subtitle"></div>
+            </div>
+        </div>
+
+        <div class="mkt-kpi-row" id="mkt-kpis"></div>
+
+        <div class="labs-tabs" id="mkt-tabs">
+            <div class="labs-tab active" data-filter="all">All Campaigns</div>
+            <div class="labs-tab" data-filter="active">Active</div>
+            <div class="labs-tab" data-filter="planning">Planning</div>
+            <div class="labs-tab" data-filter="completed">Completed</div>
+        </div>
+
+        <div class="labs-grid-2" id="mkt-campaigns"></div>
+
+        <div class="post-styles-section">
+            <div class="post-styles-title">Post Style Reference</div>
+            <div class="post-styles-grid" id="mkt-post-styles"></div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        var campaigns = window.LabsData.campaigns;
+        var helpers = window.LabsHelpers;
+        var activeFilter = 'all';
+
+        var postStyles = [
+            'Dark techno', 'Underground', 'Premium agency', 'Festival energy',
+            'Minimal announcement', 'Ticket push', 'Last-chance urgency', 'Artist spotlight',
+            'Behind-the-scenes', 'New release', 'Local scene focused', 'International positioning'
+        ];
+
+        function formatNumber(n) {
+            if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+            if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+            return n.toString();
+        }
+
+        function computeKPIs() {
+            var activeCampaigns = campaigns.filter(function(c) { return c.status === 'active'; }).length;
+            var postsScheduled = 0;
+            var postsPublished = 0;
+            var awaiting = 0;
+            var reach = 0;
+            var engagement = 0;
+            campaigns.forEach(function(c) {
+                postsScheduled += c.postsScheduled;
+                postsPublished += c.postsPublished;
+                awaiting += c.postsAwaitingApproval;
+                reach += c.reach;
+                engagement += c.engagement;
+            });
+            return {
+                activeCampaigns: activeCampaigns,
+                postsScheduled: postsScheduled,
+                postsPublished: postsPublished,
+                awaiting: awaiting,
+                reach: reach,
+                engagement: engagement
+            };
+        }
+
+        function renderKPIs() {
+            var k = computeKPIs();
+            var el = document.getElementById('mkt-kpis');
+            el.innerHTML =
+                '<div class="mkt-kpi"><div class="mkt-kpi-val">' + k.activeCampaigns + '</div><div class="mkt-kpi-label">Active Campaigns</div></div>' +
+                '<div class="mkt-kpi"><div class="mkt-kpi-val">' + k.postsScheduled + '</div><div class="mkt-kpi-label">Posts Scheduled</div></div>' +
+                '<div class="mkt-kpi"><div class="mkt-kpi-val">' + k.postsPublished + '</div><div class="mkt-kpi-label">Posts Published</div></div>' +
+                '<div class="mkt-kpi"><div class="mkt-kpi-val">' + k.awaiting + '</div><div class="mkt-kpi-label">Awaiting Approval</div></div>' +
+                '<div class="mkt-kpi"><div class="mkt-kpi-val">' + formatNumber(k.reach) + '</div><div class="mkt-kpi-label">Total Reach</div></div>' +
+                '<div class="mkt-kpi"><div class="mkt-kpi-val">' + formatNumber(k.engagement) + '</div><div class="mkt-kpi-label">Total Engagement</div></div>';
+            document.getElementById('mkt-subtitle').textContent = campaigns.length + ' campaigns tracked';
+        }
+
+        function getDeadlineColor(days) {
+            if (days === null) return 'var(--text-dim)';
+            if (days <= 3) return 'var(--accent-red)';
+            if (days <= 7) return 'var(--accent-amber)';
+            return 'var(--accent-green)';
+        }
+
+        function renderCampaigns() {
+            var filtered = campaigns;
+            if (activeFilter !== 'all') {
+                filtered = campaigns.filter(function(c) { return c.status === activeFilter; });
+            }
+
+            var grid = document.getElementById('mkt-campaigns');
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div style="grid-column:1/-1" class="empty-state"><h3>No campaigns</h3><p>No campaigns match this filter.</p></div>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(function(c) {
+                var statusMap = { active: 'green', planning: 'amber', completed: 'blue' };
+                var statusBadge = statusMap[c.status] || 'purple';
+                var progressPct = c.postsScheduled > 0 ? Math.round((c.postsPublished / c.postsScheduled) * 100) : 0;
+                var daysUntil = helpers.daysUntil(c.nextDeadline);
+                var deadlineColor = getDeadlineColor(daysUntil);
+
+                var html = '<div class="campaign-card">';
+
+                html += '<div class="campaign-card-header">';
+                html += '<div><div class="campaign-card-name">' + c.name + '</div>';
+                html += '<div class="campaign-card-type">' + c.type + ' &middot; ' + c.strategy + '</div></div>';
+                html += '<span class="badge ' + statusBadge + '">' + c.status + '</span>';
+                html += '</div>';
+
+                html += '<div class="campaign-card-artists">';
+                c.artists.forEach(function(a) {
+                    html += '<span class="tag purple">' + a + '</span>';
+                });
+                html += '</div>';
+
+                html += '<div class="campaign-card-platforms">';
+                c.platforms.forEach(function(p) {
+                    html += '<span class="platform-badge">' + p + '</span>';
+                });
+                html += '</div>';
+
+                html += '<div class="campaign-card-style">Post style: <span>' + c.postStyle + '</span></div>';
+
+                html += '<div class="campaign-progress">';
+                html += '<div class="campaign-progress-label">';
+                html += '<span class="campaign-progress-label-text">' + c.postsPublished + '/' + c.postsScheduled + ' posts published</span>';
+                if (c.postsAwaitingApproval > 0) {
+                    html += '<span class="badge amber">' + c.postsAwaitingApproval + ' awaiting</span>';
+                }
+                html += '</div>';
+                html += '<div class="campaign-progress-track"><div class="campaign-progress-fill" style="width:' + progressPct + '%"></div></div>';
+                html += '</div>';
+
+                html += '<div class="campaign-card-stats">';
+                html += '<div class="campaign-stat"><div class="campaign-stat-val">' + formatNumber(c.reach) + '</div><div class="campaign-stat-label">Reach</div></div>';
+                html += '<div class="campaign-stat"><div class="campaign-stat-val">' + formatNumber(c.engagement) + '</div><div class="campaign-stat-label">Engagement</div></div>';
+                html += '</div>';
+
+                html += '<div class="campaign-card-meta">';
+                html += '<div class="campaign-meta-row"><span class="campaign-meta-label">Budget</span><span class="campaign-meta-val">' + helpers.formatCurrency(c.budget) + '</span></div>';
+                html += '<div class="campaign-meta-row"><span class="campaign-meta-label">Period</span><span class="campaign-meta-val">' + helpers.formatDateShort(c.startDate) + ' — ' + helpers.formatDateShort(c.endDate) + '</span></div>';
+                html += '</div>';
+
+                if (c.nextDeadline) {
+                    var daysLabel = daysUntil !== null ? (daysUntil <= 0 ? 'overdue' : daysUntil + 'd') : '';
+                    html += '<div class="campaign-card-deadline">';
+                    html += '<span class="campaign-deadline-label">Next deadline</span>';
+                    html += '<span class="campaign-deadline-val" style="color:' + deadlineColor + '">' + helpers.formatDateShort(c.nextDeadline) + (daysLabel ? ' (' + daysLabel + ')' : '') + '</span>';
+                    html += '</div>';
+                }
+
+                html += '<div class="campaign-card-action">';
+                html += '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>';
+                html += c.nextAction;
+                html += '</div>';
+
+                html += '</div>';
+                return html;
+            }).join('');
+        }
+
+        function renderPostStyles() {
+            var el = document.getElementById('mkt-post-styles');
+            el.innerHTML = postStyles.map(function(s) {
+                return '<span class="post-style-chip">' + s + '</span>';
+            }).join('');
+        }
+
+        function bindTabs() {
+            var tabs = document.querySelectorAll('#mkt-tabs .labs-tab');
+            tabs.forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(function(t) { t.classList.remove('active'); });
+                    tab.classList.add('active');
+                    activeFilter = tab.dataset.filter;
+                    renderCampaigns();
+                });
+            });
+        }
+
+        renderKPIs();
+        renderCampaigns();
+        renderPostStyles();
+        bindTabs();
+    })();
+    </script>
+</body>
+</html>

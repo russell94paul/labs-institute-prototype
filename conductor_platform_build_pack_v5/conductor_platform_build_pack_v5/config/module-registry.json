@@ -1,0 +1,16 @@
+{
+  "modules": [
+    "Build Studio",
+    "Pipeline DAG Engine",
+    "Product Onboarding Studio",
+    "Guided Product Decision Simulator",
+    "Client Product Portal",
+    "Trust-Aware Discovery & Access Manager",
+    "Data Platform Modernization Studio",
+    "Market Intelligence + Growth Engine",
+    "Context + Memory Engine",
+    "Infrastructure / Deployment / Operations",
+    "Self-Improvement Engine",
+    "Audit / Compliance / Governance"
+  ]
+}
