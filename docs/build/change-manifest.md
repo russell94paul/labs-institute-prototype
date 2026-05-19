@@ -53,3 +53,111 @@
 ### Files Modified
 
 - `.gitignore` — added `local-inputs/research-inbox/*` ignore rule
+
+---
+
+## Preflight Autonomy + Rollback Policy (2026-05-18)
+
+### Files Created
+
+- `docs/build/preflight-safety-report.md` — preflight check results
+- `docs/build/rollback/preflight-autonomy-rollback-policy-rollback.md` — rollback instructions
+- `docs/architecture/autonomy-approval-rollback-policy.md` — autonomy policy (from build pack)
+- `docs/decisions/ADR-0004-autonomy-approval-rollback-policy.md` — ADR (from build pack)
+
+### Files Updated
+
+- `docs/build/change-manifest.md` — added preflight section
+- `docs/build/blockers.md` — confirmed no new blockers
+- `docs/build/approval-requests.md` — no new approvals needed
+- `docs/build/parallelization-status.md` — updated for setup sequence
+
+---
+
+## Clean Start / Reset Branch (2026-05-18)
+
+### Files Deleted (LABS Institute legacy)
+
+- `docs/product/labs-institute-growth-gig-intelligence-platform.md`
+- `docs/product/LABS_Institute_Growth_Gig_Intelligence_Platform_Spec.md`
+- `docs/product/mvp-scope.md`
+- `docs/workflows/master-simulator.md`
+- `docs/workflows/roadmap-builder.md`
+- `docs/research/labs-institute/README.md`
+- `docs/research/labs-institute/assumptions.md`
+- `docs/research/labs-institute/deep-research.md`
+- `prompts/labs/README.md`
+- `prompts/labs/conductor-ui-build-prompt.md`
+- `projects/labs-institute/project.json`
+- `dashboard/labs/` (13 files — full LABS dashboard)
+- `docs/build/backlog.md` (LABS task IDs)
+- `docs/build/acceptance-criteria.md` (LABS acceptance)
+- `docs/build/orchestrator-guardrails.md` (LABS guardrails)
+- `docs/README.md` (old LABS reading order)
+
+### Files Quarantined
+
+- `conductor_platform_build_pack_v5.zip` → `.cleanup-quarantine/conductor_platform_build_pack_v5.zip`
+
+### Files Created
+
+- `docs/build/cleanup-inventory.md` — classification of all repo contents
+- `docs/build/clean-start-reset-report.md` — cleanup report
+- `docs/build/rollback/clean-start-reset-rollback.md` — rollback instructions
+- `docs/README.md` — new Conductor platform docs index
+- `docs/checklists/.gitkeep` — placeholder
+- `docs/templates/.gitkeep` — placeholder
+- `.cleanup-quarantine/README.md` — quarantine manifest
+
+---
+
+## Repo Restructure + Roadmap Ingestion (2026-05-18)
+
+### Files Created
+
+**docs/roadmap/** (4 files)
+- `executive-summary.md` — platform executive summary
+- `product-strategy.md` — product strategy and positioning
+- `master-build-sequence.md` — 15-phase build sequence
+- `repo-restructure-plan.md` — current vs. future structure
+
+**docs/architecture/** (12 files from build pack)
+- `platform-architecture.md`, `multi-tenant-security-rls.md`, `product-onboarding-decision-simulator.md`
+- `client-product-portal.md`, `trust-aware-discovery-access.md`, `data-platform-modernization.md`
+- `market-growth-engine.md`, `context-memory-self-improvement.md`, `infrastructure-deployment-operations.md`
+- `evaluation-quality-gates.md`, `current-branch-reset-strategy.md`, `bootstrap-approval-rollback-ui.md`
+
+**docs/decisions/** (3 ADRs from build pack)
+- `ADR-0001-build-conductor-first.md`, `ADR-0002-progressive-access-model.md`, `ADR-0003-metadata-first-data-modernization.md`
+
+**docs/checklists/** (6 from build pack)
+- `gaps-before-build.md`, `current-client-migration-checklist.md`, `security-compliance-checklist.md`
+- `no-regression-testing.md`, `branch-cleanup-classification-checklist.md`, `pre-start-safety-checklist.md`
+
+**docs/templates/** (12 from build pack)
+- `client-migration-readiness-report.md`, `artifact-gap-register.md`, `current-functionality-baseline.md`
+- `product-decision-report.md`, `feature-value-cost-matrix.md`, `migration-scenario-comparison.md`
+- `branch-cleanup-report.md`, `approval-requests.md`, `blockers.md`, `change-manifest.md`
+- `phase-rollback-plan.md`, `parallelization-status.md`
+
+**docs/build/**
+- `repo-restructure-and-roadmap-ingestion-report.md`
+- `rollback/repo-restructure-roadmap-ingestion-rollback.md`
+
+---
+
+## Topic 08 Hybrid Context Fabric Setup (2026-05-18)
+
+### Files Created
+
+- `docs/prompts/design-hybrid-context-fabric-from-repos.md` — future Claude execution prompt
+- `docs/research/prompts/08-hybrid-context-fabric-wiki-memory-knowledge-graph.md` — Deep Research prompt
+
+### Files Updated
+
+- `config/research-topics.json` — added Topic 08
+- `docs/research/research-status.md` — added Topic 08 to Pending
+- `docs/research/research-index.md` — added Topic 08 row and updated run order
+- `docs/research/README.md` — added Topic 08 to directory listing
+- `docs/build/parallelization-status.md` — updated for current phase
+- `docs/build/change-manifest.md` — added Phase 4 section

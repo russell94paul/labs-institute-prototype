@@ -141,5 +141,32 @@
     "recommendedOrder": 7,
     "lastUpdated": "2026-05-18",
     "notes": "Growth layer — builds on top of the core platform."
+  },
+  {
+    "id": "08-hybrid-context-fabric-wiki-memory-knowledge-graph",
+    "title": "Hybrid Context Fabric: Wiki, Memory, Knowledge Graph, and Project Context Packs",
+    "status": "pending",
+    "priority": 1,
+    "promptPath": "docs/research/prompts/08-hybrid-context-fabric-wiki-memory-knowledge-graph.md",
+    "expectedOutputFile": "08-hybrid-context-fabric-wiki-memory-knowledge-graph.report.md",
+    "inboxPath": "local-inputs/research-inbox/08-hybrid-context-fabric-wiki-memory-knowledge-graph.report.md",
+    "synthesisPath": "docs/research/syntheses/08-hybrid-context-fabric-wiki-memory-knowledge-graph.synthesis.md",
+    "affectsModules": [
+      "context-manager",
+      "memory-context-manager",
+      "knowledge-workspace",
+      "project-memory",
+      "source-adapters",
+      "agent-context-packs",
+      "self-improvement-loop",
+      "client-portal",
+      "build-studio"
+    ],
+    "dependsOn": [
+      "05-context-memory-vector-db-self-improvement"
+    ],
+    "recommendedOrder": 3,
+    "lastUpdated": "2026-05-18",
+    "notes": "Evaluate a hybrid context fabric combining repos/wiki, zeus-memory, generated structured knowledge, knowledge graphs, vector search, project-specific memory, metadata-first retrieval, and evaluation-gated self-improvement."
   }
 ]

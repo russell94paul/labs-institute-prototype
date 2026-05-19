@@ -6,6 +6,7 @@ Last updated: 2026-05-18
 
 - [ ] **01 — Multi-Tenant SaaS, RLS & Client Portals** (Priority 1)
 - [ ] **02 — Agent Orchestration, DAGs & Parallelization** (Priority 1)
+- [ ] **08 — Hybrid Context Fabric: Wiki, Memory, Knowledge Graph & Project Context Packs** (Priority 1)
 - [ ] **05 — Context, Memory, Vector DB & Self-Improvement** (Priority 3)
 - [ ] **04 — Data Platform Modernization Factory** (Priority 4)
 - [ ] **03 — AI-Guided Onboarding & Decision Simulation** (Priority 5)

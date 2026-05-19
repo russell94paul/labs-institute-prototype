@@ -62,7 +62,8 @@ docs/research/
 │   ├── 04-data-platform-modernization-factory.md
 │   ├── 05-context-memory-vector-db-self-improvement.md
 │   ├── 06-secure-credential-artifact-workflows.md
-│   └── 07-market-intelligence-growth-engine.md
+│   ├── 07-market-intelligence-growth-engine.md
+│   └── 08-hybrid-context-fabric-wiki-memory-knowledge-graph.md
 ├── syntheses/             ← Claude-generated synthesis outputs
 │   └── README.md
 └── decisions/             ← Decision candidates extracted from research
