@@ -1,5 +1,33 @@
 # Change Manifest
 
+## DEC-003 and DEC-004 Approval for P3 (2026-05-19)
+
+### Files Modified
+
+**docs/research/decisions/**
+- `DEC-003-worktree-isolation-model.md` — Status changed from Proposed to Approved (2026-05-19); added approval notes
+- `DEC-004-event-store-technology.md` — Status changed from Proposed to Approved (2026-05-19); added current state section and approval notes
+
+**docs/build/**
+- `decision-review-summary.md` — Updated summary matrix: DEC-003 and DEC-004 marked Approved
+- `approval-requests.md` — #7 updated to Partial (DEC-003/004 approved, rest pending); #10 updated (decision gate cleared); added #11 and #12 to Approved table
+- `blockers.md` — Blocker #4 (DEC-003/004 not approved) moved to Resolved; 3 open blockers remain
+- `change-manifest.md` — Added this section
+- `session-handoffs/dec-003-004-approved-for-p3-handoff.md` — Session handoff
+
+**config/**
+- `phase-status.json` — P3 decisionGating updated to reflect approvals; nextRecommendedAction updated to "Start P3"
+
+### Constraints Verified
+
+- No engine code modified
+- No dashboard code modified
+- No secrets/env files read or modified
+- P3 remains status: not_started
+- DEC-001, DEC-002, DEC-005–DEC-010 unchanged (pending/deferred/proposed)
+
+---
+
 ## UC-001 Launchpad Pilot Registration (2026-05-19)
 
 ### Files Created

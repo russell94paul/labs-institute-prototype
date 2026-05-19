@@ -21,7 +21,10 @@ Topic 02 — Agent Orchestration, DAGs & Parallelization (Section 7)
 - Dashboard — merge queue and conflict views
 
 ## Status
-Proposed
+Approved — 2026-05-19
 
 ## Decided by
-(pending)
+Paul Russell
+
+## Approval Notes
+Approved for P3 Phase Template OS. Per-task worktree model with merge queue confirmed as the isolation strategy. Implementation deferred to P3/P4; this approval unblocks phase template execution design.

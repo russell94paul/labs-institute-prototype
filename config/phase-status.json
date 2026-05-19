@@ -282,11 +282,11 @@
     "relatedDecisions": ["DEC-003", "DEC-004"],
     "relatedResearchTopics": ["Topic 02"],
     "decisionGating": {
-      "DEC-003": "Should be approved — worktree model informs template execution isolation",
-      "DEC-004": "Should be approved — event persistence informs execution audit trail"
+      "DEC-003": "Approved 2026-05-19 — worktree model confirmed for template execution isolation",
+      "DEC-004": "Approved 2026-05-19 — JSONL event persistence confirmed for execution audit trail"
     },
     "lastUpdated": "2026-05-19",
-    "nextRecommendedAction": "Approve DEC-003 and DEC-004, then start P3"
+    "nextRecommendedAction": "Start P3 — decision gate cleared"
   },
   {
     "phaseId": "P4-agent-runtime",

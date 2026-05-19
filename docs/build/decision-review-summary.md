@@ -155,8 +155,8 @@ Two decisions (DEC-003, DEC-004) softly inform P1 UI design but do not block sta
 |----------|-----------------|-----------|------------|---------------------|
 | DEC-001 Tenancy Model | Approve principle | No | Yes | DB migration |
 | DEC-002 Secrets Backend | Approve principle | No | Yes | Agent runtime |
-| DEC-003 Worktree Isolation | **Approve** | Soft yes | Decision: no; impl: yes | Pipeline enhancement |
-| DEC-004 Event Store | **Approve** (with clarification) | Soft yes | Yes (in-memory works for P1) | During/after P1 |
+| DEC-003 Worktree Isolation | **Approved** (2026-05-19) | Soft yes | Decision: no; impl: yes | Pipeline enhancement |
+| DEC-004 Event Store | **Approved** (2026-05-19, with current-state clarification) | Soft yes | Yes (in-memory works for P1) | During/after P1 |
 | DEC-005 Vector Store | Defer | No | Yes | Context fabric |
 | DEC-006 Wiki Role | Approve principle | No | Yes | Context fabric |
 | DEC-007 Memory Provider | Approve principle | No | Yes | Context fabric |

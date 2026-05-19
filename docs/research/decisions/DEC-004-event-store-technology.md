@@ -20,7 +20,13 @@ Topic 02 — Agent Orchestration, DAGs & Parallelization (Section 10)
 - Audit logging — event visibility and retention
 
 ## Status
-Proposed
+Approved — 2026-05-19
 
 ## Decided by
-(pending)
+Paul Russell
+
+## Current State
+P0-events implemented an in-memory ring buffer (500 events, deque-based) with SSE streaming. This serves as the pre-MVP implementation. The approved path is: in-memory ring buffer → JSONL persistence → PostgreSQL.
+
+## Approval Notes
+Approved for P3 Phase Template OS. JSONL-per-run event persistence confirmed as next step. Implementation deferred to P3; this approval unblocks execution audit trail design.
