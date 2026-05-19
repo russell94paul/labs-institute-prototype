@@ -1,5 +1,33 @@
 # Change Manifest
 
+## Local Dev Startup Utility + Skill (2026-05-19)
+
+### Files Created
+
+**scripts/**
+- `start-conductor.ps1` — Start local Conductor server (checks if running, finds python, starts engine/server.py)
+- `check-conductor.ps1` — Check if server is responding on port 8888 (exit 0/1)
+- `stop-conductor.ps1` — Find and stop process on port 8888 with confirmation prompt
+
+**.claude/skills/conductor-serve/**
+- `SKILL.md` — Claude Code skill: start or verify the local Conductor UI server
+
+**docs/architecture/**
+- `local-dev-startup.md` — How to start/check/stop Conductor locally, troubleshooting
+
+### Files Modified
+
+- `docs/build/change-manifest.md` — Added this section
+
+### Constraints Verified
+
+- No engine code modified
+- No dashboard code modified
+- No config JSON modified
+- No secrets/env files read or modified
+
+---
+
 ## P1 Build Studio MVP (2026-05-19)
 
 ### Files Created
