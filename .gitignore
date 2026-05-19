@@ -8,3 +8,4 @@ dashboard/data/pipelines.json
 .env
 .venv/
 node_modules/
+.claude/settings.local.json
