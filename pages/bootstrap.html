@@ -295,6 +295,52 @@
         pointer-events: none;
     }
     .bs-toast.show { opacity: 1; }
+
+    /* Work Guard */
+    .bs-wg-banner {
+        display: flex; align-items: center; gap: 12px;
+        padding: 10px 24px; border-bottom: 1px solid var(--border-subtle);
+        font-size: 0.72rem;
+    }
+    .bs-wg-indicator {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 4px 12px; border-radius: 8px; font-weight: 700;
+        font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .bs-wg-unlocked { background: rgba(74,222,128,0.12); color: var(--accent-green); border: 1px solid rgba(74,222,128,0.25); }
+    .bs-wg-locked { background: rgba(251,191,36,0.12); color: var(--accent-gold); border: 1px solid rgba(251,191,36,0.25); }
+    .bs-wg-stale { background: rgba(248,113,113,0.12); color: var(--accent-red); border: 1px solid rgba(248,113,113,0.25); }
+    .bs-wg-dot {
+        width: 8px; height: 8px; border-radius: 50%;
+        display: inline-block;
+    }
+    .bs-wg-dot-green { background: var(--accent-green); }
+    .bs-wg-dot-amber { background: var(--accent-gold); }
+    .bs-wg-dot-red { background: var(--accent-red); }
+    .bs-wg-detail {
+        font-size: 0.68rem; color: var(--text-dim);
+    }
+    .bs-wg-safe {
+        font-weight: 700; padding: 3px 10px; border-radius: 6px;
+        font-size: 0.62rem; text-transform: uppercase;
+    }
+    .bs-wg-safe-yes { background: rgba(74,222,128,0.15); color: var(--accent-green); }
+    .bs-wg-safe-no { background: rgba(248,113,113,0.15); color: var(--accent-red); }
+
+    .bs-wg-section { margin-bottom: 16px; }
+    .bs-wg-grid {
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    @media (max-width: 700px) { .bs-wg-grid { grid-template-columns: 1fr; } }
+    .bs-wg-check-row {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 8px 12px; border-radius: 6px;
+        border: 1px solid var(--border-subtle);
+        font-size: 0.72rem; margin-bottom: 4px;
+    }
+    .bs-wg-check-pass { color: var(--accent-green); font-weight: 700; }
+    .bs-wg-check-fail { color: var(--accent-red); font-weight: 700; }
     </style>
 </head>
 <body>
@@ -313,11 +359,23 @@
             </div>
         </div>
 
+        <!-- Work Guard Banner -->
+        <div class="bs-wg-banner" id="bs-wg-banner">
+            <span class="bs-wg-indicator bs-wg-unlocked" id="bs-wg-lock-badge">
+                <span class="bs-wg-dot bs-wg-dot-green" id="bs-wg-dot"></span>
+                <span id="bs-wg-lock-label">Loading...</span>
+            </span>
+            <span class="bs-wg-safe bs-wg-safe-yes" id="bs-wg-safe-badge">...</span>
+            <span class="bs-wg-detail" id="bs-wg-detail"></span>
+            <button class="bs-btn" onclick="BS.refreshWorkGuard()" style="margin-left:auto;font-size:0.6rem;">Check</button>
+        </div>
+
         <!-- KPI Strip -->
         <div class="bs-kpi-strip" id="bs-kpi-strip"></div>
 
         <!-- Tabs -->
         <div class="bs-tabs" id="bs-tabs">
+            <div class="bs-tab" data-panel="workguard">Work Guard</div>
             <div class="bs-tab active" data-panel="roadmap">Roadmap</div>
             <div class="bs-tab" data-panel="dag">Dependencies</div>
             <div class="bs-tab" data-panel="queue">Work Queue</div>
@@ -331,6 +389,32 @@
         </div>
 
         <!-- Panels -->
+
+        <!-- Work Guard -->
+        <div class="bs-panel" id="panel-workguard">
+            <div class="bs-section-title">Work Guard Status</div>
+            <div class="bs-wg-grid">
+                <div class="bs-card" id="bs-wg-git-card">
+                    <div class="bs-card-header"><div class="bs-card-title">Git State</div></div>
+                    <div id="bs-wg-git-detail">Loading...</div>
+                </div>
+                <div class="bs-card" id="bs-wg-lock-card">
+                    <div class="bs-card-header"><div class="bs-card-title">Session Lock</div></div>
+                    <div id="bs-wg-lock-detail">Loading...</div>
+                </div>
+            </div>
+            <div class="bs-card" style="margin-top:12px;">
+                <div class="bs-card-header">
+                    <div class="bs-card-title">Safety Checks</div>
+                    <span class="bs-wg-safe bs-wg-safe-yes" id="bs-wg-safe-detail">...</span>
+                </div>
+                <div id="bs-wg-checks-list">Loading...</div>
+            </div>
+            <div class="bs-card" style="margin-top:12px;">
+                <div class="bs-card-header"><div class="bs-card-title">Recommended Action</div></div>
+                <div id="bs-wg-recommendation" style="font-size:0.78rem;color:var(--text-secondary);">Loading...</div>
+            </div>
+        </div>
 
         <!-- Roadmap -->
         <div class="bs-panel active" id="panel-roadmap">
@@ -987,6 +1071,165 @@
             toast('Launch instructions copied!');
         }
 
+        // --- Work Guard ---
+        var wgData = null;
+
+        function fetchWorkGuard() {
+            return fetch('/api/work-guard/status')
+                .then(function(r) { return r.json(); })
+                .then(function(data) { wgData = data; return data; })
+                .catch(function() { wgData = null; return null; });
+        }
+
+        function renderWorkGuardBanner() {
+            if (!wgData) {
+                document.getElementById('bs-wg-lock-label').textContent = 'Unavailable';
+                document.getElementById('bs-wg-safe-badge').textContent = '?';
+                document.getElementById('bs-wg-detail').textContent = 'Server not reachable';
+                return;
+            }
+
+            var lockBadge = document.getElementById('bs-wg-lock-badge');
+            var dot = document.getElementById('bs-wg-dot');
+            var lockLabel = document.getElementById('bs-wg-lock-label');
+            var safeBadge = document.getElementById('bs-wg-safe-badge');
+            var detail = document.getElementById('bs-wg-detail');
+
+            lockBadge.className = 'bs-wg-indicator';
+            dot.className = 'bs-wg-dot';
+
+            if (wgData.lockStatus === 'unlocked') {
+                lockBadge.classList.add('bs-wg-unlocked');
+                dot.classList.add('bs-wg-dot-green');
+                lockLabel.textContent = 'Unlocked';
+            } else if (wgData.lockStatus === 'stale') {
+                lockBadge.classList.add('bs-wg-stale');
+                dot.classList.add('bs-wg-dot-red');
+                lockLabel.textContent = 'Stale Lock';
+            } else {
+                lockBadge.classList.add('bs-wg-locked');
+                dot.classList.add('bs-wg-dot-amber');
+                lockLabel.textContent = 'Locked';
+            }
+
+            safeBadge.className = 'bs-wg-safe';
+            if (wgData.safeToRun) {
+                safeBadge.classList.add('bs-wg-safe-yes');
+                safeBadge.textContent = 'Safe to Run';
+            } else {
+                safeBadge.classList.add('bs-wg-safe-no');
+                safeBadge.textContent = 'Not Safe';
+            }
+
+            var parts = [];
+            if (wgData.git) {
+                parts.push(wgData.git.branch + ' @ ' + wgData.git.latestCommit);
+                if (!wgData.git.clean) parts.push(wgData.git.dirtyFileCount + ' dirty');
+            }
+            detail.textContent = parts.join(' | ');
+        }
+
+        function renderWorkGuardPanel() {
+            if (!wgData) return;
+
+            var gitHtml = '';
+            if (wgData.git) {
+                var g = wgData.git;
+                gitHtml += '<div class="bs-wg-check-row">Branch <span style="font-family:var(--font-mono);color:var(--accent-blue);">' + esc(g.branch) + '</span></div>';
+                gitHtml += '<div class="bs-wg-check-row">Latest Commit <span style="font-family:var(--font-mono);">' + esc(g.latestCommit) + '</span></div>';
+                gitHtml += '<div class="bs-wg-check-row">Commit Message <span style="color:var(--text-muted);font-size:0.68rem;">' + esc(g.commitMessage) + '</span></div>';
+                gitHtml += '<div class="bs-wg-check-row">Working Tree ';
+                if (g.clean) {
+                    gitHtml += '<span class="bs-wg-check-pass">Clean</span>';
+                } else {
+                    gitHtml += '<span class="bs-wg-check-fail">' + g.dirtyFileCount + ' dirty files</span>';
+                }
+                gitHtml += '</div>';
+                if (!g.clean && g.dirtyFiles) {
+                    gitHtml += '<div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--accent-red);padding:6px 12px;background:rgba(248,113,113,0.06);border-radius:6px;margin-top:4px;">';
+                    for (var d = 0; d < g.dirtyFiles.length && d < 10; d++) {
+                        gitHtml += esc(g.dirtyFiles[d]) + '<br>';
+                    }
+                    if (g.dirtyFiles.length > 10) gitHtml += '... and ' + (g.dirtyFiles.length - 10) + ' more';
+                    gitHtml += '</div>';
+                }
+            }
+            document.getElementById('bs-wg-git-detail').innerHTML = gitHtml || '<div class="bs-empty">No git data</div>';
+
+            var lockHtml = '';
+            if (wgData.lockStatus === 'unlocked') {
+                lockHtml = '<div style="text-align:center;padding:16px;color:var(--accent-green);font-weight:600;">No active lock</div>';
+            } else if (wgData.lock) {
+                var lk = wgData.lock;
+                lockHtml += '<div class="bs-wg-check-row">Lock ID <span style="font-family:var(--font-mono);font-size:0.65rem;">' + esc(lk.lockId) + '</span></div>';
+                lockHtml += '<div class="bs-wg-check-row">Owner <span>' + esc(lk.owner) + '</span></div>';
+                lockHtml += '<div class="bs-wg-check-row">Phase <span>' + esc(lk.phaseId || 'none') + '</span></div>';
+                lockHtml += '<div class="bs-wg-check-row">Type <span>' + esc(lk.sessionType) + '</span></div>';
+                lockHtml += '<div class="bs-wg-check-row">Started <span style="font-size:0.65rem;">' + esc(lk.startedAt) + '</span></div>';
+                lockHtml += '<div class="bs-wg-check-row">Heartbeat <span style="font-size:0.65rem;">' + esc(lk.lastHeartbeatAt) + '</span></div>';
+                lockHtml += '<div class="bs-wg-check-row">Stale? ';
+                if (lk.stale) {
+                    lockHtml += '<span class="bs-wg-check-fail">Yes</span>';
+                } else {
+                    lockHtml += '<span class="bs-wg-check-pass">No</span>';
+                }
+                lockHtml += '</div>';
+                lockHtml += '<div class="bs-wg-check-row">PID (' + (lk.pid || '?') + ') Alive? ';
+                if (lk.pidAlive) {
+                    lockHtml += '<span class="bs-wg-check-pass">Yes</span>';
+                } else {
+                    lockHtml += '<span class="bs-wg-check-fail">No</span>';
+                }
+                lockHtml += '</div>';
+            }
+            document.getElementById('bs-wg-lock-detail').innerHTML = lockHtml;
+
+            var checksHtml = '';
+            var checks = wgData.checks || {};
+            var checkItems = [
+                ['cleanWorkingTree', 'Clean Working Tree'],
+                ['noActiveLock', 'No Active Lock'],
+                ['previousPhaseCommitted', 'Previous Phase Committed'],
+            ];
+            for (var c = 0; c < checkItems.length; c++) {
+                var key = checkItems[c][0];
+                var label = checkItems[c][1];
+                if (checks[key] !== undefined) {
+                    checksHtml += '<div class="bs-wg-check-row">' + label + ' ';
+                    if (checks[key]) {
+                        checksHtml += '<span class="bs-wg-check-pass">Pass</span>';
+                    } else {
+                        checksHtml += '<span class="bs-wg-check-fail">Fail</span>';
+                    }
+                    checksHtml += '</div>';
+                }
+            }
+            if (checks.lockStale !== undefined) {
+                checksHtml += '<div class="bs-wg-check-row">Lock Stale ';
+                checksHtml += '<span class="' + (checks.lockStale ? 'bs-wg-check-fail' : 'bs-wg-check-pass') + '">' + (checks.lockStale ? 'Yes' : 'No') + '</span></div>';
+            }
+            document.getElementById('bs-wg-checks-list').innerHTML = checksHtml || '<div class="bs-empty">No checks</div>';
+
+            var safeDetail = document.getElementById('bs-wg-safe-detail');
+            safeDetail.className = 'bs-wg-safe';
+            if (wgData.safeToRun) {
+                safeDetail.classList.add('bs-wg-safe-yes');
+                safeDetail.textContent = 'Safe to Run';
+            } else {
+                safeDetail.classList.add('bs-wg-safe-no');
+                safeDetail.textContent = 'Not Safe';
+            }
+
+            document.getElementById('bs-wg-recommendation').innerHTML = esc(wgData.recommendedAction || 'No recommendation');
+        }
+
+        function refreshWorkGuard() {
+            fetchWorkGuard().then(function() {
+                renderWorkGuardBanner();
+                renderWorkGuardPanel();
+            });
+        }
+
         // --- Escape HTML ---
         function esc(s) {
             if (!s) return '';
@@ -1012,8 +1255,10 @@
 
         // --- Refresh ---
         function refresh() {
-            Promise.all([fetchPhases(), fetchSummary()]).then(function() {
+            Promise.all([fetchPhases(), fetchSummary(), fetchWorkGuard()]).then(function() {
                 renderKPIs();
+                renderWorkGuardBanner();
+                renderWorkGuardPanel();
                 renderRoadmap();
                 renderDAG();
                 renderQueue();
@@ -1048,7 +1293,8 @@
             markBlocked: markBlocked,
             copyPromptPath: copyPromptPath,
             showLaunchInstructions: showLaunchInstructions,
-            copyText: copyText
+            copyText: copyText,
+            refreshWorkGuard: refreshWorkGuard
         };
     })();
     </script>
