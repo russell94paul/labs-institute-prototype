@@ -1,5 +1,67 @@
 # Change Manifest
 
+## UC-001 Launchpad Pilot Registration (2026-05-19)
+
+### Files Created
+
+**docs/use-cases/**
+- `UC-001-launchpad-work-delivery-operations-portal.md` — Pilot use-case registration: purpose, capabilities, pain points, workflows, security boundaries, phase mapping
+- `UC-001-launchpad-rebuild-vs-refactor-framework.md` — 5 migration strategies compared (incremental refactor, module extraction, strangler migration, full rebuild, domain pack) with pros/cons/risk/timeline
+- `UC-001-conductor-phase-mapping.md` — Launchpad patterns mapped to Conductor phases P3-P13 with specific adoption recommendations per phase
+
+**docs/reference-repos/**
+- `aldc-launchpad-pattern-extraction.md` — 10 reusable patterns, 7 anti-patterns, architecture/UX/orchestration/stage-script/context/agent lessons, adoption phase recommendations
+
+**docs/build/**
+- `session-handoffs/uc-001-launchpad-pilot-handoff.md` — Session handoff
+
+### Files Modified
+
+- `docs/build/change-manifest.md` — Added this section
+
+### Constraints Verified
+
+- No engine code modified
+- No dashboard code modified
+- No Launchpad code copied into Conductor
+- No secrets/env files read or modified
+- No client data, credentials, or registry data added
+- UC-001 registered as reference/pilot only
+
+---
+
+## P3+ Roadmap Planning (2026-05-19)
+
+### Files Created
+
+**docs/prompts/**
+- `P3-phase-template-os-execution-queue.md` — P3 build prompt: phase template schema, execution queue, phase runner UI
+- `P4-agent-runtime-parallel-worktree.md` — P4 build prompt: agent registry, dispatch, worktree isolation, merge queue
+- `P5-context-memory-core-mvp.md` — P5 build prompt: memory ledger, context retrieval, project context packs
+
+**docs/build/**
+- `p3-plus-roadmap-planning-report.md` — Full roadmap planning report: 13 phases, decision mapping, research mapping, dependency graph, parallelization
+- `session-handoffs/p3-plus-roadmap-handoff.md` — Session handoff
+
+### Files Modified
+
+- `config/phase-status.json` — Added 13 new phases (P3-P15), all status: not_started; existing 10 completed phases preserved unchanged
+- `docs/build/blockers.md` — Added Blocker #4 (DEC-003/004 approval), updated Affects column for existing blockers
+- `docs/build/approval-requests.md` — Added #10 (P3 Phase Template OS start)
+- `docs/build/parallelization-status.md` — Updated for full P3+ parallelization analysis
+- `docs/build/change-manifest.md` — Added this section
+
+### Constraints Verified
+
+- No engine code modified
+- No dashboard code modified
+- No secrets/env files read or modified
+- All 10 existing completed phases preserved unchanged in phase-status.json
+- All 13 new phases set to not_started
+- config/phase-status.json is valid JSON
+
+---
+
 ## P2 Product Onboarding Studio (2026-05-19)
 
 ### Files Created
