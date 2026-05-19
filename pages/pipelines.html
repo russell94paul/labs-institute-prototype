@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pipelines</title>
+    <link rel="stylesheet" href="../styles/base.css">
+    <style>
+    .pl-shell { padding: 0; }
+
+    .pl-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 20px 24px 12px; flex-wrap: wrap; gap: 12px;
+    }
+    .pl-header-left { display: flex; align-items: center; gap: 14px; }
+    .pl-title {
+        font-size: 1.1rem; font-weight: 800; letter-spacing: 0.12em;
+        background: linear-gradient(90deg, #38bdf8, #a78bfa, #4ade80);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .pl-subtitle {
+        font-size: 0.62rem; color: var(--text-dim); text-transform: uppercase;
+        letter-spacing: 0.14em; font-weight: 600;
+    }
+
+    .pl-kpi-strip {
+        display: flex; align-items: center; gap: 10px;
+        padding: 8px 24px 14px; flex-wrap: wrap;
+    }
+    .pl-kpi {
+        display: flex; align-items: center; gap: 6px;
+        font-size: 0.7rem; color: var(--text-dim);
+        background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle);
+        border-radius: 8px; padding: 5px 12px;
+    }
+    .pl-kpi-val {
+        font-family: var(--font-mono); font-weight: 800;
+        color: var(--text-secondary); font-size: 0.78rem;
+    }
+    .pl-kpi-val.green { color: var(--accent-green); }
+    .pl-kpi-val.blue { color: var(--accent-blue); }
+    .pl-kpi-val.amber { color: var(--accent-amber); }
+    .pl-kpi-val.red { color: var(--accent-red); }
+
+    .pl-tabs {
+        display: flex; gap: 2px; padding: 0 24px;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+    .pl-tab {
+        padding: 8px 16px; font-size: 0.72rem; font-weight: 600;
+        color: var(--text-dim); cursor: pointer;
+        border-bottom: 2px solid transparent; transition: all 0.2s;
+    }
+    .pl-tab:hover { color: var(--text-secondary); }
+    .pl-tab.active {
+        color: var(--accent-blue); border-bottom-color: var(--accent-blue);
+    }
+
+    .pl-panel { padding: 16px 24px; display: none; }
+    .pl-panel.active { display: block; }
+
+    .pl-card {
+        background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle);
+        border-radius: 10px; padding: 16px; margin-bottom: 12px;
+        transition: border-color 0.2s;
+    }
+    .pl-card:hover { border-color: var(--border-light); }
+
+    .pl-card-header {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    .pl-card-title {
+        font-size: 0.85rem; font-weight: 700; color: var(--text-primary);
+    }
+    .pl-card-meta {
+        font-size: 0.68rem; color: var(--text-dim); font-family: var(--font-mono);
+    }
+
+    .pl-status-badge {
+        display: inline-flex; align-items: center; gap: 4px;
+        font-size: 0.6rem; font-weight: 700; padding: 2px 8px; border-radius: 8px;
+        text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .pl-status-pending { background: rgba(148,163,184,0.12); color: #94a3b8; }
+    .pl-status-ready { background: rgba(56,189,248,0.12); color: #38bdf8; }
+    .pl-status-running { background: rgba(74,222,128,0.12); color: #4ade80; }
+    .pl-status-completed { background: rgba(74,222,128,0.18); color: #4ade80; }
+    .pl-status-failed { background: rgba(248,113,113,0.12); color: #f87171; }
+    .pl-status-cancelled { background: rgba(148,163,184,0.12); color: #94a3b8; }
+    .pl-status-blocked { background: rgba(251,191,36,0.12); color: #fbbf24; }
+    .pl-status-waiting_for_approval { background: rgba(167,139,250,0.12); color: #a78bfa; }
+    .pl-status-skipped { background: rgba(148,163,184,0.08); color: #64748b; }
+
+    .pl-dag {
+        display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;
+    }
+    .pl-stage-node {
+        display: flex; flex-direction: column; align-items: center; gap: 4px;
+        padding: 8px 14px; border-radius: 8px; min-width: 90px;
+        border: 1px solid var(--border-subtle); background: rgba(255,255,255,0.015);
+        font-size: 0.68rem; position: relative;
+    }
+    .pl-stage-name { font-weight: 700; color: var(--text-secondary); }
+    .pl-stage-arrow {
+        display: flex; align-items: center; color: var(--text-dim);
+        font-size: 0.7rem; padding: 0 2px;
+    }
+
+    .pl-actions { display: flex; gap: 6px; margin-top: 10px; }
+    .pl-btn {
+        font-size: 0.65rem; font-weight: 700; padding: 4px 12px;
+        border-radius: 6px; cursor: pointer; border: 1px solid var(--border-subtle);
+        background: rgba(255,255,255,0.03); color: var(--text-secondary);
+        transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .pl-btn:hover { background: rgba(255,255,255,0.06); border-color: var(--border-light); }
+    .pl-btn-primary { background: rgba(56,189,248,0.12); color: #38bdf8; border-color: rgba(56,189,248,0.3); }
+    .pl-btn-danger { background: rgba(248,113,113,0.12); color: #f87171; border-color: rgba(248,113,113,0.3); }
+    .pl-btn-green { background: rgba(74,222,128,0.12); color: #4ade80; border-color: rgba(74,222,128,0.3); }
+
+    .pl-empty {
+        text-align: center; padding: 60px 20px; color: var(--text-dim);
+    }
+    .pl-empty h3 { font-size: 0.9rem; margin-bottom: 6px; color: var(--text-secondary); }
+    .pl-empty p { font-size: 0.75rem; }
+
+    .pl-tpl-grid {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;
+    }
+    .pl-tpl-card {
+        background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle);
+        border-radius: 10px; padding: 16px; cursor: pointer; transition: all 0.2s;
+    }
+    .pl-tpl-card:hover { border-color: var(--accent-blue); }
+    .pl-tpl-name { font-size: 0.82rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .pl-tpl-desc { font-size: 0.7rem; color: var(--text-dim); margin-bottom: 6px; }
+    .pl-tpl-meta { font-size: 0.62rem; color: var(--text-dim); font-family: var(--font-mono); }
+
+    .pl-detail-overlay {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.6); z-index: 200; display: none;
+        align-items: center; justify-content: center;
+    }
+    .pl-detail-overlay.active { display: flex; }
+    .pl-detail-box {
+        background: var(--surface-primary); border: 1px solid var(--border-light);
+        border-radius: 14px; padding: 24px; width: 90%; max-width: 640px;
+        max-height: 80vh; overflow-y: auto;
+    }
+    .pl-detail-close {
+        float: right; cursor: pointer; color: var(--text-dim); font-size: 1.2rem;
+        background: none; border: none; padding: 0;
+    }
+    .pl-detail-title { font-size: 1rem; font-weight: 800; color: var(--text-primary); margin-bottom: 12px; }
+
+    .pl-stage-table {
+        width: 100%; border-collapse: collapse; font-size: 0.72rem;
+    }
+    .pl-stage-table th {
+        text-align: left; font-weight: 700; color: var(--text-dim);
+        padding: 6px 10px; border-bottom: 1px solid var(--border-subtle);
+        text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.6rem;
+    }
+    .pl-stage-table td {
+        padding: 8px 10px; border-bottom: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+    }
+    .pl-stage-table tr:last-child td { border-bottom: none; }
+    </style>
+</head>
+<body>
+    <div class="pl-shell">
+        <div class="pl-header">
+            <div class="pl-header-left">
+                <div>
+                    <div class="pl-title">PIPELINES</div>
+                    <div class="pl-subtitle">DAG Execution Engine</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pl-kpi-strip" id="pl-kpis"></div>
+
+        <div class="pl-tabs" id="pl-tabs">
+            <div class="pl-tab active" data-tab="list">Pipelines</div>
+            <div class="pl-tab" data-tab="templates">Templates</div>
+            <div class="pl-tab" data-tab="dry-run">Dry Run</div>
+        </div>
+
+        <div class="pl-panel active" id="panel-list"></div>
+        <div class="pl-panel" id="panel-templates"></div>
+        <div class="pl-panel" id="panel-dry-run"></div>
+    </div>
+
+    <div class="pl-detail-overlay" id="pl-detail-overlay">
+        <div class="pl-detail-box" id="pl-detail-box"></div>
+    </div>
+
+    <script>
+    (function() {
+        var API = '/api';
+        var currentPipelines = [];
+        var currentTemplates = [];
+
+        function fetchJSON(url) {
+            return fetch(url).then(function(r) { return r.ok ? r.json() : null; }).catch(function() { return null; });
+        }
+        function postJSON(url, body) {
+            return fetch(url, {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: body ? JSON.stringify(body) : '{}'
+            }).then(function(r) { return r.json(); }).catch(function() { return null; });
+        }
+
+        // Tabs
+        document.querySelectorAll('.pl-tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.pl-tab').forEach(function(t) { t.classList.remove('active'); });
+                document.querySelectorAll('.pl-panel').forEach(function(p) { p.classList.remove('active'); });
+                tab.classList.add('active');
+                document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Status badge
+        function statusBadge(status) {
+            return '<span class="pl-status-badge pl-status-' + (status || 'pending') + '">' + (status || 'pending') + '</span>';
+        }
+
+        // KPIs
+        function renderKPIs() {
+            var total = currentPipelines.length;
+            var running = currentPipelines.filter(function(p) { return p.status === 'running'; }).length;
+            var completed = currentPipelines.filter(function(p) { return p.status === 'completed'; }).length;
+            var failed = currentPipelines.filter(function(p) { return p.status === 'failed'; }).length;
+            var cost = currentPipelines.reduce(function(s, p) { return s + (p.cost_usd || 0); }, 0);
+
+            document.getElementById('pl-kpis').innerHTML =
+                '<div class="pl-kpi">Total <span class="pl-kpi-val">' + total + '</span></div>' +
+                '<div class="pl-kpi">Running <span class="pl-kpi-val blue">' + running + '</span></div>' +
+                '<div class="pl-kpi">Completed <span class="pl-kpi-val green">' + completed + '</span></div>' +
+                '<div class="pl-kpi">Failed <span class="pl-kpi-val red">' + failed + '</span></div>' +
+                '<div class="pl-kpi">Cost <span class="pl-kpi-val">$' + cost.toFixed(2) + '</span></div>' +
+                '<div class="pl-kpi">Templates <span class="pl-kpi-val">' + currentTemplates.length + '</span></div>';
+        }
+
+        // Pipeline list
+        function renderPipelineList() {
+            var el = document.getElementById('panel-list');
+            if (!currentPipelines.length) {
+                el.innerHTML = '<div class="pl-empty"><h3>No pipelines</h3>' +
+                    '<p>Create a pipeline from the Templates tab or via the API.</p></div>';
+                return;
+            }
+            var html = '';
+            currentPipelines.forEach(function(p) {
+                html += '<div class="pl-card" data-pid="' + p.id + '">';
+                html += '<div class="pl-card-header">';
+                html += '<div><span class="pl-card-title">' + esc(p.name) + '</span> ' + statusBadge(p.status) + '</div>';
+                html += '<div class="pl-card-meta">' + p.id + '</div>';
+                html += '</div>';
+
+                html += '<div class="pl-dag">';
+                var stages = p.stages || [];
+                for (var i = 0; i < stages.length; i++) {
+                    if (i > 0) html += '<div class="pl-stage-arrow">&rarr;</div>';
+                    html += '<div class="pl-stage-node">';
+                    html += '<div class="pl-stage-name">' + esc(stages[i].label || stages[i].name) + '</div>';
+                    html += statusBadge(stages[i].status);
+                    html += '</div>';
+                }
+                html += '</div>';
+
+                html += '<div class="pl-actions">';
+                if (p.status === 'pending') {
+                    html += '<button class="pl-btn pl-btn-primary" onclick="startPipeline(\'' + p.id + '\')">Start</button>';
+                }
+                if (p.status === 'running') {
+                    html += '<button class="pl-btn pl-btn-primary" onclick="advancePipeline(\'' + p.id + '\')">Advance</button>';
+                    html += '<button class="pl-btn pl-btn-danger" onclick="cancelPipeline(\'' + p.id + '\')">Cancel</button>';
+                }
+                html += '<button class="pl-btn" onclick="showPipelineDetail(\'' + p.id + '\')">Details</button>';
+                html += '</div>';
+                html += '</div>';
+            });
+            el.innerHTML = html;
+        }
+
+        // Templates
+        function renderTemplates() {
+            var el = document.getElementById('panel-templates');
+            if (!currentTemplates.length) {
+                el.innerHTML = '<div class="pl-empty"><h3>No templates found</h3>' +
+                    '<p>Add YAML templates to templates/pipelines/</p></div>';
+                return;
+            }
+            var html = '<div class="pl-tpl-grid">';
+            currentTemplates.forEach(function(t) {
+                html += '<div class="pl-tpl-card" onclick="showDryRun(\'' + esc(t.slug) + '\')">';
+                html += '<div class="pl-tpl-name">' + esc(t.name) + '</div>';
+                html += '<div class="pl-tpl-desc">' + esc(t.description) + '</div>';
+                html += '<div class="pl-tpl-meta">' + t.stage_count + ' stages &middot; ' + t.slug + '</div>';
+                html += '</div>';
+            });
+            html += '</div>';
+            el.innerHTML = html;
+        }
+
+        // Dry run
+        window.showDryRun = function(slug) {
+            document.querySelectorAll('.pl-tab').forEach(function(t) { t.classList.remove('active'); });
+            document.querySelectorAll('.pl-panel').forEach(function(p) { p.classList.remove('active'); });
+            document.querySelector('.pl-tab[data-tab="dry-run"]').classList.add('active');
+            document.getElementById('panel-dry-run').classList.add('active');
+
+            var el = document.getElementById('panel-dry-run');
+            el.innerHTML = '<div style="padding:20px;color:var(--text-dim);">Loading dry run...</div>';
+
+            fetchJSON(API + '/pipelines/dry-run?template=' + slug).then(function(data) {
+                if (!data) { el.innerHTML = '<div class="pl-empty"><p>Dry run failed.</p></div>'; return; }
+
+                var html = '<div class="pl-card">';
+                html += '<div class="pl-card-header"><div class="pl-card-title">' + esc(data.template_name) + ' — Dry Run</div></div>';
+                html += '<div style="font-size:0.72rem;color:var(--text-dim);margin-bottom:12px;">' +
+                    data.stage_count + ' stages &middot; Est. $' + data.total_budget_usd.toFixed(2) +
+                    ' &middot; Est. ' + data.total_time_min + ' min</div>';
+
+                html += '<div style="margin-bottom:12px;"><strong style="font-size:0.7rem;color:var(--text-dim);">EXECUTION ORDER:</strong> ' +
+                    '<span style="font-size:0.72rem;font-family:var(--font-mono);color:var(--text-secondary);">' +
+                    data.execution_order.join(' &rarr; ') + '</span></div>';
+
+                html += '<div style="margin-bottom:12px;"><strong style="font-size:0.7rem;color:var(--text-dim);">READY STAGES:</strong> ' +
+                    '<span style="font-size:0.72rem;font-family:var(--font-mono);color:var(--accent-blue);">' +
+                    (data.ready_stages.length ? data.ready_stages.join(', ') : 'none') + '</span></div>';
+
+                html += '<table class="pl-stage-table"><thead><tr>';
+                html += '<th>Stage</th><th>Type</th><th>Depends On</th><th>Auto</th><th>Budget</th><th>Timeout</th>';
+                html += '</tr></thead><tbody>';
+                data.stages.forEach(function(s) {
+                    html += '<tr>';
+                    html += '<td><strong>' + esc(s.label || s.name) + '</strong></td>';
+                    html += '<td>' + s.type + '</td>';
+                    html += '<td>' + (s.depends_on.length ? s.depends_on.join(', ') : '—') + '</td>';
+                    html += '<td>' + (s.auto_advance ? 'Yes' : 'No') + '</td>';
+                    html += '<td>$' + s.budget_usd.toFixed(2) + '</td>';
+                    html += '<td>' + s.timeout_min + 'm</td>';
+                    html += '</tr>';
+                });
+                html += '</tbody></table>';
+
+                html += '<div class="pl-actions" style="margin-top:14px;">';
+                html += '<button class="pl-btn pl-btn-green" onclick="createFromTemplate(\'' + esc(data.template) + '\')">Create Pipeline</button>';
+                html += '</div>';
+                html += '</div>';
+                el.innerHTML = html;
+            });
+        };
+
+        // Detail overlay
+        window.showPipelineDetail = function(pid) {
+            var p = currentPipelines.find(function(x) { return x.id === pid; });
+            if (!p) return;
+            var box = document.getElementById('pl-detail-box');
+            var html = '<button class="pl-detail-close" onclick="closePipelineDetail()">&times;</button>';
+            html += '<div class="pl-detail-title">' + esc(p.name) + '</div>';
+            html += '<div style="margin-bottom:12px;">' + statusBadge(p.status) +
+                ' <span style="font-size:0.68rem;color:var(--text-dim);margin-left:8px;">' + p.id + '</span></div>';
+
+            html += '<table class="pl-stage-table"><thead><tr>';
+            html += '<th>Stage</th><th>Status</th><th>Type</th><th>Session</th><th>Actions</th>';
+            html += '</tr></thead><tbody>';
+            (p.stages || []).forEach(function(s) {
+                html += '<tr>';
+                html += '<td><strong>' + esc(s.label || s.name) + '</strong></td>';
+                html += '<td>' + statusBadge(s.status) + '</td>';
+                html += '<td>' + s.type + '</td>';
+                html += '<td style="font-family:var(--font-mono);font-size:0.62rem;">' + (s.session_id || '—') + '</td>';
+                html += '<td>';
+                if (s.status === 'failed' || s.status === 'blocked') {
+                    html += '<button class="pl-btn" onclick="retryStage(\'' + pid + '\',\'' + s.name + '\')">Retry</button> ';
+                }
+                if (s.status === 'waiting_for_approval') {
+                    html += '<button class="pl-btn pl-btn-green" onclick="approveGate(\'' + pid + '\',\'' + s.name + '\')">Approve</button> ';
+                }
+                if (s.status !== 'completed' && s.status !== 'cancelled' && s.status !== 'skipped') {
+                    html += '<button class="pl-btn" onclick="skipStage(\'' + pid + '\',\'' + s.name + '\')">Skip</button>';
+                }
+                html += '</td>';
+                html += '</tr>';
+                if (s.error) {
+                    html += '<tr><td colspan="5" style="color:var(--accent-red);font-size:0.65rem;padding:2px 10px 8px;">' + esc(s.error) + '</td></tr>';
+                }
+            });
+            html += '</tbody></table>';
+
+            if (p.created_at) html += '<div style="font-size:0.65rem;color:var(--text-dim);margin-top:12px;">Created: ' + p.created_at + '</div>';
+            if (p.cost_usd) html += '<div style="font-size:0.65rem;color:var(--text-dim);">Cost: $' + p.cost_usd.toFixed(2) + '</div>';
+
+            box.innerHTML = html;
+            document.getElementById('pl-detail-overlay').classList.add('active');
+        };
+
+        window.closePipelineDetail = function() {
+            document.getElementById('pl-detail-overlay').classList.remove('active');
+        };
+        document.getElementById('pl-detail-overlay').addEventListener('click', function(e) {
+            if (e.target === this) closePipelineDetail();
+        });
+
+        // Actions
+        window.startPipeline = function(pid) {
+            postJSON(API + '/pipelines/' + pid + '/start').then(function() { refresh(); });
+        };
+        window.advancePipeline = function(pid) {
+            postJSON(API + '/pipelines/' + pid + '/advance').then(function() { refresh(); });
+        };
+        window.cancelPipeline = function(pid) {
+            postJSON(API + '/pipelines/' + pid + '/cancel').then(function() { refresh(); });
+        };
+        window.retryStage = function(pid, stage) {
+            postJSON(API + '/pipelines/' + pid + '/stages/' + stage + '/retry').then(function() { refresh(); showPipelineDetail(pid); });
+        };
+        window.skipStage = function(pid, stage) {
+            postJSON(API + '/pipelines/' + pid + '/stages/' + stage + '/skip').then(function() { refresh(); showPipelineDetail(pid); });
+        };
+        window.approveGate = function(pid, stage) {
+            postJSON(API + '/pipelines/' + pid + '/stages/' + stage + '/approve').then(function() { refresh(); showPipelineDetail(pid); });
+        };
+        window.createFromTemplate = function(slug) {
+            var name = prompt('Pipeline name:', slug + ' pipeline');
+            if (!name) return;
+            postJSON(API + '/pipelines', { name: name, template: slug }).then(function() { refresh(); switchTab('list'); });
+        };
+
+        function switchTab(tab) {
+            document.querySelectorAll('.pl-tab').forEach(function(t) { t.classList.remove('active'); });
+            document.querySelectorAll('.pl-panel').forEach(function(p) { p.classList.remove('active'); });
+            document.querySelector('.pl-tab[data-tab="' + tab + '"]').classList.add('active');
+            document.getElementById('panel-' + tab).classList.add('active');
+        }
+
+        function esc(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+
+        function refresh() {
+            Promise.all([
+                fetchJSON(API + '/pipelines'),
+                fetchJSON(API + '/templates')
+            ]).then(function(res) {
+                currentPipelines = res[0] || [];
+                currentTemplates = res[1] || [];
+                renderKPIs();
+                renderPipelineList();
+                renderTemplates();
+            });
+        }
+
+        refresh();
+        setInterval(refresh, 5000);
+    })();
+    </script>
+</body>
+</html>
