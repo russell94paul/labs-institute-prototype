@@ -15,6 +15,7 @@
 |---|---------|----------|------|-------|
 | 4 | P0 Pipeline DAG Engine start | Paul | 2026-05-18 | Approved via direct session launch |
 | 5 | P0.5 Work Guard implementation | Paul | 2026-05-19 | User-initiated session — P0.5 executed and completed |
+| 6 | P0-events Event System implementation | Paul | 2026-05-19 | User-initiated session — P0-events executed and completed |
 
 ## Rejected
 

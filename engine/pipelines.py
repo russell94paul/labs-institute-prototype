@@ -18,6 +18,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 
+from engine import events
+
 # ---------------------------------------------------------------------------
 # Module-level configuration — call configure() before first use
 # ---------------------------------------------------------------------------
@@ -244,6 +246,15 @@ def _transition_stage(
         if error:
             stage["error"] = error
 
+    events.emit("pipeline.stage.status_changed", {
+        "pipelineId": pipeline.get("id"),
+        "pipelineName": pipeline.get("name"),
+        "stageName": stage["name"],
+        "stageLabel": stage.get("label", stage["name"]),
+        "oldStatus": old_status,
+        "newStatus": new_status,
+    }, source="pipelines")
+
     if _on_stage_transition:
         try:
             _on_stage_transition(pipeline, stage, old_status, new_status)
@@ -336,6 +347,12 @@ def create_pipeline(
         _pipelines[pid] = pipeline
         _flush_state()
 
+    events.emit("pipeline.created", {
+        "pipelineId": pid,
+        "name": name,
+        "template": template_slug,
+    }, source="pipelines")
+
     return pipeline, None
 
 
@@ -363,6 +380,11 @@ def start_pipeline(pid: str, session_launcher: Optional[Callable] = None) -> Tup
             _transition_stage(pipeline, name, "ready")
 
         _flush_state()
+
+    events.emit("pipeline.started", {
+        "pipelineId": pid,
+        "name": pipeline.get("name"),
+    }, source="pipelines")
 
     if session_launcher:
         _auto_launch_ready(pid, session_launcher)
@@ -489,8 +511,16 @@ def _check_pipeline_completion(pipeline: Dict[str, Any]) -> None:
     any_failed = any(s["status"] == "failed" for s in stages)
     if any_failed:
         pipeline["status"] = "failed"
+        events.emit("pipeline.failed", {
+            "pipelineId": pipeline.get("id"),
+            "name": pipeline.get("name"),
+        }, source="pipelines")
     else:
         pipeline["status"] = "completed"
+        events.emit("pipeline.completed", {
+            "pipelineId": pipeline.get("id"),
+            "name": pipeline.get("name"),
+        }, source="pipelines")
     pipeline["ended_at"] = _now_iso()
 
 
@@ -593,6 +623,12 @@ def cancel_pipeline(pid: str) -> Tuple[bool, str]:
                 _transition_stage(pipeline, stage["name"], "cancelled")
 
         _flush_state()
+
+    events.emit("pipeline.cancelled", {
+        "pipelineId": pid,
+        "name": pipeline.get("name"),
+    }, source="pipelines")
+
     return True, "cancelled"
 
 

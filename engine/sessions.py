@@ -19,6 +19,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
+from engine import events
+
 
 # ---------------------------------------------------------------------------
 # Module-level configuration — call configure() before first use
@@ -352,6 +354,8 @@ def _run_session(sid: str) -> None:
         session["started_at"] = _now_iso()
         _flush_state()
 
+    events.emit("session.started", {"sessionId": sid}, source="sessions")
+
     prompt = _build_prompt(session)
     budget = str(session.get("budget_usd", _config["default_budget_usd"]))
     model = session.get("model", _config["default_model"])
@@ -539,6 +543,12 @@ def _run_session(sid: str) -> None:
         _timers.pop(sid, None)
         _flush_state()
 
+    events.emit("session.completed", {
+        "sessionId": sid,
+        "status": session["status"],
+        "costUsd": session.get("cost_usd", 0.0),
+    }, source="sessions")
+
     # Notify host application
     if _on_session_complete is not None:
         try:
@@ -607,6 +617,13 @@ def create_session(
     with _lock:
         _sessions[sid] = session
         _flush_state()
+
+    events.emit("session.created", {
+        "sessionId": sid,
+        "template": template,
+        "model": session["model"],
+        "taskId": task_id,
+    }, source="sessions")
 
     _pool.submit(_run_session, sid)
     return session

@@ -13,6 +13,7 @@ conductor/
 │   ├── phases.py           # Phase manager (markdown-driven)
 │   ├── agents.py           # Agent registry + dispatch
 │   ├── context.py          # Pluggable context enrichment
+│   ├── events.py           # Event system + SSE pub/sub
 │   ├── scaffolder.py       # Project bootstrapping
 │   └── stage_scripts/      # Pipeline automation scripts
 ├── dashboard/              # Vanilla HTML/CSS/JS SPA
@@ -53,6 +54,11 @@ python engine/server.py
 - `POST   /api/pipelines` — create + start pipeline
 - `GET    /api/pipelines/{id}` — get pipeline details
 - `POST   /api/pipelines/{id}/advance` — advance past a gate
+
+### Events
+- `GET    /api/events` — event history (query: `limit`, `type`, `since`)
+- `GET    /api/events/stream` — SSE stream (real-time events)
+- `GET    /api/events/stats` — event system statistics
 
 ### Agents (Phase 3)
 - `GET    /api/agents` — list available agents

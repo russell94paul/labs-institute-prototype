@@ -1,5 +1,33 @@
 # Change Manifest
 
+## P0-events — Event System + SSE + Live Dashboard (2026-05-19)
+
+### Files Created
+
+**engine/**
+- `events.py` — Event system: in-memory ring buffer (deque, 500 max), thread-safe pub/sub via `queue.Queue`, SSE subscriber management, event history/stats queries, graceful shutdown
+
+**docs/build/**
+- `p0-events-build-report.md` — P0-events build report
+- `rollback/p0-events-rollback.md` — Rollback plan
+- `session-handoffs/p0-events-handoff.md` — Session handoff
+
+### Files Modified
+
+- `engine/server.py` — Added `events` import, 3 new API routes (`GET /api/events`, `GET /api/events/stream`, `GET /api/events/stats`), SSE handler with keepalive, events configuration in `main()`, shutdown integration
+- `engine/bootstrap.py` — Added `events` import, emit `phase.status_changed` in `update_phase_status()`
+- `engine/pipelines.py` — Added `events` import, emit `pipeline.stage.status_changed` in `_transition_stage()`, emit `pipeline.created/started/completed/failed/cancelled` in lifecycle functions
+- `engine/sessions.py` — Added `events` import, emit `session.created` in `create_session()`, emit `session.started` and `session.completed` in `_run_session()`
+- `engine/work_guard.py` — Added `events` import, emit `work_guard.lock_acquired` in `acquire_lock()`, emit `work_guard.lock_released` in `release_lock()`
+- `dashboard/pages/bootstrap.html` — Added Events tab, SSE connection indicator (Live/Connecting/Offline), live event feed panel, event type styling, auto-refresh on phase/pipeline/work_guard events, EventSource connection management
+- `config/phase-status.json` — Marked P0-events as completed
+- `CLAUDE.md` — Added `events.py` to architecture tree, added Events API endpoints
+- `docs/build/change-manifest.md` — Added this section
+- `docs/build/blockers.md` — Updated resolved blockers
+- `docs/build/approval-requests.md` — Updated for P0-events
+
+---
+
 ## Minimal Claude Skill Layer (2026-05-19)
 
 ### Files Created

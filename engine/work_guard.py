@@ -9,6 +9,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from engine import events
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 POLICY_PATH = REPO_ROOT / "config" / "work-guard-policy.json"
 PHASE_STATUS_PATH = REPO_ROOT / "config" / "phase-status.json"
@@ -106,6 +108,13 @@ def acquire_lock(repo_path: str, lock_data: Dict[str, Any]) -> bool:
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(lock_data, f, indent=2, ensure_ascii=False)
     tmp.replace(lp)
+
+    events.emit("work_guard.lock_acquired", {
+        "lockId": lock_data.get("lockId"),
+        "owner": lock_data.get("owner"),
+        "phaseId": lock_data.get("phaseId"),
+    }, source="work_guard")
+
     return True
 
 
@@ -121,6 +130,9 @@ def release_lock(repo_path: str, lock_id: str) -> bool:
         lp.unlink()
     except OSError:
         return False
+
+    events.emit("work_guard.lock_released", {"lockId": lock_id}, source="work_guard")
+
     return True
 
 

@@ -9,6 +9,8 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from engine import events
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PHASE_STATUS_PATH = REPO_ROOT / "config" / "phase-status.json"
 
@@ -179,6 +181,7 @@ def update_phase_status(phase_id: str, new_status: str, **kwargs) -> Optional[Di
     phases = _load_phases()
     for p in phases:
         if p["phaseId"] == phase_id:
+            old_status = p.get("status", "not_started")
             p["status"] = new_status
             if "nextRecommendedAction" in kwargs:
                 p["nextRecommendedAction"] = kwargs["nextRecommendedAction"]
@@ -186,6 +189,12 @@ def update_phase_status(phase_id: str, new_status: str, **kwargs) -> Optional[Di
                 p["activeSessionId"] = kwargs["activeSessionId"]
             p["lastUpdated"] = kwargs.get("lastUpdated", p.get("lastUpdated"))
             _save_phases(phases)
+            events.emit("phase.status_changed", {
+                "phaseId": phase_id,
+                "name": p.get("name", ""),
+                "oldStatus": old_status,
+                "newStatus": new_status,
+            }, source="bootstrap")
             return p
     return None
 

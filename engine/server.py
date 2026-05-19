@@ -23,6 +23,7 @@ from engine import sessions
 from engine import bootstrap
 from engine import pipelines
 from engine import work_guard
+from engine import events
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DASHBOARD_ROOT = REPO_ROOT / "dashboard"
@@ -356,6 +357,59 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return self._send_error_json(409, "Lock not found or lockId mismatch")
         self._send_json({"ok": True})
 
+    # --- Event handlers ---
+
+    def _handle_sse_stream(self) -> None:
+        self.send_response(200)
+        self.send_header("Content-Type", "text/event-stream")
+        self.send_header("Cache-Control", "no-cache")
+        self.send_header("Connection", "keep-alive")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("X-Accel-Buffering", "no")
+        self.end_headers()
+
+        from queue import Empty
+
+        q = events.subscribe()
+        try:
+            connect_msg = json.dumps({"status": "connected"})
+            self.wfile.write(f"event: connected\ndata: {connect_msg}\n\n".encode("utf-8"))
+            self.wfile.flush()
+
+            while not events.is_shutdown():
+                try:
+                    event = q.get(timeout=25)
+                    if event.get("type") == "__shutdown__":
+                        break
+                    payload = json.dumps(event)
+                    msg = f"id: {event['id']}\nevent: {event['type']}\ndata: {payload}\n\n"
+                    self.wfile.write(msg.encode("utf-8"))
+                    self.wfile.flush()
+                except Empty:
+                    self.wfile.write(b": keepalive\n\n")
+                    self.wfile.flush()
+        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError, OSError):
+            pass
+        finally:
+            events.unsubscribe(q)
+
+    def _handle_get_events(self) -> None:
+        query = self.path.split("?", 1)[1] if "?" in self.path else ""
+        params = dict(p.split("=", 1) for p in query.split("&") if "=" in p)
+        limit = int(params.get("limit", "50"))
+        event_type = params.get("type", "")
+        since = params.get("since", "")
+
+        history = events.get_history(
+            limit=limit,
+            event_type=event_type or None,
+            since=since or None,
+        )
+        self._send_json({"events": history, "total": len(history)})
+
+    def _handle_get_events_stats(self) -> None:
+        self._send_json(events.get_stats())
+
     # --- Config handler ---
 
     def _handle_get_config(self) -> None:
@@ -376,6 +430,12 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return self._handle_get_templates()
         if path == "/api/pipelines/dry-run":
             return self._handle_get_pipeline_dry_run()
+        if path == "/api/events/stream":
+            return self._handle_sse_stream()
+        if path == "/api/events":
+            return self._handle_get_events()
+        if path == "/api/events/stats":
+            return self._handle_get_events_stats()
         if path == "/api/work-guard/status":
             return self._handle_get_work_guard_status()
         if path == "/api/work-guard/safe-to-run":
@@ -537,6 +597,8 @@ def _pipeline_session_launcher(pipeline: Dict[str, Any], stage: Dict[str, Any]) 
 
 def _shutdown() -> None:
     print("[conductor] Shutting down — cleaning up sessions...")
+    events.emit("system.shutdown", {}, source="server")
+    events.shutdown()
     pipelines.shutdown()
     sessions.shutdown()
     print("[conductor] Shutdown complete.")
@@ -567,11 +629,16 @@ def main() -> None:
     )
     pipelines.load_state()
 
+    events.configure(max_events=500)
+    events.emit("system.startup", {"port": PORT}, source="server")
+
     print(f"[conductor] Conductor — Product Orchestrator")
     print(f"[conductor] Dashboard:  http://127.0.0.1:{PORT}/")
     print(f"[conductor] API:        http://127.0.0.1:{PORT}/api/sessions")
     print(f"[conductor] Pipelines:  http://127.0.0.1:{PORT}/api/pipelines")
     print(f"[conductor] Templates:  http://127.0.0.1:{PORT}/api/templates")
+    print(f"[conductor] Events:     http://127.0.0.1:{PORT}/api/events")
+    print(f"[conductor] SSE:        http://127.0.0.1:{PORT}/api/events/stream")
     print(f"[conductor] Max parallel: {DEFAULT_CONFIG['max_parallel']}")
     print()
 
