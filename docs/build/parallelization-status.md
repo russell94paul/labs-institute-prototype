@@ -35,12 +35,22 @@
 | P1-build-studio | P0-pipeline-dag, P0-events | Both prerequisites not started |
 | P2-onboarding | P1-build-studio | Build Studio not started |
 
+### Autonomous / Parallel Execution Hold
+
+**Autonomous and parallel execution should remain limited until P0.5 (Repo Work Guard, Session Lock, and Execution Queue) is implemented.** P0.5 adds the repo-level lock, dirty-tree gate, commit checkpoints, and queue model needed to safely run concurrent or autonomous tasks. Until then:
+
+- Only one code-modifying session at a time.
+- Research ingestion is safe only if it touches docs-only paths and no config files.
+- Manual edits must be committed before starting any autonomous phase.
+
+See: `docs/architecture/repo-work-guard-session-lock.md`, `docs/decisions/ADR-0009-repo-work-guard-session-lock.md`
+
 ### Recommended Max Concurrency
 
-**2** — One code implementation track (P0 Pipeline DAG) + one research/docs track (Deep Research topics)
+**2** — One code implementation track + one research/docs track (non-overlapping paths only)
 
 ### Next 3 Recommended Actions
 
-1. **Get approval for P0 Pipeline DAG Engine** — approval-gated, high-risk phase
-2. **Run Deep Research Topics 01 + 02** — unblocks synthesis needed for P0 design
-3. **Fill in service inventory** — unblocks Topic 04 research
+1. **Review and approve P0.5 Work Guard ADR** — safety layer before autonomous execution
+2. **Implement P0.5 minimal Work Guard** — enables safe parallel and autonomous work
+3. **Run Deep Research Topics 03–07** — unblocks synthesis for downstream phases

@@ -1,5 +1,34 @@
 # Change Manifest
 
+## P0.5 — Repo Work Guard, Session Lock, and Execution Queue — Roadmap/Docs/Config Setup (2026-05-19)
+
+### Files Created
+
+**docs/architecture/**
+- `repo-work-guard-session-lock.md` — Architecture doc: lock model, dirty-tree gate, heartbeat, queue, worktree isolation, parallel execution rules
+
+**docs/decisions/**
+- `ADR-0009-repo-work-guard-session-lock.md` — ADR: context, decision, options considered, consequences, risks, future implementation notes
+
+**config/**
+- `work-guard-policy.json` — Work Guard policy configuration (lock path, timeouts, blocked paths, approval rules, safe task types)
+
+**docs/templates/**
+- `session-lock.json` — Example session lock file with all fields populated
+- `work-guard-status.md` — Status report template (lock state, git state, phase, queue, safe-to-run)
+
+**docs/prompts/**
+- `00-p0-5-repo-work-guard-session-lock.md` — Future implementation prompt for P0.5 (scope, API routes, Bootstrap Console integration, testing, deliverables)
+
+### Files Modified
+
+- `.gitignore` — Added `.conductor/runtime/` to gitignore (runtime lock file location)
+- `config/phase-status.json` — Added `p0-5-repo-work-guard-session-lock` phase entry (status: pending, priority: P0.5)
+- `docs/build/parallelization-status.md` — Added autonomous/parallel execution hold notice until P0.5 is implemented
+- `docs/build/change-manifest.md` — Added this section
+
+---
+
 ## Deep Research Ingestion — Topics 01, 02, 08 (2026-05-19)
 
 ### Files Created

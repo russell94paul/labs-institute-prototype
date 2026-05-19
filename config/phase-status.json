@@ -150,6 +150,38 @@
     "nextRecommendedAction": null
   },
   {
+    "phaseId": "p0-5-repo-work-guard-session-lock",
+    "name": "P0.5 — Repo Work Guard, Session Lock, and Execution Queue",
+    "description": "Adds repo/session safety checks, lock model, queue policy, and dirty-tree gates before semi-autonomous or parallel execution.",
+    "status": "pending",
+    "priority": "P0.5",
+    "dependencies": ["P0-pipeline-dag"],
+    "blockedBy": [],
+    "blocks": ["P0-events", "P1-build-studio"],
+    "riskLevel": "medium",
+    "estimatedComplexity": "M",
+    "estimatedContextRequired": "medium",
+    "expectedFiles": ["engine/work_guard.py", "config/work-guard-policy.json", "docs/architecture/repo-work-guard-session-lock.md"],
+    "allowedParallelism": false,
+    "requiredAgents": ["implementer"],
+    "requiredArtifacts": ["ADR-0009"],
+    "approvalRequired": true,
+    "promptPath": "docs/prompts/00-p0-5-repo-work-guard-session-lock.md",
+    "reportPath": null,
+    "branchName": "conductor-platform-rebuild",
+    "activeSessionId": null,
+    "canRunInParallel": false,
+    "parallelizationReason": "Safety layer — must be serialized before autonomous execution features",
+    "supports": [
+      "autonomous execution",
+      "parallel phase execution",
+      "research ingestion queue",
+      "Build Studio execution controls"
+    ],
+    "lastUpdated": "2026-05-19",
+    "nextRecommendedAction": "Review and approve ADR-0009, then implement minimal Work Guard"
+  },
+  {
     "phaseId": "P0-events",
     "name": "P0 Event System + SSE + Live Dashboard",
     "description": "Real-time event streaming for pipeline execution with server-sent events.",
