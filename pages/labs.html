@@ -685,12 +685,13 @@ Social metrics → Periodic snapshots → Pattern detection
     var chartData={labels:['2018','2019','2020','2021','2022','2023','2024','2025','2026'],ig:[200,500,1200,3500,8000,18000,32000,45000,54000],streams:[0,0,0,5000,50000,800000,1500000,1800000,2100000],gigs:[2,5,8,12,20,35,48,55,30]};
 
     function cssBar(vals,max,color,labels){
-        var h='<div style="display:flex;align-items:flex-end;gap:3px;height:120px;padding-top:10px">';
+        var barH=120;
+        var h='<div style="display:flex;align-items:flex-end;gap:3px;height:'+barH+'px;padding-top:10px">';
         vals.forEach(function(v,i){
-            var pct=Math.max(2,(v/max)*100);
-            h+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">'+
+            var px=Math.max(2,Math.round((v/max)*barH));
+            h+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:2px;height:100%">'+
                 '<div style="font-size:.5rem;color:inherit;opacity:.6">'+formatNum(v)+'</div>'+
-                '<div style="width:100%;height:'+pct+'%;background:'+color+';border-radius:3px 3px 0 0;min-height:2px;transition:height .5s"></div>'+
+                '<div style="width:100%;height:'+px+'px;background:'+color+';border-radius:3px 3px 0 0;min-height:2px"></div>'+
                 '<div style="font-size:.48rem;opacity:.4">'+labels[i]+'</div></div>';
         });
         return h+'</div>';
