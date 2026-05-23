@@ -259,6 +259,8 @@
     <!-- ============ SITE PREVIEW ============ -->
     <div class="L-view on" id="v-site" style="position:relative">
 
+        <!-- Default layout content -->
+        <div class="S-site-default">
         <!-- Logo above hero -->
         <div class="S-logo">
             <div class="S-logo-text" id="site-logo">LABS</div>
@@ -418,6 +420,8 @@
         </div>
 
         <div class="S-footer">&copy; 2026 Labs Institute &middot; Manchester, UK &middot; Founded For The Future</div>
+
+        </div><!-- close S-site-default -->
 
         <!-- Sticky activity bar -->
         <div id="sticky-activity" style="position:fixed;bottom:0;left:0;right:0;z-index:50;background:#000;color:#fff;font-family:var(--ff);border-top:1px solid rgba(255,255,255,.08)">
@@ -2055,6 +2059,37 @@ Social metrics → Periodic snapshots → Pattern detection
         var lsSel=document.getElementById('layout-select');
         if(lsSel) lsSel.value=id;
         switchDesign(globalTheme);
+        applySiteLayout(id);
+    };
+
+    function applySiteLayout(id){
+        var d=DESIGNS[globalTheme]||DESIGNS.chrome;
+        var siteView=document.getElementById('v-site');
+        if(!siteView) return;
+
+        if(id==='hero-scroll'){
+            // Default — show all original sections
+            siteView.querySelectorAll('.S-site-default').forEach(function(el){el.style.display='';});
+            var alt=document.getElementById('site-alt-layout');
+            if(alt) alt.style.display='none';
+            return;
+        }
+
+        // For other layouts — hide the default content and render the layout into v-site
+        siteView.querySelectorAll('.S-site-default').forEach(function(el){el.style.display='none';});
+        var alt=document.getElementById('site-alt-layout');
+        if(!alt){
+            alt=document.createElement('div');
+            alt.id='site-alt-layout';
+            siteView.appendChild(alt);
+        }
+        alt.style.display='block';
+        var accentA='rgba('+d.accentRgb+',.15)';
+        var html=getLayoutHTML(d,globalTheme);
+        if(html){
+            alt.innerHTML=html;
+            initGlobe(d);
+        }
     };
 
     function applyThemeToAll(){
@@ -2368,9 +2403,10 @@ Social metrics → Periodic snapshots → Pattern detection
         else if(gc) gc.innerHTML=html;
     }).catch(function(){});
 
-    // Init designs tab
+    // Init
     switchDesign('chrome');
     switchTech('overview');
+    if(currentLayout!=='hero-scroll') applySiteLayout(currentLayout);
 
     // Add animation keyframes
     var styleEl=document.createElement('style');
