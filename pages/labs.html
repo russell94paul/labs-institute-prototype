@@ -449,7 +449,7 @@
             <div class="S-section-title">Where Our Artists Play</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center">
                 <div>
-                    <canvas id="site-globe-canvas" width="400" height="400" style="width:100%;max-width:400px;display:block;margin:0 auto"></canvas>
+                    <canvas id="site-globe-canvas" width="400" height="400" style="width:100%;max-width:400px;display:block;margin:0 auto;background:radial-gradient(circle,#0a0a14 60%,#000 100%);border-radius:50%;box-shadow:0 0 20px rgba(0,0,0,.3),0 0 40px rgba(0,0,0,.15)"></canvas>
                 </div>
                 <div>
                     <div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.4;margin-bottom:12px">17 Cities Across Europe</div>
@@ -2628,9 +2628,14 @@ Social metrics → Periodic snapshots → Pattern detection
         function draw(){
             d=DESIGNS[globalTheme]||DESIGNS.chrome;
             ctx.clearRect(0,0,W,H);
-            ctx.beginPath();ctx.arc(cx,cy,R+2,0,Math.PI*2);ctx.strokeStyle='rgba('+d.accentRgb+',.1)';ctx.lineWidth=4;ctx.stroke();
-            ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.strokeStyle='rgba('+d.accentRgb+',.4)';ctx.lineWidth=1.5;ctx.stroke();
-            ctx.strokeStyle='rgba('+d.accentRgb+',.12)';ctx.lineWidth=0.5;
+            // Pulsing outer glow
+            var pulseAlpha=0.15+Math.sin(Date.now()/800)*0.1;
+            ctx.beginPath();ctx.arc(cx,cy,R+6,0,Math.PI*2);ctx.strokeStyle='rgba('+d.accentRgb+','+pulseAlpha*0.4+')';ctx.lineWidth=8;ctx.stroke();
+            ctx.beginPath();ctx.arc(cx,cy,R+2,0,Math.PI*2);ctx.strokeStyle='rgba('+d.accentRgb+','+pulseAlpha+')';ctx.lineWidth=3;ctx.stroke();
+            // Main outline — bright
+            ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.strokeStyle='rgba('+d.accentRgb+',.6)';ctx.lineWidth=1.5;ctx.stroke();
+            // Grid — accent colored
+            ctx.strokeStyle='rgba('+d.accentRgb+',.18)';ctx.lineWidth=0.5;
             for(var la=-60;la<=60;la+=30){ctx.beginPath();for(var lo=0;lo<=360;lo+=5){var p=toS(la,lo,rot);if(p.visible){if(lo===0||!toS(la,lo-5,rot).visible)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);}}ctx.stroke();}
             for(var lo=-180;lo<180;lo+=30){ctx.beginPath();for(var la2=-90;la2<=90;la2+=5){var p=toS(la2,lo,rot);if(p.visible){if(la2===-90||!toS(la2-5,lo,rot).visible)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);}}ctx.stroke();}
             var home=CITIES[0];
