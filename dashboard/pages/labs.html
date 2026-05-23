@@ -1626,16 +1626,21 @@ Social metrics → Periodic snapshots → Pattern detection
         }
         function draw(){
             ctx.clearRect(0,0,W,H);
+            // Globe outer glow
+            ctx.beginPath();ctx.arc(cx,cy,R+2,0,Math.PI*2);
+            ctx.strokeStyle='rgba('+d.accentRgb+',.1)';ctx.lineWidth=4;ctx.stroke();
+            // Globe outline — bright accent color
             ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
-            ctx.strokeStyle='rgba('+gridRgb+',.08)';ctx.lineWidth=1;ctx.stroke();
-            ctx.strokeStyle='rgba('+gridRgb+',.04)';ctx.lineWidth=0.5;
+            ctx.strokeStyle='rgba('+d.accentRgb+',.4)';ctx.lineWidth=1.5;ctx.stroke();
+            // Grid lines — visible accent
+            ctx.strokeStyle='rgba('+d.accentRgb+',.12)';ctx.lineWidth=0.5;
             for(var la=-60;la<=60;la+=30){ctx.beginPath();for(var lo=0;lo<=360;lo+=5){var p=toScreen(la,lo,rot);if(p.visible){if(lo===0||!toScreen(la,lo-5,rot).visible)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);}}ctx.stroke();}
             for(var lo=-180;lo<180;lo+=30){ctx.beginPath();for(var la2=-90;la2<=90;la2+=5){var p=toScreen(la2,lo,rot);if(p.visible){if(la2===-90||!toScreen(la2-5,lo,rot).visible)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);}}ctx.stroke();}
             var home=CITIES[0];
             CITIES.forEach(function(city,i){
                 if(i===0)return;
                 var p1=toScreen(home.lat,home.lon,rot),p2=toScreen(city.lat,city.lon,rot);
-                if(p1.visible&&p2.visible){ctx.beginPath();ctx.moveTo(p1.x,p1.y);var pm=toScreen((home.lat+city.lat)/2+8,(home.lon+city.lon)/2,rot);ctx.quadraticCurveTo(pm.x,pm.y,p2.x,p2.y);ctx.strokeStyle='rgba('+d.accentRgb+',.15)';ctx.lineWidth=1;ctx.stroke();}
+                if(p1.visible&&p2.visible){ctx.beginPath();ctx.moveTo(p1.x,p1.y);var pm=toScreen((home.lat+city.lat)/2+8,(home.lon+city.lon)/2,rot);ctx.quadraticCurveTo(pm.x,pm.y,p2.x,p2.y);ctx.strokeStyle='rgba('+d.accentRgb+',.3)';ctx.lineWidth=1.5;ctx.stroke();}
             });
             CITIES.forEach(function(city){
                 var p=toScreen(city.lat,city.lon,rot);if(!p.visible)return;
