@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+    .W{--bg:#fff;--fg:#000;--gy:#999;--lt:#f5f5f5;--bd:rgba(0,0,0,.08);--ac:#2563eb;--gn:#16a34a;--am:#f59e0b;--rd:#dc2626;--pr:#7c3aed;--ff:'Helvetica Neue',Arial,sans-serif;--mn:'Consolas',monospace}
+    .W *{margin:0;padding:0;box-sizing:border-box}
+    .W{font-family:var(--ff);color:var(--fg);background:var(--bg);min-height:100vh}
+
+    .W-bar{display:flex;align-items:center;gap:14px;padding:14px 32px;border-bottom:1px solid var(--bd);flex-wrap:wrap}
+    .W-bar label{font-size:.52rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gy)}
+    .W-sel{padding:7px 12px;border:1px solid var(--bd);border-radius:4px;font-size:.72rem;font-family:var(--ff);font-weight:600;cursor:pointer;min-width:200px}
+    .W-btn{padding:8px 20px;border:none;border-radius:4px;font-size:.62rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;font-family:var(--ff);transition:all .15s}
+    .W-btn-primary{background:var(--ac);color:#fff}.W-btn-primary:hover{opacity:.9}
+    .W-btn-green{background:var(--gn);color:#fff}
+    .W-btn-amber{background:var(--am);color:#fff}
+    .W-btn-ghost{background:none;color:var(--fg);border:1px solid var(--bd)}.W-btn-ghost:hover{border-color:var(--fg)}
+    .W-btn-sm{padding:5px 12px;font-size:.58rem}
+
+    .W-main{padding:24px 32px;max-width:1200px;margin:0 auto}
+    .W-title{font-size:1rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+    .W-sub{font-size:.72rem;color:var(--gy);margin-bottom:20px}
+
+    /* DAG */
+    .W-dag{position:relative;padding:20px 0}
+    .W-step{display:grid;grid-template-columns:60px 1fr;gap:0;margin-bottom:0;position:relative}
+    .W-step-line{display:flex;flex-direction:column;align-items:center}
+    .W-step-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--bd);background:var(--bg);z-index:2;transition:all .3s}
+    .W-step-dot.active{border-color:var(--ac);background:var(--ac);box-shadow:0 0 0 4px rgba(37,99,235,.15)}
+    .W-step-dot.done{border-color:var(--gn);background:var(--gn)}
+    .W-step-dot.waiting{border-color:var(--bd);background:var(--bg)}
+    .W-step-connector{width:2px;flex:1;background:var(--bd);min-height:20px;transition:background .3s}
+    .W-step-connector.done{background:var(--gn)}
+    .W-step-connector.active{background:linear-gradient(180deg,var(--ac),var(--bd));animation:flowPulse 2s ease-in-out infinite}
+    @keyframes flowPulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+    .W-step-card{border:1px solid var(--bd);border-radius:10px;padding:18px 20px;margin-bottom:14px;transition:all .2s;position:relative;overflow:hidden}
+    .W-step-card.active{border-color:var(--ac);box-shadow:0 4px 20px rgba(37,99,235,.08)}
+    .W-step-card.done{border-color:var(--gn);background:rgba(22,163,74,.02)}
+    .W-step-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;background:var(--bd);transition:background .3s}
+    .W-step-card.active::before{background:var(--ac)}
+    .W-step-card.done::before{background:var(--gn)}
+
+    .W-step-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .W-step-name{font-size:.75rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
+    .W-step-num{font-size:.55rem;font-family:var(--mn);color:var(--gy)}
+    .W-step-desc{font-size:.68rem;color:var(--gy);line-height:1.6;margin-bottom:10px}
+
+    /* AI suggestion */
+    .W-ai{background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.1);border-radius:6px;padding:10px 14px;margin-bottom:10px;font-size:.68rem;line-height:1.6;position:relative;animation:fadeSlide .4s ease}
+    .W-ai-tag{font-size:.5rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ac);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+    .W-ai-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--ac);animation:pulseGlow 1.5s ease-in-out infinite}
+    .W-ai-text{color:#444}
+    .W-ai-options{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+    .W-ai-opt{padding:4px 12px;border:1px solid rgba(37,99,235,.2);border-radius:20px;font-size:.6rem;font-weight:600;color:var(--ac);cursor:pointer;transition:all .15s}
+    .W-ai-opt:hover{background:rgba(37,99,235,.08);border-color:var(--ac)}
+    .W-ai-opt.selected{background:var(--ac);color:#fff;border-color:var(--ac)}
+
+    @keyframes fadeSlide{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pulseGlow{0%,100%{opacity:1}50%{opacity:.4}}
+
+    /* User input */
+    .W-input-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+    .W-input{padding:8px 12px;border:1px solid var(--bd);border-radius:6px;font-size:.75rem;font-family:var(--ff)}
+    .W-input:focus{outline:none;border-color:var(--ac)}
+    .W-input-label{font-size:.55rem;font-weight:700;color:var(--gy);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;display:block}
+
+    /* Results */
+    .W-results{border:1px solid var(--bd);border-radius:10px;padding:24px;margin-top:20px}
+    .W-results-title{font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+    .W-kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px}
+    .W-kpi{text-align:center;padding:14px;background:var(--lt);border-radius:8px}
+    .W-kpi-val{font-size:1.4rem;font-weight:200;font-family:var(--mn)}
+    .W-kpi-label{font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gy);margin-top:4px}
+
+    /* Comparison table */
+    .W-compare{width:100%;border-collapse:collapse;font-size:.72rem;margin:14px 0}
+    .W-compare th{text-align:left;padding:10px;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gy);border-bottom:2px solid var(--fg)}
+    .W-compare td{padding:10px;border-bottom:1px solid var(--bd)}
+    .W-compare tr:hover td{background:var(--lt)}
+    .W-compare .best{font-weight:700;color:var(--gn)}
+    .W-compare .worst{color:var(--rd)}
+
+    /* Chart bars */
+    .W-chart{display:flex;align-items:flex-end;gap:4px;height:100px;margin:10px 0}
+    .W-chart-bar{flex:1;border-radius:4px 4px 0 0;transition:height .5s;position:relative;min-width:20px}
+    .W-chart-bar-label{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:.5rem;color:var(--gy);white-space:nowrap}
+    .W-chart-bar-val{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:.55rem;font-weight:700;font-family:var(--mn);white-space:nowrap}
+
+    /* Library */
+    .W-lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:14px}
+    .W-lib-card{border:1px solid var(--bd);border-radius:8px;padding:16px;cursor:pointer;transition:border-color .15s}
+    .W-lib-card:hover{border-color:var(--ac)}
+    .W-lib-card-name{font-size:.75rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px}
+    .W-lib-card-meta{font-size:.6rem;color:var(--gy)}
+    .W-lib-card-kpis{display:flex;gap:10px;margin-top:8px;font-size:.6rem;color:var(--gy)}
+    .W-lib-card-kpis span{font-weight:700;color:var(--fg)}
+
+    /* Optimizer */
+    .W-opt{background:var(--lt);border:1px solid var(--bd);border-radius:10px;padding:20px;margin-top:16px}
+    .W-opt-title{font-size:.68rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+    .W-opt-progress{height:6px;background:var(--bd);border-radius:3px;overflow:hidden;margin:10px 0}
+    .W-opt-fill{height:100%;background:var(--ac);border-radius:3px;transition:width .3s;width:0}
+
+    .W-actions{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;padding:14px 0;border-top:1px solid var(--bd)}
+    .W-action-item{display:flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--bd);border-radius:6px;font-size:.68rem;width:100%;margin-bottom:4px}
+    .W-action-pri{font-size:.5rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:10px;flex-shrink:0}
+    .W-action-pri.p1{background:rgba(220,38,38,.08);color:var(--rd)}
+    .W-action-pri.p2{background:rgba(245,158,11,.08);color:var(--am)}
+    .W-action-pri.p3{background:rgba(37,99,235,.08);color:var(--ac)}
+
+    @media(max-width:768px){
+        .W-bar{padding:10px 16px}.W-main{padding:16px}
+        .W-input-row{grid-template-columns:1fr}
+        .W-kpi-row{grid-template-columns:1fr 1fr}
+    }
+</style>
+</head>
+<body>
+<div class="W">
+    <div class="W-bar">
+        <div><label>User</label><br>
+            <select class="W-sel" id="wf-user" onchange="loadWorkflows()">
+                <option value="founder">Founder</option>
+                <option value="dj">DJ</option>
+            </select></div>
+        <div><label>Workflow</label><br>
+            <select class="W-sel" id="wf-select" onchange="loadWorkflow()"></select></div>
+        <div><label>Optimize For</label><br>
+            <select class="W-sel" id="wf-optimize">
+                <option value="revenue">Revenue</option>
+                <option value="growth">Social Growth</option>
+                <option value="bookings">Bookings</option>
+                <option value="time">Time Efficiency</option>
+                <option value="brand">Brand Impact</option>
+            </select></div>
+        <div><label>Simulations</label><br>
+            <select class="W-sel" id="wf-sims" style="min-width:80px">
+                <option value="3">3</option>
+                <option value="5" selected>5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+            </select></div>
+        <div style="display:flex;gap:6px;margin-top:14px">
+            <button class="W-btn W-btn-primary" onclick="runWorkflow()">Run Workflow</button>
+            <button class="W-btn W-btn-green" onclick="runOptimizer()">Optimize</button>
+            <button class="W-btn W-btn-ghost" onclick="showLibrary()">Library</button>
+        </div>
+    </div>
+
+    <div class="W-main" id="wf-main">
+        <div class="W-title" id="wf-title">Select a workflow to begin</div>
+        <div class="W-sub" id="wf-sub">Choose a user role and workflow from the dropdowns above, then click Run Workflow.</div>
+        <div id="wf-dag"></div>
+        <div id="wf-results"></div>
+        <div id="wf-compare"></div>
+        <div id="wf-library" style="display:none"></div>
+    </div>
+</div>
+
+<script>
+(function(){
+    var WORKFLOWS={
+        founder:[
+            {id:'book-dj',name:'Book a DJ for an Event',desc:'End-to-end booking workflow from inquiry to post-event review.',
+                steps:[
+                    {name:'Receive Inquiry',desc:'Promoter contacts Labs about booking a DJ for their event.',inputs:[{id:'venue',label:'Venue',ph:'e.g. Printworks London',ai:'Printworks London (3,000 cap, techno Fridays)'},{id:'date',label:'Event Date',ph:'2026-07-15',ai:'2026-07-15'},{id:'budget',label:'Promoter Budget (£)',ph:'1500',ai:'£1,200-1,800 range for this venue'}],aiSuggest:'Based on Lab-Wiki: Printworks books headliners at £1-3K, support at £400-800. Luciid\'s tier qualifies for headline support or co-headline.',aiOptions:['Quote £1,200','Quote £1,500','Quote £1,800','Custom']},
+                    {name:'Match DJ to Event',desc:'Select the best DJ based on genre, availability, and venue fit.',inputs:[{id:'dj',label:'DJ',ph:'Luciid',ai:'Luciid (best match: genre fit 92%, venue history: played similar 3x)'},{id:'slot',label:'Set Slot',ph:'Support',ai:'Co-headline (11pm-1am) — optimal for his energy level'}],aiSuggest:'Lab-Intelligence match score: Luciid 92% fit. Genre alignment: Hard Techno maps to Printworks Friday crowd. He\'s played 3 similar-size venues this year. Available on date.',aiOptions:['Luciid (92% match)','Per Pleks (78% match)','Custom']},
+                    {name:'Generate Quote',desc:'Create a pricing quote based on market data and DJ tier.',inputs:[{id:'fee',label:'Quoted Fee (£)',ph:'1500',ai:'£1,500 (market rate for tier + venue)'},{id:'commission',label:'Commission %',ph:'10',ai:'10% standard'}],aiSuggest:'Pricing analysis: Similar acts at Printworks quoted £1,200-1,800 in Q1 2026. Luciid\'s Beatport #15 charting and 54K IG justify upper range. Recommend: £1,500. Commission: £150.',aiOptions:['£1,200 (conservative)','£1,500 (recommended)','£1,800 (premium)']},
+                    {name:'Send Contract',desc:'Generate and send the booking contract.',inputs:[{id:'terms',label:'Special Terms',ph:'Travel + hotel included',ai:'Travel + hotel covered by promoter (standard for London venues)'},{id:'deposit',label:'Deposit %',ph:'50',ai:'50% upfront, 50% on event day'}],aiSuggest:'Contract template: Standard DJ Booking Agreement. Auto-filled with venue, date, fee, and DJ details. Digital signature via email link.',aiOptions:['Standard terms','Add rider clause','Custom']},
+                    {name:'Confirm Booking',desc:'Contract signed, deposit received, booking confirmed.',inputs:[{id:'depositPaid',label:'Deposit Received',ph:'Yes',ai:'£750 deposit confirmed'},{id:'logistics',label:'Logistics Notes',ph:'',ai:'Sound check 6pm, doors 10pm, set: 11pm-1am'}],aiSuggest:'Checklist: Contract signed ✓, Deposit £750 received ✓, Travel booked ✓, Rider confirmed ✓. Add to event calendar.',aiOptions:['All confirmed','Chase deposit','Reschedule']},
+                    {name:'Event Day',desc:'Event happens — monitor and support.',inputs:[{id:'attendance',label:'Attendance',ph:'2800',ai:'~2,800 estimated (93% capacity)'},{id:'recording',label:'Set Recorded?',ph:'Yes',ai:'Yes — record for SoundCloud upload'}],aiSuggest:'Reminder sent to Luciid: bring USB backup, CDJs are Pioneer 3000s (from Lab-Wiki venue profile). Post BTS content during set for social engagement.',aiOptions:['Event smooth','Issue flagged']},
+                    {name:'Post-Event Review',desc:'Collect outcomes, payment, and learnings.',inputs:[{id:'finalPaid',label:'Final Payment (£)',ph:'750',ai:'£750 final payment received'},{id:'rating',label:'Event Rating (1-5)',ph:'4',ai:'4.5 — strong crowd response, 2 rebooking inquiries generated'}],aiSuggest:'Post-mortem: Attendance 93% capacity. 2 new booking inquiries from promoters at event. SoundCloud set uploaded within 48hrs → +3K plays in first week. Recommend: Follow up with rebooking inquiries within 72hrs.',aiOptions:['Great outcome','Average','Below expectations']}
+                ]},
+            {id:'onboard-dj',name:'Onboard a New DJ',desc:'From first contact to fully set up on the platform.',
+                steps:[
+                    {name:'Initial Contact',desc:'DJ reaches out or is scouted.',inputs:[{id:'djName',label:'DJ Name',ph:'',ai:'Check socials and streaming stats before responding'},{id:'source',label:'Source',ph:'Instagram DM',ai:'Instagram DM (most common)'}],aiSuggest:'Before responding, Lab-Intelligence will auto-scan their socials: follower count, engagement rate, SoundCloud plays, genre alignment with Labs roster.',aiOptions:['Review application','Scout proactively','Referral']},
+                    {name:'Evaluate Fit',desc:'Assess if the DJ aligns with Labs\' roster and values.',inputs:[{id:'genre',label:'Genre Fit',ph:'Hard Techno',ai:'Hard Techno — aligns with roster'},{id:'tier',label:'Assessed Tier',ph:'Emerging',ai:'Emerging — based on social metrics'}],aiSuggest:'Lab-Intelligence tier assessment: IG <1K, SC <500 plays/mo, 2 gigs total → Emerging tier. Genre fit: 85% alignment with current roster. Growth potential: HIGH based on content quality.',aiOptions:['Strong fit','Moderate fit','Not aligned']},
+                    {name:'Agreement & Terms',desc:'Agree on management terms and commission.',inputs:[{id:'commRate',label:'Commission %',ph:'10',ai:'10% (standard for emerging tier)'},{id:'exclusivity',label:'Exclusivity',ph:'Non-exclusive',ai:'Non-exclusive initially, review after 6 months'}],aiSuggest:'For emerging DJs: start non-exclusive at 10%. Include 6-month review clause. Lower commitment = easier sign, builds trust for future exclusive deal.',aiOptions:['10% non-exclusive','15% exclusive','Custom']},
+                    {name:'Profile Setup',desc:'Create DJ profile on the platform.',inputs:[{id:'bio',label:'Bio Written',ph:'Yes',ai:'AI-draft bio from their existing socials + interview'},{id:'photos',label:'Photos Received',ph:'3 photos',ai:'Need: 1 headshot, 1 action shot, 1 lifestyle'}],aiSuggest:'Auto-generate draft bio from Instagram bio + SoundCloud description + any press. Schedule a 15-min call to refine and capture their story.',aiOptions:['Auto-generate bio','Manual write','Schedule call']},
+                    {name:'Set Goals',desc:'Define 90-day growth targets.',inputs:[{id:'gigTarget',label:'Gig Target (90 days)',ph:'6',ai:'6 gigs (2/month for emerging tier)'},{id:'igTarget',label:'IG Growth Target',ph:'+500',ai:'+500 followers in 90 days (realistic for emerging)'}],aiSuggest:'Lab-Intelligence benchmarks for emerging tier: 2 gigs/month achievable, +500 IG followers with 3x/week posting. Set first milestone review at 30 days.',aiOptions:['Conservative targets','Ambitious targets','Custom']}
+                ]},
+            {id:'marketing-campaign',name:'Run a Marketing Campaign',desc:'Plan, execute, and measure a social media campaign.',
+                steps:[
+                    {name:'Define Campaign',desc:'Set the goal, audience, and timeline.',inputs:[{id:'goal',label:'Campaign Goal',ph:'Promote new release',ai:'Promote Luciid\'s new single — target 50K streams in 2 weeks'},{id:'duration',label:'Duration (days)',ph:'14',ai:'14 days (optimal for single release)'}],aiSuggest:'Best campaign types by ROI: release promo (highest), event promo (high), brand awareness (medium). For a single release, 14-day campaign with teaser → drop → sustain cadence.',aiOptions:['Release promo','Event promo','Brand awareness']},
+                    {name:'Create Content',desc:'Plan and produce content pieces.',inputs:[{id:'pieces',label:'Content Pieces',ph:'8',ai:'8 pieces: 2 teasers, 1 announcement, 3 clips, 1 BTS, 1 review'},{id:'platforms',label:'Platforms',ph:'IG, SC, Spotify',ai:'Instagram (primary), SoundCloud, Spotify'}],aiSuggest:'Content mix that performs best for releases: short video teasers get 3x reach vs static images. Post at 7pm weekdays, 2pm weekends for UK electronic music audience.',aiOptions:['Video-heavy','Mix of formats','Static + stories']},
+                    {name:'Schedule & Post',desc:'Schedule content across platforms.',inputs:[{id:'scheduled',label:'Posts Scheduled',ph:'8',ai:'All 8 scheduled across 14 days'},{id:'spend',label:'Paid Promotion (£)',ph:'50',ai:'£50 Instagram boost on announcement post'}],aiSuggest:'Optimal posting schedule: Day 1 teaser, Day 3 teaser 2, Day 5 announcement, Day 6-10 clips daily, Day 12 BTS, Day 14 recap. Boost the announcement post (£50 reaches ~15K).',aiOptions:['Organic only','£50 boost','£100 boost']},
+                    {name:'Monitor & Adjust',desc:'Track performance and adjust.',inputs:[{id:'reach',label:'Total Reach',ph:'45000',ai:'~45K reach across platforms'},{id:'engagement',label:'Engagement Rate',ph:'4.2%',ai:'4.2% (above 3% benchmark)'}],aiSuggest:'Day 7 check: reach is at 60% of target. Engagement 4.2% (above benchmark). SoundCloud plays at 28K. Recommend: boost the best-performing clip for remaining budget.',aiOptions:['On track','Underperforming — adjust','Overperforming — scale']},
+                    {name:'Results & Learnings',desc:'Measure outcomes and capture learnings.',inputs:[{id:'streams',label:'Total Streams',ph:'52000',ai:'52K streams (exceeded 50K target)'},{id:'igGrowth',label:'IG Followers Gained',ph:'800',ai:'+800 followers during campaign'}],aiSuggest:'Campaign ROI: 52K streams on £50 spend = £0.001/stream. IG growth +800 (2x organic rate). Top performing content: 15s studio clip (18K views). Save to Lab-Wiki: video teasers 3x more effective than static for this audience.',aiOptions:['Exceeded target','Met target','Below target']}
+                ]}
+        ],
+        dj:[
+            {id:'prep-gig',name:'Prepare for a Gig',desc:'Everything to do before, during, and after a performance.',
+                steps:[
+                    {name:'Review Gig Brief',desc:'Check venue details, set time, and crowd profile.',inputs:[{id:'venue',label:'Venue',ph:'OST Berlin',ai:'OST Berlin — 500 cap, Funktion-One, techno crowd'},{id:'setTime',label:'Set Time',ph:'1am-3am',ai:'1am-3am (peak slot)'}],aiSuggest:'Lab-Wiki venue profile: OST Berlin. 500 cap. Sound: Funktion-One. Crowd prefers 140+ BPM after midnight. Previous sets by similar artists averaged 145 BPM. Bring USB backup.',aiOptions:['Review venue profile','Request more info','Confirm details']},
+                    {name:'Prepare Set',desc:'Select tracks and plan the set.',inputs:[{id:'bpm',label:'BPM Range',ph:'142-150',ai:'142-150 BPM (optimal for this venue/timeslot)'},{id:'duration',label:'Set Duration (hrs)',ph:'2',ai:'2 hours'}],aiSuggest:'Based on Lab-Intelligence analysis of your top 10 sets: your highest-rated sets start at 138 BPM and build to 148 by the last 30 mins. Include 2-3 of your own tracks for brand reinforcement.',aiOptions:['Follow AI suggestion','Freestyle','Themed set']},
+                    {name:'Day of Event',desc:'Travel, sound check, and preparation.',inputs:[{id:'arrival',label:'Arrival Time',ph:'11pm',ai:'11pm (1hr before set for sound check)'},{id:'recording',label:'Recording Setup',ph:'USB recorder',ai:'USB recorder + phone backup (always dual record)'}],aiSuggest:'Checklist: USB sticks (2x, different tracks) ✓, Headphones ✓, Phone charger ✓, Recording device ✓, Comfortable shoes ✓. Post a "doors open" story for engagement.',aiOptions:['All prepared','Need to sort recording','Travel issues']},
+                    {name:'Post-Gig Log',desc:'Record what happened for Lab-Intelligence.',inputs:[{id:'crowdResponse',label:'Crowd Response (1-5)',ph:'4',ai:'4 — strong energy throughout'},{id:'recordingUploaded',label:'Recording Uploaded',ph:'Yes',ai:'Upload to SoundCloud within 48hrs for maximum engagement'}],aiSuggest:'Action items: 1) Upload recording to SoundCloud with tracklist. 2) Post 3 photos/clips from the night. 3) Thank the promoter publicly. 4) DM any new connections made. Lab-Intelligence will track the impact on your metrics.',aiOptions:['Great set','Average','Below par']}
+                ]},
+            {id:'grow-social',name:'Weekly Social Media Routine',desc:'Consistent content posting to grow your audience.',
+                steps:[
+                    {name:'Content Audit',desc:'Review what you have to post this week.',inputs:[{id:'content',label:'Content Available',ph:'2 videos, 3 photos',ai:'2 videos from last gig, 3 studio photos, 1 mix snippet'},{id:'releases',label:'Upcoming Releases',ph:'None this week',ai:'New remix dropping next Friday — tease it mid-week'}],aiSuggest:'Your top-performing content types: BTS studio clips (2.4x engagement), live set snippets (1.8x), personal/lifestyle (1.5x). Flyer reposts perform worst. This week: lead with studio clip, save gig footage for Thursday.',aiOptions:['Follow AI plan','Custom schedule','Skip this week']},
+                    {name:'Schedule Posts',desc:'Plan what goes out and when.',inputs:[{id:'posts',label:'Posts This Week',ph:'5',ai:'5 posts: Mon studio, Wed tease, Thu gig clip, Sat mix, Sun story'},{id:'times',label:'Best Post Times',ph:'7pm weekdays',ai:'7pm Mon-Fri, 2pm Sat-Sun (your audience peak times)'}],aiSuggest:'Optimal schedule based on your audience analytics: Mon 7pm (studio BTS), Wed 7pm (remix teaser), Thu 8pm (gig clip), Sat 2pm (mix upload), Sun 12pm (story recap). Use 3-5 hashtags max, include #hardtechno #techno.',aiOptions:['5 posts (recommended)','3 posts (minimum)','Daily posting']},
+                    {name:'Engage & Network',desc:'Respond to comments and connect.',inputs:[{id:'engagement',label:'Time Spent (min)',ph:'30',ai:'30 mins/day on engagement (reply to every comment)'},{id:'connections',label:'New Connections',ph:'3',ai:'3 new connections: 1 promoter, 1 DJ, 1 photographer'}],aiSuggest:'Engagement strategy: reply to every comment within 2 hours (algorithm boost). Like/comment on 10 related posts daily. DM 2-3 promoters in cities you want to play. Share other Labs artists\' posts (cross-promotion).',aiOptions:['30 min/day','15 min/day','Full engagement mode']},
+                    {name:'Review Metrics',desc:'Check weekly growth.',inputs:[{id:'igGrowth',label:'IG Followers Change',ph:'+120',ai:'+120 this week (above your 80/week average)'},{id:'scPlays',label:'SC Plays This Week',ph:'8500',ai:'8,500 plays (+15% vs last week)'}],aiSuggest:'Weekly summary: IG +120 (50% above your average), SC +15% plays. Best performing post: studio BTS clip (2,400 views, 8.2% engagement). Worst: flyer repost (340 views). Recommendation: double down on video content next week.',aiOptions:['Good week','Average week','Adjust strategy']}
+                ]}
+        ]
+    };
+
+    var runs=[];
+    var currentWorkflow=null;
+    var currentStepIdx=0;
+    var stepData=[];
+
+    function loadWorkflows(){
+        var user=document.getElementById('wf-user').value;
+        var sel=document.getElementById('wf-select');
+        sel.innerHTML='';
+        WORKFLOWS[user].forEach(function(w){
+            sel.innerHTML+='<option value="'+w.id+'">'+w.name+'</option>';
+        });
+    }
+
+    function getWorkflow(){
+        var user=document.getElementById('wf-user').value;
+        var wfId=document.getElementById('wf-select').value;
+        return WORKFLOWS[user].find(function(w){return w.id===wfId;});
+    }
+
+    function loadWorkflow(){
+        var wf=getWorkflow();
+        if(!wf) return;
+        document.getElementById('wf-title').textContent=wf.name;
+        document.getElementById('wf-sub').textContent=wf.desc+' — Click "Run Workflow" to start the interactive simulation.';
+        document.getElementById('wf-dag').innerHTML='';
+        document.getElementById('wf-results').innerHTML='';
+        document.getElementById('wf-compare').innerHTML='';
+    }
+
+    window.runWorkflow=function(){
+        var wf=getWorkflow();
+        if(!wf) return;
+        currentWorkflow=wf;
+        currentStepIdx=0;
+        stepData=wf.steps.map(function(s){return {values:{},aiChoice:''}});
+        document.getElementById('wf-title').textContent=wf.name;
+        document.getElementById('wf-sub').textContent=wf.desc;
+        document.getElementById('wf-results').innerHTML='';
+        document.getElementById('wf-compare').innerHTML='';
+        renderDAG();
+    };
+
+    function renderDAG(){
+        var wf=currentWorkflow;
+        var h='<div class="W-dag">';
+        wf.steps.forEach(function(step,i){
+            var state=i<currentStepIdx?'done':i===currentStepIdx?'active':'waiting';
+            h+='<div class="W-step">';
+            h+='<div class="W-step-line"><div class="W-step-dot '+state+'"></div>';
+            if(i<wf.steps.length-1) h+='<div class="W-step-connector '+(i<currentStepIdx?'done':i===currentStepIdx?'active':'')+'"></div>';
+            h+='</div>';
+            h+='<div class="W-step-card '+state+'">';
+            h+='<div class="W-step-hdr"><div class="W-step-name">'+step.name+'</div><div class="W-step-num">Step '+(i+1)+'/'+wf.steps.length+'</div></div>';
+            h+='<div class="W-step-desc">'+step.desc+'</div>';
+
+            if(i===currentStepIdx){
+                // AI suggestion
+                h+='<div class="W-ai"><div class="W-ai-tag">Lab-Intelligence Suggestion</div>';
+                h+='<div class="W-ai-text">'+esc(step.aiSuggest)+'</div>';
+                if(step.aiOptions){
+                    h+='<div class="W-ai-options">';
+                    step.aiOptions.forEach(function(opt,oi){
+                        var sel=stepData[i].aiChoice===opt?' selected':'';
+                        h+='<div class="W-ai-opt'+sel+'" onclick="selectAIOpt('+i+',\''+esc(opt)+'\',this)">'+esc(opt)+'</div>';
+                    });
+                    h+='</div>';
+                }
+                h+='</div>';
+                // Input fields
+                if(step.inputs){
+                    h+='<div class="W-input-row">';
+                    step.inputs.forEach(function(inp){
+                        var val=stepData[i].values[inp.id]||inp.ai||'';
+                        h+='<div><label class="W-input-label">'+inp.label+'</label>';
+                        h+='<input class="W-input" id="wf-inp-'+inp.id+'" value="'+esc(val)+'" placeholder="'+esc(inp.ph)+'"></div>';
+                    });
+                    h+='</div>';
+                }
+                h+='<div style="display:flex;gap:6px;margin-top:8px">';
+                h+='<button class="W-btn W-btn-primary W-btn-sm" onclick="advanceStep()">Continue &rarr;</button>';
+                if(i>0) h+='<button class="W-btn W-btn-ghost W-btn-sm" onclick="goBackStep()">Back</button>';
+                h+='</div>';
+            } else if(i<currentStepIdx){
+                // Show saved values
+                var saved=stepData[i];
+                if(saved.aiChoice) h+='<div style="font-size:.62rem;color:var(--gn);margin-top:4px">Selected: '+esc(saved.aiChoice)+'</div>';
+                var vals=Object.entries(saved.values).filter(function(e){return e[1]});
+                if(vals.length){
+                    h+='<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;font-size:.62rem;color:var(--gy)">';
+                    vals.forEach(function(v){h+='<span>'+v[0]+': <strong style="color:var(--fg)">'+esc(v[1])+'</strong></span>';});
+                    h+='</div>';
+                }
+                h+='<button class="W-btn W-btn-ghost W-btn-sm" onclick="editStep('+i+')" style="margin-top:6px">Edit</button>';
+            }
+            h+='</div></div>';
+        });
+        h+='</div>';
+        document.getElementById('wf-dag').innerHTML=h;
+    }
+
+    window.selectAIOpt=function(stepIdx,opt,el){
+        stepData[stepIdx].aiChoice=opt;
+        el.parentNode.querySelectorAll('.W-ai-opt').forEach(function(o){o.classList.remove('selected')});
+        el.classList.add('selected');
+        // Auto-fill related inputs
+        var step=currentWorkflow.steps[stepIdx];
+        if(step.inputs&&step.inputs.length){
+            var inp=step.inputs[0];
+            var match=opt.match(/£([\d,]+)/);
+            if(match&&document.getElementById('wf-inp-'+inp.id)){
+                // If it's a price option, fill the fee field
+                step.inputs.forEach(function(field){
+                    if(field.id.match(/fee|budget|quote/i)){
+                        var el2=document.getElementById('wf-inp-'+field.id);
+                        if(el2) el2.value=match[1].replace(/,/g,'');
+                    }
+                });
+            }
+        }
+    };
+
+    window.advanceStep=function(){
+        // Save current inputs
+        var step=currentWorkflow.steps[currentStepIdx];
+        if(step.inputs){
+            step.inputs.forEach(function(inp){
+                var el=document.getElementById('wf-inp-'+inp.id);
+                if(el) stepData[currentStepIdx].values[inp.id]=el.value;
+            });
+        }
+        currentStepIdx++;
+        if(currentStepIdx>=currentWorkflow.steps.length){
+            renderDAG();
+            showResults();
+            return;
+        }
+        renderDAG();
+        // Scroll to active step
+        setTimeout(function(){
+            var active=document.querySelector('.W-step-card.active');
+            if(active) active.scrollIntoView({behavior:'smooth',block:'center'});
+        },100);
+    };
+
+    window.goBackStep=function(){if(currentStepIdx>0){currentStepIdx--;renderDAG();}};
+    window.editStep=function(i){currentStepIdx=i;renderDAG();};
+
+    function calcMetrics(data){
+        var fee=parseFloat((data[2]&&data[2].values.fee)||'1500')||1500;
+        var commission=parseFloat((data[2]&&data[2].values.commission)||'10')||10;
+        var attendance=parseInt((data[5]&&data[5].values.attendance)||'2800')||2800;
+        var rating=parseFloat((data[6]&&data[6].values.rating)||'4')||4;
+        var commEarned=fee*(commission/100);
+        var djEarned=fee-commEarned;
+        return{revenue:fee,commission:commEarned,djEarnings:djEarned,attendance:attendance,rating:rating,conversionRate:Math.round(attendance/3000*100),rebookingProb:Math.round(rating*18),socialImpact:Math.round(fee*0.3+attendance*0.01)};
+    }
+
+    function showResults(){
+        var m=calcMetrics(stepData);
+        var run={id:'run-'+Date.now(),name:currentWorkflow.name,timestamp:new Date().toLocaleString(),metrics:m,steps:JSON.parse(JSON.stringify(stepData)),optimize:document.getElementById('wf-optimize').value};
+        runs.push(run);
+
+        var h='<div class="W-results">';
+        h+='<div class="W-results-title">Workflow Results</div>';
+        h+='<div class="W-kpi-row">';
+        [{v:'£'+m.revenue,l:'Total Fee'},{v:'£'+m.commission,l:'Commission'},{v:'£'+m.djEarnings,l:'DJ Earnings'},{v:m.attendance.toLocaleString(),l:'Attendance'},{v:m.rating+'/5',l:'Rating'},{v:m.rebookingProb+'%',l:'Rebooking Prob'}].forEach(function(k){
+            h+='<div class="W-kpi"><div class="W-kpi-val">'+k.v+'</div><div class="W-kpi-label">'+k.l+'</div></div>';
+        });
+        h+='</div>';
+
+        // Action items
+        h+='<div class="W-results-title" style="margin-top:16px">Action Items (Priority Order)</div>';
+        var actions=[
+            {pri:'p1',text:'Upload set recording to SoundCloud within 48 hours'},
+            {pri:'p1',text:'Send thank-you message to promoter + request testimonial'},
+            {pri:'p1',text:'Follow up on rebooking inquiries within 72 hours'},
+            {pri:'p2',text:'Post 3 event photos/clips across Instagram this week'},
+            {pri:'p2',text:'Update Lab-Wiki venue profile with new learnings'},
+            {pri:'p3',text:'Review pricing: if rating >4, consider 10% fee increase for similar venues'},
+            {pri:'p3',text:'Log event in Lab-Intelligence for pattern detection'}
+        ];
+        actions.forEach(function(a){
+            h+='<div class="W-action-item"><span class="W-action-pri '+a.pri+'">'+a.pri.toUpperCase()+'</span>'+esc(a.text)+'</div>';
+        });
+
+        h+='<div style="margin-top:14px;display:flex;gap:8px">';
+        h+='<button class="W-btn W-btn-primary W-btn-sm" onclick="runWorkflow()">Run Again (Edit Steps)</button>';
+        h+='<button class="W-btn W-btn-ghost W-btn-sm" onclick="saveToLibrary()">Save to Library</button>';
+        if(runs.length>1) h+='<button class="W-btn W-btn-amber W-btn-sm" onclick="showComparison()">Compare All Runs ('+runs.length+')</button>';
+        h+='</div></div>';
+
+        document.getElementById('wf-results').innerHTML=h;
+    }
+
+    window.showComparison=function(){
+        if(runs.length<2) return;
+        var h='<div class="W-results" style="margin-top:16px">';
+        h+='<div class="W-results-title">Workflow Comparison ('+runs.length+' runs)</div>';
+
+        // Table
+        h+='<table class="W-compare"><thead><tr><th>Run</th><th>Fee</th><th>Commission</th><th>DJ Earnings</th><th>Attendance</th><th>Rating</th><th>Rebook %</th></tr></thead><tbody>';
+        var bestRev=0,bestIdx=0;
+        runs.forEach(function(r,i){if(r.metrics.revenue>bestRev){bestRev=r.metrics.revenue;bestIdx=i;}});
+        runs.forEach(function(r,i){
+            var isBest=i===bestIdx;
+            h+='<tr><td style="font-weight:700">#'+(i+1)+(isBest?' ★':'')+'</td>';
+            h+='<td class="'+(isBest?'best':'')+'">£'+r.metrics.revenue+'</td>';
+            h+='<td>£'+r.metrics.commission+'</td>';
+            h+='<td>£'+r.metrics.djEarnings+'</td>';
+            h+='<td>'+r.metrics.attendance.toLocaleString()+'</td>';
+            h+='<td>'+r.metrics.rating+'/5</td>';
+            h+='<td>'+r.metrics.rebookingProb+'%</td></tr>';
+        });
+        h+='</tbody></table>';
+
+        // Chart
+        h+='<div class="W-results-title" style="margin-top:16px">Revenue Comparison</div>';
+        h+='<div class="W-chart">';
+        var maxRev=Math.max.apply(null,runs.map(function(r){return r.metrics.revenue}));
+        var colors=['var(--ac)','var(--gn)','var(--pr)','var(--am)','var(--rd)','#14b8a6','#ec4899','#8b5cf6','#f59e0b','#6366f1'];
+        runs.forEach(function(r,i){
+            var pct=Math.round(r.metrics.revenue/maxRev*100);
+            h+='<div class="W-chart-bar" style="height:'+pct+'%;background:'+colors[i%colors.length]+'">';
+            h+='<div class="W-chart-bar-val">£'+r.metrics.revenue+'</div>';
+            h+='<div class="W-chart-bar-label">Run #'+(i+1)+'</div></div>';
+        });
+        h+='</div>';
+
+        // Summary
+        h+='<div style="margin-top:28px;padding:16px;background:var(--lt);border-radius:8px">';
+        h+='<div style="font-size:.68rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Summary</div>';
+        h+='<div style="font-size:.72rem;line-height:1.8;color:#444">';
+        h+='Best revenue: <strong>Run #'+(bestIdx+1)+' (£'+bestRev+')</strong>. ';
+        var avgRev=Math.round(runs.reduce(function(s,r){return s+r.metrics.revenue},0)/runs.length);
+        h+='Average across runs: <strong>£'+avgRev+'</strong>. ';
+        var avgRating=(runs.reduce(function(s,r){return s+r.metrics.rating},0)/runs.length).toFixed(1);
+        h+='Average rating: <strong>'+avgRating+'/5</strong>.';
+        h+='</div></div>';
+
+        h+='</div>';
+        document.getElementById('wf-compare').innerHTML=h;
+        document.getElementById('wf-compare').scrollIntoView({behavior:'smooth'});
+    };
+
+    window.runOptimizer=function(){
+        var wf=getWorkflow();if(!wf) return;
+        var numSims=parseInt(document.getElementById('wf-sims').value)||5;
+        var optFor=document.getElementById('wf-optimize').value;
+
+        // Clear and show progress
+        var h='<div class="W-opt"><div class="W-opt-title">Optimizer — Running '+numSims+' simulations for "'+optFor+'"</div>';
+        h+='<div class="W-opt-progress"><div class="W-opt-fill" id="opt-fill"></div></div>';
+        h+='<div id="opt-status" style="font-size:.65rem;color:var(--gy);font-family:var(--mn)">Initializing...</div></div>';
+        document.getElementById('wf-results').innerHTML=h;
+        document.getElementById('wf-compare').innerHTML='';
+
+        var simRuns=[];
+        var simIdx=0;
+
+        function runSim(){
+            if(simIdx>=numSims){
+                finishOptimizer(simRuns,optFor);
+                return;
+            }
+            var fill=document.getElementById('opt-fill');
+            var status=document.getElementById('opt-status');
+            if(fill) fill.style.width=Math.round((simIdx+1)/numSims*100)+'%';
+            if(status) status.textContent='Simulation '+(simIdx+1)+'/'+numSims+' — varying parameters...';
+
+            // Generate varied metrics
+            var baseFee=1500;
+            var variance=0.3;
+            var feeVar=baseFee*(1+(Math.random()*2-1)*variance);
+            var fee=Math.round(feeVar/50)*50;
+            var commission=10;
+            var attendance=Math.round(2000+Math.random()*1000);
+            var rating=Math.round((3+Math.random()*2)*10)/10;
+
+            // Optimize bias
+            if(optFor==='revenue') fee=Math.round(fee*1.1/50)*50;
+            else if(optFor==='bookings') fee=Math.round(fee*0.85/50)*50;
+            else if(optFor==='growth') attendance=Math.round(attendance*1.15);
+            else if(optFor==='brand') rating=Math.min(5,rating+0.3);
+
+            var m={revenue:fee,commission:Math.round(fee*commission/100),djEarnings:Math.round(fee*(100-commission)/100),attendance:attendance,rating:rating,rebookingProb:Math.round(rating*18),socialImpact:Math.round(fee*0.3+attendance*0.01)};
+            simRuns.push({id:'sim-'+(simIdx+1),name:'Simulation #'+(simIdx+1),metrics:m});
+            simIdx++;
+            setTimeout(runSim,300);
+        }
+        setTimeout(runSim,500);
+    };
+
+    function finishOptimizer(simRuns,optFor){
+        // Rank by optimize metric
+        var key=optFor==='revenue'?'revenue':optFor==='growth'?'socialImpact':optFor==='bookings'?'rebookingProb':optFor==='time'?'revenue':'rating';
+        simRuns.sort(function(a,b){return b.metrics[key]-a.metrics[key]});
+
+        var h='<div class="W-results">';
+        h+='<div class="W-results-title">Optimizer Results — Ranked by '+optFor+'</div>';
+
+        // Ranked table
+        h+='<table class="W-compare"><thead><tr><th>Rank</th><th>Fee</th><th>DJ Earnings</th><th>Attendance</th><th>Rating</th><th>Rebook %</th><th>Social Impact</th></tr></thead><tbody>';
+        simRuns.forEach(function(r,i){
+            var cls=i===0?'best':i===simRuns.length-1?'worst':'';
+            h+='<tr><td style="font-weight:700">#'+(i+1)+(i===0?' ★':'')+'</td>';
+            h+='<td class="'+cls+'">£'+r.metrics.revenue+'</td>';
+            h+='<td>£'+r.metrics.djEarnings+'</td>';
+            h+='<td>'+r.metrics.attendance.toLocaleString()+'</td>';
+            h+='<td>'+r.metrics.rating+'/5</td>';
+            h+='<td>'+r.metrics.rebookingProb+'%</td>';
+            h+='<td>'+r.metrics.socialImpact+'</td></tr>';
+        });
+        h+='</tbody></table>';
+
+        // Chart comparison
+        h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">';
+        ['revenue','rebookingProb'].forEach(function(metric){
+            var label=metric==='revenue'?'Revenue (£)':'Rebooking Probability (%)';
+            var vals=simRuns.map(function(r){return r.metrics[metric]});
+            var max=Math.max.apply(null,vals);
+            h+='<div><div style="font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gy);margin-bottom:6px">'+label+'</div>';
+            h+='<div class="W-chart">';
+            var colors=['var(--ac)','var(--gn)','var(--pr)','var(--am)','var(--rd)','#14b8a6','#ec4899','#8b5cf6','#f59e0b','#6366f1','#10b981','#f43f5e','#0ea5e9','#a855f7','#eab308','#06b6d4','#d946ef','#84cc16','#e11d48','#7c3aed'];
+            simRuns.forEach(function(r,i){
+                var pct=Math.max(5,Math.round(r.metrics[metric]/max*100));
+                h+='<div class="W-chart-bar" style="height:'+pct+'%;background:'+colors[i%colors.length]+'">';
+                h+='<div class="W-chart-bar-val">'+(metric==='revenue'?'£':'')+r.metrics[metric]+(metric==='rebookingProb'?'%':'')+'</div>';
+                h+='<div class="W-chart-bar-label">#'+(i+1)+'</div></div>';
+            });
+            h+='</div></div>';
+        });
+        h+='</div>';
+
+        // Trade-offs
+        var best=simRuns[0].metrics,worst=simRuns[simRuns.length-1].metrics;
+        h+='<div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:12px">';
+        h+='<div style="padding:16px;background:rgba(22,163,74,.04);border:1px solid rgba(22,163,74,.15);border-radius:8px">';
+        h+='<div style="font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gn);margin-bottom:6px">Best Outcome (#1)</div>';
+        h+='<div style="font-size:.68rem;color:#444;line-height:1.8">Fee: £'+best.revenue+' | Rating: '+best.rating+'/5 | Rebook: '+best.rebookingProb+'%</div></div>';
+        h+='<div style="padding:16px;background:rgba(220,38,38,.04);border:1px solid rgba(220,38,38,.15);border-radius:8px">';
+        h+='<div style="font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--rd);margin-bottom:6px">Trade-off (#'+simRuns.length+')</div>';
+        h+='<div style="font-size:.68rem;color:#444;line-height:1.8">Fee: £'+worst.revenue+' | Rating: '+worst.rating+'/5 | Rebook: '+worst.rebookingProb+'%</div></div>';
+        h+='</div>';
+
+        // Summary
+        h+='<div style="margin-top:16px;padding:16px;background:var(--lt);border-radius:8px">';
+        h+='<div style="font-size:.68rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Optimizer Summary</div>';
+        var avgRev=Math.round(simRuns.reduce(function(s,r){return s+r.metrics.revenue},0)/simRuns.length);
+        h+='<div style="font-size:.72rem;line-height:1.8;color:#444">';
+        h+='Optimized for: <strong>'+optFor+'</strong>. Best: <strong>£'+best.revenue+'</strong> ('+best.rating+'/5 rating). ';
+        h+='Average: <strong>£'+avgRev+'</strong>. Range: £'+worst.revenue+' — £'+best.revenue+'. ';
+        h+='Recommendation: <strong>Quote £'+best.revenue+'</strong> with flexibility to £'+Math.round(best.revenue*0.9/50)*50+' for high-value venues.';
+        h+='</div></div>';
+
+        h+='<div style="margin-top:12px"><button class="W-btn W-btn-ghost W-btn-sm" onclick="saveToLibrary()">Save Best to Library</button></div>';
+        h+='</div>';
+
+        document.getElementById('wf-results').innerHTML=h;
+    }
+
+    // Library
+    var library=[];
+    window.saveToLibrary=function(){
+        var latest=runs.length?runs[runs.length-1]:null;
+        if(!latest) return;
+        library.push(latest);
+        toast('Saved to workflow library');
+    };
+    window.showLibrary=function(){
+        var lib=document.getElementById('wf-library');
+        lib.style.display=lib.style.display==='none'?'block':'none';
+        if(lib.style.display==='none') return;
+        var h='<div class="W-results"><div class="W-results-title">Workflow Library ('+library.length+' saved)</div>';
+        if(!library.length){h+='<div style="font-size:.72rem;color:var(--gy)">No workflows saved yet. Run a workflow and click "Save to Library".</div>';}
+        else{
+            h+='<div class="W-lib">';
+            library.forEach(function(r,i){
+                h+='<div class="W-lib-card"><div class="W-lib-card-name">'+esc(r.name)+'</div>';
+                h+='<div class="W-lib-card-meta">'+r.timestamp+'</div>';
+                h+='<div class="W-lib-card-kpis"><span>£'+r.metrics.revenue+'</span> fee &middot; <span>'+r.metrics.rating+'/5</span> rating &middot; <span>'+r.metrics.rebookingProb+'%</span> rebook</div></div>';
+            });
+            h+='</div>';
+        }
+        h+='</div>';
+        lib.innerHTML=h;
+    };
+
+    function toast(m){var t=document.createElement('div');t.style.cssText='position:fixed;bottom:24px;right:24px;padding:12px 20px;background:#f5f5f5;border:1px solid #ddd;border-radius:6px;font-size:.72rem;font-weight:600;z-index:600;letter-spacing:.04em;text-transform:uppercase;animation:fadeSlide .3s ease';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.style.opacity='0';t.style.transition='opacity .3s'},2500);setTimeout(function(){t.remove()},3000)}
+    function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+    loadWorkflows();
+    loadWorkflow();
+})();
+</script>
+</body>
+</html>
