@@ -8,7 +8,7 @@
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$serverScript = Join-Path $repoRoot 'engine' 'server.py'
+$serverScript = Join-Path (Join-Path $repoRoot 'engine') 'server.py'
 
 if (-not (Test-Path $serverScript)) {
     Write-Host "[conductor] ERROR: engine/server.py not found at $serverScript" -ForegroundColor Red
