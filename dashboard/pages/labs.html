@@ -234,7 +234,7 @@
             <div class="L-mode" data-v="guide">Guide</div>
         </div>
         <div style="display:flex;align-items:center;gap:12px">
-            <select id="theme-global" onchange="applyGlobalTheme(this.value)" style="padding:5px 10px;background:var(--wh);border:1px solid var(--bd);border-radius:3px;font-size:.58rem;font-family:var(--ff);font-weight:600;cursor:pointer">
+            <select id="theme-global" onchange="applyGlobalTheme(this.value)" style="padding:5px 10px;background:var(--t-bg,#fff);color:var(--t-fg,#000);border:1px solid var(--bd);border-radius:3px;font-size:.58rem;font-family:var(--ff);font-weight:600;cursor:pointer">
                 <option value="chrome">01 Chrome</option>
                 <option value="pulse">02 Dark Pulse</option>
                 <option value="gradient">03 Gradient Flow</option>
@@ -256,7 +256,7 @@
                 <option value="filmreel">19 Film Reel</option>
                 <option value="anti">20 Anti-UI</option>
             </select>
-            <select id="layout-global" onchange="applyGlobalLayout(this.value)" style="padding:5px 10px;background:var(--wh);border:1px solid var(--bd);border-radius:3px;font-size:.58rem;font-family:var(--ff);font-weight:600;cursor:pointer">
+            <select id="layout-global" onchange="applyGlobalLayout(this.value)" style="padding:5px 10px;background:var(--t-bg,#fff);color:var(--t-fg,#000);border:1px solid var(--bd);border-radius:3px;font-size:.58rem;font-family:var(--ff);font-weight:600;cursor:pointer">
                 <option value="hero-scroll">A Hero Scroll</option>
                 <option value="split-screen">B Split Screen</option>
                 <option value="card-grid">C Card Grid</option>
@@ -506,7 +506,7 @@
                     <div style="font-size:.72rem;color:var(--gy);margin-top:4px">Submit, track, and discuss site changes and feature requests.</div>
                 </div>
                 <div style="display:flex;gap:8px">
-                    <select id="req-filter" onchange="filterRequests()" style="padding:7px 12px;border:1px solid var(--bd);border-radius:4px;font-size:.68rem;font-family:var(--ff);font-weight:600;cursor:pointer;background:transparent;color:inherit">
+                    <select id="req-filter" onchange="filterRequests()" style="padding:7px 12px;border:1px solid var(--bd);border-radius:4px;font-size:.68rem;font-family:var(--ff);font-weight:600;cursor:pointer;background:var(--t-bg,#fff);color:var(--t-fg,#000)">
                         <option value="all">All</option>
                         <option value="open">Open</option>
                         <option value="in-progress">In Progress</option>
@@ -520,14 +520,14 @@
                 <div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gy);margin-bottom:10px">New Request</div>
                 <div style="display:grid;grid-template-columns:1fr 140px 140px;gap:10px;margin-bottom:10px">
                     <input id="req-title" style="padding:10px 14px;border:1px solid var(--bd);border-radius:6px;font-size:.78rem;font-family:var(--ff);background:transparent;color:inherit" placeholder="Title — e.g. 'Add SoundCloud embed to artist profile'">
-                    <select id="req-type" style="padding:10px 14px;border:1px solid var(--bd);border-radius:6px;font-size:.72rem;font-family:var(--ff);cursor:pointer;background:transparent;color:inherit">
+                    <select id="req-type" style="padding:10px 14px;border:1px solid var(--bd);border-radius:6px;font-size:.72rem;font-family:var(--ff);cursor:pointer;background:var(--t-bg,#fff);color:var(--t-fg,#000)">
                         <option value="change">Site Change</option>
                         <option value="feature">Feature Request</option>
                         <option value="bug">Bug Report</option>
                         <option value="content">Content Update</option>
                         <option value="design">Design Tweak</option>
                     </select>
-                    <select id="req-priority" style="padding:10px 14px;border:1px solid var(--bd);border-radius:6px;font-size:.72rem;font-family:var(--ff);cursor:pointer;background:transparent;color:inherit">
+                    <select id="req-priority" style="padding:10px 14px;border:1px solid var(--bd);border-radius:6px;font-size:.72rem;font-family:var(--ff);cursor:pointer;background:var(--t-bg,#fff);color:var(--t-fg,#000)">
                         <option value="medium">Medium Priority</option>
                         <option value="high">High Priority</option>
                         <option value="low">Low Priority</option>
