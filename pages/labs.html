@@ -10,51 +10,64 @@
     @keyframes neonPulse{0%,100%{box-shadow:0 0 4px var(--glow),inset 0 0 4px rgba(255,255,255,.02)}50%{box-shadow:0 0 12px var(--glow),0 0 24px var(--glow),inset 0 0 6px rgba(255,255,255,.04)}}
     @keyframes neonBorderPulse{0%,100%{border-color:var(--glow)}50%{border-color:rgba(255,255,255,.15)}}
     .L .neon-box{animation:neonPulse 3s ease-in-out infinite}
-    /* Neon borders on ALL cards, sections, inputs */
+    /* ===== NEON GLOW SYSTEM ===== */
+    /* Card surfaces — raised, visible */
     .L[data-neon="true"] .R-phase,.L[data-neon="true"] .R-tier,.L[data-neon="true"] .R-intel,
     .L[data-neon="true"] .A-dj,.L[data-neon="true"] .A-info,
-    .L[data-neon="true"] .S-section,.L[data-neon="true"] .S-dj,.L[data-neon="true"] .S-svc,
+    .L[data-neon="true"] .S-dj,.L[data-neon="true"] .S-svc,
     .L[data-neon="true"] .S-dj-release,.L[data-neon="true"] .S-dj-profile,
-    .L[data-neon="true"] .S-kpis,.L[data-neon="true"] .S-values,
-    .L[data-neon="true"] .S-cta,
     .L[data-neon="true"] [style*="border:1px solid"],
-    .L[data-neon="true"] [style*="border:1px solid var"]{
-        border-color:var(--glow)!important;transition:box-shadow .3s,border-color .3s}
+    .L[data-neon="true"] [style*="border-radius:8px"],
+    .L[data-neon="true"] [style*="border-radius:10px"],
+    .L[data-neon="true"] [style*="border-radius:12px"]{
+        border-color:var(--glow)!important;
+        background:rgba(255,255,255,.03)!important;
+        box-shadow:0 0 6px var(--glow),inset 0 0 12px rgba(255,255,255,.01);
+        transition:box-shadow .3s,border-color .3s}
 
-    /* Pulse animation on all bordered sections */
+    /* Pulse animation on sections */
     .L[data-neon="true"] .R-phase,.L[data-neon="true"] .R-tier,.L[data-neon="true"] .R-intel,
-    .L[data-neon="true"] .A-dj,.L[data-neon="true"] .A-info,.L[data-neon="true"] .A-section,
-    .L[data-neon="true"] .S-section{
-        animation:neonBorderPulse 3s ease-in-out infinite}
+    .L[data-neon="true"] .A-dj,.L[data-neon="true"] .A-info,.L[data-neon="true"] .A-section{
+        animation:neonPulse 3s ease-in-out infinite}
 
-    /* Inputs glow */
+    /* Inputs — prominent with fill */
     .L[data-neon="true"] input,.L[data-neon="true"] select,.L[data-neon="true"] textarea{
-        border-color:var(--glow)!important;transition:box-shadow .3s}
+        border:1px solid var(--glow)!important;
+        background:rgba(255,255,255,.04)!important;
+        color:inherit!important;
+        box-shadow:0 0 4px var(--glow);
+        transition:box-shadow .3s}
     .L[data-neon="true"] input:focus,.L[data-neon="true"] select:focus,.L[data-neon="true"] textarea:focus{
-        box-shadow:0 0 8px var(--glow),0 0 20px var(--glow)!important;border-color:var(--glow)!important}
+        box-shadow:0 0 10px var(--glow),0 0 24px var(--glow)!important;
+        background:rgba(255,255,255,.06)!important}
 
-    /* Hover glow on cards */
+    /* Hover glow — intensified */
     .L[data-neon="true"] .R-phase:hover,.L[data-neon="true"] .R-tier:hover,
     .L[data-neon="true"] .A-dj:hover,.L[data-neon="true"] .S-dj:hover,.L[data-neon="true"] .S-svc:hover,
     .L[data-neon="true"] [style*="border:1px solid"]:hover{
-        box-shadow:0 0 10px var(--glow),0 0 24px var(--glow)!important}
+        box-shadow:0 0 12px var(--glow),0 0 30px var(--glow)!important;
+        background:rgba(255,255,255,.05)!important}
 
-    /* Top bar neon */
-    .L[data-neon="true"] .L-top{border-bottom-color:var(--glow)!important;box-shadow:0 1px 12px var(--glow)}
-    .L[data-neon="true"] .L-mode.on{border-bottom-color:var(--glow)!important;text-shadow:0 0 10px var(--glow)}
-
-    /* Section dividers glow */
+    /* Sections */
+    .L[data-neon="true"] .S-section{border-color:var(--glow)!important}
     .L[data-neon="true"] .S-divider{border-bottom-color:var(--glow)!important}
-    .L[data-neon="true"] .A-section{border-bottom-color:var(--glow)!important;animation:neonBorderPulse 3s ease-in-out infinite}
-
-    /* KPI bar borders */
+    .L[data-neon="true"] .S-kpis,.L[data-neon="true"] .S-values{
+        border-color:var(--glow)!important;background:rgba(255,255,255,.02)!important}
     .L[data-neon="true"] .S-kpi{border-right-color:var(--glow)!important}
+    .L[data-neon="true"] .A-section{border-bottom-color:var(--glow)!important}
+
+    /* Top bar */
+    .L[data-neon="true"] .L-top{border-bottom-color:var(--glow)!important;box-shadow:0 1px 14px var(--glow)}
+    .L[data-neon="true"] .L-mode.on{border-bottom-color:var(--glow)!important;text-shadow:0 0 12px var(--glow)}
 
     /* Tab bar in roster */
     .L[data-neon="true"] .dj-tab{border-bottom-color:var(--glow)!important}
 
     /* Sticky activity bar */
-    .L[data-neon="true"] #sticky-activity{border-top-color:var(--glow)!important;box-shadow:0 -1px 12px var(--glow)}
+    .L[data-neon="true"] #sticky-activity{border-top-color:var(--glow)!important;box-shadow:0 -2px 16px var(--glow)}
+
+    /* CTA */
+    .L[data-neon="true"] .S-cta{border-color:var(--glow)!important;box-shadow:inset 0 0 30px rgba(255,255,255,.02)}
 
     /* Top bar */
     .L-top{display:flex;align-items:center;justify-content:space-between;padding:0 30px;height:36px;border-bottom:1px solid var(--bd);background:var(--wh);position:sticky;top:0;z-index:100}
