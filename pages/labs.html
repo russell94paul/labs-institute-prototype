@@ -209,6 +209,7 @@
             <div class="L-mode" data-v="designs">Designs</div>
             <div class="L-mode" data-v="admin">Admin</div>
             <div class="L-mode" data-v="roadmap">Roadmap</div>
+            <div class="L-mode" data-v="tech">Components</div>
         </div>
         <div class="L-tagline">Founded For The Future</div>
     </div>
@@ -306,40 +307,36 @@
 
     <!-- ============ DESIGNS ============ -->
     <div class="L-view" id="v-designs">
-        <div style="padding:24px 40px;max-width:1100px;margin:0 auto">
-
-            <!-- Design selector -->
-            <div style="display:flex;gap:16px;align-items:center;margin-bottom:24px;flex-wrap:wrap">
-                <div>
-                    <label style="font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gy);display:block;margin-bottom:6px">Site Design Concept</label>
-                    <select id="design-select" onchange="switchDesign(this.value)" style="padding:10px 16px;background:var(--wh);border:1px solid var(--bd);border-radius:4px;font-size:.78rem;font-family:var(--ff);font-weight:600;min-width:260px;cursor:pointer">
-                        <option value="chrome">01 — Minimal Chrome (Current)</option>
-                        <option value="pulse">02 — Dark Pulse</option>
-                        <option value="gradient">03 — Gradient Flow</option>
-                        <option value="brutalist">04 — Brutalist Mono</option>
-                        <option value="glass">05 — Glass Morphism</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gy);display:block;margin-bottom:6px">Technical Components</label>
-                    <select id="tech-select" onchange="switchTech(this.value)" style="padding:10px 16px;background:var(--wh);border:1px solid var(--bd);border-radius:4px;font-size:.78rem;font-family:var(--ff);font-weight:600;min-width:260px;cursor:pointer">
-                        <option value="overview">Overview — All Components</option>
-                        <option value="intelligence">Lab-Intelligence — AI Growth Engine</option>
-                        <option value="wiki">Lab-Wiki — Knowledge Base</option>
-                        <option value="chat">Chat — AI-Assisted Communication</option>
-                        <option value="analytics">Analytics — Performance Dashboard</option>
-                        <option value="social">Social Integration — Platform Connectors</option>
-                        <option value="booking">Booking — Contract & Gig Pipeline</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Design preview area -->
-            <div id="design-preview" style="border:1px solid var(--bd);border-radius:8px;overflow:hidden;min-height:600px"></div>
-
-            <!-- Tech component area -->
-            <div id="tech-preview" style="margin-top:24px"></div>
+        <!-- Design selector bar -->
+        <div style="padding:16px 40px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:16px">
+            <label style="font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gy)">Design Concept</label>
+            <select id="design-select" onchange="switchDesign(this.value)" style="padding:8px 14px;background:var(--wh);border:1px solid var(--bd);border-radius:4px;font-size:.75rem;font-family:var(--ff);font-weight:600;min-width:260px;cursor:pointer">
+                <option value="chrome">01 — Minimal Chrome (Current)</option>
+                <option value="pulse">02 — Dark Pulse</option>
+                <option value="gradient">03 — Gradient Flow</option>
+                <option value="brutalist">04 — Brutalist Mono</option>
+                <option value="glass">05 — Glass Morphism</option>
+            </select>
         </div>
+        <!-- Full-width design preview -->
+        <div id="design-preview" style="min-height:600px"></div>
+    </div>
+
+    <!-- ============ COMPONENTS ============ -->
+    <div class="L-view" id="v-tech">
+        <div style="padding:16px 40px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:16px">
+            <label style="font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gy)">Component</label>
+            <select id="tech-select" onchange="switchTech(this.value)" style="padding:8px 14px;background:var(--wh);border:1px solid var(--bd);border-radius:4px;font-size:.75rem;font-family:var(--ff);font-weight:600;min-width:300px;cursor:pointer">
+                <option value="overview">Overview — All Components</option>
+                <option value="intelligence">Lab-Intelligence — AI Growth Engine</option>
+                <option value="wiki">Lab-Wiki — Knowledge Base</option>
+                <option value="chat">Chat — AI-Assisted Communication</option>
+                <option value="analytics">Analytics — Performance Dashboard</option>
+                <option value="social">Social Integration — Platform Connectors</option>
+                <option value="booking">Booking — Contract & Gig Pipeline</option>
+            </select>
+        </div>
+        <div id="tech-preview" style="padding:24px 40px;max-width:1100px;margin:0 auto"></div>
     </div>
 
     <!-- ============ ADMIN ============ -->
@@ -702,10 +699,10 @@ Social metrics → Periodic snapshots → Pattern detection
     window.switchDesign=function(id){
         var d=DESIGNS[id]; if(!d) return;
         var accentA='rgba('+d.accentRgb+',.15)';
-        var h='<div style="'+d.heroStyle+';font-family:var(--ff);overflow:hidden">';
+        var h='<div style="'+d.heroStyle+';font-family:var(--ff);overflow:hidden;min-height:100vh">';
 
         // Hero
-        h+='<div style="text-align:center;padding:60px 30px 40px;position:relative;overflow:hidden">';
+        h+='<div style="text-align:center;padding:80px 40px 50px;position:relative;overflow:hidden">';
         if(d.anim==='pulse') h+='<div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba('+d.accentRgb+',.08) 0%,transparent 70%);animation:pulseGlow 3s ease-in-out infinite"></div>';
         if(d.anim==='flow') h+='<div style="position:absolute;inset:0;background:linear-gradient(45deg,rgba('+d.accentRgb+',.05),transparent,rgba(56,189,248,.05));background-size:400%;animation:gradShift 8s linear infinite"></div>';
         if(d.anim==='glow') h+='<div style="position:absolute;top:50%;left:50%;width:300px;height:300px;background:radial-gradient(circle,rgba('+d.accentRgb+',.12),transparent);transform:translate(-50%,-50%);filter:blur(60px);animation:pulseGlow 4s ease-in-out infinite"></div>';
@@ -732,7 +729,7 @@ Social metrics → Periodic snapshots → Pattern detection
         h+='</div>';
 
         // Artist card
-        h+='<div style="padding:30px"><div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:10px;padding:24px;'+(d.anim==='glass'?'backdrop-filter:blur(12px);':'')+'">';
+        h+='<div style="padding:40px"><div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:10px;padding:30px;max-width:1000px;margin:0 auto;'+(d.anim==='glass'?'backdrop-filter:blur(12px);':'')+'">';
         h+='<div style="display:flex;gap:16px;align-items:center;margin-bottom:16px">';
         h+='<div style="width:56px;height:56px;border-radius:50%;background:'+accentA+';display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:'+d.accent+'">L</div>';
         h+='<div><div style="font-size:1rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase">Luciid</div>';
@@ -758,7 +755,7 @@ Social metrics → Periodic snapshots → Pattern detection
         h+='</div></div>';
 
         // CTA
-        h+='<div style="text-align:center;padding:40px 30px;border-top:1px solid '+d.cardBorder+'">';
+        h+='<div style="text-align:center;padding:60px 40px;border-top:1px solid '+d.cardBorder+'">';
         h+='<div style="font-size:.85rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px">Join The Roster</div>';
         h+='<button style="padding:12px 32px;border:none;border-radius:'+(id==='brutalist'?'0':'4px')+';background:'+d.accent+';color:'+(id==='pulse'||id==='glass'?'#000':id==='brutalist'?'#fff':d.bg)+';font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-family:var(--ff)">Apply Now</button>';
         h+='</div>';
