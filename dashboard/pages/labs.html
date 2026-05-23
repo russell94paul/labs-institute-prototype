@@ -91,6 +91,8 @@
     /* DJ Profile expanded */
     .S-dj-profile{border:1px solid var(--bd);border-radius:12px;padding:32px;margin-bottom:20px;transition:border-color .2s}
     .S-dj-profile:hover{border-color:var(--bk)}
+    .S-dj-profile-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:20px}
+    @media(max-width:900px){.S-dj-profile-grid{grid-template-columns:1fr}}
     .S-dj-profile-hdr{display:flex;gap:24px;align-items:flex-start;margin-bottom:20px}
     .S-dj-profile-avatar{width:72px;height:72px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:var(--gy);border:2px solid var(--bd);flex-shrink:0}
     .S-dj-profile-info{flex:1}
@@ -791,7 +793,7 @@ Social metrics → Periodic snapshots → Pattern detection
             h+='<span class="S-dj-tier tier-'+dj.tier+'">'+esc(dj.tier)+'</span>';
             h+='</div></div></div>';
 
-            // Stats
+            // Stats bar
             h+='<div class="S-dj-stats">';
             h+='<div class="S-dj-stat"><div class="S-dj-stat-num">'+formatNum(k.ig_followers||0)+'</div><div class="S-dj-stat-label">Instagram</div></div>';
             h+='<div class="S-dj-stat"><div class="S-dj-stat-num">'+formatNum(k.ra_followers||0)+'</div><div class="S-dj-stat-label">RA Followers</div></div>';
@@ -799,15 +801,13 @@ Social metrics → Periodic snapshots → Pattern detection
             h+='<div class="S-dj-stat"><div class="S-dj-stat-num">'+(k.countries_played||0)+'</div><div class="S-dj-stat-label">Countries</div></div>';
             h+='</div>';
 
-            // Supported by
-            if(dj.supported_by&&dj.supported_by.length){
-                h+='<div class="S-subsection">Supported By</div>';
-                h+='<div style="font-size:.75rem;color:#555">'+dj.supported_by.join(' &middot; ')+'</div>';
-            }
+            // Three-column grid
+            h+='<div class="S-dj-profile-grid">';
 
-            // Key releases
+            // Column 1: Releases + Labels + Supported By
+            h+='<div>';
             if(dj.key_releases&&dj.key_releases.length){
-                h+='<div class="S-subsection">Key Releases</div><div class="S-dj-releases">';
+                h+='<div class="S-subsection">Key Releases</div><div class="S-dj-releases" style="grid-template-columns:1fr">';
                 dj.key_releases.forEach(function(r){
                     h+='<div class="S-dj-release"><div class="S-dj-release-title">'+esc(r.title)+'</div>';
                     h+='<div class="S-dj-release-label">'+esc(r.label||'Self-released')+' &middot; '+r.year+'</div>';
@@ -816,8 +816,18 @@ Social metrics → Periodic snapshots → Pattern detection
                 });
                 h+='</div>';
             }
+            if(dj.labels&&dj.labels.length){
+                h+='<div class="S-subsection">Labels</div>';
+                h+='<div style="font-size:.72rem;color:#555;line-height:1.8">'+dj.labels.join(' &middot; ')+'</div>';
+            }
+            if(dj.supported_by&&dj.supported_by.length){
+                h+='<div class="S-subsection">Supported By</div>';
+                h+='<div style="font-size:.72rem;color:#555;line-height:1.8">'+dj.supported_by.join(' &middot; ')+'</div>';
+            }
+            h+='</div>';
 
-            // Career timeline
+            // Column 2: Career Timeline
+            h+='<div>';
             if(dj.career_timeline&&dj.career_timeline.length){
                 h+='<div class="S-subsection">Career Timeline</div><div class="S-dj-timeline">';
                 dj.career_timeline.slice().reverse().forEach(function(t,i){
@@ -825,22 +835,21 @@ Social metrics → Periodic snapshots → Pattern detection
                 });
                 h+='</div>';
             }
+            h+='</div>';
 
-            // Venues & Festivals
+            // Column 3: Venues + Festivals
+            h+='<div>';
             if(dj.festivals&&dj.festivals.length){
-                h+='<div class="S-subsection">Festivals 2024-2026</div>';
-                h+='<div style="font-size:.72rem;color:#555;line-height:1.8">'+dj.festivals.join(' &middot; ')+'</div>';
+                h+='<div class="S-subsection">Festivals</div>';
+                dj.festivals.forEach(function(f){h+='<div style="font-size:.68rem;color:#555;padding:3px 0;border-bottom:1px solid rgba(0,0,0,.04)">'+esc(f)+'</div>';});
             }
             if(dj.venues_played&&dj.venues_played.length){
-                h+='<div class="S-subsection">Venues</div>';
-                h+='<div style="font-size:.72rem;color:#555;line-height:1.8">'+dj.venues_played.join(' &middot; ')+'</div>';
+                h+='<div class="S-subsection" style="margin-top:16px">Venues</div>';
+                dj.venues_played.forEach(function(v){h+='<div style="font-size:.68rem;color:#555;padding:3px 0;border-bottom:1px solid rgba(0,0,0,.04)">'+esc(v)+'</div>';});
             }
+            h+='</div>';
 
-            // Labels
-            if(dj.labels&&dj.labels.length){
-                h+='<div class="S-subsection">Labels</div>';
-                h+='<div style="font-size:.72rem;color:#555">'+dj.labels.join(' &middot; ')+'</div>';
-            }
+            h+='</div>'; // close grid
 
             // Socials
             if(dj.socials){
