@@ -122,9 +122,9 @@
     .S-float{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5;width:120px;height:120px}
     .S-float-inner{width:100%;height:100%;animation:floatSpin 8s ease-in-out infinite;position:relative}
     .S-float-face{position:absolute;width:80px;height:80px;border-radius:8px;top:50%;left:50%}
-    .S-float-face:nth-child(1){background:linear-gradient(135deg,#333,#555);transform:translate(-50%,-50%) rotate(0deg);animation:faceA 8s ease-in-out infinite}
-    .S-float-face:nth-child(2){background:linear-gradient(135deg,#222,#444);transform:translate(-45%,-55%) rotate(15deg);animation:faceB 8s ease-in-out infinite}
-    .S-float-face:nth-child(3){background:linear-gradient(135deg,#1a3a5a,#2a4a6a);transform:translate(-55%,-45%) rotate(-10deg);animation:faceC 8s ease-in-out infinite;width:70px;height:70px}
+    .S-float-face:nth-child(1){background:linear-gradient(135deg,rgba(0,0,0,.6),rgba(0,0,0,.4));transform:translate(-50%,-50%) rotate(0deg);animation:faceA 8s ease-in-out infinite}
+    .S-float-face:nth-child(2){background:linear-gradient(135deg,rgba(0,0,0,.7),rgba(0,0,0,.5));transform:translate(-45%,-55%) rotate(15deg);animation:faceB 8s ease-in-out infinite}
+    .S-float-face:nth-child(3){background:linear-gradient(135deg,rgba(26,58,90,.7),rgba(42,74,106,.7));transform:translate(-55%,-45%) rotate(-10deg);animation:faceC 8s ease-in-out infinite;width:70px;height:70px}
 
     @keyframes floatSpin{0%,100%{transform:translate(-50%,-50%) rotate(0deg)}25%{transform:translate(-48%,-52%) rotate(5deg)}50%{transform:translate(-50%,-48%) rotate(0deg)}75%{transform:translate(-52%,-50%) rotate(-5deg)}}
     @keyframes faceA{0%,100%{transform:translate(-50%,-50%) rotate(0deg)}50%{transform:translate(-48%,-52%) rotate(8deg)}}
@@ -181,7 +181,7 @@
     .S-dj-profile-info{flex:1}
     .S-dj-profile-name{font-size:1.4rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
     .S-dj-profile-origin{font-size:.7rem;color:var(--gy);margin-top:2px}
-    .S-dj-profile-bio{font-size:.75rem;color:#555;line-height:1.8;margin-top:8px}
+    .S-dj-profile-bio{font-size:.75rem;color:inherit;opacity:.6;line-height:1.8;margin-top:8px}
     .S-dj-profile-quote{font-size:.78rem;color:var(--bk);font-style:italic;margin-top:10px;padding-left:14px;border-left:3px solid var(--bd)}
     .S-dj-profile-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
     .S-dj-profile-tag{font-size:.58rem;padding:3px 10px;border-radius:20px;border:1px solid var(--bd);letter-spacing:.04em;text-transform:uppercase;font-weight:600;color:var(--gy)}
@@ -197,7 +197,7 @@
     .S-dj-tl-item::before{content:'';position:absolute;left:-20px;top:6px;width:9px;height:9px;border-radius:50%;background:var(--bd);border:2px solid var(--wh)}
     .S-dj-tl-item.highlight::before{background:var(--bk)}
     .S-dj-tl-year{font-size:.62rem;font-weight:700;color:var(--gy);letter-spacing:.08em;text-transform:uppercase}
-    .S-dj-tl-text{font-size:.72rem;color:#444;margin-top:2px}
+    .S-dj-tl-text{font-size:.72rem;color:inherit;opacity:.6;margin-top:2px}
 
     .S-dj-releases{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:16px 0}
     .S-dj-release{background:#fafafa;border:1px solid var(--bd);border-radius:8px;padding:12px}
@@ -231,14 +231,14 @@
 
     /* About */
     .S-about{max-width:600px}
-    .S-about p{font-size:.82rem;color:#555;line-height:2;margin-bottom:16px}
+    .S-about p{font-size:.82rem;color:inherit;opacity:.6;line-height:2;margin-bottom:16px}
 
     /* Footer */
     .S-footer{text-align:center;padding:30px 40px;font-size:.55rem;color:var(--gy);letter-spacing:.1em;text-transform:uppercase;border-top:1px solid var(--bd)}
 
     /* ============ ADMIN ============ */
     .A-page{padding:30px 40px;max-width:960px;margin:0 auto}
-    .A-info{background:#f8f8f8;border:1px solid var(--bd);border-radius:8px;padding:16px 20px;margin-bottom:24px;font-size:.72rem;color:var(--gy);line-height:1.7}
+    .A-info{background:rgba(128,128,128,.06);border:1px solid var(--bd);border-radius:8px;padding:16px 20px;margin-bottom:24px;font-size:.72rem;color:var(--gy);line-height:1.7}
     .A-info strong{color:var(--bk)}
     .A-section{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--bd)}
     .A-title{font-size:.68rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--bk);margin-bottom:14px}
@@ -249,7 +249,7 @@
     .A-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .A-btn{padding:10px 24px;border-radius:0;font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border:none;font-family:var(--ff);transition:all .15s}
     .A-btn-bk{background:var(--bk);color:var(--wh)}
-    .A-btn-bk:hover{background:#333}
+    .A-btn-bk:hover{background:rgba(0,0,0,.7)}
     .A-btn-ghost{background:none;color:var(--bk);border:1px solid var(--bd)}.A-btn-ghost:hover{border-color:var(--bk)}
     .A-dj{border:1px solid var(--bd);border-radius:8px;padding:14px;margin-bottom:10px}
     .A-dj-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
@@ -345,7 +345,7 @@
     </div>
 
     <!-- Slide-out chat panel -->
-    <div id="chat-panel" style="position:fixed;top:0;right:-360px;width:360px;height:100vh;z-index:300;background:var(--t-bg,#fff);border-left:1px solid var(--glow,rgba(128,128,128,.15));box-shadow:-4px 0 24px rgba(0,0,0,.15);display:flex;flex-direction:column;transition:right .3s ease;font-family:var(--ff)">
+    <div id="chat-panel" style="position:fixed;top:0;right:-360px;width:360px;height:100vh;z-index:300;background:var(--t-bg,#111);border-left:1px solid var(--glow,rgba(128,128,128,.15));box-shadow:-4px 0 24px rgba(0,0,0,.15);display:flex;flex-direction:column;transition:right .3s ease;font-family:var(--ff)">
         <!-- Header -->
         <div style="padding:14px 18px;border-bottom:1px solid rgba(128,128,128,.1);display:flex;align-items:center;gap:10px;flex-shrink:0">
             <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;animation:pulse 2s ease-in-out infinite"></div>
@@ -362,7 +362,7 @@
         </div>
         <!-- Input -->
         <div style="padding:12px 14px;border-top:1px solid rgba(128,128,128,.1);display:flex;gap:8px;flex-shrink:0">
-            <input id="global-chat-input" style="flex:1;padding:10px 14px;border:1px solid rgba(128,128,128,.12);border-radius:6px;font-size:.75rem;font-family:inherit;background:transparent;color:inherit;outline:none" placeholder="Ask a question..." onkeydown="if(event.key==='Enter')sendGlobalChat()">
+            <input id="global-chat-input" aria-label="Chat message input" style="flex:1;padding:10px 14px;border:1px solid rgba(128,128,128,.12);border-radius:6px;font-size:.75rem;font-family:inherit;background:transparent;color:inherit;outline:none" placeholder="Ask a question..." onkeydown="if(event.key==='Enter')sendGlobalChat()">
             <button onclick="sendGlobalChat()" style="padding:8px 16px;background:var(--t-ac,#2563eb);color:#fff;border:none;border-radius:6px;font-size:.6rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;font-family:inherit">Send</button>
         </div>
     </div>
@@ -449,7 +449,7 @@
             <div class="S-section-title">Where Our Artists Play</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center">
                 <div>
-                    <canvas id="site-globe-canvas" width="400" height="400" style="width:100%;max-width:400px;display:block;margin:0 auto;background:radial-gradient(circle,#0a0a14 60%,#000 100%);border-radius:50%;box-shadow:0 0 20px rgba(0,0,0,.3),0 0 40px rgba(0,0,0,.15)"></canvas>
+                    <canvas id="site-globe-canvas" width="400" height="400" aria-label="Interactive 3D globe showing cities where artists have performed" style="width:100%;max-width:400px;display:block;margin:0 auto;background:radial-gradient(circle,#0a0a14 60%,#000 100%);border-radius:50%;box-shadow:0 0 20px rgba(0,0,0,.3),0 0 40px rgba(0,0,0,.15)"></canvas>
                 </div>
                 <div>
                     <div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.4;margin-bottom:12px">17 Cities Across Europe</div>
@@ -550,7 +550,7 @@
         </div><!-- close S-site-default -->
 
         <!-- Sticky activity bar -->
-        <div id="sticky-activity" style="position:fixed;bottom:0;left:0;right:0;z-index:50;background:#000;color:#fff;font-family:var(--ff);border-top:1px solid rgba(255,255,255,.08)">
+        <div id="sticky-activity" style="position:fixed;bottom:0;left:0;right:0;z-index:50;background:var(--t-bg,#000);color:inherit;font-family:var(--ff);border-top:1px solid rgba(255,255,255,.08)">
             <div style="max-width:1200px;margin:0 auto;padding:10px 30px;display:flex;align-items:center;gap:20px">
                 <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
                     <div style="width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 2s ease-in-out infinite"></div>
@@ -850,6 +850,9 @@ Social metrics → Periodic snapshots → Pattern detection
             document.querySelectorAll('.L-view').forEach(function(x){x.classList.remove('on')});
             this.classList.add('on');
             document.getElementById('v-'+this.dataset.v).classList.add('on');
+            var isSite=this.dataset.v==='site';
+            document.getElementById('chat-toggle').style.display=isSite&&!chatPanelOpen?'flex':'none';
+            document.getElementById('chat-panel').style.right=isSite&&chatPanelOpen?'0':'-360px';
         });
     });
 
@@ -952,7 +955,7 @@ Social metrics → Periodic snapshots → Pattern detection
 
             // Bio (default visible)
             h+='<div class="dj-panel" data-dj="'+djIdx+'" data-panel="bio" style="display:block">';
-            h+='<div style="font-size:.75rem;color:#555;line-height:1.8;max-width:700px">'+esc(dj.bio_short)+'</div>';
+            h+='<div style="font-size:.75rem;opacity:.6;line-height:1.8;max-width:700px">'+esc(dj.bio_short)+'</div>';
             if(dj.quote) h+='<div class="S-dj-profile-quote" style="margin-top:12px;max-width:600px">"'+esc(dj.quote)+'"</div>';
             if(dj.supported_by&&dj.supported_by.length) h+='<div style="font-size:.68rem;color:#777;margin-top:12px">Supported by: '+dj.supported_by.join(' &middot; ')+'</div>';
             if(dj.genres&&dj.genres.length) h+='<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:10px">'+(dj.genres.map(function(g){return'<span class="S-dj-profile-tag">'+esc(g)+'</span>'}).join(''))+'</div>';
@@ -983,7 +986,7 @@ Social metrics → Periodic snapshots → Pattern detection
                 });
                 h+='</tbody></table>';
             }
-            if(dj.labels&&dj.labels.length) h+='<div style="font-size:.68rem;color:#555;margin-top:14px"><strong>Labels:</strong> '+dj.labels.join(' &middot; ')+'</div>';
+            if(dj.labels&&dj.labels.length) h+='<div style="font-size:.68rem;opacity:.6;margin-top:14px"><strong>Labels:</strong> '+dj.labels.join(' &middot; ')+'</div>';
             h+='</div>';
 
             // Timeline
@@ -992,7 +995,7 @@ Social metrics → Periodic snapshots → Pattern detection
                 h+='<table style="width:100%;border-collapse:collapse;font-size:.72rem"><tbody>';
                 dj.career_timeline.slice().reverse().forEach(function(t,i){
                     h+='<tr style="border-bottom:1px solid var(--bd)"><td style="padding:8px 12px;font-family:var(--mn);font-weight:700;color:'+(i<2?'#000':'var(--gy)')+';width:60px;vertical-align:top">'+t.year+'</td>';
-                    h+='<td style="padding:8px 12px;color:#444">'+esc(t.milestone)+'</td></tr>';
+                    h+='<td style="padding:8px 12px;opacity:.6">'+esc(t.milestone)+'</td></tr>';
                 });
                 h+='</tbody></table>';
             }
@@ -1003,13 +1006,13 @@ Social metrics → Periodic snapshots → Pattern detection
             if(dj.festivals&&dj.festivals.length){
                 h+='<div style="font-size:.58rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gy);margin-bottom:8px">Festivals</div>';
                 h+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">';
-                dj.festivals.forEach(function(f){h+='<span style="font-size:.65rem;padding:4px 12px;border:1px solid var(--bd);border-radius:20px;color:#444">'+esc(f)+'</span>';});
+                dj.festivals.forEach(function(f){h+='<span style="font-size:.65rem;padding:4px 12px;border:1px solid var(--bd);border-radius:20px;opacity:.6">'+esc(f)+'</span>';});
                 h+='</div>';
             }
             if(dj.venues_played&&dj.venues_played.length){
                 h+='<div style="font-size:.58rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gy);margin-bottom:8px">Venues</div>';
                 h+='<div style="display:flex;gap:6px;flex-wrap:wrap">';
-                dj.venues_played.forEach(function(v){h+='<span style="font-size:.65rem;padding:4px 12px;border:1px solid var(--bd);border-radius:20px;color:#444">'+esc(v)+'</span>';});
+                dj.venues_played.forEach(function(v){h+='<span style="font-size:.65rem;padding:4px 12px;border:1px solid var(--bd);border-radius:20px;opacity:.6">'+esc(v)+'</span>';});
                 h+='</div>';
             }
             h+='</div>';
@@ -1098,7 +1101,7 @@ Social metrics → Periodic snapshots → Pattern detection
     };
     window.exportJSON=function(){navigator.clipboard.writeText(JSON.stringify({roster:djData,services:svcData},null,2)).then(function(){toast('Copied')})};
 
-    function toast(m,e){var t=document.createElement('div');t.className='toast show';t.style.cssText='position:fixed;bottom:24px;right:24px;padding:12px 20px;background:'+(e?'#fee2e2':'#f5f5f5')+';border:1px solid '+(e?'#fca5a5':'#ddd')+';border-radius:6px;color:'+(e?'var(--rd)':'var(--bk)')+';font-size:.72rem;font-weight:600;z-index:600;letter-spacing:.04em;text-transform:uppercase';document.body.appendChild(t);setTimeout(function(){t.style.opacity='0';t.style.transition='opacity .3s'},2500);setTimeout(function(){t.remove()},3000)}
+    function toast(m,e){var t=document.createElement('div');t.className='toast show';t.classList.add('neon-card');t.textContent=m;t.style.cssText='position:fixed;bottom:24px;right:24px;padding:12px 20px;background:'+(e?'rgba(220,38,38,.08)':'rgba(128,128,128,.06)')+';border:1px solid var(--glow,rgba(128,128,128,.15));border-radius:6px;color:inherit;font-size:.72rem;font-weight:600;z-index:600;letter-spacing:.04em;text-transform:uppercase';document.body.appendChild(t);setTimeout(function(){t.style.opacity='0';t.style.transition='opacity .3s'},2500);setTimeout(function(){t.remove()},3000)}
 
     function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
 
@@ -1278,7 +1281,7 @@ Social metrics → Periodic snapshots → Pattern detection
         // CAREER SCRUBBER
         h+='<div style="padding:30px 40px;max-width:1000px;margin:0 auto">';
         h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:12px">Career Timeline — Drag to Explore</div>';
-        h+='<input type="range" id="career-scrubber" min="0" max="'+(MILESTONES.length-1)+'" value="'+(MILESTONES.length-1)+'" style="width:100%;accent-color:'+d.accent+';cursor:pointer">';
+        h+='<input type="range" id="career-scrubber" min="0" max="'+(MILESTONES.length-1)+'" value="'+(MILESTONES.length-1)+'" aria-label="Career timeline scrubber" style="width:100%;accent-color:'+d.accent+';cursor:pointer">';
         h+='<div style="display:flex;justify-content:space-between;font-size:.5rem;color:'+d.textMuted+';margin-top:4px">';
         MILESTONES.forEach(function(m){h+='<span>'+m.yr+'</span>';});
         h+='</div>';
@@ -1330,7 +1333,7 @@ Social metrics → Periodic snapshots → Pattern detection
         h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center">';
         h+='<div>';
         h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:12px">Global Reach</div>';
-        h+='<canvas id="globe-canvas" width="400" height="400" style="width:100%;max-width:400px;display:block;margin:0 auto"></canvas>';
+        h+='<canvas id="globe-canvas" width="400" height="400" aria-label="Interactive 3D globe showing cities where artists have performed" style="width:100%;max-width:400px;display:block;margin:0 auto"></canvas>';
         h+='</div>';
         h+='<div>';
         h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:14px">Cities Played</div>';
@@ -1559,9 +1562,9 @@ Social metrics → Periodic snapshots → Pattern detection
             h+='<div style="font-size:.78rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px">'+t.title+'</div>';
 
             // Example
-            h+='<div style="background:#f8f8f8;border:1px solid var(--bd);border-radius:6px;padding:16px;margin-bottom:16px;border-left:3px solid var(--bk)">';
+            h+='<div style="background:rgba(128,128,128,.06);border:1px solid var(--bd);border-radius:6px;padding:16px;margin-bottom:16px;border-left:3px solid var(--bk)">';
             h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gy);margin-bottom:8px">Example</div>';
-            h+='<div style="font-size:.72rem;color:#444;line-height:1.8;white-space:pre-wrap">'+esc(t.example)+'</div></div>';
+            h+='<div style="font-size:.72rem;opacity:.6;line-height:1.8;white-space:pre-wrap">'+esc(t.example)+'</div></div>';
 
             // Metrics
             h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">';
@@ -1574,7 +1577,7 @@ Social metrics → Periodic snapshots → Pattern detection
 
             // Features
             h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gy);margin-bottom:8px">Features</div>';
-            h+='<ul style="font-size:.72rem;color:#555;line-height:2;padding-left:16px">';
+            h+='<ul style="font-size:.72rem;opacity:.6;line-height:2;padding-left:16px">';
             t.features.forEach(function(f){h+='<li>'+esc(f)+'</li>';});
             h+='</ul></div>';
         }
@@ -1684,7 +1687,7 @@ Social metrics → Periodic snapshots → Pattern detection
         var h='<div style="padding:40px;max-width:1000px;margin:0 auto">';
         h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center">';
         h+='<div><div style="font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:12px">Global Reach</div>';
-        h+='<canvas id="globe-canvas" width="400" height="400" style="width:100%;max-width:400px;display:block;margin:0 auto"></canvas></div>';
+        h+='<canvas id="globe-canvas" width="400" height="400" aria-label="Interactive 3D globe showing cities where artists have performed" style="width:100%;max-width:400px;display:block;margin:0 auto"></canvas></div>';
         h+='<div><div style="font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:14px">Cities Played</div>';
         h+='<div id="globe-cities" style="font-size:.68rem;color:'+d.textMuted+';line-height:2.2"></div></div>';
         h+='</div></div>';
@@ -1974,35 +1977,35 @@ Social metrics → Periodic snapshots → Pattern detection
     function getTerminalLayout(d,id,accentA){
         var h='<div style="background:#000;color:#22c55e;font-family:monospace;min-height:100vh;padding:20px">';
         h+='<div style="max-width:900px;margin:0 auto;font-size:.75rem;line-height:2">';
-        h+='<div style="color:#555">labs@institute:~$ cat /about</div>';
+        h+='<div style="color:'+d.textMuted+'">labs@institute:~$ cat /about</div>';
         h+='<div style="margin:10px 0"><span style="color:'+d.accent+'">LABS.INSTITUTE</span> — Founded For The Future</div>';
-        h+='<div style="color:#555;margin-top:16px">labs@institute:~$ show roster --featured</div>';
+        h+='<div style="color:'+d.textMuted+';margin-top:16px">labs@institute:~$ show roster --featured</div>';
         h+='<div style="margin:10px 0;padding:14px;border:1px solid rgba(34,197,94,.15);border-radius:4px">';
         h+='<div>ARTIST: <span style="color:'+d.accent+'">Luciid</span> (Luke Pollock)</div>';
         h+='<div>ORIGIN: Ireland | TIER: Established | GENRES: Hard Techno, Schranz</div>';
         h+='<div>LABELS: AGONY (founder), Kneaded Pains, Suara, NineTimesNine</div>';
         h+='<div style="margin-top:6px">SUPPORTED BY: Amelie Lens, Kobosil, Dubfire, 999999999</div></div>';
-        h+='<div style="color:#555;margin-top:16px">labs@institute:~$ stats --kpi</div>';
+        h+='<div style="color:'+d.textMuted+';margin-top:16px">labs@institute:~$ stats --kpi</div>';
         h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0">';
         [{v:'54,000',l:'IG Followers'},{v:'2,100,000',l:'Streams'},{v:'10+',l:'Countries'},{v:'6',l:'Labels'}].forEach(function(k){
-            h+='<div style="padding:12px;border:1px solid rgba(34,197,94,.12);border-radius:4px;text-align:center"><div style="font-size:1.2rem;color:'+d.accent+'">'+k.v+'</div><div style="font-size:.55rem;color:#555;margin-top:2px">'+k.l+'</div></div>';
+            h+='<div style="padding:12px;border:1px solid rgba(34,197,94,.12);border-radius:4px;text-align:center"><div style="font-size:1.2rem;color:'+d.accent+'">'+k.v+'</div><div style="font-size:.55rem;color:'+d.textMuted+';margin-top:2px">'+k.l+'</div></div>';
         });
         h+='</div>';
-        h+='<div style="color:#555;margin-top:16px">labs@institute:~$ chart ig-growth --years=2018-2026</div>';
+        h+='<div style="color:'+d.textMuted+';margin-top:16px">labs@institute:~$ chart ig-growth --years=2018-2026</div>';
         h+='<div style="margin:10px 0;padding:14px;border:1px solid rgba(34,197,94,.12);border-radius:4px">';
         h+=cssBar(chartData.ig,54000,d.accent,chartData.labels);
         h+='</div>';
-        h+='<div style="color:#555;margin-top:16px">labs@institute:~$ chart streams --years=2018-2026</div>';
+        h+='<div style="color:'+d.textMuted+';margin-top:16px">labs@institute:~$ chart streams --years=2018-2026</div>';
         h+='<div style="margin:10px 0;padding:14px;border:1px solid rgba(34,197,94,.12);border-radius:4px">';
         h+=cssBar(chartData.streams,2100000,d.accent,chartData.labels);
         h+='</div>';
-        h+='<div style="color:#555;margin-top:16px">labs@institute:~$ ai suggest --top=3</div>';
+        h+='<div style="color:'+d.textMuted+';margin-top:16px">labs@institute:~$ ai suggest --top=3</div>';
         h+='<div style="margin:10px 0;padding:14px;border:1px solid rgba(34,197,94,.12);border-radius:4px;border-left:3px solid '+d.accent+'">';
         h+='<div>[OPPORTUNITY] VERKNIPT Festival accepting submissions — genre fit 92%</div>';
         h+='<div>[GAP] No Instagram post in 9 days — BTS content gets 2.4x engagement</div>';
         h+='<div>[PRICING] Printworks inquiry: recommend £1,100 based on market data</div>';
         h+='</div>';
-        h+='<div style="color:#555;margin-top:16px">labs@institute:~$ <span style="animation:blink 1s step-end infinite">_</span></div>';
+        h+='<div style="color:'+d.textMuted+';margin-top:16px">labs@institute:~$ <span style="animation:blink 1s step-end infinite">_</span></div>';
         h+='</div></div>';
         return h;
     }
@@ -2438,7 +2441,7 @@ Social metrics → Periodic snapshots → Pattern detection
             h+='<span style="font-size:.5rem;font-weight:700;padding:2px 8px;border-radius:10px;background:'+(priColors[r.priority]||'#999')+'18;color:'+(priColors[r.priority]||'#999')+';letter-spacing:.04em;text-transform:uppercase">'+r.priority+'</span>';
             h+='<span style="font-size:.5rem;padding:2px 8px;border-radius:10px;background:rgba(0,0,0,.04);color:var(--gy)">'+r.type+'</span>';
             h+='</div></div>';
-            if(r.desc) h+='<div style="font-size:.68rem;color:#555;line-height:1.7;margin-bottom:8px">'+esc(r.desc)+'</div>';
+            if(r.desc) h+='<div style="font-size:.68rem;opacity:.6;line-height:1.7;margin-bottom:8px">'+esc(r.desc)+'</div>';
             h+='<div style="display:flex;align-items:center;gap:8px;font-size:.58rem;color:var(--gy)">';
             h+='<span>'+r.created+'</span>';
             if(r.comments.length) h+='<span>&middot; '+r.comments.length+' comment'+(r.comments.length>1?'s':'')+'</span>';
@@ -2535,7 +2538,7 @@ Social metrics → Periodic snapshots → Pattern detection
             '<span style="font-size:.68rem;font-weight:700;color:#fff;letter-spacing:.04em">'+item.dj+'</span>'+
             '<span style="font-size:.72rem;font-weight:700;letter-spacing:.02em">'+item.title+'</span>'+
             '<span style="font-size:.62rem;color:#777">'+item.detail+'</span>'+
-            (item.link?'<span style="font-size:.5rem;color:#555;margin-left:4px">→</span>':'')+
+            (item.link?'<span style="font-size:.5rem;opacity:.6;margin-left:4px">→</span>':'')+
             '</div>'+wrap[1];
         actIdx++;
     }
@@ -2674,6 +2677,9 @@ Social metrics → Periodic snapshots → Pattern detection
         document.querySelectorAll('.L-view').forEach(function(v){v.classList.remove('on')});
         var t=document.getElementById('v-'+tab);
         if(t) t.classList.add('on');
+        var isSite=tab==='site';
+        document.getElementById('chat-toggle').style.display=isSite&&!chatPanelOpen?'flex':'none';
+        document.getElementById('chat-panel').style.right=isSite&&chatPanelOpen?'0':'-360px';
     };
 
     // Load guide
