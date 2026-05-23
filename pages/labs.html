@@ -2,9 +2,24 @@
 <html lang="en">
 <head>
 <style>
-    .L{--wh:#ffffff;--bk:#000;--gy:#999;--lt:#e5e5e5;--bd:rgba(0,0,0,.08);--bd2:rgba(0,0,0,.15);--ac:#888;--gd:#b8960c;--gn:#16a34a;--bl:#2563eb;--rd:#dc2626;--pr:#7c3aed;--ff:'Helvetica Neue',Arial,sans-serif;--mn:'Consolas','Courier New',monospace;--tr:.18em;--ts:.08em}
+    .L{--wh:#ffffff;--bk:#000;--gy:#999;--lt:#e5e5e5;--bd:rgba(0,0,0,.08);--bd2:rgba(0,0,0,.15);--ac:#888;--gd:#b8960c;--gn:#16a34a;--bl:#2563eb;--rd:#dc2626;--pr:#7c3aed;--ff:'Helvetica Neue',Arial,sans-serif;--mn:'Consolas','Courier New',monospace;--tr:.18em;--ts:.08em;--glow:rgba(56,189,248,.3)}
     .L *{margin:0;padding:0;box-sizing:border-box}
     .L{background:var(--wh);color:var(--bk);font-family:var(--ff);min-height:100vh}
+
+    /* Neon glow system */
+    @keyframes neonPulse{0%,100%{box-shadow:0 0 4px var(--glow),inset 0 0 4px rgba(255,255,255,.02)}50%{box-shadow:0 0 12px var(--glow),0 0 24px var(--glow),inset 0 0 6px rgba(255,255,255,.04)}}
+    @keyframes neonBorderPulse{0%,100%{border-color:var(--glow)}50%{border-color:rgba(255,255,255,.15)}}
+    .L .neon-box{animation:neonPulse 3s ease-in-out infinite}
+    .L[data-neon="true"] .R-phase,.L[data-neon="true"] .R-tier,.L[data-neon="true"] .R-intel,
+    .L[data-neon="true"] .A-dj,.L[data-neon="true"] .A-info,.L[data-neon="true"] .A-section,
+    .L[data-neon="true"] input,.L[data-neon="true"] select,.L[data-neon="true"] textarea{
+        border-color:var(--glow);transition:box-shadow .3s,border-color .3s}
+    .L[data-neon="true"] input:focus,.L[data-neon="true"] select:focus,.L[data-neon="true"] textarea:focus{
+        box-shadow:0 0 8px var(--glow),0 0 16px var(--glow);border-color:var(--glow)}
+    .L[data-neon="true"] .R-phase:hover,.L[data-neon="true"] .R-tier:hover{
+        box-shadow:0 0 8px var(--glow);border-color:var(--glow)}
+    .L[data-neon="true"] .L-top{border-bottom-color:var(--glow);box-shadow:0 1px 8px var(--glow)}
+    .L[data-neon="true"] .L-mode.on{border-bottom-color:var(--glow);text-shadow:0 0 8px var(--glow)}
 
     /* Top bar */
     .L-top{display:flex;align-items:center;justify-content:space-between;padding:0 30px;height:36px;border-bottom:1px solid var(--bd);background:var(--wh);position:sticky;top:0;z-index:100}
@@ -2094,14 +2109,20 @@ Social metrics → Periodic snapshots → Pattern detection
         var root=document.querySelector('.L');
         if(!root) return;
 
+        var isLight=d.bg==='#fff'||d.bg==='#ffffff'||d.bg==='#f5f5f0'||d.bg==='#fafafa'||d.bg==='#fffef5'||d.bg==='#f0ece4'||d.bg==='#fafaf8';
+
         // Set CSS custom properties on root — cascades to ALL children
         root.style.setProperty('--t-bg',d.bg);
         root.style.setProperty('--t-fg',d.fg);
         root.style.setProperty('--t-ac',d.accent);
         root.style.setProperty('--t-bd',d.cardBorder);
         root.style.setProperty('--t-mt',d.textMuted);
+        root.style.setProperty('--glow','rgba('+d.accentRgb+',.35)');
         root.style.background=d.bg;
         root.style.color=d.fg;
+
+        // Enable neon glow on dark themes
+        root.dataset.neon=isLight?'false':'true';
 
         // Top bar
         var top=document.querySelector('.L-top');
