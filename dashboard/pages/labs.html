@@ -213,6 +213,7 @@
             <div class="L-mode" data-v="apps">Apps</div>
             <div class="L-mode" data-v="tech">Components</div>
             <div class="L-mode" data-v="workflows">Workflows</div>
+            <div class="L-mode" data-v="requests">Requests</div>
             <div class="L-mode" data-v="guide">Guide</div>
         </div>
         <div style="display:flex;align-items:center;gap:12px">
@@ -473,6 +474,70 @@
             </select>
         </div>
         <div id="app-preview" style="padding:30px 40px;max-width:1100px;margin:0 auto"></div>
+    </div>
+
+    <!-- ============ REQUESTS ============ -->
+    <div class="L-view" id="v-requests">
+        <div style="max-width:1000px;margin:0 auto;padding:30px 40px;font-family:var(--ff)">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px">
+                <div>
+                    <div style="font-size:1rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase">Change Requests</div>
+                    <div style="font-size:.72rem;color:var(--gy);margin-top:4px">Submit, track, and discuss site changes and feature requests.</div>
+                </div>
+                <div style="display:flex;gap:8px">
+                    <select id="req-filter" onchange="filterRequests()" style="padding:7px 12px;border:1px solid var(--bd);border-radius:4px;font-size:.68rem;font-family:var(--ff);font-weight:600;cursor:pointer">
+                        <option value="all">All</option>
+                        <option value="open">Open</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="done">Done</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- New request form -->
+            <div style="border:1px solid var(--bd);border-radius:8px;padding:18px 20px;margin-bottom:20px">
+                <div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gy);margin-bottom:10px">New Request</div>
+                <div style="display:grid;grid-template-columns:1fr 140px 140px;gap:10px;margin-bottom:10px">
+                    <input id="req-title" style="padding:10px 14px;border:1px solid var(--bd);border-radius:6px;font-size:.78rem;font-family:var(--ff)" placeholder="Title — e.g. 'Add SoundCloud embed to artist profile'">
+                    <select id="req-type" style="padding:10px 14px;border:1px solid var(--bd);border-radius:6px;font-size:.72rem;font-family:var(--ff);cursor:pointer">
+                        <option value="change">Site Change</option>
+                        <option value="feature">Feature Request</option>
+                        <option value="bug">Bug Report</option>
+                        <option value="content">Content Update</option>
+                        <option value="design">Design Tweak</option>
+                    </select>
+                    <select id="req-priority" style="padding:10px 14px;border:1px solid var(--bd);border-radius:6px;font-size:.72rem;font-family:var(--ff);cursor:pointer">
+                        <option value="medium">Medium Priority</option>
+                        <option value="high">High Priority</option>
+                        <option value="low">Low Priority</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+                <textarea id="req-desc" style="width:100%;padding:10px 14px;border:1px solid var(--bd);border-radius:6px;font-size:.75rem;font-family:var(--ff);resize:vertical;min-height:60px;line-height:1.6" placeholder="Describe the change — what should be different and why?"></textarea>
+                <div style="display:flex;justify-content:flex-end;margin-top:10px">
+                    <button onclick="submitRequest()" style="padding:8px 22px;background:#000;color:#fff;border:none;border-radius:4px;font-size:.62rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;font-family:var(--ff)">Submit Request</button>
+                </div>
+            </div>
+
+            <!-- Request list -->
+            <div id="req-list"></div>
+
+            <!-- Chat per request -->
+            <div id="req-chat-panel" style="display:none;border:1px solid var(--bd);border-radius:8px;overflow:hidden;margin-top:16px">
+                <div style="padding:10px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between">
+                    <div style="display:flex;align-items:center;gap:8px">
+                        <div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gy)">Discussion</div>
+                        <div id="req-chat-title" style="font-size:.72rem;font-weight:700"></div>
+                    </div>
+                    <span onclick="closeReqChat()" style="cursor:pointer;color:var(--gy);font-size:14px">&#10005;</span>
+                </div>
+                <div id="req-chat-msgs" style="padding:14px 16px;min-height:160px;max-height:280px;overflow-y:auto"></div>
+                <div style="padding:10px 14px;border-top:1px solid var(--bd);display:flex;gap:8px">
+                    <input id="req-chat-input" style="flex:1;padding:8px 12px;border:1px solid var(--bd);border-radius:6px;font-size:.72rem;font-family:var(--ff);outline:none" placeholder="Add a comment...">
+                    <button onclick="sendReqComment()" style="padding:6px 16px;background:#000;color:#fff;border:none;border-radius:6px;font-size:.58rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;font-family:var(--ff)">Send</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- ============ WORKFLOWS ============ -->
@@ -1992,6 +2057,124 @@ Social metrics → Periodic snapshots → Pattern detection
             el.style.background=d.bg;el.style.borderColor=d.cardBorder;
         });
     }
+
+    // ============ REQUESTS TAB ============
+    var requests=[];
+    var activeReqIdx=null;
+
+    window.submitRequest=function(){
+        var title=document.getElementById('req-title').value.trim();
+        if(!title) return;
+        requests.push({
+            id:'REQ-'+(requests.length+1).toString().padStart(3,'0'),
+            title:title,
+            type:document.getElementById('req-type').value,
+            priority:document.getElementById('req-priority').value,
+            desc:document.getElementById('req-desc').value.trim(),
+            status:'open',
+            created:new Date().toLocaleString(),
+            comments:[]
+        });
+        document.getElementById('req-title').value='';
+        document.getElementById('req-desc').value='';
+        renderRequests();
+
+        // Save to Lab-Intelligence
+        fetch('/api/projects/labs-institute/memory/store',{
+            method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({content:'Change request: '+title+' ('+document.getElementById('req-type').value+', '+document.getElementById('req-priority').value+')',type:'context',tags:['request','change',document.getElementById('req-type').value],source:'request-tracker'})
+        }).catch(function(){});
+    };
+
+    window.filterRequests=function(){renderRequests()};
+
+    function renderRequests(){
+        var filter=document.getElementById('req-filter').value;
+        var filtered=filter==='all'?requests:requests.filter(function(r){return r.status===filter});
+        var h='';
+        if(!filtered.length){h='<div style="text-align:center;padding:40px;color:var(--gy);font-size:.72rem">No requests yet. Submit one above.</div>';}
+        var priColors={critical:'#dc2626',high:'#f59e0b',medium:'#2563eb',low:'#999'};
+        var typeIcons={change:'&#9998;',feature:'&#9733;',bug:'&#9888;',content:'&#9998;',design:'&#9830;'};
+        var statusColors={open:'#2563eb','in-progress':'#f59e0b',done:'#22c55e'};
+        filtered.forEach(function(r,i){
+            var realIdx=requests.indexOf(r);
+            h+='<div style="border:1px solid var(--bd);border-radius:8px;padding:14px 18px;margin-bottom:8px;border-left:3px solid '+(priColors[r.priority]||'#999')+';transition:border-color .15s" onmouseenter="this.style.borderColor=\'rgba(0,0,0,.15)\'" onmouseleave="this.style.borderColor=\'var(--bd)\'">';
+            h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">';
+            h+='<div style="display:flex;align-items:center;gap:10px">';
+            h+='<span style="font-size:.55rem;font-family:var(--mn);color:var(--gy)">'+r.id+'</span>';
+            h+='<span style="font-size:.78rem;font-weight:700">'+esc(r.title)+'</span>';
+            h+='</div>';
+            h+='<div style="display:flex;align-items:center;gap:6px">';
+            h+='<span style="font-size:.5rem;font-weight:700;padding:2px 8px;border-radius:10px;background:'+(statusColors[r.status]||'#999')+'18;color:'+(statusColors[r.status]||'#999')+';letter-spacing:.04em;text-transform:uppercase">'+r.status+'</span>';
+            h+='<span style="font-size:.5rem;font-weight:700;padding:2px 8px;border-radius:10px;background:'+(priColors[r.priority]||'#999')+'18;color:'+(priColors[r.priority]||'#999')+';letter-spacing:.04em;text-transform:uppercase">'+r.priority+'</span>';
+            h+='<span style="font-size:.5rem;padding:2px 8px;border-radius:10px;background:rgba(0,0,0,.04);color:var(--gy)">'+r.type+'</span>';
+            h+='</div></div>';
+            if(r.desc) h+='<div style="font-size:.68rem;color:#555;line-height:1.7;margin-bottom:8px">'+esc(r.desc)+'</div>';
+            h+='<div style="display:flex;align-items:center;gap:8px;font-size:.58rem;color:var(--gy)">';
+            h+='<span>'+r.created+'</span>';
+            if(r.comments.length) h+='<span>&middot; '+r.comments.length+' comment'+(r.comments.length>1?'s':'')+'</span>';
+            h+='<span style="margin-left:auto;display:flex;gap:4px">';
+            if(r.status==='open') h+='<button onclick="updateReqStatus('+realIdx+\',\'in-progress\')" style="padding:3px 8px;border:1px solid var(--bd);border-radius:10px;font-size:.5rem;font-weight:600;cursor:pointer;background:none;color:var(--gy);font-family:var(--ff)">Start</button>';
+            if(r.status==='in-progress') h+='<button onclick="updateReqStatus('+realIdx+\',\'done\')" style="padding:3px 8px;border:1px solid var(--bd);border-radius:10px;font-size:.5rem;font-weight:600;cursor:pointer;background:none;color:var(--gy);font-family:var(--ff)">Complete</button>';
+            h+='<button onclick="openReqChat('+realIdx+')" style="padding:3px 8px;border:1px solid var(--bd);border-radius:10px;font-size:.5rem;font-weight:600;cursor:pointer;background:none;color:var(--gy);font-family:var(--ff)">Discuss</button>';
+            h+='</span></div></div>';
+        });
+        document.getElementById('req-list').innerHTML=h;
+    }
+
+    window.updateReqStatus=function(idx,status){
+        requests[idx].status=status;
+        requests[idx].comments.push({sender:'System',text:'Status changed to '+status,time:new Date().toLocaleTimeString()});
+        renderRequests();
+    };
+
+    window.openReqChat=function(idx){
+        activeReqIdx=idx;
+        var r=requests[idx];
+        var panel=document.getElementById('req-chat-panel');
+        panel.style.display='block';
+        document.getElementById('req-chat-title').textContent=r.id+' — '+r.title;
+        renderReqComments();
+        document.getElementById('req-chat-input').focus();
+    };
+
+    window.closeReqChat=function(){
+        document.getElementById('req-chat-panel').style.display='none';
+        activeReqIdx=null;
+    };
+
+    function renderReqComments(){
+        if(activeReqIdx===null) return;
+        var r=requests[activeReqIdx];
+        var h='';
+        if(!r.comments.length) h='<div style="font-size:.68rem;color:var(--gy);padding:10px">No comments yet.</div>';
+        r.comments.forEach(function(c){
+            var isSystem=c.sender==='System';
+            h+='<div style="padding:8px 12px;margin:4px 0;border-radius:6px;font-size:.68rem;line-height:1.7;'+(isSystem?'color:var(--gy);font-style:italic':'background:#f5f5f5;border:1px solid var(--bd)')+';animation:fadeIn .2s ease">';
+            if(!isSystem) h+='<div style="font-size:.5rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gy);margin-bottom:2px">'+esc(c.sender)+' &middot; '+c.time+'</div>';
+            h+=esc(c.text)+'</div>';
+        });
+        document.getElementById('req-chat-msgs').innerHTML=h;
+        var msgs=document.getElementById('req-chat-msgs');
+        msgs.scrollTop=msgs.scrollHeight;
+    }
+
+    window.sendReqComment=function(){
+        if(activeReqIdx===null) return;
+        var input=document.getElementById('req-chat-input');
+        var text=input.value.trim();
+        if(!text) return;
+        input.value='';
+        requests[activeReqIdx].comments.push({sender:'Founder',text:text,time:new Date().toLocaleTimeString()});
+        renderReqComments();
+        renderRequests();
+    };
+
+    document.getElementById('req-chat-input').addEventListener('keydown',function(e){
+        if(e.key==='Enter') sendReqComment();
+    });
+
+    renderRequests();
 
     // Activity carousel
     var activityItems=[
