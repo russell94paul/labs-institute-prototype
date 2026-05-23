@@ -7,31 +7,31 @@
     .L{background:var(--wh);color:var(--bk);font-family:var(--ff);min-height:100vh}
 
     /* Top bar */
-    .L-top{display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:52px;border-bottom:1px solid var(--bd);background:var(--wh);position:sticky;top:0;z-index:100}
-    .L-brand{font-size:.72rem;font-weight:900;letter-spacing:var(--tr);text-transform:uppercase;color:var(--bk)}
+    .L-top{display:flex;align-items:center;justify-content:space-between;padding:0 30px;height:36px;border-bottom:1px solid var(--bd);background:var(--wh);position:sticky;top:0;z-index:100}
+    .L-brand{font-size:.58rem;font-weight:900;letter-spacing:var(--tr);text-transform:uppercase;color:var(--bk)}
     .L-modes{display:flex;gap:0;height:100%}
-    .L-mode{padding:0 22px;height:100%;display:flex;align-items:center;font-size:.62rem;font-weight:700;letter-spacing:var(--tr);text-transform:uppercase;color:var(--gy);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+    .L-mode{padding:0 16px;height:100%;display:flex;align-items:center;font-size:.55rem;font-weight:700;letter-spacing:var(--tr);text-transform:uppercase;color:var(--gy);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
     .L-mode:hover{color:var(--bk)}
     .L-mode.on{color:var(--bk);border-bottom-color:var(--bk)}
-    .L-tagline{font-size:.55rem;color:var(--gy);letter-spacing:var(--tr);text-transform:uppercase}
+    .L-tagline{font-size:.48rem;color:var(--gy);letter-spacing:var(--tr);text-transform:uppercase}
 
     .L-view{display:none}.L-view.on{display:block}
 
     /* ============ SITE PREVIEW ============ */
 
     /* Hero — full viewport with marquee */
-    .S-hero{position:relative;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:var(--wh)}
+    .S-hero{position:relative;height:calc(100vh - 90px);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:var(--wh)}
 
-    /* Chrome logo */
-    .S-logo{position:relative;z-index:10;margin-bottom:40px;text-align:center}
-    .S-logo-text{font-size:2.4rem;font-weight:900;letter-spacing:.25em;text-transform:uppercase;background:linear-gradient(135deg,#666,#ddd,#888,#eee,#777);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 2px 4px rgba(0,0,0,.15));animation:logoShine 4s ease-in-out infinite}
+    /* Chrome logo — sits above hero */
+    .S-logo{text-align:center;padding:24px 0 0;background:var(--wh);position:relative;z-index:10}
+    .S-logo-text{font-size:2rem;font-weight:900;letter-spacing:.25em;text-transform:uppercase;background:linear-gradient(135deg,#666,#ddd,#888,#eee,#777);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 2px 4px rgba(0,0,0,.15));animation:logoShine 4s ease-in-out infinite}
 
     @keyframes logoShine{0%,100%{filter:drop-shadow(0 2px 4px rgba(0,0,0,.15))}50%{filter:drop-shadow(0 2px 8px rgba(0,0,0,.25))}}
 
     /* Scrolling marquee */
     .S-marquee{position:absolute;top:50%;transform:translateY(-50%);width:100%;overflow:hidden;z-index:1}
     .S-marquee-track{display:flex;animation:marquee 20s linear infinite;white-space:nowrap}
-    .S-marquee-text{font-size:clamp(5rem,15vw,12rem);font-weight:900;letter-spacing:.02em;text-transform:uppercase;color:var(--bk);padding-right:80px;line-height:1;flex-shrink:0;user-select:none}
+    .S-marquee-text{font-size:clamp(2.5rem,7vw,5rem);font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--bk);padding-right:60px;line-height:1;flex-shrink:0;user-select:none}
 
     @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
@@ -87,6 +87,44 @@
     .S-svc:hover{border-color:var(--bk)}
     .S-svc-name{font-size:.75rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
     .S-svc-desc{font-size:.68rem;color:var(--gy);line-height:1.7}
+
+    /* DJ Profile expanded */
+    .S-dj-profile{border:1px solid var(--bd);border-radius:12px;padding:32px;margin-bottom:20px;transition:border-color .2s}
+    .S-dj-profile:hover{border-color:var(--bk)}
+    .S-dj-profile-hdr{display:flex;gap:24px;align-items:flex-start;margin-bottom:20px}
+    .S-dj-profile-avatar{width:72px;height:72px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:var(--gy);border:2px solid var(--bd);flex-shrink:0}
+    .S-dj-profile-info{flex:1}
+    .S-dj-profile-name{font-size:1.4rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
+    .S-dj-profile-origin{font-size:.7rem;color:var(--gy);margin-top:2px}
+    .S-dj-profile-bio{font-size:.75rem;color:#555;line-height:1.8;margin-top:8px}
+    .S-dj-profile-quote{font-size:.78rem;color:var(--bk);font-style:italic;margin-top:10px;padding-left:14px;border-left:3px solid var(--bd)}
+    .S-dj-profile-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+    .S-dj-profile-tag{font-size:.58rem;padding:3px 10px;border-radius:20px;border:1px solid var(--bd);letter-spacing:.04em;text-transform:uppercase;font-weight:600;color:var(--gy)}
+
+    .S-dj-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0;padding:20px 0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+    .S-dj-stat{text-align:center}
+    .S-dj-stat-num{font-size:1.6rem;font-weight:200;font-family:var(--mn)}
+    .S-dj-stat-label{font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gy);margin-top:4px}
+
+    .S-dj-timeline{position:relative;padding-left:24px;margin:20px 0}
+    .S-dj-timeline::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:1px;background:var(--bd)}
+    .S-dj-tl-item{position:relative;margin-bottom:16px;padding-left:20px}
+    .S-dj-tl-item::before{content:'';position:absolute;left:-20px;top:6px;width:9px;height:9px;border-radius:50%;background:var(--bd);border:2px solid var(--wh)}
+    .S-dj-tl-item.highlight::before{background:var(--bk)}
+    .S-dj-tl-year{font-size:.62rem;font-weight:700;color:var(--gy);letter-spacing:.08em;text-transform:uppercase}
+    .S-dj-tl-text{font-size:.72rem;color:#444;margin-top:2px}
+
+    .S-dj-releases{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:16px 0}
+    .S-dj-release{background:#fafafa;border:1px solid var(--bd);border-radius:8px;padding:12px}
+    .S-dj-release-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.02em}
+    .S-dj-release-label{font-size:.6rem;color:var(--gy);margin-top:2px}
+    .S-dj-release-streams{font-size:.58rem;color:var(--gn);font-weight:700;margin-top:4px}
+
+    .S-dj-socials{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+    .S-dj-social-link{font-size:.62rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--gy);text-decoration:none;padding:6px 14px;border:1px solid var(--bd);border-radius:20px;transition:all .15s}
+    .S-dj-social-link:hover{color:var(--bk);border-color:var(--bk)}
+
+    .S-subsection{font-size:.65rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--gy);margin:20px 0 10px}
 
     /* Values marquee */
     .S-values{overflow:hidden;padding:40px 0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);background:#fafafa}
@@ -177,26 +215,19 @@
     <!-- ============ SITE PREVIEW ============ -->
     <div class="L-view on" id="v-site">
 
+        <!-- Logo above hero -->
+        <div class="S-logo">
+            <div class="S-logo-text" id="site-logo">LABS</div>
+        </div>
+
         <!-- Hero with marquee + floating object -->
         <div class="S-hero">
-            <div class="S-logo">
-                <div class="S-logo-text" id="site-logo">LABS</div>
-            </div>
-
             <div class="S-marquee">
                 <div class="S-marquee-track">
                     <span class="S-marquee-text">FOUNDED FOR THE FUTURE</span>
                     <span class="S-marquee-text">FOUNDED FOR THE FUTURE</span>
                     <span class="S-marquee-text">FOUNDED FOR THE FUTURE</span>
                     <span class="S-marquee-text">FOUNDED FOR THE FUTURE</span>
-                </div>
-            </div>
-
-            <div class="S-float">
-                <div class="S-float-inner">
-                    <div class="S-float-face"></div>
-                    <div class="S-float-face"></div>
-                    <div class="S-float-face"></div>
                 </div>
             </div>
 
@@ -269,12 +300,12 @@
             <div class="A-section">
                 <div class="A-title">02 &mdash; Hero Stats</div>
                 <div class="A-row">
-                    <div><span class="A-label">Stat 1</span><input class="A-input" id="a-k1v" value="8" oninput="sync()"><span class="A-label">Label</span><input class="A-input" id="a-k1l" value="Artists Managed" oninput="sync()"></div>
-                    <div><span class="A-label">Stat 2</span><input class="A-input" id="a-k2v" value="120+" oninput="sync()"><span class="A-label">Label</span><input class="A-input" id="a-k2l" value="Gigs Booked" oninput="sync()"></div>
+                    <div><span class="A-label">Stat 1</span><input class="A-input" id="a-k1v" value="54K" oninput="sync()"><span class="A-label">Label</span><input class="A-input" id="a-k1l" value="Instagram Reach" oninput="sync()"></div>
+                    <div><span class="A-label">Stat 2</span><input class="A-input" id="a-k2v" value="2M+" oninput="sync()"><span class="A-label">Label</span><input class="A-input" id="a-k2l" value="Track Streams" oninput="sync()"></div>
                 </div>
                 <div class="A-row" style="margin-top:12px">
-                    <div><span class="A-label">Stat 3</span><input class="A-input" id="a-k3v" value="3x" oninput="sync()"><span class="A-label">Label</span><input class="A-input" id="a-k3l" value="Avg Social Growth" oninput="sync()"></div>
-                    <div><span class="A-label">Stat 4</span><input class="A-input" id="a-k4v" value="£25K+" oninput="sync()"><span class="A-label">Label</span><input class="A-input" id="a-k4l" value="Revenue Generated" oninput="sync()"></div>
+                    <div><span class="A-label">Stat 3</span><input class="A-input" id="a-k3v" value="10+" oninput="sync()"><span class="A-label">Label</span><input class="A-input" id="a-k3l" value="Countries Played" oninput="sync()"></div>
+                    <div><span class="A-label">Stat 4</span><input class="A-input" id="a-k4v" value="6" oninput="sync()"><span class="A-label">Label</span><input class="A-input" id="a-k4l" value="Labels Released On" oninput="sync()"></div>
                 </div>
             </div>
 
@@ -351,10 +382,17 @@ Social metrics → Periodic snapshots → Pattern detection
         {id:'P9',name:'Gig Discovery',desc:'Opportunity feed, DJ-to-gig matching, application tracking.',status:'planned'},
         {id:'P10',name:'Financial Management',desc:'Invoicing, commissions, P&L per event/DJ.',status:'planned'},
     ];
-    var djData=[
-        {name:'Sample DJ 1',genre:'House / Disco',tier:'developing',gigs:24,ig:'2.1K',fee:'£150'},
-        {name:'Sample DJ 2',genre:'Techno / Minimal',tier:'emerging',gigs:8,ig:'450',fee:'£50'},
-    ];
+    var djData=[];
+    var rosterData=[];
+    fetch('/data/labs-roster.json').then(function(r){return r.ok?r.json():[]}).then(function(d){
+        rosterData=d||[];
+        djData=rosterData.map(function(dj){return{name:dj.name,genre:dj.genres.slice(0,2).join(' / '),tier:dj.tier,gigs:dj.venues_played?dj.venues_played.length:0,ig:formatNum(dj.kpis&&dj.kpis.current?dj.kpis.current.ig_followers:0),fee:'—'}});
+        renderAdminDJs();renderSiteRoster();sync();
+    }).catch(function(){
+        djData=[{name:'Luciid',genre:'Hard Techno / Schranz',tier:'established',gigs:11,ig:'54K',fee:'—'}];
+        renderAdminDJs();renderSiteRoster();sync();
+    });
+    function formatNum(n){if(!n)return'0';if(n>=1000000)return(n/1000000).toFixed(1)+'M';if(n>=1000)return(n/1000).toFixed(1)+'K';return''+n;}
     var svcData=[
         {name:'Artist Management',desc:'Career strategy, brand development, day-to-day management'},
         {name:'Booking Agency',desc:'Securing gigs, negotiating fees, managing the pipeline'},
@@ -401,15 +439,98 @@ Social metrics → Periodic snapshots → Pattern detection
     };
 
     function renderSiteRoster(){
+        if(!rosterData.length){
+            var h='';
+            djData.forEach(function(d){
+                h+='<div class="S-dj"><div class="S-dj-avatar">'+esc(d.name.charAt(0))+'</div>'+
+                    '<div class="S-dj-name">'+esc(d.name)+'</div><div class="S-dj-genre">'+esc(d.genre)+'</div>'+
+                    '<span class="S-dj-tier tier-'+d.tier+'">'+esc(d.tier)+'</span></div>';
+            });
+            document.getElementById('site-roster').innerHTML=h;
+            return;
+        }
+
         var h='';
-        djData.forEach(function(d){
-            h+='<div class="S-dj"><div class="S-dj-avatar">'+esc(d.name.charAt(0))+'</div>'+
-                '<div class="S-dj-name">'+esc(d.name)+'</div><div class="S-dj-genre">'+esc(d.genre)+'</div>'+
-                '<span class="S-dj-tier tier-'+d.tier+'">'+esc(d.tier)+'</span>'+
-                '<div class="S-dj-kpis"><div class="S-dj-kpi">Gigs <span>'+d.gigs+'</span></div>'+
-                '<div class="S-dj-kpi">IG <span>'+d.ig+'</span></div>'+
-                '<div class="S-dj-kpi">Fee <span>'+d.fee+'</span></div>'+
-                '<div class="S-dj-kpi">Tier <span>'+d.tier+'</span></div></div></div>';
+        rosterData.forEach(function(dj){
+            var k=dj.kpis&&dj.kpis.current?dj.kpis.current:{};
+            h+='<div class="S-dj-profile">';
+
+            // Header
+            h+='<div class="S-dj-profile-hdr"><div class="S-dj-profile-avatar">'+esc(dj.name.charAt(0))+'</div><div class="S-dj-profile-info">';
+            h+='<div class="S-dj-profile-name">'+esc(dj.name)+'</div>';
+            h+='<div class="S-dj-profile-origin">'+esc(dj.real_name)+' &middot; '+esc(dj.origin)+'</div>';
+            h+='<div class="S-dj-profile-bio">'+esc(dj.bio_short)+'</div>';
+            if(dj.quote)h+='<div class="S-dj-profile-quote">"'+esc(dj.quote)+'"</div>';
+            h+='<div class="S-dj-profile-tags">';
+            (dj.genres||[]).forEach(function(g){h+='<span class="S-dj-profile-tag">'+esc(g)+'</span>';});
+            h+='<span class="S-dj-tier tier-'+dj.tier+'">'+esc(dj.tier)+'</span>';
+            h+='</div></div></div>';
+
+            // Stats
+            h+='<div class="S-dj-stats">';
+            h+='<div class="S-dj-stat"><div class="S-dj-stat-num">'+formatNum(k.ig_followers||0)+'</div><div class="S-dj-stat-label">Instagram</div></div>';
+            h+='<div class="S-dj-stat"><div class="S-dj-stat-num">'+formatNum(k.ra_followers||0)+'</div><div class="S-dj-stat-label">RA Followers</div></div>';
+            h+='<div class="S-dj-stat"><div class="S-dj-stat-num">'+formatNum(k.spotify_top_track_streams||0)+'</div><div class="S-dj-stat-label">Top Track Streams</div></div>';
+            h+='<div class="S-dj-stat"><div class="S-dj-stat-num">'+(k.countries_played||0)+'</div><div class="S-dj-stat-label">Countries</div></div>';
+            h+='</div>';
+
+            // Supported by
+            if(dj.supported_by&&dj.supported_by.length){
+                h+='<div class="S-subsection">Supported By</div>';
+                h+='<div style="font-size:.75rem;color:#555">'+dj.supported_by.join(' &middot; ')+'</div>';
+            }
+
+            // Key releases
+            if(dj.key_releases&&dj.key_releases.length){
+                h+='<div class="S-subsection">Key Releases</div><div class="S-dj-releases">';
+                dj.key_releases.forEach(function(r){
+                    h+='<div class="S-dj-release"><div class="S-dj-release-title">'+esc(r.title)+'</div>';
+                    h+='<div class="S-dj-release-label">'+esc(r.label||'Self-released')+' &middot; '+r.year+'</div>';
+                    if(r.streams)h+='<div class="S-dj-release-streams">'+esc(r.streams)+' streams</div>';
+                    h+='</div>';
+                });
+                h+='</div>';
+            }
+
+            // Career timeline
+            if(dj.career_timeline&&dj.career_timeline.length){
+                h+='<div class="S-subsection">Career Timeline</div><div class="S-dj-timeline">';
+                dj.career_timeline.slice().reverse().forEach(function(t,i){
+                    h+='<div class="S-dj-tl-item'+(i<2?' highlight':'')+'"><div class="S-dj-tl-year">'+t.year+'</div><div class="S-dj-tl-text">'+esc(t.milestone)+'</div></div>';
+                });
+                h+='</div>';
+            }
+
+            // Venues & Festivals
+            if(dj.festivals&&dj.festivals.length){
+                h+='<div class="S-subsection">Festivals 2024-2026</div>';
+                h+='<div style="font-size:.72rem;color:#555;line-height:1.8">'+dj.festivals.join(' &middot; ')+'</div>';
+            }
+            if(dj.venues_played&&dj.venues_played.length){
+                h+='<div class="S-subsection">Venues</div>';
+                h+='<div style="font-size:.72rem;color:#555;line-height:1.8">'+dj.venues_played.join(' &middot; ')+'</div>';
+            }
+
+            // Labels
+            if(dj.labels&&dj.labels.length){
+                h+='<div class="S-subsection">Labels</div>';
+                h+='<div style="font-size:.72rem;color:#555">'+dj.labels.join(' &middot; ')+'</div>';
+            }
+
+            // Socials
+            if(dj.socials){
+                h+='<div class="S-dj-socials">';
+                var platforms={instagram:'Instagram',soundcloud:'SoundCloud',spotify:'Spotify',resident_advisor:'Resident Advisor',beatport:'Beatport',bandcamp:'Bandcamp'};
+                Object.keys(platforms).forEach(function(k){
+                    if(dj.socials[k]){
+                        var url=dj.socials[k].url||dj.socials[k];
+                        h+='<a class="S-dj-social-link" href="'+esc(url)+'" target="_blank">'+platforms[k]+'</a>';
+                    }
+                });
+                h+='</div>';
+            }
+
+            h+='</div>';
         });
         document.getElementById('site-roster').innerHTML=h;
     }
