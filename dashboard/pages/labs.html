@@ -2062,28 +2062,38 @@ Social metrics → Periodic snapshots → Pattern detection
     var requests=[];
     var activeReqIdx=null;
 
+    // Load requests from API on init
+    fetch('/api/projects/labs-institute/requests').then(function(r){return r.ok?r.json():[]}).then(function(d){
+        requests=d||[];renderRequests();
+    }).catch(function(){});
+
     window.submitRequest=function(){
         var title=document.getElementById('req-title').value.trim();
         if(!title) return;
-        requests.push({
-            id:'REQ-'+(requests.length+1).toString().padStart(3,'0'),
+        var req={
             title:title,
             type:document.getElementById('req-type').value,
             priority:document.getElementById('req-priority').value,
             desc:document.getElementById('req-desc').value.trim(),
             status:'open',
-            created:new Date().toLocaleString(),
             comments:[]
-        });
-        document.getElementById('req-title').value='';
-        document.getElementById('req-desc').value='';
-        renderRequests();
-
-        // Save to Lab-Intelligence
-        fetch('/api/projects/labs-institute/memory/store',{
+        };
+        fetch('/api/projects/labs-institute/requests',{
             method:'POST',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({content:'Change request: '+title+' ('+document.getElementById('req-type').value+', '+document.getElementById('req-priority').value+')',type:'context',tags:['request','change',document.getElementById('req-type').value],source:'request-tracker'})
-        }).catch(function(){});
+            body:JSON.stringify(req)
+        }).then(function(r){return r.json()}).then(function(saved){
+            requests.push(saved);
+            document.getElementById('req-title').value='';
+            document.getElementById('req-desc').value='';
+            renderRequests();
+        }).catch(function(){
+            req.id='REQ-'+(requests.length+1).toString().padStart(3,'0');
+            req.created=new Date().toLocaleString();
+            requests.push(req);
+            document.getElementById('req-title').value='';
+            document.getElementById('req-desc').value='';
+            renderRequests();
+        });
     };
 
     window.filterRequests=function(){renderRequests()};
@@ -2126,6 +2136,10 @@ Social metrics → Periodic snapshots → Pattern detection
         requests[idx].status=status;
         requests[idx].comments.push({sender:'System',text:'Status changed to '+status,time:new Date().toLocaleTimeString()});
         renderRequests();
+        fetch('/api/projects/labs-institute/requests/'+requests[idx].id,{
+            method:'PATCH',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({status:status,comments:requests[idx].comments})
+        }).catch(function(){});
     };
 
     window.openReqChat=function(idx){
@@ -2168,6 +2182,10 @@ Social metrics → Periodic snapshots → Pattern detection
         requests[activeReqIdx].comments.push({sender:'Founder',text:text,time:new Date().toLocaleTimeString()});
         renderReqComments();
         renderRequests();
+        fetch('/api/projects/labs-institute/requests/'+requests[activeReqIdx].id,{
+            method:'PATCH',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({comments:requests[activeReqIdx].comments})
+        }).catch(function(){});
     };
 
     document.getElementById('req-chat-input').addEventListener('keydown',function(e){

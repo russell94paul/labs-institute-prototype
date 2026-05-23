@@ -480,6 +480,60 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
         tmp.replace(p)
         self._send_json(body)
 
+    # --- Request handlers ---
+
+    def _requests_path(self, slug: str) -> Path:
+        return REPO_ROOT / "projects" / slug / "requests.json"
+
+    def _read_requests(self, slug: str) -> list:
+        p = self._requests_path(slug)
+        if not p.exists():
+            return []
+        try:
+            return json.loads(p.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, ValueError):
+            return []
+
+    def _write_requests(self, slug: str, data: list) -> None:
+        p = self._requests_path(slug)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        tmp = p.with_suffix(".tmp")
+        tmp.write_text(json.dumps(data, indent=2, default=str), encoding="utf-8")
+        tmp.replace(p)
+
+    def _handle_get_requests(self, slug: str) -> None:
+        self._send_json(self._read_requests(slug))
+
+    def _handle_post_request(self, slug: str) -> None:
+        body = self._json_body()
+        if not body or not body.get("title"):
+            return self._send_error_json(400, "title is required")
+        reqs = self._read_requests(slug)
+        body["id"] = f"REQ-{len(reqs) + 1:03d}"
+        if "created" not in body:
+            from datetime import datetime, timezone
+            body["created"] = datetime.now(timezone.utc).isoformat()
+        if "status" not in body:
+            body["status"] = "open"
+        if "comments" not in body:
+            body["comments"] = []
+        reqs.append(body)
+        self._write_requests(slug, reqs)
+        self._send_json(body, 201)
+
+    def _handle_patch_request(self, slug: str, req_id: str) -> None:
+        body = self._json_body()
+        if not body:
+            return self._send_error_json(400, "Request body required")
+        reqs = self._read_requests(slug)
+        for r in reqs:
+            if r.get("id") == req_id:
+                for k, v in body.items():
+                    r[k] = v
+                self._write_requests(slug, reqs)
+                return self._send_json(r)
+        return self._send_error_json(404, f"Request {req_id} not found")
+
     # --- Memory handlers ---
 
     def _match_memory_route(self) -> Optional[tuple]:
@@ -606,6 +660,13 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
         if path == "/api/groovenet/profile":
             return self._handle_get_groovenet_profile()
 
+        rmatch = re.match(r"^/api/projects/([a-zA-Z0-9_-]+)/requests(?:/(.+))?$", path)
+        if rmatch:
+            slug, action = rmatch.group(1), rmatch.group(2)
+            if action is None:
+                return self._handle_get_requests(slug)
+            return self._send_error_json(404, f"Unknown action: {action}")
+
         mmatch = self._match_memory_route()
         if mmatch:
             slug, action = mmatch
@@ -659,6 +720,9 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return self._handle_post_groovenet_events()
         if path == "/api/groovenet/sets":
             return self._handle_post_groovenet_sets()
+        if re.match(r"^/api/projects/[a-zA-Z0-9_-]+/requests$", path):
+            slug = path.split("/")[3]
+            return self._handle_post_request(slug)
 
         mmatch = self._match_memory_route()
         if mmatch:
@@ -709,6 +773,11 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
         return self._send_error_json(404, "Not found")
 
     def do_PATCH(self) -> None:
+        path = self.path.split("?")[0]
+        rmatch = re.match(r"^/api/projects/([a-zA-Z0-9_-]+)/requests/(.+)$", path)
+        if rmatch:
+            return self._handle_patch_request(rmatch.group(1), rmatch.group(2))
+
         mmatch = self._match_memory_route()
         if mmatch:
             slug, action = mmatch
