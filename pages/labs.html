@@ -2059,53 +2059,17 @@ Social metrics → Periodic snapshots → Pattern detection
 
     function applyThemeToAll(){
         var d=DESIGNS[globalTheme];if(!d)return;
-        var isLight=d.bg==='#fff'||d.bg==='#ffffff'||d.bg==='#f5f5f0';
+        var root=document.querySelector('.L');
+        if(!root) return;
 
-        // Site Preview tab
-        var site=document.getElementById('v-site');
-        if(site){
-            site.style.background=d.bg;site.style.color=d.fg;
-            site.querySelectorAll('.S-section,.S-about p,.S-dj-genre,.S-dj-kpi,.S-svc-desc,.S-dj-profile-bio,.S-dj-profile-origin,.S-dj-tl-text,.S-dj-release-label').forEach(function(el){el.style.color=isLight?'':'#ccc';});
-        }
-
-        // Admin tab
-        var admin=document.getElementById('v-admin');
-        if(admin){
-            admin.style.background=d.bg;admin.style.color=d.fg;
-            admin.querySelectorAll('.A-input,.A-textarea').forEach(function(el){el.style.background=isLight?'#fff':d.cardBg;el.style.color=d.fg;el.style.borderColor=d.cardBorder;});
-            admin.querySelectorAll('.A-info').forEach(function(el){el.style.background=isLight?'#f8f8f8':d.cardBg;el.style.borderColor=d.cardBorder;el.style.color=d.textMuted;});
-            admin.querySelectorAll('.A-dj').forEach(function(el){el.style.borderColor=d.cardBorder;el.style.background=isLight?'#fff':d.cardBg;});
-            admin.querySelectorAll('.A-title').forEach(function(el){el.style.color=isLight?'#000':d.accent;});
-            admin.querySelectorAll('.A-label').forEach(function(el){el.style.color=d.textMuted;});
-            admin.querySelectorAll('.A-section').forEach(function(el){el.style.borderColor=d.cardBorder;});
-            admin.querySelectorAll('.A-btn-bk').forEach(function(el){el.style.background=d.accent;el.style.color=isLight?d.bg:'#000';});
-            admin.querySelectorAll('.A-btn-ghost').forEach(function(el){el.style.color=d.fg;el.style.borderColor=d.cardBorder;});
-        }
-
-        // Roadmap tab
-        var roadmap=document.getElementById('v-roadmap');
-        if(roadmap){
-            roadmap.style.background=d.bg;roadmap.style.color=d.fg;
-            roadmap.querySelectorAll('.R-phase,.R-tier,.R-intel').forEach(function(el){el.style.borderColor=d.cardBorder;el.style.background=isLight?'#fff':d.cardBg;});
-            roadmap.querySelectorAll('.R-phase-desc,.R-sub,.R-tier-desc').forEach(function(el){el.style.color=d.textMuted;});
-            roadmap.querySelectorAll('.R-phase-id').forEach(function(el){el.style.color=d.textMuted;});
-            roadmap.querySelectorAll('.R-intel-flow').forEach(function(el){el.style.background=isLight?'#fafafa':d.bg;el.style.color=d.textMuted;});
-        }
-
-        // Apps tab
-        var apps=document.getElementById('v-apps');
-        if(apps){
-            apps.style.background=d.bg;apps.style.color=d.fg;
-            apps.querySelectorAll('#app-preview div[style*="border"]').forEach(function(el){
-                if(el.style.borderColor)el.style.borderColor=d.cardBorder;
-            });
-        }
-
-        // Components tab
-        var tech=document.getElementById('v-tech');
-        if(tech){
-            tech.style.background=d.bg;tech.style.color=d.fg;
-        }
+        // Set CSS custom properties on root — cascades to ALL children
+        root.style.setProperty('--t-bg',d.bg);
+        root.style.setProperty('--t-fg',d.fg);
+        root.style.setProperty('--t-ac',d.accent);
+        root.style.setProperty('--t-bd',d.cardBorder);
+        root.style.setProperty('--t-mt',d.textMuted);
+        root.style.background=d.bg;
+        root.style.color=d.fg;
 
         // Top bar
         var top=document.querySelector('.L-top');
@@ -2114,12 +2078,31 @@ Social metrics → Periodic snapshots → Pattern detection
         if(brand) brand.style.color=d.fg;
         document.querySelectorAll('.L-mode').forEach(function(el){
             if(!el.classList.contains('on'))el.style.color=d.textMuted;
+            else el.style.color=d.fg;
         });
 
-        // Selector bars
+        // Apply to ALL views — bg, color, border
+        document.querySelectorAll('.L-view').forEach(function(v){
+            v.style.background=d.bg;
+            v.style.color=d.fg;
+        });
+
+        // All loaded sub-pages (workflows, guide, etc)
+        document.querySelectorAll('#workflows-content, #guide-content').forEach(function(el){
+            if(el.firstChild){
+                el.firstChild.style.background=d.bg;
+                el.firstChild.style.color=d.fg;
+            }
+        });
+
+        // Selector/filter bars
         document.querySelectorAll('.L-view > div[style*="border-bottom"]').forEach(function(el){
             el.style.background=d.bg;el.style.borderColor=d.cardBorder;
         });
+
+        // Sticky activity bar
+        var sticky=document.getElementById('sticky-activity');
+        if(sticky){sticky.style.background=d.bg;sticky.style.borderColor=d.cardBorder;}
     }
 
     // DJ profile tab switching
