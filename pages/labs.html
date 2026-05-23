@@ -2124,8 +2124,8 @@ Social metrics → Periodic snapshots → Pattern detection
             h+='<span>'+r.created+'</span>';
             if(r.comments.length) h+='<span>&middot; '+r.comments.length+' comment'+(r.comments.length>1?'s':'')+'</span>';
             h+='<span style="margin-left:auto;display:flex;gap:4px">';
-            if(r.status==='open') h+='<button onclick="updateReqStatus('+realIdx+\',\'in-progress\')" style="padding:3px 8px;border:1px solid var(--bd);border-radius:10px;font-size:.5rem;font-weight:600;cursor:pointer;background:none;color:var(--gy);font-family:var(--ff)">Start</button>';
-            if(r.status==='in-progress') h+='<button onclick="updateReqStatus('+realIdx+\',\'done\')" style="padding:3px 8px;border:1px solid var(--bd);border-radius:10px;font-size:.5rem;font-weight:600;cursor:pointer;background:none;color:var(--gy);font-family:var(--ff)">Complete</button>';
+            if(r.status==='open') h+='<button onclick="updateReqStatus('+realIdx+',\'in-progress\')" style="padding:3px 8px;border:1px solid var(--bd);border-radius:10px;font-size:.5rem;font-weight:600;cursor:pointer;background:none;color:var(--gy);font-family:var(--ff)">Start</button>';
+            if(r.status==='in-progress') h+='<button onclick="updateReqStatus('+realIdx+',\'done\')" style="padding:3px 8px;border:1px solid var(--bd);border-radius:10px;font-size:.5rem;font-weight:600;cursor:pointer;background:none;color:var(--gy);font-family:var(--ff)">Complete</button>';
             h+='<button onclick="openReqChat('+realIdx+')" style="padding:3px 8px;border:1px solid var(--bd);border-radius:10px;font-size:.5rem;font-weight:600;cursor:pointer;background:none;color:var(--gy);font-family:var(--ff)">Discuss</button>';
             h+='</span></div></div>';
         });
