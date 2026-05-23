@@ -11,19 +11,23 @@
     @keyframes neonBorderPulse{0%,100%{border-color:var(--glow)}50%{border-color:rgba(255,255,255,.15)}}
     .L .neon-box{animation:neonPulse 3s ease-in-out infinite}
     /* ===== LIGHT MODE GLOW ===== */
+    @keyframes lightPulse{0%,100%{box-shadow:0 2px 12px rgba(0,0,0,.08),0 0 0 1px rgba(0,0,0,.04)}50%{box-shadow:0 4px 24px rgba(0,0,0,.14),0 0 0 1px rgba(0,0,0,.08)}}
     .L[data-neon="false"] .neon-card,.L[data-neon="false"] .R-phase,.L[data-neon="false"] .R-tier,.L[data-neon="false"] .R-intel,
     .L[data-neon="false"] .A-dj,.L[data-neon="false"] .A-info,.L[data-neon="false"] .G-card,.L[data-neon="false"] .G-sum-card,
     .L[data-neon="false"] .W-step-card,.L[data-neon="false"] .W-results,.L[data-neon="false"] .S-dj,.L[data-neon="false"] .S-svc{
-        border-color:rgba(0,0,0,.08);box-shadow:0 1px 6px rgba(0,0,0,.06);transition:all .2s}
+        border-color:rgba(0,0,0,.1);box-shadow:0 3px 16px rgba(0,0,0,.1),0 0 0 1px rgba(0,0,0,.04);transition:all .25s;animation:lightPulse 4s ease-in-out infinite}
     .L[data-neon="false"] .neon-card:hover,.L[data-neon="false"] .R-phase:hover,.L[data-neon="false"] .R-tier:hover,
     .L[data-neon="false"] .A-dj:hover,.L[data-neon="false"] .G-card:hover,.L[data-neon="false"] .S-dj:hover,.L[data-neon="false"] .S-svc:hover{
-        border-color:rgba(0,0,0,.15);box-shadow:0 4px 16px rgba(0,0,0,.1);transform:translateY(-1px)}
+        border-color:rgba(0,0,0,.2)!important;box-shadow:0 8px 32px rgba(0,0,0,.16),0 0 0 1px rgba(0,0,0,.08)!important;transform:translateY(-3px);animation:none}
     .L[data-neon="false"] input,.L[data-neon="false"] select,.L[data-neon="false"] textarea{
-        border-color:rgba(0,0,0,.1)!important;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+        border-color:rgba(0,0,0,.12)!important;box-shadow:0 2px 8px rgba(0,0,0,.06),inset 0 1px 3px rgba(0,0,0,.03)}
     .L[data-neon="false"] input:focus,.L[data-neon="false"] select:focus,.L[data-neon="false"] textarea:focus{
-        border-color:rgba(0,0,0,.2)!important;box-shadow:0 2px 10px rgba(0,0,0,.08)!important}
-    .L[data-neon="false"] .L-top{box-shadow:0 1px 8px rgba(0,0,0,.06)}
-    .L[data-neon="false"] #sticky-activity{box-shadow:0 -2px 12px rgba(0,0,0,.08)}
+        border-color:rgba(0,0,0,.25)!important;box-shadow:0 4px 20px rgba(0,0,0,.12),0 0 0 3px rgba(0,0,0,.04)!important}
+    .L[data-neon="false"] .L-top{box-shadow:0 2px 16px rgba(0,0,0,.08)}
+    .L[data-neon="false"] .L-mode.on{border-bottom-width:3px}
+    .L[data-neon="false"] #sticky-activity{box-shadow:0 -4px 24px rgba(0,0,0,.12)}
+    .L[data-neon="false"] .S-section{border-color:rgba(0,0,0,.08)}
+    .L[data-neon="false"] .S-kpis,.L[data-neon="false"] .S-values{box-shadow:inset 0 1px 6px rgba(0,0,0,.04)}
 
     /* ===== NEON GLOW SYSTEM ===== */
     /* Nuclear override: force ALL white/light backgrounds dark on neon themes */
