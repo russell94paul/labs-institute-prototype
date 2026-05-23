@@ -11,6 +11,11 @@
     @keyframes neonBorderPulse{0%,100%{border-color:var(--glow)}50%{border-color:rgba(255,255,255,.15)}}
     .L .neon-box{animation:neonPulse 3s ease-in-out infinite}
     /* ===== NEON GLOW SYSTEM ===== */
+    /* Nuclear override: force ALL white/light backgrounds dark on neon themes */
+    .L[data-neon="true"] select,.L[data-neon="true"] input,.L[data-neon="true"] textarea{
+        background:rgba(255,255,255,.04)!important;color:inherit!important;border-color:var(--glow)!important}
+    .L[data-neon="true"] select option{background:var(--t-bg,#111)!important;color:var(--t-fg,#fff)!important}
+    .L[data-neon="true"] .A-info{background:rgba(255,255,255,.03)!important;color:inherit!important}
     /* Card surfaces — raised, visible */
     .L[data-neon="true"] .R-phase,.L[data-neon="true"] .R-tier,.L[data-neon="true"] .R-intel,
     .L[data-neon="true"] .A-dj,.L[data-neon="true"] .A-info,
@@ -1516,6 +1521,7 @@ Social metrics → Periodic snapshots → Pattern detection
             h+='</ul></div>';
         }
         document.getElementById('tech-preview').innerHTML=h;
+        setTimeout(applyThemeToAll,10);
     };
 
     // ============ LAYOUT SWITCHER ============
@@ -2095,6 +2101,7 @@ Social metrics → Periodic snapshots → Pattern detection
         });
 
         document.getElementById('app-preview').innerHTML=h;
+        setTimeout(applyThemeToAll,10);
     };
     switchApp('founder');
 
@@ -2171,6 +2178,21 @@ Social metrics → Periodic snapshots → Pattern detection
 
         // Enable neon glow on dark themes
         root.dataset.neon=isLight?'false':'true';
+
+        // Force-fix all hardcoded light backgrounds on dark themes
+        if(!isLight){
+            root.querySelectorAll('*').forEach(function(el){
+                var bg=el.style.background||el.style.backgroundColor;
+                if(bg&&(bg.match(/#f[0-9a-f]/i)||bg.match(/#fff/i)||bg==='white'||bg.match(/rgb\(2[45]/)||bg.match(/rgba\(2[45]/))){
+                    el.style.background='rgba(255,255,255,.03)';
+                }
+                // Fix hardcoded dark text colors
+                var col=el.style.color;
+                if(col&&(col==='#444'||col==='#555'||col==='#333'||col==='#111'||col==='#222'||col==='#000'||col==='black')){
+                    el.style.color='inherit';
+                }
+            });
+        }
 
         // Top bar
         var top=document.querySelector('.L-top');
