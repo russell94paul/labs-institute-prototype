@@ -917,21 +917,6 @@ Social metrics → Periodic snapshots → Pattern detection
 
             h+='</div>'; // close tab content
             h+='</div>'; // close card
-
-            // Socials
-            if(dj.socials){
-                h+='<div class="S-dj-socials">';
-                var platforms={instagram:'Instagram',soundcloud:'SoundCloud',spotify:'Spotify',resident_advisor:'Resident Advisor',beatport:'Beatport',bandcamp:'Bandcamp'};
-                Object.keys(platforms).forEach(function(k){
-                    if(dj.socials[k]){
-                        var url=dj.socials[k].url||dj.socials[k];
-                        h+='<a class="S-dj-social-link" href="'+esc(url)+'" target="_blank">'+platforms[k]+'</a>';
-                    }
-                });
-                h+='</div>';
-            }
-
-            h+='</div>';
         });
         document.getElementById('site-roster').innerHTML=h;
     }
