@@ -209,6 +209,7 @@
             <div class="L-mode" data-v="designs">Designs</div>
             <div class="L-mode" data-v="admin">Admin</div>
             <div class="L-mode" data-v="roadmap">Roadmap</div>
+            <div class="L-mode" data-v="apps">Apps</div>
             <div class="L-mode" data-v="tech">Components</div>
         </div>
         <div class="L-tagline">Founded For The Future</div>
@@ -320,6 +321,18 @@
         </div>
         <!-- Full-width design preview -->
         <div id="design-preview" style="min-height:600px"></div>
+    </div>
+
+    <!-- ============ APPS ============ -->
+    <div class="L-view" id="v-apps">
+        <div style="padding:16px 40px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:16px">
+            <label style="font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gy)">Portal</label>
+            <select id="app-select" onchange="switchApp(this.value)" style="padding:8px 14px;background:var(--wh);border:1px solid var(--bd);border-radius:4px;font-size:.75rem;font-family:var(--ff);font-weight:600;min-width:300px;cursor:pointer">
+                <option value="founder">Founder Portal — Full Management Dashboard</option>
+                <option value="dj">DJ Portal — Artist Dashboard</option>
+            </select>
+        </div>
+        <div id="app-preview" style="padding:30px 40px;max-width:1100px;margin:0 auto"></div>
     </div>
 
     <!-- ============ COMPONENTS ============ -->
@@ -1177,6 +1190,117 @@ Social metrics → Periodic snapshots → Pattern detection
         }
         document.getElementById('tech-preview').innerHTML=h;
     };
+
+    // ============ APPS TAB ============
+
+    var FOUNDER_FEATURES=[
+        {section:'Dashboard',status:'P1',features:[
+            {name:'Roster Overview',desc:'All DJs at a glance — tier, gigs booked, revenue, social growth trend. Click to drill into any artist.',status:'planned'},
+            {name:'Revenue Tracker',desc:'Total revenue, commission earned, outstanding invoices, revenue by DJ and by month.',status:'planned'},
+            {name:'Activity Feed',desc:'Real-time feed: new bookings, contract signed, social milestones, AI suggestions.',status:'planned'},
+            {name:'Quick Actions',desc:'Add gig, create invoice, send contract, post update — one-click from dashboard.',status:'planned'}
+        ]},
+        {section:'Roster Management',status:'P1',features:[
+            {name:'DJ Profiles',desc:'Full profiles: bio, genres, tier, rate card, availability, socials, KPIs, press kit.',status:'planned'},
+            {name:'Tier Progression',desc:'Track DJ progression against benchmarks. AI recommends when to upgrade tier and adjust pricing.',status:'planned'},
+            {name:'Onboarding Flow',desc:'Guided new DJ onboarding: collect info, set up profile, generate contract, set goals.',status:'planned'},
+            {name:'Performance Reviews',desc:'Monthly/quarterly reviews with AI-generated talking points based on data.',status:'planned'}
+        ]},
+        {section:'Booking Pipeline',status:'P3',features:[
+            {name:'Inquiry Management',desc:'Track all incoming inquiries with source, status, and follow-up reminders.',status:'planned'},
+            {name:'Quote Generator',desc:'Generate quotes with Lab-Intelligence pricing suggestions based on venue, event type, DJ tier.',status:'planned'},
+            {name:'Contract Builder',desc:'Template-based contracts with auto-fill. Digital signature via email link.',status:'planned'},
+            {name:'Payment Tracking',desc:'Track deposits, final payments, commission. Auto-generate invoices.',status:'planned'},
+            {name:'Event Calendar',desc:'All upcoming events across all DJs. Conflict detection, logistics checklist.',status:'planned'}
+        ]},
+        {section:'Marketing Hub',status:'P8',features:[
+            {name:'Content Calendar',desc:'Plan and schedule posts across Instagram, Facebook, Twitter for all artists.',status:'planned'},
+            {name:'Campaign Tracker',desc:'Track marketing campaigns: reach, engagement, conversions, cost per acquisition.',status:'planned'},
+            {name:'Press Kit Generator',desc:'Auto-generate press kits from DJ profile data: bio, photos, releases, stats.',status:'planned'},
+            {name:'Social Analytics',desc:'Cross-platform analytics: best posting times, content types, audience demographics.',status:'planned'}
+        ]},
+        {section:'Financial Management',status:'P10',features:[
+            {name:'P&L Dashboard',desc:'Profit and loss by event, by DJ, by month. Commission tracking and forecasting.',status:'planned'},
+            {name:'Invoice Generator',desc:'Create and send professional invoices. Track payment status and overdue items.',status:'planned'},
+            {name:'Tax Reports',desc:'Quarterly summaries for accountant. Categorised income and expenses.',status:'planned'},
+            {name:'Budget Planner',desc:'Plan event budgets with venue costs, DJ fees, marketing spend, projected revenue.',status:'planned'}
+        ]},
+        {section:'Lab-Intelligence',status:'P5',features:[
+            {name:'AI Suggestions Feed',desc:'Ranked suggestions: opportunities, pricing adjustments, content ideas, networking leads.',status:'planned'},
+            {name:'Growth Roadmaps',desc:'AI-generated 90-day plans per DJ. Track progress against milestones.',status:'planned'},
+            {name:'Event Post-Mortems',desc:'Auto-generated reports after each event: what worked, what to improve, audience data.',status:'planned'},
+            {name:'Market Intelligence',desc:'Pricing trends, genre popularity, venue booking patterns, competitor analysis.',status:'planned'}
+        ]}
+    ];
+
+    var DJ_FEATURES=[
+        {section:'My Dashboard',status:'P2',features:[
+            {name:'Stats Overview',desc:'Your KPIs at a glance: followers, streams, gigs this month, revenue, growth trend.',status:'planned'},
+            {name:'Upcoming Gigs',desc:'Calendar view of confirmed gigs with venue details, set time, logistics, and prep notes.',status:'planned'},
+            {name:'Growth Score',desc:'AI-calculated score based on social growth, gig frequency, revenue, and engagement vs tier benchmarks.',status:'planned'},
+            {name:'Notifications',desc:'New booking confirmed, contract to sign, AI suggestion, founder message.',status:'planned'}
+        ]},
+        {section:'My Content',status:'P2',features:[
+            {name:'Mix Library',desc:'Upload and manage mixes. Link to SoundCloud, Mixcloud, YouTube. Track plays per mix.',status:'planned'},
+            {name:'Press Kit',desc:'Your auto-generated EPK: bio, photos, releases, stats, recent events. Share link with promoters.',status:'planned'},
+            {name:'Release Tracker',desc:'All your releases across labels. Streaming stats, chart positions, revenue.',status:'planned'},
+            {name:'Photo/Video Gallery',desc:'Event photos, promo shots, video clips. Tag by event and venue.',status:'planned'}
+        ]},
+        {section:'My Calendar',status:'P2',features:[
+            {name:'Gig Calendar',desc:'All confirmed and pending gigs. Set availability, block dates, see offers.',status:'planned'},
+            {name:'Gig Prep',desc:'Before each gig: venue profile (sound system, crowd, past events), suggested set style, logistics.',status:'planned'},
+            {name:'Post-Gig Log',desc:'After each gig: log recording link, notes, crowd reaction. AI prompts if recording not uploaded.',status:'planned'},
+            {name:'Availability Sync',desc:'Set your available dates. Labs matches you to opportunities automatically.',status:'planned'}
+        ]},
+        {section:'My Growth',status:'P5',features:[
+            {name:'Growth Roadmap',desc:'AI-generated 90-day plan: content to post, gigs to apply for, skills to develop.',status:'planned'},
+            {name:'Social Tracker',desc:'Instagram, SoundCloud, Spotify, Mixcloud stats over time. Weekly change highlights.',status:'planned'},
+            {name:'Tier Progress',desc:'Where you are vs tier benchmarks. What you need to reach the next tier.',status:'planned'},
+            {name:'Goal Setting',desc:'Set quarterly goals with your manager. Track completion. AI suggests realistic targets.',status:'planned'}
+        ]},
+        {section:'Chat',status:'P4',features:[
+            {name:'Manager Chat',desc:'Direct messaging with your Labs manager. Full history, file sharing.',status:'planned'},
+            {name:'AI Assistant',desc:'Ask anything: "What should I charge for this gig?" "When should I post?" "What venues suit my style?"',status:'planned'},
+            {name:'Prep Briefs',desc:'Before each gig, the AI sends a brief: venue info, crowd profile, what worked last time.',status:'planned'}
+        ]},
+        {section:'My Finances',status:'P10',features:[
+            {name:'Earnings Dashboard',desc:'Total earned, pending payments, commission breakdown. Monthly/quarterly view.',status:'planned'},
+            {name:'Gig Revenue',desc:'Revenue per gig with fee, expenses, and net earnings.',status:'planned'},
+            {name:'Tax Summary',desc:'Year-to-date earnings summary for self-assessment.',status:'planned'}
+        ]}
+    ];
+
+    window.switchApp=function(id){
+        var features=id==='founder'?FOUNDER_FEATURES:DJ_FEATURES;
+        var title=id==='founder'?'Founder Portal':'DJ Portal';
+        var desc=id==='founder'?'Full management dashboard — manage roster, bookings, contracts, finances, marketing, and AI intelligence across all artists.':'Personal artist dashboard — manage your content, calendar, growth metrics, and communicate with your manager and AI assistant.';
+        var accent=id==='founder'?'var(--bl)':'var(--gn)';
+
+        var h='';
+        h+='<div style="margin-bottom:24px">';
+        h+='<div style="font-size:1.1rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">'+title+'</div>';
+        h+='<div style="font-size:.72rem;color:var(--gy);max-width:600px;line-height:1.7">'+desc+'</div></div>';
+
+        features.forEach(function(sec){
+            h+='<div style="margin-bottom:28px">';
+            h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--bd)">';
+            h+='<div style="font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase">'+sec.section+'</div>';
+            h+='<div style="font-size:.5rem;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(37,99,235,.08);color:var(--bl);letter-spacing:.04em;text-transform:uppercase">Phase '+sec.status+'</div>';
+            h+='</div>';
+
+            h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px">';
+            sec.features.forEach(function(f){
+                h+='<div style="border:1px solid var(--bd);border-radius:8px;padding:16px;transition:border-color .15s;cursor:default" onmouseenter="this.style.borderColor=\'var(--bd2)\'" onmouseleave="this.style.borderColor=\'var(--bd)\'">';
+                h+='<div style="font-size:.75rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px">'+f.name+'</div>';
+                h+='<div style="font-size:.65rem;color:var(--gy);line-height:1.7">'+f.desc+'</div>';
+                h+='</div>';
+            });
+            h+='</div></div>';
+        });
+
+        document.getElementById('app-preview').innerHTML=h;
+    };
+    switchApp('founder');
 
     // Init designs tab
     switchDesign('chrome');
