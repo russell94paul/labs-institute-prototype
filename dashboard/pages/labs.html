@@ -443,6 +443,21 @@
             </table>
         </div>
 
+        <!-- Global Reach Globe -->
+        <div class="S-section S-divider">
+            <div class="S-section-tag">Global Reach</div>
+            <div class="S-section-title">Where Our Artists Play</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center">
+                <div>
+                    <canvas id="site-globe-canvas" width="400" height="400" style="width:100%;max-width:400px;display:block;margin:0 auto"></canvas>
+                </div>
+                <div>
+                    <div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.4;margin-bottom:12px">17 Cities Across Europe</div>
+                    <div id="site-globe-cities" style="font-size:.72rem;opacity:.6;line-height:2.2"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- New Releases Spotlight -->
         <div class="S-section S-divider">
             <div class="S-section-tag">New Releases</div>
@@ -2596,6 +2611,54 @@ Social metrics → Periodic snapshots → Pattern detection
         msgs.appendChild(el);
         msgs.scrollTop=msgs.scrollHeight;
     }
+
+    // Site Preview globe
+    function initSiteGlobe(){
+        var canvas=document.getElementById('site-globe-canvas');
+        if(!canvas) return;
+        var d=DESIGNS[globalTheme]||DESIGNS.chrome;
+        var ctx=canvas.getContext('2d');
+        var W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,R=160;
+        var rot=0;
+        function toS(lat,lon,rotation){
+            var phi=(90-lat)*Math.PI/180,theta=(lon+rotation)*Math.PI/180;
+            var x=R*Math.sin(phi)*Math.cos(theta),y=-R*Math.cos(phi),z=R*Math.sin(phi)*Math.sin(theta);
+            return{x:cx+x,y:cy+y,z:z,visible:z>0};
+        }
+        function draw(){
+            d=DESIGNS[globalTheme]||DESIGNS.chrome;
+            ctx.clearRect(0,0,W,H);
+            ctx.beginPath();ctx.arc(cx,cy,R+2,0,Math.PI*2);ctx.strokeStyle='rgba('+d.accentRgb+',.1)';ctx.lineWidth=4;ctx.stroke();
+            ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.strokeStyle='rgba('+d.accentRgb+',.4)';ctx.lineWidth=1.5;ctx.stroke();
+            ctx.strokeStyle='rgba('+d.accentRgb+',.12)';ctx.lineWidth=0.5;
+            for(var la=-60;la<=60;la+=30){ctx.beginPath();for(var lo=0;lo<=360;lo+=5){var p=toS(la,lo,rot);if(p.visible){if(lo===0||!toS(la,lo-5,rot).visible)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);}}ctx.stroke();}
+            for(var lo=-180;lo<180;lo+=30){ctx.beginPath();for(var la2=-90;la2<=90;la2+=5){var p=toS(la2,lo,rot);if(p.visible){if(la2===-90||!toS(la2-5,lo,rot).visible)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);}}ctx.stroke();}
+            var home=CITIES[0];
+            CITIES.forEach(function(city,i){
+                if(i===0)return;var p1=toS(home.lat,home.lon,rot),p2=toS(city.lat,city.lon,rot);
+                if(p1.visible&&p2.visible){ctx.beginPath();ctx.moveTo(p1.x,p1.y);var pm=toS((home.lat+city.lat)/2+8,(home.lon+city.lon)/2,rot);ctx.quadraticCurveTo(pm.x,pm.y,p2.x,p2.y);ctx.strokeStyle='rgba('+d.accentRgb+',.3)';ctx.lineWidth=1.5;ctx.stroke();}
+            });
+            CITIES.forEach(function(city){
+                var p=toS(city.lat,city.lon,rot);if(!p.visible)return;var dr=city.home?6:4;
+                ctx.beginPath();ctx.arc(p.x,p.y,dr,0,Math.PI*2);ctx.fillStyle=d.accent;ctx.fill();
+                ctx.beginPath();ctx.arc(p.x,p.y,dr+4,0,Math.PI*2);ctx.fillStyle='rgba('+d.accentRgb+',.15)';ctx.fill();
+                if(city.home){var pr=dr+6+Math.sin(Date.now()/400)*4;ctx.beginPath();ctx.arc(p.x,p.y,pr,0,Math.PI*2);ctx.strokeStyle='rgba('+d.accentRgb+',.3)';ctx.lineWidth=1;ctx.stroke();}
+            });
+            rot+=0.3;requestAnimationFrame(draw);
+        }
+        draw();
+        var cl=document.getElementById('site-globe-cities');
+        if(cl){
+            var h='';
+            CITIES.forEach(function(c){
+                h+='<span style="display:inline-flex;align-items:center;gap:6px;margin-right:14px;margin-bottom:4px">';
+                h+='<span style="width:6px;height:6px;border-radius:50%;background:'+(c.home?d.accent:'rgba('+d.accentRgb+',.4)')+'"></span>';
+                h+='<span style="'+(c.home?'font-weight:700':'')+'">'+c.name+'</span></span>';
+            });
+            cl.innerHTML=h;
+        }
+    }
+    setTimeout(initSiteGlobe,500);
 
     // goToTab — used by Guide page buttons
     window.goToTab=function(tab){
