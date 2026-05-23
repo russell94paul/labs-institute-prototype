@@ -697,63 +697,111 @@ Social metrics → Periodic snapshots → Pattern detection
         return h+'</div>';
     }
 
+    var liveCounterInterval=null;
+    var aiTypeInterval=null;
+
+    var AI_SUGGESTIONS=[
+        {type:'opportunity',priority:'HIGH',text:'VERKNIPT Festival (Germany, Jul 25) is accepting lineup submissions. Luciid\'s Beatport #15 "Charm" and 54K IG following match their booking criteria. Recommendation: Submit via promoter contact in Lab-Wiki. Expected fee: €1,200-1,800.',time:4500},
+        {type:'gap',priority:'MEDIUM',text:'No Instagram post in 9 days. Last 3 behind-the-scenes studio posts averaged 2.4x higher engagement than flyer reposts. Suggestion: Post a 15s studio clip with track preview. Expected: +400-600 new followers.',time:3800},
+        {type:'pricing',priority:'MEDIUM',text:'Booking inquiry from Printworks London (3,000 cap). Based on Lab-Wiki data: similar tier artists quoted £800-1,200 for support slots in Q1 2026. Luciid\'s recent Terminal V performance + Beatport charting justifies upper range. Recommend: Quote £1,100.',time:4200},
+        {type:'growth',priority:'LOW',text:'Luciid\'s SoundCloud plays have plateaued at ~500K/mo. Mixcloud uploads get 3x more engagement per play. Suggestion: Cross-post next 3 mixes to Mixcloud with tracklist. Expected: +2K Mixcloud followers in 30 days.',time:3500},
+        {type:'insight',priority:'HIGH',text:'Pattern detected: Events at venues with Funktion-One sound systems yield 40% higher rebooking rates for Luciid. 3 upcoming opportunities at F1 venues found in Lab-Wiki. Prioritising these in the gig pipeline.',time:4000}
+    ];
+
+    var MILESTONES=[
+        {yr:2012,ig:0,streams:0,gigs:0,label:'Started producing',venues:'Bedroom studio'},
+        {yr:2018,ig:200,streams:0,gigs:2,label:'Launched Luciid moniker',venues:'Local bars, Ireland'},
+        {yr:2019,ig:500,streams:0,gigs:5,label:'First RA-listed event',venues:'The Telegraph Building'},
+        {yr:2020,ig:1200,streams:0,gigs:8,label:'Building catalogue',venues:'Dublin clubs'},
+        {yr:2021,ig:3500,streams:5000,gigs:12,label:'Sleepless Recordings EP',venues:'Irish circuit'},
+        {yr:2022,ig:8000,streams:50000,gigs:20,label:'BREAKOUT: Paro Hour',venues:'Fabrik Madrid, BASIS'},
+        {yr:2023,ig:18000,streams:800000,gigs:35,label:'Founded AGONY label + Suara release',venues:'OST Berlin, European tour'},
+        {yr:2024,ig:32000,streams:1500000,gigs:48,label:'Album "Reeluv" + Electric Picnic',venues:'Sold-out ANL tour'},
+        {yr:2025,ig:45000,streams:1800000,gigs:55,label:'International festival circuit',venues:'10+ countries'},
+        {yr:2026,ig:54000,streams:2100000,gigs:30,label:'Terminal V, VERKNIPT, Echelon',venues:'Cocoricò, Lehmann, Ääniwalli'}
+    ];
+
     window.switchDesign=function(id){
         var d=DESIGNS[id]; if(!d) return;
+        if(liveCounterInterval) clearInterval(liveCounterInterval);
+        if(aiTypeInterval) clearInterval(aiTypeInterval);
         var accentA='rgba('+d.accentRgb+',.15)';
-        var h='<div style="'+d.heroStyle+';font-family:var(--ff);overflow:hidden;min-height:100vh">';
+        var h='<div id="design-root" style="'+d.heroStyle+';font-family:var(--ff);overflow:hidden">';
 
         // Hero
         h+='<div style="text-align:center;padding:80px 40px 50px;position:relative;overflow:hidden">';
         if(d.anim==='pulse') h+='<div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba('+d.accentRgb+',.08) 0%,transparent 70%);animation:pulseGlow 3s ease-in-out infinite"></div>';
         if(d.anim==='flow') h+='<div style="position:absolute;inset:0;background:linear-gradient(45deg,rgba('+d.accentRgb+',.05),transparent,rgba(56,189,248,.05));background-size:400%;animation:gradShift 8s linear infinite"></div>';
         if(d.anim==='glow') h+='<div style="position:absolute;top:50%;left:50%;width:300px;height:300px;background:radial-gradient(circle,rgba('+d.accentRgb+',.12),transparent);transform:translate(-50%,-50%);filter:blur(60px);animation:pulseGlow 4s ease-in-out infinite"></div>';
-
         h+='<div style="position:relative;z-index:1">';
         h+='<div style="font-size:2.4rem;font-weight:900;letter-spacing:.2em;text-transform:uppercase;'+d.logo+';margin-bottom:8px">LABS</div>';
         h+='<div style="font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:'+d.textMuted+'">Founded For The Future</div>';
-
-        // Scrolling text
-        h+='<div style="margin:30px -30px;overflow:hidden"><div style="display:flex;animation:marquee 15s linear infinite;white-space:nowrap">';
+        h+='<div style="margin:30px -40px;overflow:hidden"><div style="display:flex;animation:marquee 15s linear infinite;white-space:nowrap">';
         for(var r=0;r<4;r++) h+='<span style="font-size:2.5rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase;padding-right:40px;opacity:.15;flex-shrink:0">FOUNDED FOR THE FUTURE</span>';
         h+='</div></div>';
-
         h+='<div style="font-size:.75rem;color:'+d.textMuted+';max-width:400px;margin:0 auto;line-height:1.7">Underground Techno DJ Management. Manchester, UK.</div>';
         h+='</div></div>';
 
-        // KPI bar
+        // LIVE COUNTER KPIs
         h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid '+d.cardBorder+';border-bottom:1px solid '+d.cardBorder+'">';
-        [{v:'54K',l:'Instagram'},{v:'2M+',l:'Streams'},{v:'10+',l:'Countries'},{v:'6',l:'Labels'}].forEach(function(k){
-            h+='<div style="text-align:center;padding:24px 12px;border-right:1px solid '+d.cardBorder+'">'+
-                '<div style="font-size:1.8rem;font-weight:200;font-family:var(--mn)">'+k.v+'</div>'+
-                '<div style="font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-top:4px">'+k.l+'</div></div>';
+        var counters=[{id:'cnt-ig',base:54000,rate:3,label:'Instagram'},{id:'cnt-str',base:2100000,rate:47,label:'Streams'},{id:'cnt-sc',base:512000,rate:12,label:'SC Plays'},{id:'cnt-gigs',base:186,rate:0,label:'Total Gigs'}];
+        counters.forEach(function(k){
+            h+='<div style="text-align:center;padding:28px 12px;border-right:1px solid '+d.cardBorder+'">'+
+                '<div id="'+k.id+'" style="font-size:2rem;font-weight:200;font-family:var(--mn);transition:transform .15s" data-val="'+k.base+'" data-rate="'+k.rate+'">'+formatNum(k.base)+'</div>'+
+                '<div style="font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-top:4px">'+k.label+'</div>'+
+                '<div style="font-size:.45rem;color:'+d.accent+';margin-top:2px;opacity:.7">LIVE</div></div>';
         });
         h+='</div>';
 
-        // Artist card
-        h+='<div style="padding:40px"><div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:10px;padding:30px;max-width:1000px;margin:0 auto;'+(d.anim==='glass'?'backdrop-filter:blur(12px);':'')+'">';
-        h+='<div style="display:flex;gap:16px;align-items:center;margin-bottom:16px">';
-        h+='<div style="width:56px;height:56px;border-radius:50%;background:'+accentA+';display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:'+d.accent+'">L</div>';
-        h+='<div><div style="font-size:1rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase">Luciid</div>';
-        h+='<div style="font-size:.65rem;color:'+d.textMuted+'">Hard Techno &middot; Schranz &middot; Established</div></div></div>';
+        // CAREER SCRUBBER
+        h+='<div style="padding:30px 40px;max-width:1000px;margin:0 auto">';
+        h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:12px">Career Timeline — Drag to Explore</div>';
+        h+='<input type="range" id="career-scrubber" min="0" max="'+(MILESTONES.length-1)+'" value="'+(MILESTONES.length-1)+'" style="width:100%;accent-color:'+d.accent+';cursor:pointer">';
+        h+='<div style="display:flex;justify-content:space-between;font-size:.5rem;color:'+d.textMuted+';margin-top:4px">';
+        MILESTONES.forEach(function(m){h+='<span>'+m.yr+'</span>';});
+        h+='</div>';
 
-        // Charts
-        h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">';
+        // Scrubber output
+        h+='<div id="scrubber-output" style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px">';
+        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:10px;padding:20px">';
+        h+='<div id="scr-year" style="font-size:2.4rem;font-weight:200;font-family:var(--mn)">2026</div>';
+        h+='<div id="scr-label" style="font-size:.78rem;font-weight:700;margin-top:4px">Terminal V, VERKNIPT, Echelon</div>';
+        h+='<div id="scr-venues" style="font-size:.68rem;color:'+d.textMuted+';margin-top:6px">Cocoricò, Lehmann, Ääniwalli</div>';
+        h+='</div>';
+        h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:14px;text-align:center"><div id="scr-ig" style="font-size:1.4rem;font-weight:200;font-family:var(--mn)">54K</div><div style="font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-top:2px">Instagram</div></div>';
+        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:14px;text-align:center"><div id="scr-streams" style="font-size:1.4rem;font-weight:200;font-family:var(--mn)">2.1M</div><div style="font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-top:2px">Streams</div></div>';
+        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:14px;text-align:center"><div id="scr-gigs" style="font-size:1.4rem;font-weight:200;font-family:var(--mn)">30</div><div style="font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-top:2px">Gigs/Year</div></div>';
+        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:14px;text-align:center"><div id="scr-growth" style="font-size:1.4rem;font-weight:200;font-family:var(--mn);color:'+d.accent+'">—</div><div style="font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-top:2px">vs Previous</div></div>';
+        h+='</div></div></div>';
+
+        // CHARTS
+        h+='<div style="padding:0 40px 30px;max-width:1000px;margin:0 auto">';
+        h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">';
         h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:14px">';
-        h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:8px">Instagram Growth</div>';
+        h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:8px">Instagram</div>';
         h+=cssBar(chartData.ig,54000,d.accent,chartData.labels);
         h+='</div>';
         h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:14px">';
-        h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:8px">Spotify Streams</div>';
+        h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:8px">Streams</div>';
         h+=cssBar(chartData.streams,2100000,d.accent,chartData.labels);
-        h+='</div></div>';
-
-        // Gigs chart
-        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:14px;margin-top:12px">';
-        h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:8px">Gigs Per Year</div>';
-        h+=cssBar(chartData.gigs,55,d.accent,chartData.labels);
         h+='</div>';
+        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:14px">';
+        h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:8px">Gigs/Year</div>';
+        h+=cssBar(chartData.gigs,55,d.accent,chartData.labels);
+        h+='</div></div></div>';
 
-        h+='</div></div>';
+        // AI SIMULATION PANEL
+        h+='<div style="padding:0 40px 40px;max-width:1000px;margin:0 auto">';
+        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:10px;overflow:hidden;'+(d.anim==='glass'?'backdrop-filter:blur(12px);':'')+'">';
+        h+='<div style="padding:12px 20px;border-bottom:1px solid '+d.cardBorder+';display:flex;align-items:center;gap:10px">';
+        h+='<div id="ai-dot" style="width:8px;height:8px;border-radius:50%;background:'+d.accent+';animation:pulseGlow 1.5s ease-in-out infinite"></div>';
+        h+='<div style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+'">Lab-Intelligence — Live</div>';
+        h+='<div id="ai-status" style="font-size:.55rem;color:'+d.accent+';margin-left:auto;font-family:var(--mn)">Analysing...</div>';
+        h+='</div>';
+        h+='<div id="ai-feed" style="padding:16px 20px;min-height:200px;font-family:var(--mn);font-size:.7rem;line-height:1.8;color:'+d.textMuted+'">';
+        h+='<div style="opacity:.4">Initialising Lab-Intelligence...</div>';
+        h+='</div></div></div>';
 
         // CTA
         h+='<div style="text-align:center;padding:60px 40px;border-top:1px solid '+d.cardBorder+'">';
@@ -763,6 +811,83 @@ Social metrics → Periodic snapshots → Pattern detection
 
         h+='</div>';
         document.getElementById('design-preview').innerHTML=h;
+
+        // Start live counters
+        liveCounterInterval=setInterval(function(){
+            counters.forEach(function(k){
+                var el=document.getElementById(k.id);
+                if(!el||!k.rate) return;
+                var v=parseInt(el.dataset.val)+(Math.random()>0.3?k.rate:0);
+                el.dataset.val=v;
+                el.textContent=formatNum(v);
+                el.style.transform='scale(1.05)';
+                setTimeout(function(){el.style.transform='scale(1)';},150);
+            });
+        },2000);
+
+        // Career scrubber
+        var scrubber=document.getElementById('career-scrubber');
+        if(scrubber){
+            scrubber.addEventListener('input',function(){
+                var m=MILESTONES[+this.value];
+                var prev=+this.value>0?MILESTONES[+this.value-1]:null;
+                document.getElementById('scr-year').textContent=m.yr;
+                document.getElementById('scr-label').textContent=m.label;
+                document.getElementById('scr-venues').textContent=m.venues;
+                document.getElementById('scr-ig').textContent=formatNum(m.ig);
+                document.getElementById('scr-streams').textContent=formatNum(m.streams);
+                document.getElementById('scr-gigs').textContent=m.gigs;
+                if(prev&&prev.ig>0){
+                    var pct=Math.round(((m.ig-prev.ig)/prev.ig)*100);
+                    document.getElementById('scr-growth').textContent=(pct>0?'+':'')+pct+'%';
+                    document.getElementById('scr-growth').style.color=pct>0?d.accent:'inherit';
+                } else {
+                    document.getElementById('scr-growth').textContent=+this.value>0?'N/A':'—';
+                }
+            });
+        }
+
+        // AI typing simulation
+        var aiIdx=0;
+        var feed=document.getElementById('ai-feed');
+        var status=document.getElementById('ai-status');
+        function typeAISuggestion(){
+            var s=AI_SUGGESTIONS[aiIdx%AI_SUGGESTIONS.length];
+            aiIdx++;
+            if(status) status.textContent='Generating...';
+            var colors={opportunity:'#10b981',gap:'#f59e0b',pricing:'#3b82f6',growth:'#8b5cf6',insight:'#ec4899'};
+            var tagColor=colors[s.type]||d.accent;
+
+            var entry=document.createElement('div');
+            entry.style.cssText='margin-bottom:14px;padding:12px;background:rgba('+d.accentRgb+',.04);border:1px solid '+d.cardBorder+';border-radius:6px;border-left:3px solid '+tagColor+';opacity:0;transform:translateY(8px);transition:all .3s';
+            var header='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'+
+                '<span style="font-size:.5rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:10px;background:'+tagColor+'22;color:'+tagColor+'">'+s.type+'</span>'+
+                '<span style="font-size:.5rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:'+d.textMuted+'">Priority: '+s.priority+'</span></div>';
+            entry.innerHTML=header+'<div class="ai-typeout" style="color:inherit"></div>';
+
+            if(feed.children.length>3) feed.removeChild(feed.firstChild);
+            feed.appendChild(entry);
+            setTimeout(function(){entry.style.opacity='1';entry.style.transform='translateY(0)';},50);
+
+            // Type out text character by character
+            var textEl=entry.querySelector('.ai-typeout');
+            var chars=s.text.split('');
+            var ci=0;
+            var typeSpeed=15;
+            aiTypeInterval=setInterval(function(){
+                if(ci>=chars.length){
+                    clearInterval(aiTypeInterval);
+                    if(status) status.textContent='Monitoring...';
+                    setTimeout(typeAISuggestion,3000);
+                    return;
+                }
+                textEl.textContent+=chars[ci];
+                ci++;
+            },typeSpeed);
+        }
+        setTimeout(function(){
+            if(feed){feed.innerHTML='';typeAISuggestion();}
+        },1500);
     };
 
     var TECH={
