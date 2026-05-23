@@ -344,13 +344,14 @@
     var currentStepIdx=0;
     var stepData=[];
 
-    function loadWorkflows(){
+    window.loadWorkflows=function(){
         var user=document.getElementById('wf-user').value;
         var sel=document.getElementById('wf-select');
         sel.innerHTML='';
         WORKFLOWS[user].forEach(function(w){
             sel.innerHTML+='<option value="'+w.id+'">'+w.name+'</option>';
         });
+        loadWorkflow();
     }
 
     function getWorkflow(){
@@ -359,7 +360,7 @@
         return WORKFLOWS[user].find(function(w){return w.id===wfId;});
     }
 
-    function loadWorkflow(){
+    window.loadWorkflow=function(){
         var wf=getWorkflow();
         if(!wf) return;
         document.getElementById('wf-title').textContent=wf.name;
