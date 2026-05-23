@@ -778,99 +778,133 @@ Social metrics → Periodic snapshots → Pattern detection
         }
 
         var h='';
-        rosterData.forEach(function(dj){
+        rosterData.forEach(function(dj,djIdx){
             var k=dj.kpis&&dj.kpis.current?dj.kpis.current:{};
+            var pid='dj-panel-'+djIdx;
 
-            // Horizontal layout: sidebar left | content right
-            h+='<div style="display:grid;grid-template-columns:240px 1fr;gap:0;border:1px solid var(--bd);border-radius:12px;overflow:hidden;margin-bottom:20px">';
+            h+='<div style="border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:16px">';
 
-            // LEFT SIDEBAR — identity
-            h+='<div style="padding:28px 24px;border-right:1px solid var(--bd);background:#fafafa">';
-            h+='<div class="S-dj-profile-avatar" style="margin:0 auto 14px">'+esc(dj.name.charAt(0))+'</div>';
-            h+='<div style="text-align:center"><div class="S-dj-profile-name" style="font-size:1.1rem">'+esc(dj.name)+'</div>';
-            h+='<div style="font-size:.65rem;color:var(--gy);margin-top:2px">'+esc(dj.real_name)+' &middot; '+esc(dj.origin)+'</div>';
-            h+='<div style="margin:10px 0"><span class="S-dj-tier tier-'+dj.tier+'">'+esc(dj.tier)+'</span></div></div>';
-            // Stats in sidebar
-            h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:16px">';
-            [{v:formatNum(k.ig_followers||0),l:'IG'},{v:formatNum(k.ra_followers||0),l:'RA'},{v:formatNum(k.spotify_top_track_streams||0),l:'Streams'},{v:(k.countries_played||0)+'',l:'Countries'}].forEach(function(s){
-                h+='<div style="text-align:center;padding:8px;background:#fff;border:1px solid var(--bd);border-radius:6px"><div style="font-size:1rem;font-weight:200;font-family:var(--mn)">'+s.v+'</div><div style="font-size:.45rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gy);margin-top:2px">'+s.l+'</div></div>';
+            // Header row — name, stats, genres, socials all inline
+            h+='<div style="display:flex;align-items:center;gap:16px;padding:16px 20px;flex-wrap:wrap">';
+            h+='<div class="S-dj-profile-avatar" style="width:48px;height:48px;font-size:20px;margin:0">'+esc(dj.name.charAt(0))+'</div>';
+            h+='<div style="min-width:140px"><div class="S-dj-profile-name" style="font-size:1rem">'+esc(dj.name)+'</div>';
+            h+='<div style="font-size:.62rem;color:var(--gy)">'+esc(dj.real_name)+' &middot; '+esc(dj.origin)+'</div></div>';
+            h+='<span class="S-dj-tier tier-'+dj.tier+'" style="margin:0">'+esc(dj.tier)+'</span>';
+            // Inline stats
+            [{v:formatNum(k.ig_followers||0),l:'IG'},{v:formatNum(k.ra_followers||0),l:'RA'},{v:formatNum(k.spotify_top_track_streams||0),l:'Streams'},{v:(k.countries_played||0)+'',l:'Countries'},{v:(k.festivals_2026||4)+'',l:'Festivals'}].forEach(function(s){
+                h+='<div style="text-align:center;min-width:50px"><div style="font-size:.88rem;font-weight:200;font-family:var(--mn)">'+s.v+'</div><div style="font-size:.45rem;letter-spacing:.06em;text-transform:uppercase;color:var(--gy)">'+s.l+'</div></div>';
             });
-            h+='</div>';
-            // Genres
-            h+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:14px;justify-content:center">';
-            (dj.genres||[]).forEach(function(g){h+='<span class="S-dj-profile-tag">'+esc(g)+'</span>';});
-            h+='</div>';
-            // Supported by
-            if(dj.supported_by&&dj.supported_by.length){
-                h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gy);margin-top:16px;margin-bottom:6px">Supported By</div>';
-                h+='<div style="font-size:.62rem;color:#777;line-height:1.8;text-align:center">'+dj.supported_by.join(' &middot; ')+'</div>';
-            }
-            // Social links
+            // Social pills
             if(dj.socials){
-                h+='<div class="S-dj-socials" style="margin-top:14px;justify-content:center">';
-                var platforms={instagram:'IG',soundcloud:'SC',spotify:'SP',resident_advisor:'RA',beatport:'BP',bandcamp:'BC'};
-                Object.keys(platforms).forEach(function(pk){
+                h+='<div style="display:flex;gap:4px;margin-left:auto">';
+                var plat={instagram:'IG',soundcloud:'SC',spotify:'SP',resident_advisor:'RA',beatport:'BP'};
+                Object.keys(plat).forEach(function(pk){
                     if(dj.socials[pk]){
                         var url=dj.socials[pk].url||dj.socials[pk];
-                        h+='<a class="S-dj-social-link" href="'+esc(url)+'" target="_blank" style="font-size:.55rem;padding:4px 10px">'+platforms[pk]+'</a>';
+                        h+='<a href="'+esc(url)+'" target="_blank" style="font-size:.5rem;padding:3px 8px;border:1px solid var(--bd);border-radius:10px;text-decoration:none;color:var(--gy);font-weight:600;transition:border-color .15s" onmouseenter="this.style.borderColor=\'#000\';this.style.color=\'#000\'" onmouseleave="this.style.borderColor=\'rgba(0,0,0,.08)\';this.style.color=\'var(--gy)\'">'+plat[pk]+'</a>';
                     }
                 });
                 h+='</div>';
             }
             h+='</div>';
 
-            // RIGHT CONTENT — 3 columns
-            h+='<div style="padding:24px">';
-            // Bio + quote
-            h+='<div style="font-size:.75rem;color:#555;line-height:1.8;margin-bottom:12px">'+esc(dj.bio_short)+'</div>';
-            if(dj.quote) h+='<div class="S-dj-profile-quote" style="margin-bottom:16px">"'+esc(dj.quote)+'"</div>';
+            // Mini tabs
+            var tabs=['Bio','Stats','Releases','Timeline','Venues','Socials'];
+            h+='<div style="display:flex;gap:0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)">';
+            tabs.forEach(function(tab,ti){
+                h+='<div class="dj-tab" data-dj="'+djIdx+'" data-tab="'+tab.toLowerCase()+'" onclick="switchDJTab('+djIdx+\',\''+tab.toLowerCase()+'\')" style="padding:8px 16px;font-size:.58rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:'+(ti===0?'#000':'var(--gy)')+';cursor:pointer;border-bottom:2px solid '+(ti===0?'#000':'transparent')+';transition:all .15s">';
+                h+=tab+'</div>';
+            });
+            h+='</div>';
 
-            h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px">';
+            // Tab content panels
+            h+='<div style="padding:16px 20px;min-height:120px">';
 
-            // Col 1: Releases + Labels
-            h+='<div>';
+            // Bio (default visible)
+            h+='<div class="dj-panel" data-dj="'+djIdx+'" data-panel="bio" style="display:block">';
+            h+='<div style="font-size:.75rem;color:#555;line-height:1.8;max-width:700px">'+esc(dj.bio_short)+'</div>';
+            if(dj.quote) h+='<div class="S-dj-profile-quote" style="margin-top:12px;max-width:600px">"'+esc(dj.quote)+'"</div>';
+            if(dj.supported_by&&dj.supported_by.length) h+='<div style="font-size:.68rem;color:#777;margin-top:12px">Supported by: '+dj.supported_by.join(' &middot; ')+'</div>';
+            if(dj.genres&&dj.genres.length) h+='<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:10px">'+(dj.genres.map(function(g){return'<span class="S-dj-profile-tag">'+esc(g)+'</span>'}).join(''))+'</div>';
+            h+='</div>';
+
+            // Stats
+            h+='<div class="dj-panel" data-dj="'+djIdx+'" data-panel="stats" style="display:none">';
+            h+='<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px">';
+            [{v:formatNum(k.ig_followers||0),l:'Instagram'},{v:formatNum(k.ra_followers||0),l:'RA Followers'},{v:formatNum(k.spotify_top_track_streams||0),l:'Top Track'},{v:(k.countries_played||0)+'',l:'Countries'},{v:(k.labels_released_on||6)+'',l:'Labels'},{v:'#'+(k.beatport_chart_peak||15),l:'Beatport Peak'}].forEach(function(s){
+                h+='<div style="text-align:center;padding:16px;background:#fafafa;border-radius:6px"><div style="font-size:1.4rem;font-weight:200;font-family:var(--mn)">'+s.v+'</div><div style="font-size:.48rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gy);margin-top:4px">'+s.l+'</div></div>';
+            });
+            h+='</div></div>';
+
+            // Releases
+            h+='<div class="dj-panel" data-dj="'+djIdx+'" data-panel="releases" style="display:none">';
             if(dj.key_releases&&dj.key_releases.length){
-                h+='<div class="S-subsection" style="margin-top:0">Releases</div>';
+                h+='<table style="width:100%;border-collapse:collapse;font-size:.72rem"><thead><tr style="border-bottom:2px solid #000">';
+                h+='<th style="text-align:left;padding:8px;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gy)">Track</th>';
+                h+='<th style="text-align:left;padding:8px;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gy)">Label</th>';
+                h+='<th style="text-align:center;padding:8px;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gy)">Year</th>';
+                h+='<th style="text-align:right;padding:8px;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gy)">Streams</th>';
+                h+='</tr></thead><tbody>';
                 dj.key_releases.forEach(function(r){
-                    h+='<div style="padding:6px 0;border-bottom:1px solid rgba(0,0,0,.04)">';
-                    h+='<div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.02em">'+esc(r.title)+'</div>';
-                    h+='<div style="font-size:.58rem;color:var(--gy)">'+esc(r.label||'Self-released')+' &middot; '+r.year+'</div>';
-                    if(r.streams) h+='<div style="font-size:.55rem;color:var(--gn);font-weight:700;margin-top:2px">'+esc(r.streams)+'</div>';
-                    h+='</div>';
+                    h+='<tr style="border-bottom:1px solid var(--bd)"><td style="padding:8px;font-weight:700">'+esc(r.title)+'</td>';
+                    h+='<td style="padding:8px;color:var(--gy)">'+esc(r.label||'Self-released')+'</td>';
+                    h+='<td style="padding:8px;text-align:center;font-family:var(--mn)">'+r.year+'</td>';
+                    h+='<td style="padding:8px;text-align:right;color:var(--gn);font-weight:700;font-family:var(--mn)">'+(r.streams||'—')+'</td></tr>';
                 });
+                h+='</tbody></table>';
             }
-            if(dj.labels&&dj.labels.length){
-                h+='<div class="S-subsection">Labels</div>';
-                h+='<div style="font-size:.65rem;color:#555;line-height:1.8">'+dj.labels.join(' &middot; ')+'</div>';
+            if(dj.labels&&dj.labels.length) h+='<div style="font-size:.68rem;color:#555;margin-top:14px"><strong>Labels:</strong> '+dj.labels.join(' &middot; ')+'</div>';
+            h+='</div>';
+
+            // Timeline
+            h+='<div class="dj-panel" data-dj="'+djIdx+'" data-panel="timeline" style="display:none">';
+            if(dj.career_timeline&&dj.career_timeline.length){
+                h+='<table style="width:100%;border-collapse:collapse;font-size:.72rem"><tbody>';
+                dj.career_timeline.slice().reverse().forEach(function(t,i){
+                    h+='<tr style="border-bottom:1px solid var(--bd)"><td style="padding:8px 12px;font-family:var(--mn);font-weight:700;color:'+(i<2?'#000':'var(--gy)')+';width:60px;vertical-align:top">'+t.year+'</td>';
+                    h+='<td style="padding:8px 12px;color:#444">'+esc(t.milestone)+'</td></tr>';
+                });
+                h+='</tbody></table>';
             }
             h+='</div>';
 
-            // Col 2: Timeline
-            h+='<div>';
-            if(dj.career_timeline&&dj.career_timeline.length){
-                h+='<div class="S-subsection" style="margin-top:0">Timeline</div><div class="S-dj-timeline">';
-                dj.career_timeline.slice().reverse().forEach(function(t,i){
-                    h+='<div class="S-dj-tl-item'+(i<2?' highlight':'')+'"><div class="S-dj-tl-year">'+t.year+'</div><div class="S-dj-tl-text">'+esc(t.milestone)+'</div></div>';
+            // Venues
+            h+='<div class="dj-panel" data-dj="'+djIdx+'" data-panel="venues" style="display:none">';
+            if(dj.festivals&&dj.festivals.length){
+                h+='<div style="font-size:.58rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gy);margin-bottom:8px">Festivals</div>';
+                h+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">';
+                dj.festivals.forEach(function(f){h+='<span style="font-size:.65rem;padding:4px 12px;border:1px solid var(--bd);border-radius:20px;color:#444">'+esc(f)+'</span>';});
+                h+='</div>';
+            }
+            if(dj.venues_played&&dj.venues_played.length){
+                h+='<div style="font-size:.58rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gy);margin-bottom:8px">Venues</div>';
+                h+='<div style="display:flex;gap:6px;flex-wrap:wrap">';
+                dj.venues_played.forEach(function(v){h+='<span style="font-size:.65rem;padding:4px 12px;border:1px solid var(--bd);border-radius:20px;color:#444">'+esc(v)+'</span>';});
+                h+='</div>';
+            }
+            h+='</div>';
+
+            // Socials
+            h+='<div class="dj-panel" data-dj="'+djIdx+'" data-panel="socials" style="display:none">';
+            if(dj.socials){
+                var socPlatforms={instagram:'Instagram',soundcloud:'SoundCloud',spotify:'Spotify',resident_advisor:'Resident Advisor',beatport:'Beatport',bandcamp:'Bandcamp'};
+                h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">';
+                Object.keys(socPlatforms).forEach(function(pk){
+                    if(dj.socials[pk]){
+                        var url=dj.socials[pk].url||dj.socials[pk];
+                        var handle=dj.socials[pk].handle||url.split('/').pop();
+                        h+='<a href="'+esc(url)+'" target="_blank" style="display:flex;align-items:center;gap:10px;padding:12px 16px;border:1px solid var(--bd);border-radius:8px;text-decoration:none;color:inherit;transition:border-color .15s" onmouseenter="this.style.borderColor=\'#000\'" onmouseleave="this.style.borderColor=\'rgba(0,0,0,.08)\'">';
+                        h+='<div style="font-size:.72rem;font-weight:700">'+socPlatforms[pk]+'</div>';
+                        if(dj.socials[pk].followers) h+='<div style="font-size:.62rem;color:var(--gy);margin-left:auto">'+formatNum(dj.socials[pk].followers)+'</div>';
+                        h+='</a>';
+                    }
                 });
                 h+='</div>';
             }
             h+='</div>';
 
-            // Col 3: Festivals + Venues
-            h+='<div>';
-            if(dj.festivals&&dj.festivals.length){
-                h+='<div class="S-subsection" style="margin-top:0">Festivals</div>';
-                dj.festivals.forEach(function(f){h+='<div style="font-size:.65rem;color:#555;padding:3px 0;border-bottom:1px solid rgba(0,0,0,.04)">'+esc(f)+'</div>';});
-            }
-            if(dj.venues_played&&dj.venues_played.length){
-                h+='<div class="S-subsection">Venues</div>';
-                dj.venues_played.forEach(function(v){h+='<div style="font-size:.65rem;color:#555;padding:3px 0;border-bottom:1px solid rgba(0,0,0,.04)">'+esc(v)+'</div>';});
-            }
-            h+='</div>';
-
-            h+='</div>'; // close 3-col grid
-            h+='</div>'; // close right content
-            h+='</div>'; // close horizontal layout
+            h+='</div>'; // close tab content
+            h+='</div>'; // close card
 
             // Socials
             if(dj.socials){
@@ -2087,6 +2121,17 @@ Social metrics → Periodic snapshots → Pattern detection
             el.style.background=d.bg;el.style.borderColor=d.cardBorder;
         });
     }
+
+    // DJ profile tab switching
+    window.switchDJTab=function(djIdx,tab){
+        document.querySelectorAll('.dj-tab[data-dj="'+djIdx+'"]').forEach(function(t){
+            t.style.color=t.dataset.tab===tab?'#000':'var(--gy)';
+            t.style.borderBottomColor=t.dataset.tab===tab?'#000':'transparent';
+        });
+        document.querySelectorAll('.dj-panel[data-dj="'+djIdx+'"]').forEach(function(p){
+            p.style.display=p.dataset.panel===tab?'block':'none';
+        });
+    };
 
     // ============ REQUESTS TAB ============
     var requests=[];
