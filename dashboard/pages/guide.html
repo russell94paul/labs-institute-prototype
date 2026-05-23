@@ -2,73 +2,56 @@
 <html lang="en">
 <head>
 <style>
-    .G{padding:0;font-family:'Helvetica Neue',Arial,sans-serif;color:#000;min-height:100vh;background:#fff}
+    .G{padding:0;font-family:'Helvetica Neue',Arial,sans-serif;color:inherit;min-height:100vh;background:inherit}
     .G *{margin:0;padding:0;box-sizing:border-box}
 
-    /* Hero */
-    .G-hero{padding:50px 40px 30px;text-align:center;border-bottom:1px solid rgba(0,0,0,.06)}
-    .G-hero-logo{font-size:1.6rem;font-weight:900;letter-spacing:.2em;text-transform:uppercase;background:linear-gradient(135deg,#666,#ddd,#888);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
-    .G-hero-title{font-size:.88rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
-    .G-hero-sub{font-size:.72rem;color:#999;max-width:500px;margin:0 auto;line-height:1.7}
+    .G-hero{text-align:center;padding:60px 40px 40px}
+    .G-hero-logo{font-size:1.4rem;font-weight:900;letter-spacing:.2em;text-transform:uppercase;opacity:.3;margin-bottom:6px}
+    .G-hero-title{font-size:1.6rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+    .G-hero-line{width:40px;height:2px;background:currentColor;opacity:.2;margin:0 auto 16px}
+    .G-hero-sub{font-size:.78rem;opacity:.5;max-width:560px;margin:0 auto;line-height:1.8}
 
-    /* Step-by-step layout */
+    /* Summary cards */
+    .G-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:900px;margin:30px auto 0;padding:0 30px}
+    .G-sum-card{text-align:center;padding:20px 14px;border:1px solid rgba(128,128,128,.15);border-radius:8px;background:rgba(128,128,128,.04)}
+    .G-sum-num{font-size:1.6rem;font-weight:200;font-family:'Consolas',monospace}
+    .G-sum-label{font-size:.52rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.4;margin-top:4px}
+
+    /* Content */
     .G-body{max-width:800px;margin:0 auto;padding:40px 30px}
 
-    .G-step{display:grid;grid-template-columns:48px 1fr;gap:0;margin-bottom:0}
-    .G-step-line{display:flex;flex-direction:column;align-items:center}
-    .G-step-num{width:32px;height:32px;border-radius:50%;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;z-index:1}
-    .G-step-connector{width:1px;flex:1;background:rgba(0,0,0,.1);min-height:20px}
-    .G-step-content{padding:4px 0 32px 16px}
-    .G-step-name{font-size:.82rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px}
-    .G-step-desc{font-size:.72rem;color:#666;line-height:1.7;margin-bottom:10px}
-    .G-step-action{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:#000;color:#fff;border-radius:4px;font-size:.6rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:background .15s;border:none;font-family:inherit}
-    .G-step-action:hover{background:#333}
-    .G-step-action-ghost{background:none;color:#000;border:1px solid rgba(0,0,0,.1)}
-    .G-step-action-ghost:hover{border-color:#000}
+    /* Section headers */
+    .G-sec{margin-bottom:32px}
+    .G-sec-hdr{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid rgba(128,128,128,.12)}
+    .G-sec-num{font-size:.55rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;opacity:.3}
+    .G-sec-title{font-size:.82rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
 
-    .G-step-features{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-    .G-step-feat{font-size:.6rem;padding:4px 12px;border:1px solid rgba(0,0,0,.06);border-radius:20px;color:#777}
+    /* Step cards */
+    .G-card{border:1px solid rgba(128,128,128,.12);border-radius:10px;overflow:hidden;margin-bottom:10px;transition:all .2s}
+    .G-card:hover{border-color:rgba(128,128,128,.25);box-shadow:0 2px 12px rgba(0,0,0,.06)}
+    .G-card-top{display:flex;align-items:center;gap:14px;padding:16px 20px}
+    .G-card-num{width:28px;height:28px;border-radius:50%;background:rgba(128,128,128,.08);display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:900;flex-shrink:0}
+    .G-card-info{flex:1}
+    .G-card-name{font-size:.75rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
+    .G-card-desc{font-size:.65rem;opacity:.5;margin-top:3px;line-height:1.6}
+    .G-card-go{padding:8px 18px;border-radius:4px;font-size:.55rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;font-family:inherit;transition:all .15s;flex-shrink:0;text-decoration:none;display:inline-flex;align-items:center;gap:4px;border:1px solid rgba(128,128,128,.15);background:transparent;color:inherit}
+    .G-card-go:hover{background:rgba(128,128,128,.08);border-color:rgba(128,128,128,.3)}
+    .G-card-go.primary{background:currentColor;color:inherit;border:none}
+    .G-card-tags{display:flex;gap:5px;padding:0 20px 14px 62px;flex-wrap:wrap}
+    .G-card-tag{font-size:.52rem;padding:3px 10px;border-radius:14px;border:1px solid rgba(128,128,128,.1);opacity:.5;font-weight:600;letter-spacing:.02em}
 
-    /* Divider */
-    .G-divider{display:flex;align-items:center;gap:14px;margin:30px 0;padding-left:48px}
-    .G-divider-line{flex:1;height:1px;background:rgba(0,0,0,.06)}
-    .G-divider-text{font-size:.55rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#ccc}
+    /* Pro tips */
+    .G-tip{padding:14px 18px;border-radius:8px;background:rgba(128,128,128,.04);border:1px solid rgba(128,128,128,.1);font-size:.68rem;line-height:1.8;margin:10px 0;opacity:.7}
+    .G-tip strong{opacity:1}
+    .G-tip code{font-family:'Consolas',monospace;font-size:.65rem;opacity:.8;background:rgba(128,128,128,.08);padding:1px 6px;border-radius:3px}
 
-    /* Chat */
-    .G-chat-section{padding-left:48px;margin-top:10px}
-    .G-chat{border:1px solid rgba(0,0,0,.06);border-radius:8px;overflow:hidden}
-    .G-chat-hdr{padding:10px 16px;border-bottom:1px solid rgba(0,0,0,.06);display:flex;align-items:center;gap:8px}
-    .G-chat-hdr .dot{width:6px;height:6px;border-radius:50%;background:#22c55e;animation:gP 2s ease-in-out infinite}
-    @keyframes gP{0%,100%{opacity:1}50%{opacity:.4}}
-    .G-chat-hdr span{font-size:.55rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#999}
-    .G-chat-msgs{padding:12px 16px;min-height:160px;max-height:300px;overflow-y:auto}
-    .G-chat-msg{padding:10px 14px;margin:5px 0;border-radius:8px;font-size:.68rem;line-height:1.7;max-width:85%}
-    .G-chat-msg.ai{background:#f5f5f5;border:1px solid rgba(0,0,0,.04)}
-    .G-chat-msg.user{background:rgba(0,0,0,.03);border:1px solid rgba(0,0,0,.06);margin-left:auto}
-    .G-chat-msg .sender{font-size:.48rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:3px}
-    .G-chat-msg.ai .sender{color:#22c55e}
-    .G-chat-input-row{padding:10px 14px;border-top:1px solid rgba(0,0,0,.06);display:flex;gap:8px}
-    .G-chat-input{flex:1;padding:9px 14px;border:1px solid rgba(0,0,0,.08);border-radius:6px;font-size:.72rem;font-family:inherit;outline:none}
-    .G-chat-input:focus{border-color:#000}
-    .G-chat-send{padding:8px 18px;background:#000;color:#fff;border:none;border-radius:6px;font-size:.55rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;font-family:inherit}
-
-    .G-wf-step{display:flex;gap:10px;margin:6px 0;align-items:flex-start}
-    .G-wf-num{width:22px;height:22px;border-radius:50%;background:#f5f5f5;border:1px solid rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;font-size:.52rem;font-weight:700;color:#999;flex-shrink:0}
-    .G-wf-info{flex:1;font-size:.65rem;color:#444;line-height:1.6}
-    .G-wf-info strong{color:#000}
-    .G-wf-btns{display:flex;gap:3px;margin-top:3px}
-    .G-wf-btn{padding:2px 8px;border:1px solid rgba(0,0,0,.06);border-radius:10px;font-size:.5rem;font-weight:600;color:#999;cursor:pointer;background:none;font-family:inherit;transition:all .15s}
-    .G-wf-btn:hover{border-color:#000;color:#000}
-
-    @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-
-    .G-footer{text-align:center;padding:30px;font-size:.5rem;color:#ddd;letter-spacing:.1em;text-transform:uppercase;border-top:1px solid rgba(0,0,0,.06);margin-top:20px}
+    .G-footer{text-align:center;padding:30px;font-size:.48rem;opacity:.2;letter-spacing:.12em;text-transform:uppercase;border-top:1px solid rgba(128,128,128,.08);margin-top:20px}
 
     @media(max-width:768px){
-        .G-hero{padding:30px 20px 20px}
-        .G-body{padding:20px 16px}
-        .G-step{grid-template-columns:36px 1fr}
-        .G-step-num{width:26px;height:26px;font-size:.6rem}
+        .G-hero{padding:40px 20px 24px}
+        .G-summary{grid-template-columns:1fr 1fr;padding:0 16px}
+        .G-body{padding:24px 16px}
+        .G-card-tags{padding-left:20px}
     }
 </style>
 </head>
@@ -76,128 +59,266 @@
 <div class="G">
     <div class="G-hero">
         <div class="G-hero-logo">LABS</div>
-        <div class="G-hero-title">Getting Started</div>
-        <div class="G-hero-sub">Follow these steps to explore the Labs Institute prototype. Each step links directly to the feature.</div>
+        <div class="G-hero-title">Prototype Guide</div>
+        <div class="G-hero-line"></div>
+        <div class="G-hero-sub">This guide walks you through every feature of the Labs Institute platform prototype. Follow the sections in order, or jump to any feature using the buttons.</div>
+    </div>
+
+    <!-- Summary -->
+    <div class="G-summary">
+        <div class="G-sum-card"><div class="G-sum-num">9</div><div class="G-sum-label">Tabs</div></div>
+        <div class="G-sum-card"><div class="G-sum-num">200</div><div class="G-sum-label">Design Combos</div></div>
+        <div class="G-sum-card"><div class="G-sum-num">10</div><div class="G-sum-label">Workflows</div></div>
+        <div class="G-sum-card"><div class="G-sum-num">31</div><div class="G-sum-label">Roadmap Items</div></div>
     </div>
 
     <div class="G-body">
 
-        <!-- Step 1 -->
-        <div class="G-step">
-            <div class="G-step-line"><div class="G-step-num">1</div><div class="G-step-connector"></div></div>
-            <div class="G-step-content">
-                <div class="G-step-name">Browse the Marketing Site</div>
-                <div class="G-step-desc">See what visitors experience — the hero, artist profile, services, releases, and calls-to-action. This is how labs.institute will look.</div>
-                <button class="G-step-action" onclick="goToTab('site')">Open Site Preview &rarr;</button>
-                <div class="G-step-features">
-                    <span class="G-step-feat">Scrolling marquee</span>
-                    <span class="G-step-feat">Luciid's full profile</span>
-                    <span class="G-step-feat">New releases</span>
-                    <span class="G-step-feat">With Labs vs Without</span>
+        <!-- SECTION 1: Getting Started -->
+        <div class="G-sec">
+            <div class="G-sec-hdr"><div class="G-sec-num">Section 01</div><div class="G-sec-title">Getting Started</div></div>
+
+            <div class="G-card">
+                <div class="G-card-top">
+                    <div class="G-card-num">1</div>
+                    <div class="G-card-info">
+                        <div class="G-card-name">Browse the Marketing Site</div>
+                        <div class="G-card-desc">See the public-facing site: hero animation, artist profile with career data, services, new releases, and calls-to-action for DJs and promoters.</div>
+                    </div>
+                    <button class="G-card-go" onclick="goToTab('site')">Open &rarr;</button>
+                </div>
+                <div class="G-card-tags">
+                    <span class="G-card-tag">Scrolling Marquee</span>
+                    <span class="G-card-tag">KPI Bar</span>
+                    <span class="G-card-tag">Artist Profile</span>
+                    <span class="G-card-tag">Releases</span>
+                    <span class="G-card-tag">Activity Feed</span>
+                </div>
+            </div>
+
+            <div class="G-card">
+                <div class="G-card-top">
+                    <div class="G-card-num">2</div>
+                    <div class="G-card-info">
+                        <div class="G-card-name">Change the Theme &amp; Layout</div>
+                        <div class="G-card-desc">Use the two dropdowns in the top-right corner. 20 themes (Chrome, Dark Pulse, Gradient, Neon, Mercury...) and 10 layouts (Hero, Split, Grid, Cinematic, Radar...). Changes apply across all tabs.</div>
+                    </div>
+                </div>
+                <div class="G-tip"><strong>Try:</strong> Set theme to <code>Dark Pulse</code> and layout to <code>C Card Grid</code> — then switch between tabs to see the theme everywhere.</div>
+            </div>
+
+            <div class="G-card">
+                <div class="G-card-top">
+                    <div class="G-card-num">3</div>
+                    <div class="G-card-info">
+                        <div class="G-card-name">Edit the Content</div>
+                        <div class="G-card-desc">The Admin tab lets the founder change everything: brand name, KPIs, artists, services. Edits sync to the Site Preview in real-time.</div>
+                    </div>
+                    <button class="G-card-go" onclick="goToTab('admin')">Open &rarr;</button>
+                </div>
+                <div class="G-tip"><strong>Try:</strong> Change the first KPI from <code>54K</code> to <code>100K</code>, then switch to Site Preview — the stat updates instantly.</div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: Design Exploration -->
+        <div class="G-sec">
+            <div class="G-sec-hdr"><div class="G-sec-num">Section 02</div><div class="G-sec-title">Design Exploration</div></div>
+
+            <div class="G-card">
+                <div class="G-card-top">
+                    <div class="G-card-num">4</div>
+                    <div class="G-card-info">
+                        <div class="G-card-name">Explore 200 Design Combinations</div>
+                        <div class="G-card-desc">The Designs tab renders a full interactive preview for each theme + layout combo. Includes live ticking counters, career timeline scrubber, AI simulation panel, spinning 3D globe, and interactive chat.</div>
+                    </div>
+                    <button class="G-card-go" onclick="goToTab('designs')">Open &rarr;</button>
+                </div>
+                <div class="G-card-tags">
+                    <span class="G-card-tag">20 Themes</span>
+                    <span class="G-card-tag">10 Layouts</span>
+                    <span class="G-card-tag">Live Counters</span>
+                    <span class="G-card-tag">3D Globe</span>
+                    <span class="G-card-tag">AI Chat</span>
+                </div>
+            </div>
+
+            <div class="G-card">
+                <div class="G-card-top">
+                    <div class="G-card-num">5</div>
+                    <div class="G-card-info">
+                        <div class="G-card-name">Drag the Career Scrubber</div>
+                        <div class="G-card-desc">In the Designs tab (Layout A), find the timeline slider and drag it from 2012 to 2026. All stats, milestones, and growth percentages animate in sync.</div>
+                    </div>
+                    <button class="G-card-go" onclick="goToTab('designs')">Open &rarr;</button>
+                </div>
+            </div>
+
+            <div class="G-card">
+                <div class="G-card-top">
+                    <div class="G-card-num">6</div>
+                    <div class="G-card-info">
+                        <div class="G-card-name">Chat with the AI</div>
+                        <div class="G-card-desc">In the Designs tab (Layout A), scroll to the chat at the bottom. Type a question — the AI responds using real Luciid data from Lab-Intelligence.</div>
+                    </div>
+                    <button class="G-card-go" onclick="goToTab('designs')">Open &rarr;</button>
+                </div>
+                <div class="G-tip"><strong>Try asking:</strong> <code>What should we quote for Printworks?</code> or <code>growth roadmap</code> or <code>booking pipeline</code> or <code>venue recommendations</code></div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: Platform Vision -->
+        <div class="G-sec">
+            <div class="G-sec-hdr"><div class="G-sec-num">Section 03</div><div class="G-sec-title">Platform Vision</div></div>
+
+            <div class="G-card">
+                <div class="G-card-top">
+                    <div class="G-card-num">7</div>
+                    <div class="G-card-info">
+                        <div class="G-card-name">Review the Full Roadmap</div>
+                        <div class="G-card-desc">31 items across 4 categories: Product Features (12), Data Integrations (7), Intelligence Layer (2), Self-Improvement Loop (10). Three-tier architecture + Lab-Intelligence flow diagram.</div>
+                    </div>
+                    <button class="G-card-go" onclick="goToTab('roadmap')">Open &rarr;</button>
+                </div>
+            </div>
+
+            <div class="G-card">
+                <div class="G-card-top">
+                    <div class="G-card-num">8</div>
+                    <div class="G-card-info">
+                        <div class="G-card-name">Explore the App Features</div>
+                        <div class="G-card-desc">Switch between Founder Portal (32 features across 7 sections including Talent Scout) and DJ Portal (21 features across 6 sections). Each shows build phase and description.</div>
+                    </div>
+                    <button class="G-card-go" onclick="goToTab('apps')">Open &rarr;</button>
+                </div>
+                <div class="G-card-tags">
+                    <span class="G-card-tag">Founder Portal</span>
+                    <span class="G-card-tag">DJ Portal</span>
+                    <span class="G-card-tag">Talent Scout</span>
+                    <span class="G-card-tag">32 + 21 Features</span>
+                </div>
+            </div>
+
+            <div class="G-card">
+                <div class="G-card-top">
+                    <div class="G-card-num">9</div>
+                    <div class="G-card-info">
+                        <div class="G-card-name">Inspect the Technical Components</div>
+                        <div class="G-card-desc">Deep-dive into each system: Lab-Intelligence (AI engine), Lab-Wiki (knowledge base), Chat (AI assistant), Analytics, Social Integration, Booking Pipeline. Each has a concrete example and metrics.</div>
+                    </div>
+                    <button class="G-card-go" onclick="goToTab('tech')">Open &rarr;</button>
                 </div>
             </div>
         </div>
 
-        <!-- Step 2 -->
-        <div class="G-step">
-            <div class="G-step-line"><div class="G-step-num">2</div><div class="G-step-connector"></div></div>
-            <div class="G-step-content">
-                <div class="G-step-name">Try Different Designs</div>
-                <div class="G-step-desc">Switch between 20 themes and 10 layouts using the dropdowns in the top-right corner. Each combination creates a unique look — 200 options total.</div>
-                <button class="G-step-action" onclick="goToTab('designs')">Open Designs &rarr;</button>
-                <div class="G-step-features">
-                    <span class="G-step-feat">Live counters</span>
-                    <span class="G-step-feat">Career scrubber</span>
-                    <span class="G-step-feat">AI simulation</span>
-                    <span class="G-step-feat">3D globe</span>
-                    <span class="G-step-feat">AI chat demo</span>
+        <!-- SECTION 4: Workflows -->
+        <div class="G-sec">
+            <div class="G-sec-hdr"><div class="G-sec-num">Section 04</div><div class="G-sec-title">Interactive Workflows</div></div>
+
+            <div class="G-card">
+                <div class="G-card-top">
+                    <div class="G-card-num">10</div>
+                    <div class="G-card-info">
+                        <div class="G-card-name">Run a Workflow Simulation</div>
+                        <div class="G-card-desc">Step through a real scenario with AI guiding each decision. 4 founder workflows (Book a DJ, Onboard, Marketing Campaign, Gig Logistics) and 6 DJ workflows (Gig Prep, Social Media, Release, Apply, Monthly Review, Studio).</div>
+                    </div>
+                    <button class="G-card-go" onclick="goToTab('workflows')">Open &rarr;</button>
+                </div>
+                <div class="G-tip"><strong>Recommended first run:</strong> Select <code>Founder</code> &rarr; <code>Book a DJ for an Event</code> &rarr; click <code>Run Workflow</code> &rarr; step through all 7 steps. At the end, save to library.</div>
+            </div>
+
+            <div class="G-card">
+                <div class="G-card-top">
+                    <div class="G-card-num">11</div>
+                    <div class="G-card-info">
+                        <div class="G-card-name">Try the Gig Logistics Planner</div>
+                        <div class="G-card-desc">12-step workflow with a colour-coded timeline progress bar. Plan travel from Manchester to Berlin — transport, hotel, venue, set, return. AI suggests at every step.</div>
+                    </div>
+                    <button class="G-card-go" onclick="goToTab('workflows')">Open &rarr;</button>
+                </div>
+                <div class="G-card-tags">
+                    <span class="G-card-tag">12 Steps</span>
+                    <span class="G-card-tag">Timeline Bar</span>
+                    <span class="G-card-tag">Cost Tracking</span>
+                    <span class="G-card-tag">ROI Calculation</span>
+                </div>
+            </div>
+
+            <div class="G-card">
+                <div class="G-card-top">
+                    <div class="G-card-num">12</div>
+                    <div class="G-card-info">
+                        <div class="G-card-name">Run the Optimizer</div>
+                        <div class="G-card-desc">Set simulations to 10, choose a KPI to optimize (Revenue, Growth, Bookings, Time, Brand), click Optimize. See ranked comparison table, bar charts, trade-offs, and a summary recommendation.</div>
+                    </div>
+                    <button class="G-card-go" onclick="goToTab('workflows')">Open &rarr;</button>
+                </div>
+            </div>
+
+            <div class="G-card">
+                <div class="G-card-top">
+                    <div class="G-card-num">13</div>
+                    <div class="G-card-info">
+                        <div class="G-card-name">Build a Custom Workflow</div>
+                        <div class="G-card-desc">Click the AI Builder button in the Workflows tab. Describe any goal in plain language — Lab-Intelligence generates a custom workflow you can edit, reorder, and run.</div>
+                    </div>
+                    <button class="G-card-go" onclick="goToTab('workflows')">Open &rarr;</button>
+                </div>
+                <div class="G-tip"><strong>Try:</strong> <code>Plan a tour across Berlin, Amsterdam and Paris</code> — generates a 9-step tour workflow you can customise.</div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: Feedback -->
+        <div class="G-sec">
+            <div class="G-sec-hdr"><div class="G-sec-num">Section 05</div><div class="G-sec-title">Feedback &amp; Requests</div></div>
+
+            <div class="G-card">
+                <div class="G-card-top">
+                    <div class="G-card-num">14</div>
+                    <div class="G-card-info">
+                        <div class="G-card-name">Submit Change Requests</div>
+                        <div class="G-card-desc">Use the Requests tab to submit site changes, feature ideas, or bug reports. Each request is tracked with status (Open &rarr; In Progress &rarr; Done), priority, type, and a threaded discussion.</div>
+                    </div>
+                    <button class="G-card-go" onclick="goToTab('requests')">Open &rarr;</button>
                 </div>
             </div>
         </div>
 
-        <!-- Step 3 -->
-        <div class="G-step">
-            <div class="G-step-line"><div class="G-step-num">3</div><div class="G-step-connector"></div></div>
-            <div class="G-step-content">
-                <div class="G-step-name">Edit the Site Content</div>
-                <div class="G-step-desc">Change the brand name, stats, artists, or services in the Admin tab. Switch back to Site Preview to see your changes reflected immediately.</div>
-                <button class="G-step-action" onclick="goToTab('admin')">Open Admin &rarr;</button>
-            </div>
+        <!-- SECTION 6: Design Combos -->
+        <div class="G-sec">
+            <div class="G-sec-hdr"><div class="G-sec-num">Section 06</div><div class="G-sec-title">Recommended Design Combos</div></div>
+
+            <div class="G-tip"><strong>Mercury + Mosaic</strong> — chrome metallic bento grid</div>
+            <div class="G-tip"><strong>Neon Wire + Terminal</strong> — green wireframe command line</div>
+            <div class="G-tip"><strong>Film Reel + Film Strip</strong> — nostalgic cinema experience</div>
+            <div class="G-tip"><strong>Dark Pulse + Radar</strong> — neon green orbital nodes</div>
+            <div class="G-tip"><strong>Gradient + Magazine</strong> — purple editorial layout</div>
+            <div class="G-tip"><strong>Command + Terminal</strong> — pure hacker aesthetic</div>
+            <div class="G-tip"><strong>Glass + Cinematic</strong> — frosted blue full-bleed</div>
         </div>
 
-        <!-- Step 4 -->
-        <div class="G-step">
-            <div class="G-step-line"><div class="G-step-num">4</div><div class="G-step-connector"></div></div>
-            <div class="G-step-content">
-                <div class="G-step-name">Explore the Platform Vision</div>
-                <div class="G-step-desc">The Roadmap shows all 31 planned features across product, integrations, intelligence, and self-improvement. The Apps tab details every feature in the Founder Portal and DJ Portal.</div>
-                <div style="display:flex;gap:8px">
-                    <button class="G-step-action" onclick="goToTab('roadmap')">Roadmap &rarr;</button>
-                    <button class="G-step-action G-step-action-ghost" onclick="goToTab('apps')">Apps &rarr;</button>
-                    <button class="G-step-action G-step-action-ghost" onclick="goToTab('tech')">Components &rarr;</button>
+        <!-- SECTION 7: Artist Data -->
+        <div class="G-sec">
+            <div class="G-sec-hdr"><div class="G-sec-num">Section 07</div><div class="G-sec-title">About the Data</div></div>
+
+            <div class="G-card">
+                <div class="G-card-top">
+                    <div class="G-card-num">&bull;</div>
+                    <div class="G-card-info">
+                        <div class="G-card-name">Real Artist Data</div>
+                        <div class="G-card-desc">All data is real, sourced from Resident Advisor, Spotify, Beatport, Instagram, and Four/Four Magazine for Luciid (Luke Pollock) — the first artist on the Labs Institute roster.</div>
+                    </div>
+                </div>
+                <div class="G-card-tags">
+                    <span class="G-card-tag">54K Instagram</span>
+                    <span class="G-card-tag">7.1K RA</span>
+                    <span class="G-card-tag">2.1M Streams</span>
+                    <span class="G-card-tag">10+ Countries</span>
+                    <span class="G-card-tag">6 Labels</span>
+                    <span class="G-card-tag">#15 Beatport</span>
                 </div>
             </div>
         </div>
 
-        <!-- Step 5 -->
-        <div class="G-step">
-            <div class="G-step-line"><div class="G-step-num">5</div><div class="G-step-connector"></div></div>
-            <div class="G-step-content">
-                <div class="G-step-name">Run a Workflow Simulation</div>
-                <div class="G-step-desc">Step through a real scenario — like booking a DJ for an event — with AI guiding each decision. Try the optimizer to compare different approaches.</div>
-                <button class="G-step-action" onclick="goToTab('workflows')">Open Workflows &rarr;</button>
-                <div class="G-step-features">
-                    <span class="G-step-feat">4 founder workflows</span>
-                    <span class="G-step-feat">6 DJ workflows</span>
-                    <span class="G-step-feat">Optimizer</span>
-                    <span class="G-step-feat">Library</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Step 6 -->
-        <div class="G-step">
-            <div class="G-step-line"><div class="G-step-num">6</div><div class="G-step-connector"></div></div>
-            <div class="G-step-content">
-                <div class="G-step-name">Submit Feedback</div>
-                <div class="G-step-desc">Use the Requests tab to submit change requests, feature ideas, or bug reports. Each request is tracked with status, priority, and a discussion thread.</div>
-                <button class="G-step-action" onclick="goToTab('requests')">Open Requests &rarr;</button>
-            </div>
-        </div>
-
-        <div class="G-divider"><div class="G-divider-line"></div><div class="G-divider-text">Quick Demos</div><div class="G-divider-line"></div></div>
-
-        <!-- Step 7 -->
-        <div class="G-step">
-            <div class="G-step-line"><div class="G-step-num">7</div><div class="G-step-connector"></div></div>
-            <div class="G-step-content">
-                <div class="G-step-name">Try the AI Chat</div>
-                <div class="G-step-desc">In the Designs tab (Layout A), scroll to the bottom and type a question in the chat. Try asking about pricing, venues, or growth strategy — the AI responds using real artist data.</div>
-                <button class="G-step-action" onclick="goToTab('designs')">Open Designs &rarr;</button>
-                <div style="font-size:.65rem;color:#999;margin-top:8px;line-height:1.7">
-                    Try: <em>"What should we quote for Printworks?"</em> or <em>"growth roadmap"</em> or <em>"booking pipeline"</em>
-                </div>
-            </div>
-        </div>
-
-        <!-- Step 8 -->
-        <div class="G-step">
-            <div class="G-step-line"><div class="G-step-num">8</div><div class="G-step-connector"></div></div>
-            <div class="G-step-content">
-                <div class="G-step-name">Drag the Career Scrubber</div>
-                <div class="G-step-desc">In the Designs tab (Layout A), find the timeline slider and drag it from 2012 to 2026. Watch the stats, milestones, and growth percentage animate in real-time.</div>
-                <button class="G-step-action" onclick="goToTab('designs')">Open Designs &rarr;</button>
-            </div>
-        </div>
-
-        <div class="G-divider"><div class="G-divider-line"></div><div class="G-divider-text">Need Something Custom?</div><div class="G-divider-line"></div></div>
-
-        <div style="padding-left:48px">
-            <div style="font-size:.72rem;color:#666;line-height:1.7;max-width:600px;margin-bottom:12px">
-                Can't find a pre-built workflow that fits? Click <strong>AI Builder</strong> in the Workflows tab to describe what you need — Lab-Intelligence will generate a custom workflow you can edit and run.
-            </div>
-            <button class="G-step-action" onclick="goToTab('workflows')">Open Workflows &rarr;</button>
-        </div>
     </div>
 
     <div class="G-footer">Labs Institute &middot; Founded For The Future &middot; Prototype v1.0</div>
@@ -214,56 +335,6 @@
         var t=document.getElementById('v-'+tab);
         if(t) t.classList.add('on');
     };
-
-    var generatedSteps=[];
-    var TEMPLATES={
-        tour:{steps:[{name:'Route Planning',desc:'Map cities, dates, venue targets'},{name:'Venue Research',desc:'Lab-Wiki data: capacity, genre, contacts'},{name:'Budget',desc:'Transport, accommodation, food per city'},{name:'Outreach',desc:'Contact venues with EPK'},{name:'Confirm',desc:'Lock dates, contracts, deposits'},{name:'Book Logistics',desc:'Flights, hotels, transfers'},{name:'Promo',desc:'Tour poster, teasers, city reveals'},{name:'Execute',desc:'Travel, perform, log, post'},{name:'Review',desc:'Revenue, costs, contacts, learnings'}]},
-        grow:{steps:[{name:'Audit',desc:'Current followers, engagement, content types'},{name:'Competitors',desc:'Study 5 similar DJs at 10K+'},{name:'Strategy',desc:'Content pillars: BTS, live, previews'},{name:'Schedule',desc:'5x/week, optimal times'},{name:'Engage',desc:'30min/day: comments, DMs, network'},{name:'Collab',desc:'2 B2B sets/month for cross-promo'},{name:'Check-in',desc:'Monthly: adjust what works'},{name:'Milestone',desc:'At 5K/10K: celebrate + free mix'}]},
-        onboard:{steps:[{name:'Assess',desc:'Scan socials, streams, genre fit'},{name:'Call',desc:'30min: goals, expectations'},{name:'Terms',desc:'Commission, exclusivity, review clause'},{name:'Sign',desc:'Contract template, digital signature'},{name:'Profile',desc:'Bio, photos, socials, rate card'},{name:'Baseline',desc:'Record all KPIs at join'},{name:'Goals',desc:'90-day targets, 30-day first review'},{name:'Quick Wins',desc:'2 gig apps, 1 social fix'}]},
-        event:{steps:[{name:'Concept',desc:'Theme, date, genre, check clashes'},{name:'Venue',desc:'Match capacity, sound, budget'},{name:'Lineup',desc:'Roster DJs + guests, set times'},{name:'Budget',desc:'Costs, ticket price, target'},{name:'Marketing',desc:'Artwork, RA/FB pages, rollout'},{name:'Sales',desc:'Launch, track, adjust promo'},{name:'Week-Of',desc:'Confirm DJs, rider, sound, doors'},{name:'Event Day',desc:'Sound check, sets, recording'},{name:'Post-Event',desc:'Payments, recordings, learnings'}]}
-    };
-
-    var chatInput=document.getElementById('guide-chat-input');
-    if(chatInput) chatInput.addEventListener('keydown',function(e){if(e.key==='Enter')guideChatSend()});
-
-    window.guideChatSend=function(){
-        var inp=document.getElementById('guide-chat-input');
-        var msg=inp.value.trim();if(!msg)return;inp.value='';
-        addMsg('user',msg);
-        var lower=msg.toLowerCase(),tpl=null,title='';
-        if(lower.match(/tour|cities|travel|europe/)){tpl=TEMPLATES.tour;title='Multi-City Tour';}
-        else if(lower.match(/grow|instagram|follower|ig|10k/)){tpl=TEMPLATES.grow;title='Instagram Growth';}
-        else if(lower.match(/onboard|new.*dj|roster|sign|recruit/)){tpl=TEMPLATES.onboard;title='DJ Onboarding';}
-        else if(lower.match(/event|showcase|night|party|label/)){tpl=TEMPLATES.event;title='Label Showcase';}
-        setTimeout(function(){addMsg('ai','Building workflow...')},300);
-        setTimeout(function(){
-            if(tpl){
-                generatedSteps=tpl.steps.map(function(s,i){return{id:i,name:s.name,desc:s.desc}});
-                addMsg('ai','<strong>'+title+'</strong> — '+generatedSteps.length+' steps. Edit below, then run it in the Workflows tab.');
-            } else {
-                generatedSteps=[{id:0,name:'Define Goal',desc:msg},{id:1,name:'Research',desc:'Pull context from Lab-Intelligence'},{id:2,name:'Plan',desc:'Break into steps with timelines'},{id:3,name:'Execute',desc:'Do the work, log progress'},{id:4,name:'Review',desc:'Check results, adjust'},{id:5,name:'Capture',desc:'Store learnings'}];
-                addMsg('ai','Custom workflow for <strong>"'+esc(msg)+'"</strong>. Edit below or be more specific.');
-            }
-            renderWF(title||'Custom');
-        },800);
-    };
-    function addMsg(r,t){var e=document.createElement('div');e.className='G-chat-msg '+r;e.innerHTML='<div class="sender">'+(r==='ai'?'Lab-Intelligence':'You')+'</div>'+t;var c=document.getElementById('guide-chat-msgs');c.appendChild(e);c.scrollTop=c.scrollHeight;}
-    function renderWF(title){
-        var h='<div style="font-size:.65rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">'+esc(title)+' — '+generatedSteps.length+' Steps</div>';
-        generatedSteps.forEach(function(s,i){
-            h+='<div class="G-wf-step"><div class="G-wf-num">'+(i+1)+'</div><div class="G-wf-info"><strong>'+esc(s.name)+'</strong> — '+esc(s.desc);
-            h+='<div class="G-wf-btns"><button class="G-wf-btn" onclick="eS('+s.id+')">Edit</button><button class="G-wf-btn" onclick="mS('+s.id+',-1)">Up</button><button class="G-wf-btn" onclick="mS('+s.id+',1)">Down</button><button class="G-wf-btn" onclick="rS('+s.id+')">Remove</button></div></div></div>';
-        });
-        h+='<div style="display:flex;gap:6px;margin-top:10px">';
-        h+='<button class="G-step-action" style="font-size:.55rem;padding:6px 14px" onclick="aS()">+ Add Step</button>';
-        h+='<button class="G-step-action" style="font-size:.55rem;padding:6px 14px" onclick="goToTab(\'workflows\')">Run in Workflows &rarr;</button></div>';
-        document.getElementById('guide-wf-preview').innerHTML=h;
-    }
-    window.rS=function(id){generatedSteps=generatedSteps.filter(function(s){return s.id!==id});renderWF('Custom');};
-    window.mS=function(id,d){var i=generatedSteps.findIndex(function(s){return s.id===id});if(i<0)return;var n=i+d;if(n<0||n>=generatedSteps.length)return;var t=generatedSteps[i];generatedSteps[i]=generatedSteps[n];generatedSteps[n]=t;renderWF('Custom');};
-    window.eS=function(id){var s=generatedSteps.find(function(x){return x.id===id});if(!s)return;var n=prompt('Step name:',s.name);if(!n)return;var d=prompt('Description:',s.desc);if(d===null)return;s.name=n;s.desc=d;renderWF('Custom');};
-    window.aS=function(){var n=prompt('Step name:');if(!n)return;generatedSteps.push({id:Date.now(),name:n,desc:prompt('Description:','')||''});renderWF('Custom');};
-    function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
 })();
 </script>
 </body>
