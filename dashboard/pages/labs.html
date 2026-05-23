@@ -755,6 +755,7 @@ Social metrics → Periodic snapshots → Pattern detection
         var altHTML=getLayoutHTML(d,id);
         if(altHTML){
             document.getElementById('design-preview').innerHTML=altHTML;
+            initGlobe(d);
             return;
         }
 
@@ -945,126 +946,7 @@ Social metrics → Periodic snapshots → Pattern detection
             if(feed){feed.innerHTML='';typeAISuggestion();}
         },1500);
 
-        // GLOBE RENDERING
-        var CITIES=[
-            {name:'Manchester',lat:53.48,lon:-2.24,home:true},
-            {name:'Dublin',lat:53.35,lon:-6.26},{name:'Belfast',lat:54.60,lon:-5.93},
-            {name:'Madrid',lat:40.42,lon:-3.70},{name:'Barcelona',lat:41.39,lon:2.17},
-            {name:'Paris',lat:48.86,lon:2.35},{name:'Amsterdam',lat:52.37,lon:4.90},
-            {name:'Berlin',lat:52.52,lon:13.41},{name:'Stuttgart',lat:48.78,lon:9.18},
-            {name:'Munich',lat:48.14,lon:11.58},{name:'Helsinki',lat:60.17,lon:24.94},
-            {name:'Budapest',lat:47.50,lon:19.04},{name:'Edinburgh',lat:55.95,lon:-3.19},
-            {name:'London',lat:51.51,lon:-0.13},{name:'Rimini',lat:44.06,lon:12.57},
-            {name:'Glasgow',lat:55.86,lon:-4.25},{name:'Oberhausen',lat:51.47,lon:6.85}
-        ];
-        var canvas=document.getElementById('globe-canvas');
-        if(canvas){
-            var ctx=canvas.getContext('2d');
-            var W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,R=160;
-            var rot=0;
-            var globeColor=d.accent;
-            var globeBg=d.bg==='#fff'||d.bg==='#ffffff'||d.bg==='#f5f5f0'?'#000':'#fff';
-
-            function toScreen(lat,lon,rotation){
-                var phi=(90-lat)*Math.PI/180;
-                var theta=(lon+rotation)*Math.PI/180;
-                var x=R*Math.sin(phi)*Math.cos(theta);
-                var y=-R*Math.cos(phi);
-                var z=R*Math.sin(phi)*Math.sin(theta);
-                return {x:cx+x,y:cy+y,z:z,visible:z>0};
-            }
-
-            function drawGlobe(){
-                ctx.clearRect(0,0,W,H);
-
-                // Globe outline
-                ctx.beginPath();
-                ctx.arc(cx,cy,R,0,Math.PI*2);
-                ctx.strokeStyle='rgba('+(d.bg==='#fff'||d.bg==='#ffffff'||d.bg==='#f5f5f0'?'0,0,0':'255,255,255')+',.08)';
-                ctx.lineWidth=1;
-                ctx.stroke();
-
-                // Grid lines
-                ctx.strokeStyle='rgba('+(d.bg==='#fff'||d.bg==='#ffffff'||d.bg==='#f5f5f0'?'0,0,0':'255,255,255')+',.04)';
-                ctx.lineWidth=0.5;
-                for(var lat=-60;lat<=60;lat+=30){
-                    ctx.beginPath();
-                    for(var lon=0;lon<=360;lon+=5){
-                        var p=toScreen(lat,lon,rot);
-                        if(p.visible){if(lon===0||!toScreen(lat,lon-5,rot).visible)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);}
-                    }
-                    ctx.stroke();
-                }
-                for(var lon=-180;lon<180;lon+=30){
-                    ctx.beginPath();
-                    for(var lat=-90;lat<=90;lat+=5){
-                        var p=toScreen(lat,lon,rot);
-                        if(p.visible){if(lat===-90||!toScreen(lat-5,lon,rot).visible)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);}
-                    }
-                    ctx.stroke();
-                }
-
-                // Flight paths from Manchester
-                var home=CITIES[0];
-                CITIES.forEach(function(city,i){
-                    if(i===0) return;
-                    var p1=toScreen(home.lat,home.lon,rot);
-                    var p2=toScreen(city.lat,city.lon,rot);
-                    if(p1.visible&&p2.visible){
-                        ctx.beginPath();
-                        ctx.moveTo(p1.x,p1.y);
-                        var midLat=(home.lat+city.lat)/2+8;
-                        var midLon=(home.lon+city.lon)/2;
-                        var pm=toScreen(midLat,midLon,rot);
-                        ctx.quadraticCurveTo(pm.x,pm.y,p2.x,p2.y);
-                        ctx.strokeStyle='rgba('+d.accentRgb+',.15)';
-                        ctx.lineWidth=1;
-                        ctx.stroke();
-                    }
-                });
-
-                // City dots
-                CITIES.forEach(function(city){
-                    var p=toScreen(city.lat,city.lon,rot);
-                    if(!p.visible) return;
-                    var dotR=city.home?6:4;
-                    ctx.beginPath();
-                    ctx.arc(p.x,p.y,dotR,0,Math.PI*2);
-                    ctx.fillStyle=city.home?globeColor:d.accent;
-                    ctx.fill();
-                    // Glow
-                    ctx.beginPath();
-                    ctx.arc(p.x,p.y,dotR+4,0,Math.PI*2);
-                    ctx.fillStyle='rgba('+d.accentRgb+',.15)';
-                    ctx.fill();
-                    // Pulse ring on home
-                    if(city.home){
-                        var pulseR=dotR+6+Math.sin(Date.now()/400)*4;
-                        ctx.beginPath();
-                        ctx.arc(p.x,p.y,pulseR,0,Math.PI*2);
-                        ctx.strokeStyle='rgba('+d.accentRgb+',.3)';
-                        ctx.lineWidth=1;
-                        ctx.stroke();
-                    }
-                });
-
-                rot+=0.3;
-                requestAnimationFrame(drawGlobe);
-            }
-            drawGlobe();
-
-            // City list
-            var cityList=document.getElementById('globe-cities');
-            if(cityList){
-                var cl='';
-                CITIES.forEach(function(c){
-                    cl+='<div style="display:inline-flex;align-items:center;gap:6px;margin-right:16px;margin-bottom:4px">';
-                    cl+='<div style="width:6px;height:6px;border-radius:50%;background:'+(c.home?d.accent:'rgba('+d.accentRgb+',.4)')+'"></div>';
-                    cl+='<span style="'+(c.home?'font-weight:700;color:'+d.fg:'')+'">'+c.name+'</span></div>';
-                });
-                cityList.innerHTML=cl;
-            }
-        }
+        initGlobe(d);
 
         // AI CHAT DEMO
         var CHAT_RESPONSES={
@@ -1227,6 +1109,84 @@ Social metrics → Periodic snapshots → Pattern detection
         return null; // default hero-scroll handled by main switchDesign
     }
 
+    var CITIES=[
+        {name:'Manchester',lat:53.48,lon:-2.24,home:true},
+        {name:'Dublin',lat:53.35,lon:-6.26},{name:'Belfast',lat:54.60,lon:-5.93},
+        {name:'Madrid',lat:40.42,lon:-3.70},{name:'Barcelona',lat:41.39,lon:2.17},
+        {name:'Paris',lat:48.86,lon:2.35},{name:'Amsterdam',lat:52.37,lon:4.90},
+        {name:'Berlin',lat:52.52,lon:13.41},{name:'Stuttgart',lat:48.78,lon:9.18},
+        {name:'Munich',lat:48.14,lon:11.58},{name:'Helsinki',lat:60.17,lon:24.94},
+        {name:'Budapest',lat:47.50,lon:19.04},{name:'Edinburgh',lat:55.95,lon:-3.19},
+        {name:'London',lat:51.51,lon:-0.13},{name:'Rimini',lat:44.06,lon:12.57},
+        {name:'Glasgow',lat:55.86,lon:-4.25},{name:'Oberhausen',lat:51.47,lon:6.85}
+    ];
+    var globeAnimId=null;
+
+    function initGlobe(d){
+        if(globeAnimId) cancelAnimationFrame(globeAnimId);
+        var canvas=document.getElementById('globe-canvas');
+        if(!canvas) return;
+        var ctx=canvas.getContext('2d');
+        var W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,R=160;
+        var rot=0;
+        var isLight=d.bg==='#fff'||d.bg==='#ffffff'||d.bg==='#f5f5f0';
+        var gridRgb=isLight?'0,0,0':'255,255,255';
+
+        function toScreen(lat,lon,rotation){
+            var phi=(90-lat)*Math.PI/180;
+            var theta=(lon+rotation)*Math.PI/180;
+            var x=R*Math.sin(phi)*Math.cos(theta);
+            var y=-R*Math.cos(phi);
+            var z=R*Math.sin(phi)*Math.sin(theta);
+            return {x:cx+x,y:cy+y,z:z,visible:z>0};
+        }
+        function draw(){
+            ctx.clearRect(0,0,W,H);
+            ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
+            ctx.strokeStyle='rgba('+gridRgb+',.08)';ctx.lineWidth=1;ctx.stroke();
+            ctx.strokeStyle='rgba('+gridRgb+',.04)';ctx.lineWidth=0.5;
+            for(var la=-60;la<=60;la+=30){ctx.beginPath();for(var lo=0;lo<=360;lo+=5){var p=toScreen(la,lo,rot);if(p.visible){if(lo===0||!toScreen(la,lo-5,rot).visible)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);}}ctx.stroke();}
+            for(var lo=-180;lo<180;lo+=30){ctx.beginPath();for(var la2=-90;la2<=90;la2+=5){var p=toScreen(la2,lo,rot);if(p.visible){if(la2===-90||!toScreen(la2-5,lo,rot).visible)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);}}ctx.stroke();}
+            var home=CITIES[0];
+            CITIES.forEach(function(city,i){
+                if(i===0)return;
+                var p1=toScreen(home.lat,home.lon,rot),p2=toScreen(city.lat,city.lon,rot);
+                if(p1.visible&&p2.visible){ctx.beginPath();ctx.moveTo(p1.x,p1.y);var pm=toScreen((home.lat+city.lat)/2+8,(home.lon+city.lon)/2,rot);ctx.quadraticCurveTo(pm.x,pm.y,p2.x,p2.y);ctx.strokeStyle='rgba('+d.accentRgb+',.15)';ctx.lineWidth=1;ctx.stroke();}
+            });
+            CITIES.forEach(function(city){
+                var p=toScreen(city.lat,city.lon,rot);if(!p.visible)return;
+                var dr=city.home?6:4;
+                ctx.beginPath();ctx.arc(p.x,p.y,dr,0,Math.PI*2);ctx.fillStyle=city.home?d.accent:d.accent;ctx.fill();
+                ctx.beginPath();ctx.arc(p.x,p.y,dr+4,0,Math.PI*2);ctx.fillStyle='rgba('+d.accentRgb+',.15)';ctx.fill();
+                if(city.home){var pr=dr+6+Math.sin(Date.now()/400)*4;ctx.beginPath();ctx.arc(p.x,p.y,pr,0,Math.PI*2);ctx.strokeStyle='rgba('+d.accentRgb+',.3)';ctx.lineWidth=1;ctx.stroke();}
+            });
+            rot+=0.3;
+            globeAnimId=requestAnimationFrame(draw);
+        }
+        draw();
+        var cityList=document.getElementById('globe-cities');
+        if(cityList){
+            var cl='';
+            CITIES.forEach(function(c){
+                cl+='<div style="display:inline-flex;align-items:center;gap:6px;margin-right:16px;margin-bottom:4px">';
+                cl+='<div style="width:6px;height:6px;border-radius:50%;background:'+(c.home?d.accent:'rgba('+d.accentRgb+',.4)')+'"></div>';
+                cl+='<span style="'+(c.home?'font-weight:700;color:'+d.fg:'')+'">'+c.name+'</span></div>';
+            });
+            cityList.innerHTML=cl;
+        }
+    }
+
+    function globeHTML(d){
+        var h='<div style="padding:40px;max-width:1000px;margin:0 auto">';
+        h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center">';
+        h+='<div><div style="font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:12px">Global Reach</div>';
+        h+='<canvas id="globe-canvas" width="400" height="400" style="width:100%;max-width:400px;display:block;margin:0 auto"></canvas></div>';
+        h+='<div><div style="font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:14px">Cities Played</div>';
+        h+='<div id="globe-cities" style="font-size:.68rem;color:'+d.textMuted+';line-height:2.2"></div></div>';
+        h+='</div></div>';
+        return h;
+    }
+
     function getSplitLayout(d,id,accentA){
         var h='<div style="'+d.heroStyle+';font-family:var(--ff);min-height:100vh">';
         // Split hero
@@ -1262,6 +1222,7 @@ Social metrics → Periodic snapshots → Pattern detection
             h+='<div style="font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:'+d.textMuted+'">'+v+'</div>';
         });
         h+='</div>';
+        h+=globeHTML(d);
         h+='</div>';
         return h;
     }
@@ -1311,7 +1272,9 @@ Social metrics → Periodic snapshots → Pattern detection
             h+='<div style="font-size:.7rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">'+s.n+'</div>';
             h+='<div style="font-size:.62rem;color:'+d.textMuted+'">'+s.d+'</div></div>';
         });
-        h+='</div></div>';
+        h+='</div>';
+        h+=globeHTML(d);
+        h+='</div>';
         return h;
     }
 
@@ -1363,6 +1326,7 @@ Social metrics → Periodic snapshots → Pattern detection
         h+=cssBar(chartData.gigs,55,d.accent,chartData.labels);
         h+='</div></div></div></div>';
 
+        h+=globeHTML(d);
         h+='</div>';
         return h;
     }
