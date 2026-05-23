@@ -108,6 +108,20 @@
     .W-action-pri.p2{background:rgba(245,158,11,.08);color:var(--am)}
     .W-action-pri.p3{background:rgba(37,99,235,.08);color:var(--ac)}
 
+    /* Timeline progress bar */
+    .W-timeline{margin:16px 0;padding:14px 18px;background:var(--lt);border-radius:8px;border:1px solid var(--bd)}
+    .W-timeline-title{font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gy);margin-bottom:8px;display:flex;justify-content:space-between}
+    .W-timeline-bar{display:flex;height:28px;border-radius:6px;overflow:hidden;background:var(--bd)}
+    .W-timeline-seg{display:flex;align-items:center;justify-content:center;font-size:.5rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff;transition:all .5s;position:relative;overflow:hidden}
+    .W-timeline-seg.done{opacity:1}
+    .W-timeline-seg.active{animation:segPulse 2s ease-in-out infinite}
+    .W-timeline-seg.future{opacity:.3}
+    @keyframes segPulse{0%,100%{opacity:1}50%{opacity:.7}}
+    .W-timeline-info{display:flex;justify-content:space-between;margin-top:6px;font-size:.6rem}
+    .W-timeline-status{font-weight:700;display:flex;align-items:center;gap:6px}
+    .W-timeline-status .dot{width:8px;height:8px;border-radius:50%}
+    .W-timeline-eta{color:var(--gy);font-family:var(--mn)}
+
     @media(max-width:768px){
         .W-bar{padding:10px 16px}.W-main{padding:16px}
         .W-input-row{grid-template-columns:1fr}
@@ -186,6 +200,70 @@
                     {name:'Schedule & Post',desc:'Schedule content across platforms.',inputs:[{id:'scheduled',label:'Posts Scheduled',ph:'8',ai:'All 8 scheduled across 14 days'},{id:'spend',label:'Paid Promotion (£)',ph:'50',ai:'£50 Instagram boost on announcement post'}],aiSuggest:'Optimal posting schedule: Day 1 teaser, Day 3 teaser 2, Day 5 announcement, Day 6-10 clips daily, Day 12 BTS, Day 14 recap. Boost the announcement post (£50 reaches ~15K).',aiOptions:['Organic only','£50 boost','£100 boost']},
                     {name:'Monitor & Adjust',desc:'Track performance and adjust.',inputs:[{id:'reach',label:'Total Reach',ph:'45000',ai:'~45K reach across platforms'},{id:'engagement',label:'Engagement Rate',ph:'4.2%',ai:'4.2% (above 3% benchmark)'}],aiSuggest:'Day 7 check: reach is at 60% of target. Engagement 4.2% (above benchmark). SoundCloud plays at 28K. Recommend: boost the best-performing clip for remaining budget.',aiOptions:['On track','Underperforming — adjust','Overperforming — scale']},
                     {name:'Results & Learnings',desc:'Measure outcomes and capture learnings.',inputs:[{id:'streams',label:'Total Streams',ph:'52000',ai:'52K streams (exceeded 50K target)'},{id:'igGrowth',label:'IG Followers Gained',ph:'800',ai:'+800 followers during campaign'}],aiSuggest:'Campaign ROI: 52K streams on £50 spend = £0.001/stream. IG growth +800 (2x organic rate). Top performing content: 15s studio clip (18K views). Save to Lab-Wiki: video teasers 3x more effective than static for this audience.',aiOptions:['Exceeded target','Met target','Below target']}
+                ]},
+            {id:'gig-logistics',name:'Gig Day Logistics Planner',desc:'End-to-end logistics from home to venue to gig to return — optimised for timing, transport, and costs.',
+                isTimeline:true,
+                steps:[
+                    {name:'Plan Journey',desc:'Calculate travel from DJ\'s current location to the venue city.',
+                        timeMin:0,durationMin:30,color:'var(--ac)',
+                        inputs:[{id:'origin',label:'Departing From',ph:'Manchester',ai:'Manchester (home base)'},{id:'destination',label:'Venue City',ph:'Berlin',ai:'Berlin, Germany'},{id:'travellers',label:'Number Travelling',ph:'2',ai:'2 (DJ + tour manager)'},{id:'gigDate',label:'Gig Date',ph:'2026-07-15',ai:'2026-07-15'},{id:'setTime',label:'Set Time',ph:'01:00',ai:'01:00 (1am)'}],
+                        aiSuggest:'Route options from Manchester to Berlin:\n1. Flight MAN→BER: 2hr flight + 1hr each side = 4hr total. ~£120pp return (Ryanair/easyJet). Book 3+ weeks out.\n2. Eurostar + train: 8-10hrs. ~£180pp return. More flexible luggage.\n3. Drive: 10hrs. ~£150 fuel + tolls + ferry/tunnel.\n\nRecommendation: Fly — cheapest and fastest for 2 people. Depart morning of gig day for same-day return possible, or arrive day before for comfort.',
+                        aiOptions:['Fly (recommended, £240 total)','Train (£360 total)','Drive (£150 + ferry)','Arrive day before']},
+                    {name:'Book Transport',desc:'Book flights/trains and transfers.',
+                        timeMin:30,durationMin:20,color:'var(--pr)',
+                        inputs:[{id:'transport',label:'Transport Type',ph:'Flight',ai:'Flight MAN→BER (easyJet 07:15→10:30)'},{id:'cost',label:'Transport Cost (£)',ph:'240',ai:'£240 (2x return @ £120pp)'},{id:'transferToVenue',label:'Airport → Venue Transfer',ph:'Taxi',ai:'S-Bahn + U-Bahn: £6pp (45min) or Taxi: £35 (25min)'}],
+                        aiSuggest:'Best flight: easyJet MAN 07:15 → BER 10:30 (local time). Return: BER 14:00 next day → MAN 15:15. Total transport: £240 flights + £12 public transport = £252. Alternative: taxi from airport £35 (saves 20min, worth it if tight on time).',
+                        aiOptions:['Public transport (£12)','Taxi (£35)','Private transfer (£60)']},
+                    {name:'Book Accommodation',desc:'Arrange overnight stay if needed.',
+                        timeMin:50,durationMin:15,color:'var(--am)',
+                        inputs:[{id:'hotel',label:'Accommodation',ph:'Hotel near venue',ai:'Generator Berlin Mitte — £45/room/night (1.2km from OST)'},{id:'accomCost',label:'Cost (£)',ph:'90',ai:'£90 (1 twin room, 1 night)'},{id:'checkin',label:'Check-in Time',ph:'14:00',ai:'14:00 (drop bags before exploring)'}],
+                        aiSuggest:'Options near OST Berlin:\n1. Generator Mitte: £45/night twin (1.2km, 15min walk) — budget, social vibe\n2. Motel One Alexanderplatz: £75/night (2km, good transport) — reliable mid-range\n3. Request promoter covers hotel (standard for international bookings)\n\nLab-Wiki note: Last Berlin trip, promoter covered accommodation. Check contract.',
+                        aiOptions:['Budget hostel (£45)','Mid-range hotel (£75)','Promoter covers','Airbnb']},
+                    {name:'Arrive & Check In',desc:'Land, transfer to accommodation, settle in.',
+                        timeMin:65,durationMin:60,color:'var(--gn)',
+                        inputs:[{id:'arrivalTime',label:'Arrival Time (local)',ph:'10:30',ai:'10:30 Berlin time'},{id:'checkedIn',label:'Checked In By',ph:'12:00',ai:'12:00 — bags dropped, freshened up'}],
+                        aiSuggest:'Timeline: Land 10:30 → baggage 10:50 → S-Bahn to Mitte 11:35 → check in 12:00. You have 6 hours free before needing to head to venue. Suggestions: explore record shops (Hard Wax is 20min away), eat at Markthalle Neun, rest before set.',
+                        aiOptions:['Explore city','Rest at hotel','Meet local contacts','Record shop visit']},
+                    {name:'Pre-Gig Prep',desc:'Final preparation before heading to venue.',
+                        timeMin:125,durationMin:90,color:'#14b8a6',
+                        inputs:[{id:'prepStart',label:'Start Prep Time',ph:'21:00',ai:'21:00 (4hrs before set)'},{id:'usbsChecked',label:'USBs Checked',ph:'Yes',ai:'Yes — 2 USBs prepared, backup tracks on phone'},{id:'outfitReady',label:'Outfit Ready',ph:'Yes',ai:'Yes'},{id:'recording',label:'Recording Equipment',ph:'USB recorder',ai:'Zoom H6 recorder + phone backup'}],
+                        aiSuggest:'Pre-gig checklist:\n✓ 2x USB sticks (different track selections)\n✓ Headphones + adapter\n✓ Recording device (dual record: dedicated + phone)\n✓ Phone charger / battery pack\n✓ Comfortable shoes (2hr set)\n✓ Earplugs\n✓ Water bottle\n✓ Cash for incidentals\n\nMental prep: review venue sound profile from Lab-Wiki. OST has Funktion-One — your tracks sound best with sub-bass emphasis.',
+                        aiOptions:['All prepared','Need to sort USBs','Equipment issue']},
+                    {name:'Travel to Venue',desc:'Get from accommodation to the venue.',
+                        timeMin:215,durationMin:30,color:'var(--ac)',
+                        inputs:[{id:'departHotel',label:'Leave Hotel',ph:'23:30',ai:'23:30 (90min before set for buffer)'},{id:'venueTransport',label:'Transport',ph:'Taxi',ai:'Taxi — £12, 15min (reliable, no waiting for trains)'},{id:'arriveVenue',label:'Arrive Venue',ph:'23:45',ai:'23:45'}],
+                        aiSuggest:'Leave hotel at 23:30 for 01:00 set. Taxi is £12 (15min). Public transport: U-Bahn runs until 00:30 on weekends, £3 but 25min with a change.\n\nRecommend taxi — guaranteed timing, no stress before set. Arrive 23:45, giving 75min buffer for sound check, networking, settling in.',
+                        aiOptions:['Taxi (£12, 15min)','U-Bahn (£3, 25min)','Walk (free, 20min)']},
+                    {name:'Sound Check & Setup',desc:'Arrive at venue, check equipment, meet promoter.',
+                        timeMin:245,durationMin:45,color:'#ec4899',
+                        inputs:[{id:'soundCheck',label:'Sound Check Done',ph:'Yes',ai:'Yes — levels checked, monitor adjusted'},{id:'metPromoter',label:'Met Promoter',ph:'Yes',ai:'Yes — introduced, confirmed set time and duration'},{id:'greenRoom',label:'Green Room Available',ph:'Yes',ai:'Yes — backstage with water and towels'}],
+                        aiSuggest:'Arrival protocol:\n1. Find promoter/stage manager — confirm set time, duration, any changes\n2. Check CDJs — model, firmware, USB compatibility\n3. Test your first track at low volume — check levels\n4. Set up recording device\n5. Get water for the booth\n6. Network — meet other DJs, photographer, venue staff\n\nLab-Wiki: OST uses Pioneer CDJ-3000s + DJM-900NXS2. Your USBs are compatible.',
+                        aiOptions:['All good','CDJ issue','Schedule change']},
+                    {name:'Perform Set',desc:'Play the set — this is what it\'s all about.',
+                        timeMin:290,durationMin:120,color:'var(--gn)',
+                        inputs:[{id:'setStart',label:'Actual Start Time',ph:'01:00',ai:'01:00 (on schedule)'},{id:'setEnd',label:'Set End Time',ph:'03:00',ai:'03:00'},{id:'crowdPeak',label:'Crowd Peak',ph:'02:00',ai:'02:00-02:30 (peak energy)'},{id:'recording2',label:'Recording Running',ph:'Yes',ai:'Yes — Zoom H6 recording clean audio'}],
+                        aiSuggest:'Set strategy for OST Berlin (from Lab-Intelligence):\n• Start 138 BPM, build to 148 by hour 2\n• Your top tracks for this venue type: "Charm", "Paro Hour VIP", "Dark Core"\n• Drop 2-3 unreleased tracks mid-set (crowd testing)\n• Peak energy window: 02:00-02:30 based on venue data\n• End with a memorable closer — leave them wanting more\n\nRemember: hit record on Zoom before first track!',
+                        aiOptions:['Followed plan','Went harder','Read the room']},
+                    {name:'Post-Set Wind Down',desc:'After the set — networking, pack up, head back.',
+                        timeMin:410,durationMin:60,color:'var(--pr)',
+                        inputs:[{id:'networking',label:'Networking Done',ph:'Yes',ai:'Met 3 promoters, exchanged contacts'},{id:'packedUp',label:'Equipment Packed',ph:'Yes',ai:'Yes — recording device secured'},{id:'departVenue',label:'Leave Venue',ph:'04:00',ai:'04:00'}],
+                        aiSuggest:'Post-set priorities:\n1. Stop recording, check file saved properly\n2. Thank the promoter — ask for feedback and photos\n3. Network: exchange details with other DJs and promoters\n4. Post a story/photo from the booth (real-time engagement)\n5. Pack equipment carefully (don\'t lose cables in the dark)\n6. Arrange transport back — pre-book a taxi or check night bus\n\nDon\'t stay too late — you have a flight tomorrow.',
+                        aiOptions:['Left by 4am','Stayed until close','Left early']},
+                    {name:'Return to Hotel',desc:'Transport back to accommodation for rest.',
+                        timeMin:470,durationMin:30,color:'var(--am)',
+                        inputs:[{id:'returnTransport',label:'Transport Back',ph:'Taxi',ai:'Taxi — £15 (surge pricing at 4am)'},{id:'arriveHotel',label:'Arrive Hotel',ph:'04:20',ai:'04:20'},{id:'sleepBy',label:'Sleep By',ph:'05:00',ai:'05:00 (aim for 6-7hrs before checkout)'}],
+                        aiSuggest:'At 4am in Berlin: taxi is the only reliable option (£15 with surge). U-Bahn night service runs but adds 30min. You need sleep before your 14:00 flight.\n\nTimeline: arrive hotel 04:20, wind down 30min, sleep 05:00-11:00 (6hrs). Checkout 12:00, airport by 13:00.',
+                        aiOptions:['Taxi (£15)','Night bus (£3)','Walk (free, 20min)']},
+                    {name:'Journey Home',desc:'Check out, travel to airport, fly home.',
+                        timeMin:500,durationMin:120,color:'var(--ac)',
+                        inputs:[{id:'checkout',label:'Hotel Checkout',ph:'12:00',ai:'12:00'},{id:'atAirport',label:'At Airport By',ph:'13:00',ai:'13:00 (1hr before flight)'},{id:'landHome',label:'Land Home',ph:'15:15',ai:'15:15 Manchester time'},{id:'homeBy',label:'Home By',ph:'16:30',ai:'16:30'}],
+                        aiSuggest:'Return timeline:\n12:00 checkout → 12:15 taxi to BER (£15) → 12:45 arrive airport → 14:00 flight → 15:15 land MAN → 15:45 baggage → 16:30 home\n\nTotal trip: ~31 hours door-to-door. Factor in recovery day tomorrow.',
+                        aiOptions:['Smooth journey','Delayed flight','Extended stay']},
+                    {name:'Post-Trip Summary',desc:'Log costs, outcomes, and learnings.',
+                        timeMin:620,durationMin:30,color:'var(--gn)',
+                        inputs:[{id:'totalCost',label:'Total Trip Cost (£)',ph:'432',ai:'£432 (flights £240 + hotel £90 + transport £57 + food £45)'},{id:'fee',label:'DJ Fee (£)',ph:'1500',ai:'£1,500'},{id:'profit',label:'Net Profit (£)',ph:'1068',ai:'£1,068 (fee minus costs)'},{id:'rating',label:'Gig Rating (1-5)',ph:'4.5',ai:'4.5'},{id:'contacts',label:'New Contacts Made',ph:'3',ai:'3 promoters'}],
+                        aiSuggest:'Trip summary:\n• Fee: £1,500 | Costs: £432 | Net profit: £1,068\n• Commission (10%): £150 | DJ net: £918 | Labs net: £150\n• ROI: 247% (profit/costs)\n• New contacts: 3 promoters (potential 2-3 future bookings)\n• Recording: upload to SoundCloud within 48hrs\n• Action: follow up with Berlin promoters within 72hrs\n\nSave venue profile update to Lab-Wiki: OST Berlin — confirmed Funktion-One, peak at 2am, crowd prefers 140+ BPM.',
+                        aiOptions:['Profitable trip','Break even','Loss (review pricing)']}
                 ]}
         ],
         dj:[
@@ -251,7 +329,43 @@
 
     function renderDAG(){
         var wf=currentWorkflow;
-        var h='<div class="W-dag">';
+        var h='';
+
+        // Timeline progress bar for logistics workflows
+        if(wf.isTimeline){
+            var totalDur=wf.steps.reduce(function(s,st){return s+(st.durationMin||30)},0);
+            var statusText='Not started';
+            var statusColor='var(--gy)';
+            var pctComplete=Math.round(currentStepIdx/wf.steps.length*100);
+            if(currentStepIdx>0&&currentStepIdx<wf.steps.length){
+                var timeSoFar=wf.steps.slice(0,currentStepIdx).reduce(function(s,st){return s+(st.durationMin||30)},0);
+                var expectedPct=Math.round(timeSoFar/totalDur*100);
+                if(pctComplete>expectedPct+10){statusText='Ahead of schedule';statusColor='var(--gn)';}
+                else if(pctComplete<expectedPct-10){statusText='Behind schedule';statusColor='var(--rd)';}
+                else{statusText='On track';statusColor='var(--ac)';}
+            } else if(currentStepIdx>=wf.steps.length){
+                statusText='Complete';statusColor='var(--gn)';pctComplete=100;
+            }
+
+            h+='<div class="W-timeline">';
+            h+='<div class="W-timeline-title"><span>Trip Timeline</span><span style="font-family:var(--mn)">'+pctComplete+'% complete</span></div>';
+            h+='<div class="W-timeline-bar">';
+            wf.steps.forEach(function(st,i){
+                var segPct=Math.max(3,Math.round((st.durationMin||30)/totalDur*100));
+                var state=i<currentStepIdx?'done':i===currentStepIdx?'active':'future';
+                var col=st.color||'var(--ac)';
+                h+='<div class="W-timeline-seg '+state+'" style="width:'+segPct+'%;background:'+col+'" title="'+st.name+' (~'+(st.durationMin||30)+'min)">';
+                if(segPct>6) h+=''+(i+1);
+                h+='</div>';
+            });
+            h+='</div>';
+            h+='<div class="W-timeline-info">';
+            h+='<div class="W-timeline-status"><div class="dot" style="background:'+statusColor+'"></div><span style="color:'+statusColor+'">'+statusText+'</span></div>';
+            h+='<div class="W-timeline-eta">Est. total: '+Math.round(totalDur/60)+'hr '+totalDur%60+'min</div>';
+            h+='</div></div>';
+        }
+
+        h+='<div class="W-dag">';
         wf.steps.forEach(function(step,i){
             var state=i<currentStepIdx?'done':i===currentStepIdx?'active':'waiting';
             h+='<div class="W-step">';
@@ -355,6 +469,19 @@
     window.editStep=function(i){currentStepIdx=i;renderDAG();};
 
     function calcMetrics(data){
+        if(currentWorkflow&&currentWorkflow.isTimeline){
+            var totalCost=parseFloat(findVal(data,'totalCost'))||432;
+            var fee=parseFloat(findVal(data,'fee'))||1500;
+            var profit=fee-totalCost;
+            var commission=Math.round(fee*0.1);
+            var djNet=fee-totalCost-commission;
+            var rating=parseFloat(findVal(data,'rating'))||4;
+            var contacts=parseInt(findVal(data,'contacts'))||3;
+            var travellers=parseInt(findVal(data,'travellers'))||2;
+            var transportCost=parseFloat(findVal(data,'cost'))||240;
+            var accomCost=parseFloat(findVal(data,'accomCost'))||90;
+            return{revenue:fee,totalCost:totalCost,profit:profit,commission:commission,djNet:djNet,rating:rating,contacts:contacts,travellers:travellers,transportCost:transportCost,accomCost:accomCost,roi:Math.round(profit/totalCost*100),rebookingProb:Math.round(rating*18),isLogistics:true};
+        }
         var fee=parseFloat((data[2]&&data[2].values.fee)||'1500')||1500;
         var commission=parseFloat((data[2]&&data[2].values.commission)||'10')||10;
         var attendance=parseInt((data[5]&&data[5].values.attendance)||'2800')||2800;
@@ -363,6 +490,7 @@
         var djEarned=fee-commEarned;
         return{revenue:fee,commission:commEarned,djEarnings:djEarned,attendance:attendance,rating:rating,conversionRate:Math.round(attendance/3000*100),rebookingProb:Math.round(rating*18),socialImpact:Math.round(fee*0.3+attendance*0.01)};
     }
+    function findVal(data,key){for(var i=0;i<data.length;i++){if(data[i]&&data[i].values&&data[i].values[key])return data[i].values[key];}return '';}
 
     function showResults(){
         var m=calcMetrics(stepData);
@@ -372,14 +500,39 @@
         var h='<div class="W-results">';
         h+='<div class="W-results-title">Workflow Results</div>';
         h+='<div class="W-kpi-row">';
-        [{v:'£'+m.revenue,l:'Total Fee'},{v:'£'+m.commission,l:'Commission'},{v:'£'+m.djEarnings,l:'DJ Earnings'},{v:m.attendance.toLocaleString(),l:'Attendance'},{v:m.rating+'/5',l:'Rating'},{v:m.rebookingProb+'%',l:'Rebooking Prob'}].forEach(function(k){
+        var kpis=m.isLogistics?
+            [{v:'£'+m.revenue,l:'DJ Fee'},{v:'£'+m.totalCost,l:'Total Costs'},{v:'£'+m.profit,l:'Net Profit'},{v:'£'+m.commission,l:'Commission'},{v:'£'+m.djNet,l:'DJ Take-Home'},{v:m.roi+'%',l:'ROI'},{v:m.rating+'/5',l:'Gig Rating'},{v:m.contacts,l:'New Contacts'}]:
+            [{v:'£'+m.revenue,l:'Total Fee'},{v:'£'+m.commission,l:'Commission'},{v:'£'+m.djEarnings,l:'DJ Earnings'},{v:m.attendance.toLocaleString(),l:'Attendance'},{v:m.rating+'/5',l:'Rating'},{v:m.rebookingProb+'%',l:'Rebooking Prob'}];
+        kpis.forEach(function(k){
             h+='<div class="W-kpi"><div class="W-kpi-val">'+k.v+'</div><div class="W-kpi-label">'+k.l+'</div></div>';
         });
         h+='</div>';
 
+        // Cost breakdown for logistics
+        if(m.isLogistics){
+            h+='<div class="W-results-title" style="margin-top:16px">Cost Breakdown</div>';
+            h+='<div class="W-chart" style="height:80px">';
+            var costs=[{v:m.transportCost,l:'Transport',c:'var(--ac)'},{v:m.accomCost,l:'Accommodation',c:'var(--pr)'},{v:Math.round(m.totalCost-m.transportCost-m.accomCost),l:'Other',c:'var(--am)'}];
+            var maxC=Math.max.apply(null,costs.map(function(c){return c.v}));
+            costs.forEach(function(c){
+                var pct=Math.max(10,Math.round(c.v/maxC*100));
+                h+='<div class="W-chart-bar" style="height:'+pct+'%;background:'+c.c+'"><div class="W-chart-bar-val">£'+c.v+'</div><div class="W-chart-bar-label">'+c.l+'</div></div>';
+            });
+            h+='</div>';
+        }
+
         // Action items
         h+='<div class="W-results-title" style="margin-top:16px">Action Items (Priority Order)</div>';
-        var actions=[
+        var actions=m.isLogistics?[
+            {pri:'p1',text:'Upload set recording to SoundCloud within 48 hours'},
+            {pri:'p1',text:'Follow up with '+m.contacts+' new contacts within 72 hours'},
+            {pri:'p1',text:'Send thank-you to promoter + request testimonial'},
+            {pri:'p2',text:'Post 3 photos/clips from the trip this week'},
+            {pri:'p2',text:'Update Lab-Wiki venue profile (OST Berlin) with new data'},
+            {pri:'p2',text:'Log all costs in financial tracker for tax records'},
+            {pri:'p3',text:'Review: profit margin '+m.roi+'% — adjust pricing if below 200%'},
+            {pri:'p3',text:'Save transport/accommodation preferences for next Berlin trip'}
+        ]:[
             {pri:'p1',text:'Upload set recording to SoundCloud within 48 hours'},
             {pri:'p1',text:'Send thank-you message to promoter + request testimonial'},
             {pri:'p1',text:'Follow up on rebooking inquiries within 72 hours'},
