@@ -8,7 +8,8 @@ updated: 2026-05-23
 
 ## Decisions
 
-_None yet — project build not started._
+- [[DEC-001-three-tier-architecture]] — Marketing site + Owner portal + DJ portal
+- [[DEC-002-intelligence-layer]] — Lab-Intelligence (vector DB) + Lab-Wiki + AI chat
 
 ## Learnings
 

@@ -1,8 +1,8 @@
 {
   "name": "Labs Institute",
   "slug": "labs-institute",
-  "description": "DJ artist management portal — contracts, gig opportunities, marketing, location-based pricing models, and DJ profiles under the Labs Institute brand.",
-  "status": "next",
+  "description": "DJ artist management platform — three tiers (marketing site, owner portal, DJ portal) with AI-driven intelligence layer for self-improvement.",
+  "status": "active",
   "build_order": 1,
   "created": "2026-05-23",
   "platform": "web-responsive",
@@ -12,36 +12,80 @@
     "data": "json-file",
     "future": ["postgres", "vector-db", "zeus-memory"]
   },
+  "tiers": {
+    "marketing-site": "Public-facing labs.institute — roster showcase, services, proof of value",
+    "owner-portal": "Admin dashboard — roster, venues, events, contracts, finances, bookings",
+    "dj-portal": "Per-artist dashboard — content, socials, calendar, gig tracker, metrics",
+    "lab-intelligence": "AI layer — vector DB, pattern detection, growth roadmaps, improvement suggestions",
+    "lab-wiki": "Knowledge base — decisions, learnings, patterns, institutional knowledge",
+    "chat": "Founder ↔ DJ communication with AI assistant using Lab-Intelligence + Lab-Wiki context"
+  },
   "phases": [
     {
       "id": "P0",
-      "name": "DJ Profiles + Roster",
-      "status": "planned",
-      "description": "DJ profiles with genre, location, rate card, availability. Roster management for the label."
+      "name": "Site Content Builder + Marketing Page",
+      "status": "in-progress",
+      "description": "Conductor-based intake UI to capture all site content. Output feeds labs.institute build."
     },
     {
       "id": "P1",
-      "name": "Gig Opportunities Feed",
+      "name": "DJ Profiles + Roster (Owner Portal)",
       "status": "planned",
-      "description": "Browse and match DJs to gig opportunities based on genre, location, and scale."
+      "description": "DJ profiles with genre, tier, rate card, availability, socials, KPIs. Roster management dashboard."
     },
     {
       "id": "P2",
-      "name": "Contracts + Booking",
+      "name": "DJ Portal — Content + Calendar",
       "status": "planned",
-      "description": "Contract templates, booking workflow from inquiry to confirmation."
+      "description": "Per-DJ dashboard: manage content, social links, gig calendar, track metrics."
     },
     {
       "id": "P3",
-      "name": "Pricing Model",
+      "name": "Contracts + Booking Workflow",
       "status": "planned",
-      "description": "Dynamic pricing based on location, event scale, DJ tier, and market data."
+      "description": "Contract templates, booking lifecycle (inquiry → quote → contract → confirm), status tracking."
     },
     {
       "id": "P4",
-      "name": "Marketing + Promotion",
+      "name": "Chat + Communication Hub",
       "status": "planned",
-      "description": "Marketing tools, social media integration, promotional asset management."
+      "description": "Founder ↔ DJ messaging. AI assistant answers questions from Lab-Wiki + Lab-Intelligence context."
+    },
+    {
+      "id": "P5",
+      "name": "Lab-Intelligence — AI Growth Engine",
+      "status": "planned",
+      "description": "Vector DB ingesting gig outcomes, social metrics, campaign results. Generates growth roadmaps, post-mortems, improvement suggestions."
+    },
+    {
+      "id": "P6",
+      "name": "Lab-Wiki — Knowledge Base",
+      "status": "planned",
+      "description": "Structured knowledge capture: what works at which venues, optimal pricing, best promo strategies. Searchable by founder and DJs."
+    },
+    {
+      "id": "P7",
+      "name": "Pricing Engine",
+      "status": "planned",
+      "description": "Dynamic pricing based on location, event scale, DJ tier, market data. Rate cards per DJ."
+    },
+    {
+      "id": "P8",
+      "name": "Marketing + Social Tools",
+      "status": "planned",
+      "description": "Content calendar, cross-platform posting, campaign tracking, audience analytics."
+    },
+    {
+      "id": "P9",
+      "name": "Gig Discovery + DJ Matching",
+      "status": "planned",
+      "description": "Event opportunity feed. Match DJs to gigs by genre, location, availability. Application tracking."
+    },
+    {
+      "id": "P10",
+      "name": "Financial Management",
+      "status": "planned",
+      "description": "Invoicing, payment tracking, commission calculator, P&L per event and per DJ."
     }
   ]
 }
