@@ -549,6 +549,17 @@
 
         </div><!-- close S-site-default -->
 
+        <!-- Global Reach — outside S-site-default so it shows on ALL layouts -->
+        <div id="site-globe-always" style="padding:60px 40px;max-width:1000px;margin:0 auto">
+            <div style="font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;opacity:.4;margin-bottom:8px">Global Reach</div>
+            <div style="font-size:1.4rem;font-weight:900;letter-spacing:.02em;text-transform:uppercase;margin-bottom:24px">Where Our Artists Play</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center">
+                <div><canvas id="site-globe-canvas-always" width="400" height="400" style="width:100%;max-width:400px;display:block;margin:0 auto;background:radial-gradient(circle,#0a0a14 60%,#000 100%);border-radius:50%;box-shadow:0 0 20px rgba(0,0,0,.3),0 0 40px rgba(0,0,0,.15)" aria-label="3D globe showing cities played"></canvas></div>
+                <div><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.4;margin-bottom:12px">17 Cities Across Europe</div>
+                <div id="site-globe-cities-always" style="font-size:.72rem;opacity:.6;line-height:2.2"></div></div>
+            </div>
+        </div>
+
         <!-- Sticky activity bar -->
         <div id="sticky-activity" style="position:fixed;bottom:0;left:0;right:0;z-index:50;background:var(--t-bg,#000);color:inherit;font-family:var(--ff);border-top:1px solid rgba(255,255,255,.08)">
             <div style="max-width:1200px;margin:0 auto;padding:10px 30px;display:flex;align-items:center;gap:20px">
@@ -2667,6 +2678,34 @@ Social metrics → Periodic snapshots → Pattern detection
         }
     }
     setTimeout(initSiteGlobe,500);
+
+    // Always-visible globe (outside S-site-default)
+    setTimeout(function(){
+        var canvas=document.getElementById('site-globe-canvas-always');
+        if(!canvas) return;
+        var d=DESIGNS[globalTheme]||DESIGNS.chrome;
+        var ctx=canvas.getContext('2d');
+        var W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,R=160,rot=0;
+        function toS2(lat,lon,rotation){var phi=(90-lat)*Math.PI/180,theta=(lon+rotation)*Math.PI/180;var x=R*Math.sin(phi)*Math.cos(theta),y=-R*Math.cos(phi),z=R*Math.sin(phi)*Math.sin(theta);return{x:cx+x,y:cy+y,z:z,visible:z>0};}
+        function draw2(){
+            var dd=DESIGNS[globalTheme]||DESIGNS.chrome;
+            ctx.clearRect(0,0,W,H);
+            var pa=0.15+Math.sin(Date.now()/800)*0.1;
+            ctx.beginPath();ctx.arc(cx,cy,R+6,0,Math.PI*2);ctx.strokeStyle='rgba('+dd.accentRgb+','+pa*0.4+')';ctx.lineWidth=8;ctx.stroke();
+            ctx.beginPath();ctx.arc(cx,cy,R+2,0,Math.PI*2);ctx.strokeStyle='rgba('+dd.accentRgb+','+pa+')';ctx.lineWidth=3;ctx.stroke();
+            ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.strokeStyle='rgba('+dd.accentRgb+',.6)';ctx.lineWidth=1.5;ctx.stroke();
+            ctx.strokeStyle='rgba('+dd.accentRgb+',.18)';ctx.lineWidth=0.5;
+            for(var la=-60;la<=60;la+=30){ctx.beginPath();for(var lo=0;lo<=360;lo+=5){var p=toS2(la,lo,rot);if(p.visible){if(lo===0||!toS2(la,lo-5,rot).visible)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);}}ctx.stroke();}
+            for(var lo=-180;lo<180;lo+=30){ctx.beginPath();for(var la2=-90;la2<=90;la2+=5){var p=toS2(la2,lo,rot);if(p.visible){if(la2===-90||!toS2(la2-5,lo,rot).visible)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);}}ctx.stroke();}
+            var home=CITIES.find(function(c){return c.home})||CITIES[0];
+            CITIES.forEach(function(city,i){if(city.home)return;var p1=toS2(home.lat,home.lon,rot),p2=toS2(city.lat,city.lon,rot);if(p1.visible&&p2.visible){ctx.beginPath();ctx.moveTo(p1.x,p1.y);var pm=toS2((home.lat+city.lat)/2+8,(home.lon+city.lon)/2,rot);ctx.quadraticCurveTo(pm.x,pm.y,p2.x,p2.y);ctx.strokeStyle='rgba('+dd.accentRgb+',.3)';ctx.lineWidth=1.5;ctx.stroke();}});
+            CITIES.forEach(function(city){var p=toS2(city.lat,city.lon,rot);if(!p.visible)return;var dr=city.home?6:4;ctx.beginPath();ctx.arc(p.x,p.y,dr,0,Math.PI*2);ctx.fillStyle=dd.accent;ctx.fill();ctx.beginPath();ctx.arc(p.x,p.y,dr+4,0,Math.PI*2);ctx.fillStyle='rgba('+dd.accentRgb+',.15)';ctx.fill();if(city.home){var pr=dr+6+Math.sin(Date.now()/400)*4;ctx.beginPath();ctx.arc(p.x,p.y,pr,0,Math.PI*2);ctx.strokeStyle='rgba('+dd.accentRgb+',.3)';ctx.lineWidth=1;ctx.stroke();}});
+            rot+=0.3;requestAnimationFrame(draw2);
+        }
+        draw2();
+        var cl=document.getElementById('site-globe-cities-always');
+        if(cl){var h='';CITIES.forEach(function(c){h+='<span style="display:inline-flex;align-items:center;gap:6px;margin-right:14px;margin-bottom:4px"><span style="width:6px;height:6px;border-radius:50%;background:'+(DESIGNS[globalTheme]||DESIGNS.chrome).accent+'"></span><span>'+c.name+(c.home?' (HQ)':'')+'</span></span>';});cl.innerHTML=h;}
+    },600);
 
     // goToTab — used by Guide page buttons
     window.goToTab=function(tab){
