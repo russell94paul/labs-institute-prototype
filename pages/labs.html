@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+    .L{--bk:#0a0a0a;--dk:#111;--sf:#1a1a1a;--sf2:#222;--bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.15);--wh:#f0f0f0;--dm:#666;--mt:#888;--ac:#c0c0c0;--gd:#c9a84c;--gn:#4ade80;--bl:#60a5fa;--rd:#f87171;--pr:#a78bfa;--ff:'Segoe UI','Helvetica Neue',Arial,sans-serif;--mn:'Consolas','Courier New',monospace;--tr:.18em;--ts:.08em}
+    .L *{margin:0;padding:0;box-sizing:border-box}
+    .L{background:var(--bk);color:var(--wh);font-family:var(--ff);min-height:100vh}
+
+    /* Top bar with mode tabs */
+    .L-top{display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:52px;border-bottom:1px solid var(--bd);background:var(--bk);position:sticky;top:0;z-index:100}
+    .L-brand{font-size:.72rem;font-weight:700;letter-spacing:var(--tr);text-transform:uppercase;background:linear-gradient(90deg,#999,#ddd,#999);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .L-modes{display:flex;gap:0;height:100%}
+    .L-mode{padding:0 22px;height:100%;display:flex;align-items:center;font-size:.62rem;font-weight:700;letter-spacing:var(--tr);text-transform:uppercase;color:var(--dm);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+    .L-mode:hover{color:var(--mt)}
+    .L-mode.on{color:var(--ac);border-bottom-color:var(--ac)}
+    .L-tagline{font-size:.55rem;color:var(--dm);letter-spacing:var(--tr);text-transform:uppercase}
+
+    .L-view{display:none}.L-view.on{display:block}
+
+    /* ============ SITE PREVIEW ============ */
+    .S-hero{text-align:center;padding:100px 40px 80px;border-bottom:1px solid var(--bd)}
+    .S-hero-tag{font-size:.6rem;letter-spacing:.3em;color:var(--dm);text-transform:uppercase;margin-bottom:20px}
+    .S-hero-name{font-size:3rem;font-weight:200;letter-spacing:.15em;text-transform:uppercase;background:linear-gradient(90deg,#888,#eee,#888);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px}
+    .S-hero-sub{font-size:.82rem;color:var(--mt);letter-spacing:.04em;max-width:500px;margin:0 auto 30px;line-height:1.7}
+    .S-hero-vals{display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
+    .S-val{font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dm);padding:6px 16px;border:1px solid var(--bd);border-radius:20px}
+
+    .S-kpis{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--bd)}
+    .S-kpi{text-align:center;padding:30px 20px;border-right:1px solid var(--bd)}
+    .S-kpi:last-child{border-right:none}
+    .S-kpi-num{font-size:2.2rem;font-weight:200;font-family:var(--mn);color:var(--wh)}
+    .S-kpi-label{font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dm);margin-top:6px}
+
+    .S-section{padding:60px 40px;max-width:1000px;margin:0 auto}
+    .S-section-tag{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd);margin-bottom:8px}
+    .S-section-title{font-size:1.1rem;font-weight:700;letter-spacing:var(--ts);text-transform:uppercase;margin-bottom:20px}
+    .S-divider{border-bottom:1px solid var(--bd)}
+
+    /* Roster grid */
+    .S-roster{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+    .S-dj{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:20px;transition:border-color .15s}
+    .S-dj:hover{border-color:var(--bd2)}
+    .S-dj-avatar{width:48px;height:48px;border-radius:50%;background:var(--sf2);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:var(--dm);margin-bottom:12px;border:1px solid var(--bd)}
+    .S-dj-name{font-size:.82rem;font-weight:700;letter-spacing:var(--ts);text-transform:uppercase;margin-bottom:4px}
+    .S-dj-genre{font-size:.62rem;color:var(--dm);letter-spacing:.04em}
+    .S-dj-tier{font-size:.55rem;padding:2px 8px;border-radius:10px;margin-top:8px;display:inline-block;letter-spacing:.04em;text-transform:uppercase;font-weight:700}
+    .tier-emerging{background:rgba(96,165,250,.1);color:var(--bl)}
+    .tier-developing{background:rgba(167,139,250,.1);color:var(--pr)}
+    .tier-established{background:rgba(74,222,128,.1);color:var(--gn)}
+    .tier-headliner{background:rgba(201,168,76,.1);color:var(--gd)}
+    .S-dj-kpis{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
+    .S-dj-kpi{font-size:.58rem;color:var(--dm)}
+    .S-dj-kpi span{color:var(--mt);font-family:var(--mn);font-weight:700}
+
+    /* Services */
+    .S-svcs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    .S-svc{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:18px}
+    .S-svc-name{font-size:.72rem;font-weight:700;letter-spacing:var(--ts);text-transform:uppercase;margin-bottom:6px}
+    .S-svc-desc{font-size:.65rem;color:var(--dm);line-height:1.6}
+
+    /* CTA */
+    .S-cta{text-align:center;padding:60px 40px;background:var(--sf);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+    .S-cta-title{font-size:1rem;font-weight:700;letter-spacing:var(--tr);text-transform:uppercase;margin-bottom:10px}
+    .S-cta-sub{font-size:.75rem;color:var(--dm);margin-bottom:24px}
+    .S-btn{padding:12px 32px;border-radius:4px;font-size:.68rem;font-weight:700;letter-spacing:var(--ts);text-transform:uppercase;cursor:pointer;border:none;font-family:var(--ff);transition:all .15s}
+    .S-btn-chrome{background:linear-gradient(135deg,#c0c0c0,#e8e8e8,#a0a0a0);color:var(--bk)}
+    .S-btn-outline{background:none;color:var(--ac);border:1px solid var(--bd)}.S-btn-outline:hover{border-color:var(--ac)}
+
+    /* Footer */
+    .S-footer{text-align:center;padding:30px 40px;font-size:.55rem;color:#444;letter-spacing:.08em;text-transform:uppercase}
+
+    /* ============ ADMIN ============ */
+    .A-page{padding:30px 40px;max-width:960px;margin:0 auto}
+    .A-info{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:16px 20px;margin-bottom:24px;font-size:.72rem;color:var(--dm);line-height:1.7}
+    .A-info strong{color:var(--mt)}
+    .A-section{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--bd)}
+    .A-title{font-size:.68rem;font-weight:700;letter-spacing:var(--tr);text-transform:uppercase;color:var(--ac);margin-bottom:14px}
+    .A-label{font-size:.58rem;font-weight:700;color:var(--dm);letter-spacing:var(--ts);text-transform:uppercase;margin:12px 0 5px;display:block}
+    .A-input,.A-textarea{width:100%;padding:10px 14px;background:var(--sf);border:1px solid var(--bd);border-radius:6px;color:var(--wh);font-size:.8rem;font-family:var(--ff)}
+    .A-textarea{resize:vertical;min-height:56px;line-height:1.6}
+    .A-input:focus,.A-textarea:focus{outline:none;border-color:var(--ac);background:var(--sf2)}
+    .A-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .A-btn{padding:8px 20px;border-radius:4px;font-size:.62rem;font-weight:700;letter-spacing:var(--ts);text-transform:uppercase;cursor:pointer;border:none;font-family:var(--ff);transition:all .15s}
+    .A-btn-chrome{background:linear-gradient(135deg,#c0c0c0,#e8e8e8,#a0a0a0);color:var(--bk)}
+    .A-btn-ghost{background:none;color:var(--ac);border:1px solid var(--bd)}.A-btn-ghost:hover{border-color:var(--ac)}
+    .A-dj{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:14px;margin-bottom:10px}
+    .A-dj-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .A-dj-name{font-size:.75rem;font-weight:700;letter-spacing:var(--ts);text-transform:uppercase}
+
+    /* ============ ROADMAP ============ */
+    .R-page{padding:30px 40px;max-width:960px;margin:0 auto}
+    .R-hdr{margin-bottom:30px}
+    .R-title{font-size:1rem;font-weight:700;letter-spacing:var(--tr);text-transform:uppercase;margin-bottom:6px}
+    .R-sub{font-size:.72rem;color:var(--dm)}
+    .R-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px}
+    .R-tier{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:16px;text-align:center}
+    .R-tier-name{font-size:.65rem;font-weight:700;letter-spacing:var(--ts);text-transform:uppercase;margin-bottom:6px}
+    .R-tier-desc{font-size:.62rem;color:var(--dm);line-height:1.6}
+    .R-phase{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:16px 20px;margin-bottom:8px;display:grid;grid-template-columns:50px 1fr 100px;gap:14px;align-items:center;transition:border-color .15s}
+    .R-phase:hover{border-color:var(--bd2)}
+    .R-phase-id{font-family:var(--mn);font-size:.72rem;font-weight:700;color:var(--dm)}
+    .R-phase-name{font-size:.78rem;font-weight:700;letter-spacing:var(--ts);text-transform:uppercase}
+    .R-phase-desc{font-size:.65rem;color:var(--dm);margin-top:3px;line-height:1.5}
+    .R-badge{font-size:.55rem;font-weight:700;padding:3px 10px;border-radius:10px;text-transform:uppercase;letter-spacing:.04em;text-align:center}
+    .R-badge-active{background:rgba(96,165,250,.12);color:var(--bl)}
+    .R-badge-planned{background:rgba(255,255,255,.04);color:var(--dm)}
+
+    .R-intel{margin-top:32px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:24px}
+    .R-intel-title{font-size:.72rem;font-weight:700;letter-spacing:var(--tr);text-transform:uppercase;color:var(--gd);margin-bottom:12px}
+    .R-intel-flow{font-size:.68rem;color:var(--dm);line-height:2;font-family:var(--mn)}
+
+    @media(max-width:768px){
+        .L-top{padding:0 16px}.S-hero{padding:60px 20px 50px}.S-hero-name{font-size:1.8rem}
+        .S-kpis{grid-template-columns:1fr 1fr}.S-svcs{grid-template-columns:1fr}
+        .S-section{padding:40px 20px}.R-tiers{grid-template-columns:1fr}
+        .R-phase{grid-template-columns:40px 1fr;gap:10px}.R-phase .R-badge{display:none}
+        .A-row{grid-template-columns:1fr}
+    }
+</style>
+</head>
+<body>
+<div class="L">
+    <div class="L-top">
+        <div class="L-brand">LABS.INSTITUTE</div>
+        <div class="L-modes">
+            <div class="L-mode on" data-v="site">Site Preview</div>
+            <div class="L-mode" data-v="admin">Admin</div>
+            <div class="L-mode" data-v="roadmap">Roadmap</div>
+        </div>
+        <div class="L-tagline">Founded For The Future</div>
+    </div>
+
+    <!-- ============ SITE PREVIEW ============ -->
+    <div class="L-view on" id="v-site">
+        <div class="S-hero">
+            <div class="S-hero-tag">Artist Management &middot; Bookings &middot; Development</div>
+            <div class="S-hero-name" id="site-name">LABS.INSTITUTE</div>
+            <div class="S-hero-sub" id="site-sub">We manage, develop, and promote emerging and established DJs in the underground electronic music scene. Transparent contracts. Data-driven growth. Community-first.</div>
+            <div class="S-hero-vals" id="site-vals"></div>
+        </div>
+
+        <div class="S-kpis" id="site-kpis"></div>
+
+        <div class="S-section S-divider">
+            <div class="S-section-tag">Roster</div>
+            <div class="S-section-title">Our Artists</div>
+            <div class="S-roster" id="site-roster"></div>
+        </div>
+
+        <div class="S-section S-divider">
+            <div class="S-section-tag">What We Do</div>
+            <div class="S-section-title">Services</div>
+            <div class="S-svcs" id="site-svcs"></div>
+        </div>
+
+        <div class="S-cta">
+            <div class="S-cta-title">Join The Roster</div>
+            <div class="S-cta-sub">We're looking for dedicated DJs who want structured management, transparent deals, and real growth.</div>
+            <button class="S-btn S-btn-chrome" style="margin-right:10px">Apply Now</button>
+            <button class="S-btn S-btn-outline">Book Our Artists</button>
+        </div>
+
+        <div class="S-section">
+            <div class="S-section-tag">About</div>
+            <div class="S-section-title">Founded For The Future</div>
+            <p style="font-size:.78rem;color:var(--dm);line-height:1.8;max-width:600px" id="site-about">
+                Labs Institute was founded to give underground DJs what the industry doesn't — transparency, reinvestment, and a structured path from open-deck nights to headline slots. Every penny of commission goes back into artist development, better events, and building a community that lasts.
+            </p>
+        </div>
+
+        <div class="S-footer">&copy; 2026 Labs Institute &middot; Manchester, UK &middot; Founded For The Future</div>
+    </div>
+
+    <!-- ============ ADMIN ============ -->
+    <div class="L-view" id="v-admin">
+        <div class="A-page">
+            <div class="A-info">
+                <strong>Admin Portal</strong> — Edit the marketing site content below. Changes update the site preview in real-time. All data saves to project memory.
+            </div>
+
+            <div class="A-section">
+                <div class="A-title">01 &mdash; Brand</div>
+                <span class="A-label">Company Name</span>
+                <input class="A-input" id="a-name" value="Labs Institute" oninput="sync()">
+                <span class="A-label">Tagline</span>
+                <input class="A-input" id="a-tagline" value="Founded For The Future" oninput="sync()">
+                <span class="A-label">Description</span>
+                <textarea class="A-textarea" id="a-desc" rows="3" oninput="sync()">We manage, develop, and promote emerging and established DJs in the underground electronic music scene. Transparent contracts. Data-driven growth. Community-first.</textarea>
+                <span class="A-label">Values (comma separated)</span>
+                <input class="A-input" id="a-values" value="Reputation, Transparency, Reinvestment, Family, Value" oninput="sync()">
+                <span class="A-label">About / Origin Story</span>
+                <textarea class="A-textarea" id="a-about" rows="4" oninput="sync()">Labs Institute was founded to give underground DJs what the industry doesn't — transparency, reinvestment, and a structured path from open-deck nights to headline slots. Every penny of commission goes back into artist development, better events, and building a community that lasts.</textarea>
+            </div>
+
+            <div class="A-section">
+                <div class="A-title">02 &mdash; KPIs (Hero Stats)</div>
+                <div class="A-row">
+                    <div><span class="A-label">Stat 1 Value</span><input class="A-input" id="a-k1v" value="8" oninput="sync()"><span class="A-label">Label</span><input class="A-input" id="a-k1l" value="Artists Managed" oninput="sync()"></div>
+                    <div><span class="A-label">Stat 2 Value</span><input class="A-input" id="a-k2v" value="120+" oninput="sync()"><span class="A-label">Label</span><input class="A-input" id="a-k2l" value="Gigs Booked" oninput="sync()"></div>
+                </div>
+                <div class="A-row" style="margin-top:12px">
+                    <div><span class="A-label">Stat 3 Value</span><input class="A-input" id="a-k3v" value="3x" oninput="sync()"><span class="A-label">Label</span><input class="A-input" id="a-k3l" value="Avg Social Growth" oninput="sync()"></div>
+                    <div><span class="A-label">Stat 4 Value</span><input class="A-input" id="a-k4v" value="£25K+" oninput="sync()"><span class="A-label">Label</span><input class="A-input" id="a-k4l" value="Revenue Generated" oninput="sync()"></div>
+                </div>
+            </div>
+
+            <div class="A-section">
+                <div class="A-title">03 &mdash; Artists</div>
+                <div id="a-djs"></div>
+                <button class="A-btn A-btn-ghost" onclick="addAdminDJ()" style="margin-top:8px">+ Add Artist</button>
+            </div>
+
+            <div class="A-section">
+                <div class="A-title">04 &mdash; Services</div>
+                <div id="a-svcs"></div>
+                <button class="A-btn A-btn-ghost" onclick="addSvc()" style="margin-top:8px">+ Add Service</button>
+            </div>
+
+            <div style="display:flex;gap:10px;margin-top:20px">
+                <button class="A-btn A-btn-chrome" onclick="saveAll()">Save to Project Memory</button>
+                <button class="A-btn A-btn-ghost" onclick="exportJSON()">Export JSON</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ ROADMAP ============ -->
+    <div class="L-view" id="v-roadmap">
+        <div class="R-page">
+            <div class="R-hdr">
+                <div class="R-title">Platform Roadmap</div>
+                <div class="R-sub">The complete vision for Labs Institute — from marketing site to AI-powered management platform.</div>
+            </div>
+
+            <div class="R-tiers">
+                <div class="R-tier" style="border-color:rgba(192,192,192,.2)">
+                    <div class="R-tier-name" style="color:var(--ac)">Marketing Site</div>
+                    <div class="R-tier-desc">Public-facing labs.institute — roster showcase, services, proof of value, events</div>
+                </div>
+                <div class="R-tier" style="border-color:rgba(96,165,250,.2)">
+                    <div class="R-tier-name" style="color:var(--bl)">Owner Portal</div>
+                    <div class="R-tier-desc">Admin dashboard — roster, venues, events, contracts, finances, bookings</div>
+                </div>
+                <div class="R-tier" style="border-color:rgba(74,222,128,.2)">
+                    <div class="R-tier-name" style="color:var(--gn)">DJ Portal</div>
+                    <div class="R-tier-desc">Per-artist dashboard — content, socials, calendar, gig tracker, metrics</div>
+                </div>
+            </div>
+
+            <div id="r-phases"></div>
+
+            <div class="R-intel">
+                <div class="R-intel-title">Lab-Intelligence + Lab-Wiki — Self-Improvement Engine</div>
+                <div class="R-intel-flow">
+Events/Gigs → Outcomes logged → Lab-Intelligence ingests
+                                    ↓
+Social metrics → Periodic snapshots → Pattern detection
+                                    ↓
+                            AI generates suggestions
+                        (ranked by: ROI, complexity, growth)
+                                    ↓
+                      Chat surfaces to founder/DJ
+                                    ↓
+                  Feedback loop (accept/reject/modify)
+                                    ↓
+                        Lab-Intelligence improves
+                                    ↓
+                    Lab-Wiki captures proven patterns
+                </div>
+                <div style="margin-top:16px;font-size:.65rem;color:var(--dm);line-height:1.8">
+                    <strong style="color:var(--gd)">Lab-Intelligence</strong> — Vector DB ingesting gig outcomes, social metrics, campaign results. Detects patterns, generates growth roadmaps, surfaces improvement suggestions ranked by complexity, productivity, ROI, and growth potential.<br>
+                    <strong style="color:var(--gd)">Lab-Wiki</strong> — Structured knowledge base: what works at which venues, optimal pricing by location, best promo strategies. Searchable by founder and DJs.<br>
+                    <strong style="color:var(--gd)">Chat</strong> — Founder ↔ DJ messaging with AI assistant pulling context from both systems.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function(){
+    var PHASES=[
+        {id:'P0',name:'Marketing Site',desc:'Public site with roster, services, proof of value. Admin portal to edit content via guided UI.',status:'active'},
+        {id:'P1',name:'DJ Profiles + Roster',desc:'Owner portal: DJ profiles with genres, tier, rate card, availability, socials, KPIs.',status:'planned'},
+        {id:'P2',name:'DJ Portal',desc:'Per-artist dashboard: content management, social links, gig calendar, growth metrics.',status:'planned'},
+        {id:'P3',name:'Contracts + Booking',desc:'Contract templates, booking lifecycle (inquiry → quote → contract → confirm → payment).',status:'planned'},
+        {id:'P4',name:'Chat + Communication',desc:'Founder ↔ DJ messaging with AI assistant using Lab-Intelligence + Lab-Wiki context.',status:'planned'},
+        {id:'P5',name:'Lab-Intelligence',desc:'Vector DB: gig outcomes, social metrics, campaign results. Growth roadmaps + improvement suggestions.',status:'planned'},
+        {id:'P6',name:'Lab-Wiki',desc:'Knowledge base: venue profiles, pricing intelligence, marketing playbook, lessons learned.',status:'planned'},
+        {id:'P7',name:'Pricing Engine',desc:'Dynamic pricing by location, venue size, event type, DJ tier. Data-driven rate cards.',status:'planned'},
+        {id:'P8',name:'Marketing + Social',desc:'Content calendar, cross-platform posting, campaign tracking, audience analytics.',status:'planned'},
+        {id:'P9',name:'Gig Discovery',desc:'Event opportunity feed. DJ-to-gig matching by genre, location, availability.',status:'planned'},
+        {id:'P10',name:'Financial Management',desc:'Invoicing, payment tracking, commission calculator, P&L per event/DJ.',status:'planned'},
+    ];
+
+    var djData=[
+        {name:'Sample DJ 1',genre:'House / Disco',tier:'developing',gigs:24,ig:'2.1K',fee:'£150'},
+        {name:'Sample DJ 2',genre:'Techno / Minimal',tier:'emerging',gigs:8,ig:'450',fee:'£50'},
+    ];
+    var svcData=[
+        {name:'Artist Management',desc:'Career strategy, brand development, day-to-day management'},
+        {name:'Booking Agency',desc:'Securing gigs, negotiating fees, managing the booking pipeline'},
+        {name:'Event Promotion',desc:'Planning, marketing, and running events under the Labs brand'},
+        {name:'Social Media Management',desc:'Content strategy, posting schedule, audience growth'},
+        {name:'DJ Development',desc:'Mentoring emerging talent: skills, exposure, progression'},
+        {name:'Content Production',desc:'Mix recording, photography, video, press kits'},
+    ];
+
+    // Mode tabs
+    document.querySelectorAll('.L-mode').forEach(function(m){
+        m.addEventListener('click',function(){
+            document.querySelectorAll('.L-mode').forEach(function(x){x.classList.remove('on')});
+            document.querySelectorAll('.L-view').forEach(function(x){x.classList.remove('on')});
+            this.classList.add('on');
+            document.getElementById('v-'+this.dataset.v).classList.add('on');
+        });
+    });
+
+    // Render roadmap
+    var ph='';
+    PHASES.forEach(function(p){
+        var bc=p.status==='active'?'R-badge-active':'R-badge-planned';
+        ph+='<div class="R-phase"><div class="R-phase-id">'+p.id+'</div><div><div class="R-phase-name">'+p.name+'</div><div class="R-phase-desc">'+p.desc+'</div></div><div class="R-badge '+bc+'">'+p.status+'</div></div>';
+    });
+    document.getElementById('r-phases').innerHTML=ph;
+
+    // Sync admin → site preview
+    window.sync=function(){
+        var n=document.getElementById('a-name').value||'Labs Institute';
+        document.getElementById('site-name').textContent=n.toUpperCase();
+        document.getElementById('site-sub').textContent=document.getElementById('a-desc').value;
+        document.getElementById('site-about').textContent=document.getElementById('a-about').value;
+
+        var vals=(document.getElementById('a-values').value||'').split(',').map(function(v){return v.trim()}).filter(Boolean);
+        document.getElementById('site-vals').innerHTML=vals.map(function(v){return'<div class="S-val">'+esc(v)+'</div>'}).join('');
+
+        var kpis='';
+        for(var i=1;i<=4;i++){
+            var v=document.getElementById('a-k'+i+'v').value,l=document.getElementById('a-k'+i+'l').value;
+            kpis+='<div class="S-kpi"><div class="S-kpi-num">'+esc(v)+'</div><div class="S-kpi-label">'+esc(l)+'</div></div>';
+        }
+        document.getElementById('site-kpis').innerHTML=kpis;
+
+        renderSiteRoster();
+        renderSiteServices();
+    };
+
+    function renderSiteRoster(){
+        var h='';
+        djData.forEach(function(d){
+            var tc='tier-'+(d.tier||'emerging');
+            h+='<div class="S-dj"><div class="S-dj-avatar">'+esc(d.name.charAt(0))+'</div>'+
+                '<div class="S-dj-name">'+esc(d.name)+'</div>'+
+                '<div class="S-dj-genre">'+esc(d.genre)+'</div>'+
+                '<span class="S-dj-tier '+tc+'">'+esc(d.tier)+'</span>'+
+                '<div class="S-dj-kpis">'+
+                '<div class="S-dj-kpi">Gigs: <span>'+d.gigs+'</span></div>'+
+                '<div class="S-dj-kpi">IG: <span>'+d.ig+'</span></div>'+
+                '<div class="S-dj-kpi">Avg Fee: <span>'+d.fee+'</span></div>'+
+                '<div class="S-dj-kpi">Tier: <span>'+d.tier+'</span></div>'+
+                '</div></div>';
+        });
+        document.getElementById('site-roster').innerHTML=h;
+    }
+
+    function renderSiteServices(){
+        var h='';
+        svcData.forEach(function(s){
+            h+='<div class="S-svc"><div class="S-svc-name">'+esc(s.name)+'</div><div class="S-svc-desc">'+esc(s.desc)+'</div></div>';
+        });
+        document.getElementById('site-svcs').innerHTML=h;
+    }
+
+    // Admin DJ management
+    var adjC=0;
+    function renderAdminDJs(){
+        var h='';
+        djData.forEach(function(d,i){
+            h+='<div class="A-dj"><div class="A-dj-hdr"><span class="A-dj-name">'+esc(d.name)+'</span>'+
+                '<button class="A-btn A-btn-ghost" style="padding:4px 10px;font-size:.55rem" onclick="rmDJ('+i+')">Remove</button></div>'+
+                '<div class="A-row"><div><span class="A-label">Name</span><input class="A-input" value="'+esc(d.name)+'" oninput="updDJ('+i+\',\'name\',this.value)"></div>'+
+                '<div><span class="A-label">Genres</span><input class="A-input" value="'+esc(d.genre)+'" oninput="updDJ('+i+\',\'genre\',this.value)"></div></div>'+
+                '<div class="A-row"><div><span class="A-label">Tier</span><select class="A-input" onchange="updDJ('+i+\',\'tier\',this.value)">'+
+                '<option'+(d.tier==='emerging'?' selected':'')+'>emerging</option>'+
+                '<option'+(d.tier==='developing'?' selected':'')+'>developing</option>'+
+                '<option'+(d.tier==='established'?' selected':'')+'>established</option>'+
+                '<option'+(d.tier==='headliner'?' selected':'')+'>headliner</option></select></div>'+
+                '<div><span class="A-label">Gigs</span><input class="A-input" type="number" value="'+d.gigs+'" oninput="updDJ('+i+\',\'gigs\',+this.value)"></div></div>'+
+                '<div class="A-row"><div><span class="A-label">IG Followers</span><input class="A-input" value="'+esc(d.ig)+'" oninput="updDJ('+i+\',\'ig\',this.value)"></div>'+
+                '<div><span class="A-label">Avg Fee</span><input class="A-input" value="'+esc(d.fee)+'" oninput="updDJ('+i+\',\'fee\',this.value)"></div></div></div>';
+        });
+        document.getElementById('a-djs').innerHTML=h;
+    }
+    window.updDJ=function(i,k,v){djData[i][k]=v;sync()};
+    window.rmDJ=function(i){djData.splice(i,1);renderAdminDJs();sync()};
+    window.addAdminDJ=function(){djData.push({name:'New Artist',genre:'',tier:'emerging',gigs:0,ig:'0',fee:'£0'});renderAdminDJs();sync()};
+
+    // Admin services
+    function renderAdminSvcs(){
+        var h='';
+        svcData.forEach(function(s,i){
+            h+='<div style="display:grid;grid-template-columns:1fr 2fr 30px;gap:8px;margin-bottom:6px;align-items:center">'+
+                '<input class="A-input" value="'+esc(s.name)+'" oninput="updSvc('+i+\',\'name\',this.value)" style="padding:8px 10px;font-size:.75rem">'+
+                '<input class="A-input" value="'+esc(s.desc)+'" oninput="updSvc('+i+\',\'desc\',this.value)" style="padding:8px 10px;font-size:.75rem">'+
+                '<span style="color:var(--rd);cursor:pointer;text-align:center" onclick="rmSvc('+i+')">&#10005;</span></div>';
+        });
+        document.getElementById('a-svcs').innerHTML=h;
+    }
+    window.updSvc=function(i,k,v){svcData[i][k]=v;sync()};
+    window.rmSvc=function(i){svcData.splice(i,1);renderAdminSvcs();sync()};
+    window.addSvc=function(){svcData.push({name:'New Service',desc:''});renderAdminSvcs();sync()};
+
+    window.saveAll=function(){
+        var data={brand:{name:document.getElementById('a-name').value,tagline:document.getElementById('a-tagline').value,desc:document.getElementById('a-desc').value,values:document.getElementById('a-values').value,about:document.getElementById('a-about').value},kpis:[],roster:djData,services:svcData,generated_at:new Date().toISOString()};
+        for(var i=1;i<=4;i++)data.kpis.push({value:document.getElementById('a-k'+i+'v').value,label:document.getElementById('a-k'+i+'l').value});
+        fetch('/api/projects/labs-institute/memory/store',{method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({content:JSON.stringify(data),type:'context',tags:['site-content','admin'],source:'labs-admin'})
+        }).then(function(){toast('Saved')}).catch(function(){toast('API offline',1)});
+    };
+
+    window.exportJSON=function(){
+        var j=JSON.stringify({roster:djData,services:svcData},null,2);
+        navigator.clipboard.writeText(j).then(function(){toast('JSON copied')});
+    };
+
+    function toast(m,e){var t=document.createElement('div');t.className='toast show'+(e?' error':'');t.textContent=m;t.style.cssText='position:fixed;bottom:24px;right:24px;padding:10px 18px;background:'+(e?'rgba(248,113,113,.12)':'var(--sf2)')+';border:1px solid '+(e?'rgba(248,113,113,.4)':'var(--ac)')+';border-radius:6px;color:'+(e?'var(--rd)':'var(--wh)')+';font-size:.72rem;z-index:600;opacity:1;transition:opacity .2s';document.body.appendChild(t);setTimeout(function(){t.style.opacity='0'},2500);setTimeout(function(){t.remove()},3000)}
+
+    function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+    renderAdminDJs();
+    renderAdminSvcs();
+    sync();
+})();
+</script>
+</body>
+</html>
