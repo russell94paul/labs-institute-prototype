@@ -339,6 +339,34 @@
         </div>
     </div>
 
+    <!-- Chat toggle button -->
+    <div id="chat-toggle" onclick="toggleChatPanel()" style="position:fixed;bottom:70px;right:20px;z-index:200;width:44px;height:44px;border-radius:50%;background:var(--t-ac,#2563eb);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.2);transition:all .2s" onmouseenter="this.style.transform='scale(1.1)'" onmouseleave="this.style.transform='scale(1)'">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    </div>
+
+    <!-- Slide-out chat panel -->
+    <div id="chat-panel" style="position:fixed;top:0;right:-360px;width:360px;height:100vh;z-index:300;background:var(--t-bg,#fff);border-left:1px solid var(--glow,rgba(128,128,128,.15));box-shadow:-4px 0 24px rgba(0,0,0,.15);display:flex;flex-direction:column;transition:right .3s ease;font-family:var(--ff)">
+        <!-- Header -->
+        <div style="padding:14px 18px;border-bottom:1px solid rgba(128,128,128,.1);display:flex;align-items:center;gap:10px;flex-shrink:0">
+            <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;animation:pulse 2s ease-in-out infinite"></div>
+            <div style="flex:1"><div style="font-size:.68rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase">Lab-Intelligence</div>
+            <div style="font-size:.55rem;opacity:.4">Ask about pricing, venues, growth, bookings</div></div>
+            <div onclick="toggleChatPanel()" style="cursor:pointer;font-size:18px;opacity:.3;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.3'">&times;</div>
+        </div>
+        <!-- Messages -->
+        <div id="global-chat-msgs" style="flex:1;overflow-y:auto;padding:14px 16px">
+            <div style="padding:10px 14px;border-radius:8px;background:rgba(128,128,128,.06);border:1px solid rgba(128,128,128,.08);font-size:.72rem;line-height:1.7;margin-bottom:8px">
+                <div style="font-size:.5rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#22c55e;margin-bottom:4px">Lab-Intelligence</div>
+                Ask me anything about your artists, pricing, venues, growth strategy, or booking pipeline.
+            </div>
+        </div>
+        <!-- Input -->
+        <div style="padding:12px 14px;border-top:1px solid rgba(128,128,128,.1);display:flex;gap:8px;flex-shrink:0">
+            <input id="global-chat-input" style="flex:1;padding:10px 14px;border:1px solid rgba(128,128,128,.12);border-radius:6px;font-size:.75rem;font-family:inherit;background:transparent;color:inherit;outline:none" placeholder="Ask a question..." onkeydown="if(event.key==='Enter')sendGlobalChat()">
+            <button onclick="sendGlobalChat()" style="padding:8px 16px;background:var(--t-ac,#2563eb);color:#fff;border:none;border-radius:6px;font-size:.6rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;font-family:inherit">Send</button>
+        </div>
+    </div>
+
     <!-- ============ SITE PREVIEW ============ -->
     <div class="L-view on" id="v-site" style="position:relative">
 
@@ -2505,6 +2533,64 @@ Social metrics → Periodic snapshots → Pattern detection
         var scripts=html.match(/<script\b[^>]*>([\s\S]*?)<\/script>/gi);
         if(scripts){scripts.forEach(function(s){var code=s.replace(/<\/?script[^>]*>/gi,'');var el=document.createElement('script');el.textContent=code;document.body.appendChild(el);});}
     }).catch(function(){});
+
+    // Global chat panel
+    var chatPanelOpen=false;
+    window.toggleChatPanel=function(){
+        chatPanelOpen=!chatPanelOpen;
+        document.getElementById('chat-panel').style.right=chatPanelOpen?'0':'-360px';
+        document.getElementById('chat-toggle').style.display=chatPanelOpen?'none':'flex';
+        if(chatPanelOpen) document.getElementById('global-chat-input').focus();
+    };
+
+    var GLOBAL_CHAT={
+        'default':'I can help with pricing, venue recommendations, growth strategies, booking pipeline status, and DJ development roadmaps. Try asking about a specific venue, event, or strategy.',
+        'price':'Luciid\'s current tier (established) with 54K IG, 2M+ streams, and Beatport charting supports fees of £400-800 for club nights, £800-1,500 for festivals.\n\nManchester: Hidden (£300-500), YES (£400-700), Warehouse Project (£800-1,200).\nAlways factor in travel costs for non-local gigs.',
+        'venue':'Luciid performs best at venues with Funktion-One sound systems — 40% higher rebooking rate.\n\nTop venues by audience response:\n• Fabrik Madrid (peak energy at 3am)\n• OST Berlin (140+ BPM preferred)\n• The Telegraph Building Belfast (hometown bonus)\n\nRecommend: Printworks London (3,000 cap, techno-forward Fridays).',
+        'growth':'90-day growth roadmap for Luciid:\n\n1. Post 3x studio BTS clips/week (2.4x engagement)\n2. Submit remix pack to Drumcode (87% genre fit)\n3. Apply to Awakenings NL (submissions close Jun 15)\n4. Instagram Reels of live sets (avg 12K vs 3K static)\n5. B2B with Per Pleks at AGONY night (combined 92K reach)\n\nProjected: +8K IG, +3 festival bookings, +£4K revenue.',
+        'booking':'Current pipeline:\n\n• INQUIRIES (3): Printworks, fabric, Sonar Off\n• QUOTING (1): Printworks — £1,100 recommended\n• CONTRACT (1): VERKNIPT — €1,200 awaiting signature\n• CONFIRMED (2): Terminal V Apr 18, Echelon Aug 14\n\nRevenue: £4,200 confirmed, £2,200 pipeline.',
+        'strategy':'Optimal strategy analysis:\n\nSTRENGTHS: Beatport charting, AGONY label, strong live energy\nGAPS: SoundCloud stalled, no YouTube, no podcasts\n\nTop 3 by ROI:\n1. Launch YouTube mix series (untapped 2B users)\n2. Guest mix on HÖR Berlin (warm lead from Budapest)\n3. EU festival pricing +20% (below tier benchmark)\n\nRisk: cap at 6 gigs/month to maintain brand exclusivity.'
+    };
+
+    window.sendGlobalChat=function(){
+        var input=document.getElementById('global-chat-input');
+        var msg=input.value.trim();
+        if(!msg) return;
+        input.value='';
+        addGlobalMsg('user',msg);
+
+        var response=GLOBAL_CHAT['default'];
+        var lower=msg.toLowerCase();
+        if(lower.match(/pric|fee|cost|quote|how much|rate/)) response=GLOBAL_CHAT['price'];
+        else if(lower.match(/venue|club|where|fabric|printworks/)) response=GLOBAL_CHAT['venue'];
+        else if(lower.match(/grow|roadmap|plan|next|improve/)) response=GLOBAL_CHAT['growth'];
+        else if(lower.match(/book|pipeline|inquiry|gig|confirm/)) response=GLOBAL_CHAT['booking'];
+        else if(lower.match(/strateg|strength|weak|gap|analys/)) response=GLOBAL_CHAT['strategy'];
+
+        var msgs=document.getElementById('global-chat-msgs');
+        var typing=document.createElement('div');
+        typing.id='global-typing';
+        typing.style.cssText='font-size:.65rem;opacity:.4;font-style:italic;padding:6px 0';
+        typing.textContent='Lab-Intelligence is thinking...';
+        msgs.appendChild(typing);
+        msgs.scrollTop=msgs.scrollHeight;
+
+        setTimeout(function(){
+            var t=document.getElementById('global-typing');
+            if(t) t.remove();
+            addGlobalMsg('ai',response);
+        },600+Math.random()*800);
+    };
+
+    function addGlobalMsg(role,text){
+        var el=document.createElement('div');
+        var isAI=role==='ai';
+        el.style.cssText='padding:10px 14px;margin:6px 0;border-radius:8px;font-size:.72rem;line-height:1.7;white-space:pre-wrap;'+(isAI?'background:rgba(128,128,128,.06);border:1px solid rgba(128,128,128,.08)':'background:rgba(128,128,128,.04);border:1px solid rgba(128,128,128,.06);margin-left:20%');
+        el.innerHTML='<div style="font-size:.48rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.5;margin-bottom:3px">'+(isAI?'Lab-Intelligence':'You')+'</div>'+esc(text);
+        var msgs=document.getElementById('global-chat-msgs');
+        msgs.appendChild(el);
+        msgs.scrollTop=msgs.scrollHeight;
+    }
 
     // goToTab — used by Guide page buttons
     window.goToTab=function(tab){
