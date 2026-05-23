@@ -216,17 +216,38 @@
         </div>
         <div style="display:flex;align-items:center;gap:12px">
             <select id="theme-global" onchange="applyGlobalTheme(this.value)" style="padding:5px 10px;background:var(--wh);border:1px solid var(--bd);border-radius:3px;font-size:.58rem;font-family:var(--ff);font-weight:600;cursor:pointer">
-                <option value="chrome">Chrome</option>
-                <option value="pulse">Dark Pulse</option>
-                <option value="gradient">Gradient</option>
-                <option value="brutalist">Brutalist</option>
-                <option value="glass">Glass</option>
+                <option value="chrome">01 Chrome</option>
+                <option value="pulse">02 Dark Pulse</option>
+                <option value="gradient">03 Gradient Flow</option>
+                <option value="brutalist">04 Brutalist</option>
+                <option value="glass">05 Glass</option>
+                <option value="membrane">06 Membrane</option>
+                <option value="signal">07 Signal Drift</option>
+                <option value="neon">08 Neon Wire</option>
+                <option value="mercury">09 Mercury</option>
+                <option value="phantom">10 Phantom Grid</option>
+                <option value="waveform">11 Waveform</option>
+                <option value="gravity">12 Gravity Well</option>
+                <option value="command">13 Command</option>
+                <option value="tectonic">14 Tectonic</option>
+                <option value="network">15 Pulse Net</option>
+                <option value="horizon">16 Split Horizon</option>
+                <option value="depth">17 Depth Scan</option>
+                <option value="seismo">18 Seismograph</option>
+                <option value="filmreel">19 Film Reel</option>
+                <option value="anti">20 Anti-UI</option>
             </select>
             <select id="layout-global" onchange="applyGlobalLayout(this.value)" style="padding:5px 10px;background:var(--wh);border:1px solid var(--bd);border-radius:3px;font-size:.58rem;font-family:var(--ff);font-weight:600;cursor:pointer">
-                <option value="hero-scroll">Layout A</option>
-                <option value="split-screen">Layout B</option>
-                <option value="card-grid">Layout C</option>
-                <option value="cinematic">Layout D</option>
+                <option value="hero-scroll">A Hero Scroll</option>
+                <option value="split-screen">B Split Screen</option>
+                <option value="card-grid">C Card Grid</option>
+                <option value="cinematic">D Cinematic</option>
+                <option value="radar">E Radar</option>
+                <option value="corridor">F Corridor</option>
+                <option value="mosaic">G Mosaic</option>
+                <option value="filmstrip">H Film Strip</option>
+                <option value="terminal">I Terminal</option>
+                <option value="magazine">J Magazine</option>
             </select>
         </div>
     </div>
@@ -329,20 +350,18 @@
             <div>
                 <label style="font-size:.52rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gy);display:block;margin-bottom:4px">Theme</label>
                 <select id="design-select" onchange="switchDesign(this.value)" style="padding:8px 14px;background:var(--wh);border:1px solid var(--bd);border-radius:4px;font-size:.75rem;font-family:var(--ff);font-weight:600;min-width:240px;cursor:pointer">
-                    <option value="chrome">01 — Minimal Chrome</option>
-                    <option value="pulse">02 — Dark Pulse</option>
-                    <option value="gradient">03 — Gradient Flow</option>
-                    <option value="brutalist">04 — Brutalist Mono</option>
-                    <option value="glass">05 — Glass Morphism</option>
+                    <option value="chrome">01 Chrome</option><option value="pulse">02 Dark Pulse</option><option value="gradient">03 Gradient</option><option value="brutalist">04 Brutalist</option><option value="glass">05 Glass</option>
+                    <option value="membrane">06 Membrane</option><option value="signal">07 Signal Drift</option><option value="neon">08 Neon Wire</option><option value="mercury">09 Mercury</option><option value="phantom">10 Phantom Grid</option>
+                    <option value="waveform">11 Waveform</option><option value="gravity">12 Gravity Well</option><option value="command">13 Command</option><option value="tectonic">14 Tectonic</option><option value="network">15 Pulse Net</option>
+                    <option value="horizon">16 Split Horizon</option><option value="depth">17 Depth Scan</option><option value="seismo">18 Seismograph</option><option value="filmreel">19 Film Reel</option><option value="anti">20 Anti-UI</option>
                 </select>
             </div>
             <div>
                 <label style="font-size:.52rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gy);display:block;margin-bottom:4px">Layout</label>
                 <select id="layout-select" onchange="switchLayout(this.value)" style="padding:8px 14px;background:var(--wh);border:1px solid var(--bd);border-radius:4px;font-size:.75rem;font-family:var(--ff);font-weight:600;min-width:260px;cursor:pointer">
-                    <option value="hero-scroll">A — Hero Marquee + Vertical Scroll</option>
-                    <option value="split-screen">B — Split Screen (Info | Visual)</option>
-                    <option value="card-grid">C — Card Grid Dashboard</option>
-                    <option value="cinematic">D — Cinematic Full-Bleed</option>
+                    <option value="hero-scroll">A Hero Scroll</option><option value="split-screen">B Split Screen</option><option value="card-grid">C Card Grid</option><option value="cinematic">D Cinematic</option>
+                    <option value="radar">E Radar Compass</option><option value="corridor">F Corridor</option><option value="mosaic">G Generative Mosaic</option>
+                    <option value="filmstrip">H Film Strip</option><option value="terminal">I Terminal</option><option value="magazine">J Magazine</option>
                 </select>
             </div>
         </div>
@@ -729,7 +748,67 @@ Social metrics → Periodic snapshots → Pattern detection
         glass:{ name:'Glass Morphism', bg:'#0a0a1a', fg:'#fff', accent:'#38bdf8', accentRgb:'56,189,248',
             desc:'Frosted glass cards on a deep dark background. Soft glows, blur effects. Premium and modern.',
             heroStyle:'background:linear-gradient(160deg,#0a0a1a,#0f1a2e);color:#fff', cardBg:'rgba(255,255,255,.05)', cardBorder:'rgba(255,255,255,.1)', textMuted:'#88a',
-            anim:'glow', logo:'color:#38bdf8;text-shadow:0 0 30px rgba(56,189,248,.4)' }
+            anim:'glow', logo:'color:#38bdf8;text-shadow:0 0 30px rgba(56,189,248,.4)' },
+        membrane:{ name:'Membrane UI', bg:'#f0ece4', fg:'#1a1a1a', accent:'#8b6914', accentRgb:'139,105,20',
+            desc:'Tactile surface — elements push through like pressing fabric. Warm organic tones.',
+            heroStyle:'background:#f0ece4;color:#1a1a1a', cardBg:'rgba(255,255,255,.6)', cardBorder:'rgba(139,105,20,.15)', textMuted:'#998',
+            anim:'none', logo:'color:#8b6914;text-shadow:0 4px 12px rgba(139,105,20,.2)' },
+        signal:{ name:'Signal Drift', bg:'#050508', fg:'#e0e0e0', accent:'#ff6b35', accentRgb:'255,107,53',
+            desc:'Everything breathes — micro-movements, drifting elements, alive feel. Orange signal accents.',
+            heroStyle:'background:#050508;color:#e0e0e0', cardBg:'rgba(255,107,53,.03)', cardBorder:'rgba(255,107,53,.12)', textMuted:'#666',
+            anim:'pulse', logo:'color:#ff6b35;text-shadow:0 0 24px rgba(255,107,53,.4)' },
+        neon:{ name:'Neon Wireframe', bg:'#000', fg:'#fff', accent:'#39ff14', accentRgb:'57,255,20',
+            desc:'Outline-only elements. Zero fills. Glowing wireframe on black. Pure structure.',
+            heroStyle:'background:#000;color:#fff', cardBg:'transparent', cardBorder:'rgba(57,255,20,.25)', textMuted:'#555',
+            anim:'pulse', logo:'color:#39ff14;text-shadow:0 0 20px rgba(57,255,20,.6);-webkit-text-stroke:1px #39ff14' },
+        mercury:{ name:'Liquid Mercury', bg:'#0c0c10', fg:'#e8e8e8', accent:'#c0c8d8', accentRgb:'192,200,216',
+            desc:'Chrome metallic surfaces. Reflective cards. Iridescent highlights. Liquid metal feel.',
+            heroStyle:'background:linear-gradient(135deg,#0c0c10,#141420);color:#e8e8e8', cardBg:'linear-gradient(135deg,rgba(192,200,216,.06),rgba(192,200,216,.02))', cardBorder:'rgba(192,200,216,.15)', textMuted:'#777',
+            anim:'glow', logo:'background:linear-gradient(90deg,#888,#fff,#999,#ddd,#888);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:300%;animation:gradShift 4s linear infinite' },
+        phantom:{ name:'Phantom Grid', bg:'#fafafa', fg:'#111', accent:'#6366f1', accentRgb:'99,102,241',
+            desc:'Visible grid lines as the design. Structure IS the aesthetic. Indigo accents.',
+            heroStyle:'background:#fafafa;color:#111;background-image:linear-gradient(rgba(99,102,241,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,.06) 1px,transparent 1px);background-size:40px 40px', cardBg:'#fff', cardBorder:'rgba(99,102,241,.15)', textMuted:'#888',
+            anim:'none', logo:'color:#6366f1' },
+        waveform:{ name:'Acoustic Waveform', bg:'#0a0a12', fg:'#fff', accent:'#f472b6', accentRgb:'244,114,182',
+            desc:'Layout shaped by audio waveforms. Pink/magenta accents. Sound made visible.',
+            heroStyle:'background:#0a0a12;color:#fff', cardBg:'rgba(244,114,182,.04)', cardBorder:'rgba(244,114,182,.15)', textMuted:'#777',
+            anim:'pulse', logo:'color:#f472b6;text-shadow:0 0 20px rgba(244,114,182,.4)' },
+        gravity:{ name:'Gravity Well', bg:'#fff', fg:'#000', accent:'#0ea5e9', accentRgb:'14,165,233',
+            desc:'Elements attracted to cursor. Layout bends toward interaction. Sky blue accents.',
+            heroStyle:'background:#fff;color:#000', cardBg:'#fff', cardBorder:'rgba(14,165,233,.12)', textMuted:'#999',
+            anim:'none', logo:'color:#0ea5e9' },
+        command:{ name:'Command Theatre', bg:'#000', fg:'#22c55e', accent:'#22c55e', accentRgb:'34,197,94',
+            desc:'Terminal aesthetic. Green on black. Monospace everything. Hacker energy.',
+            heroStyle:'background:#000;color:#22c55e', cardBg:'rgba(34,197,94,.03)', cardBorder:'rgba(34,197,94,.15)', textMuted:'#1a6b3a',
+            anim:'none', logo:'color:#22c55e;font-family:monospace;text-shadow:0 0 10px rgba(34,197,94,.5)' },
+        tectonic:{ name:'Tectonic Plates', bg:'#1a1a2e', fg:'#fff', accent:'#e11d48', accentRgb:'225,29,72',
+            desc:'Layered shifting panels. Deep navy with rose/crimson accents. Dramatic depth.',
+            heroStyle:'background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff', cardBg:'rgba(225,29,72,.04)', cardBorder:'rgba(225,29,72,.15)', textMuted:'#778',
+            anim:'flow', logo:'color:#e11d48;text-shadow:0 0 20px rgba(225,29,72,.3)' },
+        network:{ name:'Pulse Network', bg:'#060612', fg:'#fff', accent:'#a78bfa', accentRgb:'167,139,250',
+            desc:'Node-graph aesthetic. Particles flowing between connected elements. Violet/lavender.',
+            heroStyle:'background:#060612;color:#fff', cardBg:'rgba(167,139,250,.04)', cardBorder:'rgba(167,139,250,.12)', textMuted:'#666',
+            anim:'glow', logo:'color:#a78bfa;text-shadow:0 0 20px rgba(167,139,250,.5)' },
+        horizon:{ name:'Split Horizon', bg:'#fff', fg:'#000', accent:'#f59e0b', accentRgb:'245,158,11',
+            desc:'Dual-tone split. Left dark, right light. Same content, two moods. Amber accents.',
+            heroStyle:'background:linear-gradient(90deg,#111 50%,#fff 50%);color:#fff', cardBg:'rgba(245,158,11,.04)', cardBorder:'rgba(245,158,11,.15)', textMuted:'#888',
+            anim:'none', logo:'color:#f59e0b' },
+        depth:{ name:'Depth Scanner', bg:'#0f0f0f', fg:'#fff', accent:'#06b6d4', accentRgb:'6,182,212',
+            desc:'Depth-of-field — focused content sharp, rest blurs. Cyan/teal accents. Cinematic.',
+            heroStyle:'background:#0f0f0f;color:#fff', cardBg:'rgba(6,182,212,.04)', cardBorder:'rgba(6,182,212,.12)', textMuted:'#666',
+            anim:'glow', logo:'color:#06b6d4;text-shadow:0 0 30px rgba(6,182,212,.4)' },
+        seismo:{ name:'Seismograph', bg:'#fafaf8', fg:'#111', accent:'#dc2626', accentRgb:'220,38,38',
+            desc:'Live-trace aesthetic. Continuous animated line. Red alert accents. Urgency feel.',
+            heroStyle:'background:#fafaf8;color:#111', cardBg:'#fff', cardBorder:'rgba(220,38,38,.12)', textMuted:'#888',
+            anim:'none', logo:'color:#dc2626;border-bottom:2px solid #dc2626' },
+        filmreel:{ name:'Film Reel', bg:'#1a1a1a', fg:'#f5f0e0', accent:'#fbbf24', accentRgb:'251,191,36',
+            desc:'Cinematic film strip. Warm sepia tones. Sprocket holes. Nostalgic gold accents.',
+            heroStyle:'background:#1a1a1a;color:#f5f0e0', cardBg:'rgba(251,191,36,.04)', cardBorder:'rgba(251,191,36,.12)', textMuted:'#998',
+            anim:'none', logo:'color:#fbbf24;text-shadow:0 2px 8px rgba(251,191,36,.3)' },
+        anti:{ name:'Anti-Interface', bg:'#fffef5', fg:'#222', accent:'#1d4ed8', accentRgb:'29,78,216',
+            desc:'Deliberately imperfect. Handwritten notes, marker highlights, paper texture. Human.',
+            heroStyle:'background:#fffef5;color:#222;background-image:repeating-linear-gradient(0deg,transparent,transparent 27px,rgba(0,0,0,.03) 28px)', cardBg:'#fff', cardBorder:'#ccc', textMuted:'#777',
+            anim:'none', logo:'color:#222;font-family:Georgia,serif;font-style:italic;text-decoration:underline wavy #1d4ed8' }
     };
 
     var chartData={labels:['2018','2019','2020','2021','2022','2023','2024','2025','2026'],ig:[200,500,1200,3500,8000,18000,32000,45000,54000],streams:[0,0,0,5000,50000,800000,1500000,1800000,2100000],gigs:[2,5,8,12,20,35,48,55,30]};
@@ -1139,7 +1218,13 @@ Social metrics → Periodic snapshots → Pattern detection
         if(currentLayout==='split-screen') return getSplitLayout(d,id,accentA);
         if(currentLayout==='card-grid') return getCardGridLayout(d,id,accentA);
         if(currentLayout==='cinematic') return getCinematicLayout(d,id,accentA);
-        return null; // default hero-scroll handled by main switchDesign
+        if(currentLayout==='radar') return getRadarLayout(d,id,accentA);
+        if(currentLayout==='corridor') return getCorridorLayout(d,id,accentA);
+        if(currentLayout==='mosaic') return getMosaicLayout(d,id,accentA);
+        if(currentLayout==='filmstrip') return getFilmstripLayout(d,id,accentA);
+        if(currentLayout==='terminal') return getTerminalLayout(d,id,accentA);
+        if(currentLayout==='magazine') return getMagazineLayout(d,id,accentA);
+        return null;
     }
 
     var CITIES=[
@@ -1359,6 +1444,217 @@ Social metrics → Periodic snapshots → Pattern detection
         h+=cssBar(chartData.gigs,55,d.accent,chartData.labels);
         h+='</div></div></div></div>';
 
+        h+=globeHTML(d);
+        h+='</div>';
+        return h;
+    }
+
+    function getRadarLayout(d,id,accentA){
+        var h='<div style="'+d.heroStyle+';font-family:var(--ff);min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">';
+        // Radar rings
+        h+='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">';
+        for(var r=1;r<=5;r++){
+            var size=r*160;
+            h+='<div style="position:absolute;width:'+size+'px;height:'+size+'px;border-radius:50%;border:1px solid '+d.cardBorder+';opacity:'+(0.5-r*0.08)+'"></div>';
+        }
+        // Sweep line
+        h+='<div style="position:absolute;width:400px;height:2px;background:linear-gradient(90deg,transparent,'+d.accent+');transform-origin:left center;animation:radarSweep 6s linear infinite"></div>';
+        h+='</div>';
+        // Center hub
+        h+='<div style="position:relative;z-index:2;text-align:center">';
+        h+='<div style="font-size:2rem;font-weight:900;letter-spacing:.2em;text-transform:uppercase;'+d.logo+';margin-bottom:6px">LABS</div>';
+        h+='<div style="font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:'+d.textMuted+'">Founded For The Future</div>';
+        h+='</div>';
+        // Orbital nodes
+        var nodes=[{label:'Luciid',angle:30,dist:200,size:60},{label:'54K IG',angle:90,dist:280,size:44},{label:'2M Streams',angle:150,dist:240,size:48},{label:'10 Countries',angle:210,dist:300,size:44},{label:'AGONY',angle:270,dist:220,size:44},{label:'6 Labels',angle:330,dist:260,size:44}];
+        nodes.forEach(function(n){
+            var rad=n.angle*Math.PI/180;
+            var x=Math.cos(rad)*n.dist;
+            var y=Math.sin(rad)*n.dist;
+            h+='<div style="position:absolute;top:50%;left:50%;transform:translate(calc(-50% + '+Math.round(x)+'px),calc(-50% + '+Math.round(y)+'px));width:'+n.size+'px;height:'+n.size+'px;border-radius:50%;background:'+accentA+';border:1px solid '+d.cardBorder+';display:flex;align-items:center;justify-content:center;font-size:.5rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:'+d.accent+';z-index:3;animation:fadeSlide .5s ease '+(n.angle/360)+'s both">'+n.label+'</div>';
+        });
+        h+='</div>';
+        h+=globeHTML(d);
+        return h;
+    }
+
+    function getCorridorLayout(d,id,accentA){
+        var h='<div style="'+d.heroStyle+';font-family:var(--ff);overflow:hidden;perspective:1200px">';
+        // Corridor
+        h+='<div style="padding:60px 0;transform-style:preserve-3d">';
+        // Vanishing point header
+        h+='<div style="text-align:center;padding:40px;margin-bottom:40px">';
+        h+='<div style="font-size:3rem;font-weight:900;letter-spacing:.2em;text-transform:uppercase;'+d.logo+'">LABS</div>';
+        h+='<div style="font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:'+d.textMuted+';margin-top:6px">Founded For The Future</div></div>';
+        // Corridor panels
+        var panels=[
+            {title:'Artist',content:'Luciid — Hard Techno — 54K IG — 2M+ Streams'},
+            {title:'Stats',content:'10+ Countries — 6 Labels — Beatport #15'},
+            {title:'Services',content:'Management — Booking — Development — Marketing'},
+            {title:'Vision',content:'Transparent. Data-driven. Community-first.'}
+        ];
+        panels.forEach(function(p,i){
+            var rotY=(i%2===0?-3:3);
+            var translateZ=-i*30;
+            h+='<div style="max-width:700px;margin:0 auto '+(20+i*4)+'px;padding:24px 30px;background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:10px;transform:perspective(800px) rotateY('+rotY+'deg) translateZ('+translateZ+'px);transition:transform .3s;'+(d.anim==='glass'?'backdrop-filter:blur(12px);':'')+'" onmouseenter="this.style.transform=\'perspective(800px) rotateY(0) translateZ(20px) scale(1.02)\'" onmouseleave="this.style.transform=\'perspective(800px) rotateY('+rotY+'deg) translateZ('+translateZ+'px)\'">';
+            h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.accent+';margin-bottom:6px">'+p.title+'</div>';
+            h+='<div style="font-size:.82rem;color:'+d.textMuted+'">'+p.content+'</div>';
+            h+='</div>';
+        });
+        // KPIs
+        h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:700px;margin:20px auto">';
+        [{v:'54K',l:'Instagram'},{v:'2M+',l:'Streams'},{v:'10+',l:'Countries'},{v:'6',l:'Labels'}].forEach(function(k){
+            h+='<div style="text-align:center;padding:18px;background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px"><div style="font-size:1.4rem;font-weight:200;font-family:var(--mn)">'+k.v+'</div><div style="font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-top:4px">'+k.l+'</div></div>';
+        });
+        h+='</div>';
+        h+='<div style="max-width:700px;margin:20px auto"><div style="font-size:.5rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:6px">Streams Growth</div>';
+        h+=cssBar(chartData.streams,2100000,d.accent,chartData.labels)+'</div>';
+        h+='</div>';
+        h+=globeHTML(d);
+        h+='</div>';
+        return h;
+    }
+
+    function getMosaicLayout(d,id,accentA){
+        var h='<div style="'+d.heroStyle+';font-family:var(--ff);min-height:100vh;padding:20px">';
+        // Generative-style grid with varied sizes
+        h+='<div style="display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:80px;gap:10px;max-width:1100px;margin:0 auto">';
+        var cells=[
+            {col:'span 3',row:'span 3',content:'<div style="font-size:2.4rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase;'+d.logo+'">LABS</div><div style="font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:'+d.textMuted+';margin-top:6px">Founded For The Future</div>'},
+            {col:'span 3',row:'span 2',content:'<div style="font-size:.5rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.accent+';margin-bottom:8px">Featured</div><div style="font-size:1.2rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase">Luciid</div><div style="font-size:.65rem;color:'+d.textMuted+';margin-top:4px">Hard Techno &middot; Ireland &middot; Established</div>'},
+            {col:'span 2',row:'span 2',content:'<div style="text-align:center"><div style="font-size:2.2rem;font-weight:200;font-family:var(--mn)">54K</div><div style="font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-top:4px">Instagram</div></div>'},
+            {col:'span 2',row:'span 2',content:'<div style="text-align:center"><div style="font-size:2.2rem;font-weight:200;font-family:var(--mn)">2M+</div><div style="font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-top:4px">Streams</div></div>'},
+            {col:'span 2',row:'span 2',content:'<div style="text-align:center"><div style="font-size:2.2rem;font-weight:200;font-family:var(--mn)">10+</div><div style="font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-top:4px">Countries</div></div>'},
+            {col:'span 3',row:'span 3',content:'<div style="font-size:.5rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:6px">Instagram Growth</div>'+cssBar(chartData.ig,54000,d.accent,chartData.labels)},
+            {col:'span 3',row:'span 3',content:'<div style="font-size:.5rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:6px">Streams</div>'+cssBar(chartData.streams,2100000,d.accent,chartData.labels)},
+            {col:'span 4',row:'span 2',content:'<div style="font-size:.72rem;color:'+d.textMuted+';line-height:1.8;font-style:italic">"We need to stop thinking of Spotify plays and start thinking about legacy." — Luciid</div>'},
+            {col:'span 2',row:'span 2',content:'<div style="font-size:.5rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.accent+';margin-bottom:8px">Labels</div><div style="font-size:.62rem;color:'+d.textMuted+';line-height:1.8">AGONY &middot; Kneaded Pains &middot; Suara &middot; NineTimesNine</div>'},
+            {col:'span 3',row:'span 2',content:'<div style="font-size:.5rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.accent+';margin-bottom:8px">Venues</div><div style="font-size:.62rem;color:'+d.textMuted+';line-height:1.8">Fabrik &middot; OST Berlin &middot; Cocoricò &middot; Terminal V &middot; VERKNIPT</div>'},
+            {col:'span 3',row:'span 2',content:'<div style="text-align:center;padding:16px"><button style="padding:12px 32px;background:'+d.accent+';border:none;border-radius:4px;color:'+(d.bg==='#fff'||d.bg==='#fafafa'||d.bg==='#f5f5f0'||d.bg==='#f0ece4'||d.bg==='#fffef5'?d.bg:'#000')+';font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-family:var(--ff)">Join The Roster</button></div>'}
+        ];
+        cells.forEach(function(c,i){
+            h+='<div style="grid-column:'+c.col+';grid-row:'+c.row+';background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:16px;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:transform .2s;animation:fadeSlide .4s ease '+(i*0.05)+'s both;'+(d.anim==='glass'?'backdrop-filter:blur(12px);':'')+'" onmouseenter="this.style.transform=\'scale(1.02)\'" onmouseleave="this.style.transform=\'scale(1)\'">';
+            h+=c.content+'</div>';
+        });
+        h+='</div>';
+        h+=globeHTML(d);
+        h+='</div>';
+        return h;
+    }
+
+    function getFilmstripLayout(d,id,accentA){
+        var h='<div style="'+d.heroStyle+';font-family:var(--ff);overflow:hidden">';
+        // Film strip header
+        h+='<div style="text-align:center;padding:50px 40px 20px">';
+        h+='<div style="font-size:2rem;font-weight:900;letter-spacing:.2em;text-transform:uppercase;'+d.logo+'">LABS</div>';
+        h+='<div style="font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:'+d.textMuted+';margin-top:6px">Founded For The Future</div></div>';
+        // Sprocket border
+        var sprocket='<div style="display:flex;gap:12px;padding:8px 20px;justify-content:center">';
+        for(var s=0;s<30;s++) sprocket+='<div style="width:10px;height:10px;border-radius:2px;background:'+d.cardBorder+'"></div>';
+        sprocket+='</div>';
+        h+=sprocket;
+        // Horizontal film frames
+        h+='<div style="overflow-x:auto;padding:10px 20px;white-space:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none">';
+        h+='<div style="display:inline-flex;gap:14px">';
+        var frames=[
+            {title:'2018',sub:'Launched Luciid',stat:'200 IG'},
+            {title:'2019',sub:'First RA Event',stat:'500 IG'},
+            {title:'2022',sub:'Paro Hour',stat:'8K IG — 50K Streams'},
+            {title:'2023',sub:'AGONY Label + Suara',stat:'18K IG — 800K Streams'},
+            {title:'2024',sub:'Reeluv Album',stat:'32K IG — 1.5M Streams'},
+            {title:'2026',sub:'International Circuit',stat:'54K IG — 2.1M Streams'},
+            {title:'Now',sub:'Join Labs Institute',stat:'Apply Today'}
+        ];
+        frames.forEach(function(f,i){
+            h+='<div style="display:inline-block;width:240px;background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:24px;white-space:normal;vertical-align:top;transition:transform .2s;flex-shrink:0;'+(d.anim==='glass'?'backdrop-filter:blur(12px);':'')+'" onmouseenter="this.style.transform=\'scale(1.05)\'" onmouseleave="this.style.transform=\'scale(1)\'">';
+            h+='<div style="font-size:1.4rem;font-weight:200;font-family:var(--mn);color:'+d.accent+'">'+f.title+'</div>';
+            h+='<div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:6px">'+f.sub+'</div>';
+            h+='<div style="font-size:.62rem;color:'+d.textMuted+';margin-top:6px">'+f.stat+'</div>';
+            h+='</div>';
+        });
+        h+='</div></div>';
+        h+=sprocket;
+        // Charts below
+        h+='<div style="padding:30px 40px;max-width:1000px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">';
+        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:14px"><div style="font-size:.5rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:6px">Instagram</div>'+cssBar(chartData.ig,54000,d.accent,chartData.labels)+'</div>';
+        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:14px"><div style="font-size:.5rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:6px">Streams</div>'+cssBar(chartData.streams,2100000,d.accent,chartData.labels)+'</div>';
+        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:14px"><div style="font-size:.5rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:6px">Gigs</div>'+cssBar(chartData.gigs,55,d.accent,chartData.labels)+'</div>';
+        h+='</div>';
+        h+=globeHTML(d);
+        h+='</div>';
+        return h;
+    }
+
+    function getTerminalLayout(d,id,accentA){
+        var h='<div style="background:#000;color:#22c55e;font-family:monospace;min-height:100vh;padding:20px">';
+        h+='<div style="max-width:900px;margin:0 auto;font-size:.75rem;line-height:2">';
+        h+='<div style="color:#555">labs@institute:~$ cat /about</div>';
+        h+='<div style="margin:10px 0"><span style="color:'+d.accent+'">LABS.INSTITUTE</span> — Founded For The Future</div>';
+        h+='<div style="color:#555;margin-top:16px">labs@institute:~$ show roster --featured</div>';
+        h+='<div style="margin:10px 0;padding:14px;border:1px solid rgba(34,197,94,.15);border-radius:4px">';
+        h+='<div>ARTIST: <span style="color:'+d.accent+'">Luciid</span> (Luke Pollock)</div>';
+        h+='<div>ORIGIN: Ireland | TIER: Established | GENRES: Hard Techno, Schranz</div>';
+        h+='<div>LABELS: AGONY (founder), Kneaded Pains, Suara, NineTimesNine</div>';
+        h+='<div style="margin-top:6px">SUPPORTED BY: Amelie Lens, Kobosil, Dubfire, 999999999</div></div>';
+        h+='<div style="color:#555;margin-top:16px">labs@institute:~$ stats --kpi</div>';
+        h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0">';
+        [{v:'54,000',l:'IG Followers'},{v:'2,100,000',l:'Streams'},{v:'10+',l:'Countries'},{v:'6',l:'Labels'}].forEach(function(k){
+            h+='<div style="padding:12px;border:1px solid rgba(34,197,94,.12);border-radius:4px;text-align:center"><div style="font-size:1.2rem;color:'+d.accent+'">'+k.v+'</div><div style="font-size:.55rem;color:#555;margin-top:2px">'+k.l+'</div></div>';
+        });
+        h+='</div>';
+        h+='<div style="color:#555;margin-top:16px">labs@institute:~$ chart ig-growth --years=2018-2026</div>';
+        h+='<div style="margin:10px 0;padding:14px;border:1px solid rgba(34,197,94,.12);border-radius:4px">';
+        h+=cssBar(chartData.ig,54000,d.accent,chartData.labels);
+        h+='</div>';
+        h+='<div style="color:#555;margin-top:16px">labs@institute:~$ chart streams --years=2018-2026</div>';
+        h+='<div style="margin:10px 0;padding:14px;border:1px solid rgba(34,197,94,.12);border-radius:4px">';
+        h+=cssBar(chartData.streams,2100000,d.accent,chartData.labels);
+        h+='</div>';
+        h+='<div style="color:#555;margin-top:16px">labs@institute:~$ ai suggest --top=3</div>';
+        h+='<div style="margin:10px 0;padding:14px;border:1px solid rgba(34,197,94,.12);border-radius:4px;border-left:3px solid '+d.accent+'">';
+        h+='<div>[OPPORTUNITY] VERKNIPT Festival accepting submissions — genre fit 92%</div>';
+        h+='<div>[GAP] No Instagram post in 9 days — BTS content gets 2.4x engagement</div>';
+        h+='<div>[PRICING] Printworks inquiry: recommend £1,100 based on market data</div>';
+        h+='</div>';
+        h+='<div style="color:#555;margin-top:16px">labs@institute:~$ <span style="animation:blink 1s step-end infinite">_</span></div>';
+        h+='</div></div>';
+        return h;
+    }
+
+    function getMagazineLayout(d,id,accentA){
+        var h='<div style="'+d.heroStyle+';font-family:var(--ff);min-height:100vh">';
+        // Magazine header
+        h+='<div style="text-align:center;padding:40px;border-bottom:3px solid '+d.fg+'">';
+        h+='<div style="font-size:3rem;font-weight:900;letter-spacing:.3em;text-transform:uppercase;'+d.logo+'">LABS</div>';
+        h+='<div style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:'+d.textMuted+';margin-top:4px">INSTITUTE &middot; EST. 2024 &middot; MANCHESTER</div>';
+        h+='<div style="width:60px;height:2px;background:'+d.accent+';margin:12px auto 0"></div></div>';
+        // Magazine grid (editorial)
+        h+='<div style="display:grid;grid-template-columns:2fr 1fr;max-width:1000px;margin:0 auto">';
+        // Main column
+        h+='<div style="padding:40px;border-right:1px solid '+d.cardBorder+'">';
+        h+='<div style="font-size:.5rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:'+d.accent+'">Cover Story</div>';
+        h+='<div style="font-size:1.8rem;font-weight:900;letter-spacing:.02em;text-transform:uppercase;margin:10px 0 16px;line-height:1.2">From Northern Ireland to Berlin Headliners</div>';
+        h+='<div style="font-size:.78rem;color:'+d.textMuted+';line-height:2;margin-bottom:20px">Luciid (Luke Pollock) began honing his skills in the quiet corners of Northern Ireland. His future-facing sound fusing elements of rave with power-driven big-room techno has established him as one of the hottest names in the harder techno fraternity.</div>';
+        h+='<div style="font-size:.78rem;color:'+d.textMuted+';line-height:2;margin-bottom:20px">Supported by Amelie Lens, Kobosil, Dubfire, and 999999999 — with releases on Kneaded Pains, Suara, and his own AGONY label — Luciid is the sound of underground techno management done right.</div>';
+        // Pull quote
+        h+='<div style="padding:20px 0;margin:16px 0;border-top:1px solid '+d.cardBorder+';border-bottom:1px solid '+d.cardBorder+';font-size:1.1rem;font-style:italic;line-height:1.6;text-align:center">"We need to stop thinking of Spotify plays and start thinking about legacy."</div>';
+        h+='<div style="font-size:.5rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin:16px 0 8px">Growth Under Labs</div>';
+        h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
+        h+='<div style="padding:14px;border:1px solid '+d.cardBorder+';border-radius:6px"><div style="font-size:.48rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:6px">Instagram</div>'+cssBar(chartData.ig,54000,d.accent,chartData.labels)+'</div>';
+        h+='<div style="padding:14px;border:1px solid '+d.cardBorder+';border-radius:6px"><div style="font-size:.48rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:6px">Streams</div>'+cssBar(chartData.streams,2100000,d.accent,chartData.labels)+'</div>';
+        h+='</div></div>';
+        // Sidebar
+        h+='<div style="padding:40px 30px">';
+        h+='<div style="font-size:.5rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:'+d.accent+';margin-bottom:12px">Quick Stats</div>';
+        [{v:'54K',l:'Instagram'},{v:'2.1M',l:'Total Streams'},{v:'10+',l:'Countries Played'},{v:'6',l:'Labels Released On'},{v:'4',l:'Festivals 2026'},{v:'#15',l:'Beatport Peak'}].forEach(function(k){
+            h+='<div style="padding:12px 0;border-bottom:1px solid '+d.cardBorder+';display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:.65rem;color:'+d.textMuted+'">'+k.l+'</span><span style="font-size:1rem;font-weight:200;font-family:var(--mn)">'+k.v+'</span></div>';
+        });
+        h+='<div style="font-size:.5rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:'+d.accent+';margin:20px 0 10px">Services</div>';
+        ['Management','Booking','Development','Marketing','Content','Strategy'].forEach(function(s){
+            h+='<div style="font-size:.68rem;color:'+d.textMuted+';padding:4px 0;border-bottom:1px solid '+d.cardBorder+'">'+s+'</div>';
+        });
+        h+='<div style="margin-top:20px;text-align:center"><button style="padding:12px 28px;background:'+d.accent+';border:none;border-radius:4px;color:'+(d.bg==='#fff'||d.bg==='#fafafa'||d.bg==='#f5f5f0'||d.bg==='#f0ece4'||d.bg==='#fffef5'?d.bg:'#000')+';font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-family:var(--ff);width:100%">Join Roster</button></div>';
+        h+='</div></div>';
         h+=globeHTML(d);
         h+='</div>';
         return h;
@@ -1585,7 +1881,7 @@ Social metrics → Periodic snapshots → Pattern detection
 
     // Add animation keyframes
     var styleEl=document.createElement('style');
-    styleEl.textContent='@keyframes pulseGlow{0%,100%{opacity:.6}50%{opacity:1}}@keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}@keyframes glitchShift{0%,100%{transform:none}25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}';
+    styleEl.textContent='@keyframes pulseGlow{0%,100%{opacity:.6}50%{opacity:1}}@keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}@keyframes glitchShift{0%,100%{transform:none}25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}@keyframes radarSweep{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}@keyframes blink{50%{opacity:0}}';
     document.head.appendChild(styleEl);
 
 })();
