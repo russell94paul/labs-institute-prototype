@@ -299,6 +299,7 @@
             <div class="L-mode" data-v="tech">Components</div>
             <div class="L-mode" data-v="workflows">Workflows</div>
             <div class="L-mode" data-v="requests">Requests</div>
+            <div class="L-mode" data-v="architecture">Architecture</div>
             <div class="L-mode" data-v="guide">Guide</div>
         </div>
         <div style="display:flex;align-items:center;gap:12px">
@@ -686,6 +687,11 @@
     <!-- ============ WORKFLOWS ============ -->
     <div class="L-view" id="v-workflows">
         <div id="workflows-content" style="max-height:calc(100vh - 60px);overflow-y:auto"></div>
+    </div>
+
+    <!-- ============ ARCHITECTURE ============ -->
+    <div class="L-view" id="v-architecture">
+        <div id="architecture-content" style="max-height:calc(100vh - 60px);overflow-y:auto"></div>
     </div>
 
     <!-- ============ GUIDE ============ -->
@@ -2720,6 +2726,14 @@ Social metrics → Periodic snapshots → Pattern detection
         document.getElementById('chat-toggle').style.display=isSite&&!chatPanelOpen?'flex':'none';
         document.getElementById('chat-panel').style.right=isSite&&chatPanelOpen?'0':'-360px';
     };
+
+    // Load architecture
+    fetch('/pages/architecture.html').then(function(r){return r.text()}).then(function(html){
+        var m=html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+        var el=document.getElementById('architecture-content');
+        if(el&&m) el.innerHTML=m[1]; else if(el) el.innerHTML=html;
+        setTimeout(applyThemeToAll,50);
+    }).catch(function(){});
 
     // Load guide
     fetch('/pages/guide.html').then(function(r){return r.text()}).then(function(html){
