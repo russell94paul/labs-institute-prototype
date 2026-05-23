@@ -212,7 +212,21 @@
             <div class="L-mode" data-v="apps">Apps</div>
             <div class="L-mode" data-v="tech">Components</div>
         </div>
-        <div class="L-tagline">Founded For The Future</div>
+        <div style="display:flex;align-items:center;gap:12px">
+            <select id="theme-global" onchange="applyGlobalTheme(this.value)" style="padding:5px 10px;background:var(--wh);border:1px solid var(--bd);border-radius:3px;font-size:.58rem;font-family:var(--ff);font-weight:600;cursor:pointer">
+                <option value="chrome">Chrome</option>
+                <option value="pulse">Dark Pulse</option>
+                <option value="gradient">Gradient</option>
+                <option value="brutalist">Brutalist</option>
+                <option value="glass">Glass</option>
+            </select>
+            <select id="layout-global" onchange="applyGlobalLayout(this.value)" style="padding:5px 10px;background:var(--wh);border:1px solid var(--bd);border-radius:3px;font-size:.58rem;font-family:var(--ff);font-weight:600;cursor:pointer">
+                <option value="hero-scroll">Layout A</option>
+                <option value="split-screen">Layout B</option>
+                <option value="card-grid">Layout C</option>
+                <option value="cinematic">Layout D</option>
+            </select>
+        </div>
     </div>
 
     <!-- ============ SITE PREVIEW ============ -->
@@ -747,6 +761,10 @@ Social metrics → Periodic snapshots → Pattern detection
 
     window.switchDesign=function(id){
         var d=DESIGNS[id]; if(!d) return;
+        globalTheme=id;
+        var tg=document.getElementById('theme-global');
+        if(tg) tg.value=id;
+        applyThemeToAll();
         if(liveCounterInterval) clearInterval(liveCounterInterval);
         if(aiTypeInterval) clearInterval(aiTypeInterval);
         var accentA='rgba('+d.accentRgb+',.15)';
@@ -1096,6 +1114,9 @@ Social metrics → Periodic snapshots → Pattern detection
     var currentLayout='hero-scroll';
     window.switchLayout=function(id){
         currentLayout=id;
+        globalLayout=id;
+        var gl=document.getElementById('layout-global');
+        if(gl) gl.value=id;
         var sel=document.getElementById('design-select');
         switchDesign(sel?sel.value:'chrome');
     };
@@ -1441,6 +1462,90 @@ Social metrics → Periodic snapshots → Pattern detection
         document.getElementById('app-preview').innerHTML=h;
     };
     switchApp('founder');
+
+    // Global theme/layout application
+    var globalTheme='chrome';
+    var globalLayout='hero-scroll';
+
+    window.applyGlobalTheme=function(id){
+        globalTheme=id;
+        var dsSel=document.getElementById('design-select');
+        if(dsSel) dsSel.value=id;
+        applyThemeToAll();
+        switchDesign(id);
+    };
+    window.applyGlobalLayout=function(id){
+        globalLayout=id;
+        currentLayout=id;
+        var lsSel=document.getElementById('layout-select');
+        if(lsSel) lsSel.value=id;
+        switchDesign(globalTheme);
+    };
+
+    function applyThemeToAll(){
+        var d=DESIGNS[globalTheme];if(!d)return;
+        var isLight=d.bg==='#fff'||d.bg==='#ffffff'||d.bg==='#f5f5f0';
+
+        // Site Preview tab
+        var site=document.getElementById('v-site');
+        if(site){
+            site.style.background=d.bg;site.style.color=d.fg;
+            site.querySelectorAll('.S-section,.S-about p,.S-dj-genre,.S-dj-kpi,.S-svc-desc,.S-dj-profile-bio,.S-dj-profile-origin,.S-dj-tl-text,.S-dj-release-label').forEach(function(el){el.style.color=isLight?'':'#ccc';});
+        }
+
+        // Admin tab
+        var admin=document.getElementById('v-admin');
+        if(admin){
+            admin.style.background=d.bg;admin.style.color=d.fg;
+            admin.querySelectorAll('.A-input,.A-textarea').forEach(function(el){el.style.background=isLight?'#fff':d.cardBg;el.style.color=d.fg;el.style.borderColor=d.cardBorder;});
+            admin.querySelectorAll('.A-info').forEach(function(el){el.style.background=isLight?'#f8f8f8':d.cardBg;el.style.borderColor=d.cardBorder;el.style.color=d.textMuted;});
+            admin.querySelectorAll('.A-dj').forEach(function(el){el.style.borderColor=d.cardBorder;el.style.background=isLight?'#fff':d.cardBg;});
+            admin.querySelectorAll('.A-title').forEach(function(el){el.style.color=isLight?'#000':d.accent;});
+            admin.querySelectorAll('.A-label').forEach(function(el){el.style.color=d.textMuted;});
+            admin.querySelectorAll('.A-section').forEach(function(el){el.style.borderColor=d.cardBorder;});
+            admin.querySelectorAll('.A-btn-bk').forEach(function(el){el.style.background=d.accent;el.style.color=isLight?d.bg:'#000';});
+            admin.querySelectorAll('.A-btn-ghost').forEach(function(el){el.style.color=d.fg;el.style.borderColor=d.cardBorder;});
+        }
+
+        // Roadmap tab
+        var roadmap=document.getElementById('v-roadmap');
+        if(roadmap){
+            roadmap.style.background=d.bg;roadmap.style.color=d.fg;
+            roadmap.querySelectorAll('.R-phase,.R-tier,.R-intel').forEach(function(el){el.style.borderColor=d.cardBorder;el.style.background=isLight?'#fff':d.cardBg;});
+            roadmap.querySelectorAll('.R-phase-desc,.R-sub,.R-tier-desc').forEach(function(el){el.style.color=d.textMuted;});
+            roadmap.querySelectorAll('.R-phase-id').forEach(function(el){el.style.color=d.textMuted;});
+            roadmap.querySelectorAll('.R-intel-flow').forEach(function(el){el.style.background=isLight?'#fafafa':d.bg;el.style.color=d.textMuted;});
+        }
+
+        // Apps tab
+        var apps=document.getElementById('v-apps');
+        if(apps){
+            apps.style.background=d.bg;apps.style.color=d.fg;
+            apps.querySelectorAll('#app-preview div[style*="border"]').forEach(function(el){
+                if(el.style.borderColor)el.style.borderColor=d.cardBorder;
+            });
+        }
+
+        // Components tab
+        var tech=document.getElementById('v-tech');
+        if(tech){
+            tech.style.background=d.bg;tech.style.color=d.fg;
+        }
+
+        // Top bar
+        var top=document.querySelector('.L-top');
+        if(top){top.style.background=d.bg;top.style.borderColor=d.cardBorder;}
+        var brand=document.querySelector('.L-brand');
+        if(brand) brand.style.color=d.fg;
+        document.querySelectorAll('.L-mode').forEach(function(el){
+            if(!el.classList.contains('on'))el.style.color=d.textMuted;
+        });
+
+        // Selector bars
+        document.querySelectorAll('.L-view > div[style*="border-bottom"]').forEach(function(el){
+            el.style.background=d.bg;el.style.borderColor=d.cardBorder;
+        });
+    }
 
     // Init designs tab
     switchDesign('chrome');
