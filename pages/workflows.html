@@ -994,7 +994,7 @@
     // Load roster for DJ context
     var wfRoster=[];
     var activeDJIdx=0;
-    fetch('/data/labs-roster.json').then(function(r){return r.ok?r.json():[]}).then(function(d){
+    fetch('data/labs-roster.json').then(function(r){return r.ok?r.json():[]}).then(function(d){
         wfRoster=d||[];
         renderRosterContext();
     }).catch(function(){
