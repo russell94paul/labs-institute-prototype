@@ -2058,8 +2058,12 @@ Social metrics → Periodic snapshots → Pattern detection
         currentLayout=id;
         var lsSel=document.getElementById('layout-select');
         if(lsSel) lsSel.value=id;
-        switchDesign(globalTheme);
+        // Update Designs tab if its container exists
+        if(document.getElementById('design-preview')) switchDesign(globalTheme);
+        // Always update Site Preview
         applySiteLayout(id);
+        // Reapply theme to newly rendered content
+        setTimeout(function(){applyThemeToAll()},50);
     };
 
     function applySiteLayout(id){
