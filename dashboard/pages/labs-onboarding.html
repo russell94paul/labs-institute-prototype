@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+    .li-page { padding: 28px 20px; max-width: 1000px; margin: 0 auto; }
+
+    .li-header { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+    .li-logo {
+        width: 42px; height: 42px; border-radius: 12px;
+        background: linear-gradient(135deg, #f59e0b, #ef4444);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 16px; font-weight: 900; color: #fff;
+        box-shadow: 0 0 20px rgba(245,158,11,0.3);
+    }
+    .li-header h1 { font-size: 1.4rem; font-weight: 700; text-align: left; letter-spacing: 0; }
+    .li-header-sub { font-size: 0.72rem; color: var(--text-dim); }
+
+    .li-intro {
+        font-size: 0.78rem; color: var(--text-muted); margin-bottom: 20px;
+        line-height: 1.7; max-width: 700px;
+    }
+
+    /* Progress sidebar */
+    .li-layout { display: flex; gap: 24px; }
+    .li-sidebar {
+        width: 200px; flex-shrink: 0; position: sticky; top: 80px; align-self: flex-start;
+    }
+    .li-sidebar-item {
+        display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+        font-size: 0.72rem; color: var(--text-dim); cursor: pointer;
+        border-radius: 8px; margin-bottom: 2px; transition: all 0.15s;
+        border-left: 2px solid transparent;
+    }
+    .li-sidebar-item:hover { color: var(--text-secondary); background: rgba(255,255,255,0.02); }
+    .li-sidebar-item.active { color: #f59e0b; border-left-color: #f59e0b; background: rgba(245,158,11,0.04); }
+    .li-sidebar-item.complete { color: var(--accent-green); }
+    .li-sidebar-dot {
+        width: 8px; height: 8px; border-radius: 50%;
+        background: rgba(255,255,255,0.1); flex-shrink: 0;
+    }
+    .li-sidebar-item.active .li-sidebar-dot { background: #f59e0b; }
+    .li-sidebar-item.complete .li-sidebar-dot { background: var(--accent-green); }
+
+    .li-main { flex: 1; min-width: 0; }
+
+    /* Sections */
+    .li-section {
+        background: var(--card-gradient); border: 1px solid var(--border-medium);
+        border-radius: 14px; padding: 24px; margin-bottom: 16px;
+    }
+    .li-section-hdr {
+        display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+    }
+    .li-section-num {
+        width: 28px; height: 28px; border-radius: 8px;
+        background: rgba(245,158,11,0.12); color: #f59e0b;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.72rem; font-weight: 800; flex-shrink: 0;
+    }
+    .li-section-title { font-size: 0.95rem; font-weight: 700; color: #fff; }
+    .li-section-desc {
+        font-size: 0.72rem; color: var(--text-dim); margin-left: 38px;
+        margin-top: -10px; margin-bottom: 14px;
+    }
+
+    .li-field-label {
+        font-size: 0.68rem; font-weight: 700; color: var(--text-label);
+        text-transform: uppercase; letter-spacing: 0.05em;
+        margin: 14px 0 6px;
+    }
+    .li-field-label:first-child { margin-top: 0; }
+    .li-field-hint {
+        font-size: 0.65rem; color: var(--text-faint); margin-top: 3px;
+    }
+    .li-required::after { content: ' *'; color: var(--accent-red); }
+
+    /* DJ Cards */
+    .li-dj-cards { display: grid; gap: 12px; }
+    .li-dj-card {
+        background: rgba(0,0,0,0.2); border: 1px solid var(--border-light);
+        border-radius: 12px; padding: 16px;
+    }
+    .li-dj-card-hdr {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 12px;
+    }
+    .li-dj-card-title { font-size: 0.82rem; font-weight: 700; color: #fff; }
+    .li-dj-remove {
+        background: none; border: none; color: var(--accent-red);
+        cursor: pointer; font-size: 14px; opacity: 0.6;
+    }
+    .li-dj-remove:hover { opacity: 1; }
+    .li-dj-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    }
+    .li-dj-grid-3 {
+        display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+    }
+
+    /* KPI inputs */
+    .li-kpi-row {
+        display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px;
+        margin-bottom: 8px;
+    }
+    .li-kpi-cell {
+        text-align: center; padding: 8px;
+        background: rgba(255,255,255,0.02); border: 1px solid var(--border-light);
+        border-radius: 8px;
+    }
+    .li-kpi-cell label {
+        font-size: 0.62rem; color: var(--text-dim); display: block;
+        text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px;
+    }
+    .li-kpi-cell input {
+        width: 100%; text-align: center; background: none; border: none;
+        color: var(--text-primary); font-size: 0.88rem; font-weight: 700;
+        font-family: var(--font-mono); outline: none;
+    }
+
+    /* Service cards */
+    .li-svc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .li-svc-card {
+        background: rgba(0,0,0,0.2); border: 1px solid var(--border-light);
+        border-radius: 10px; padding: 14px; cursor: pointer;
+        transition: all 0.15s;
+    }
+    .li-svc-card:hover { border-color: rgba(245,158,11,0.3); }
+    .li-svc-card.selected { border-color: #f59e0b; background: rgba(245,158,11,0.04); }
+    .li-svc-name { font-size: 0.78rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .li-svc-desc { font-size: 0.68rem; color: var(--text-dim); }
+
+    /* Output */
+    .li-output-block {
+        background: rgba(0,0,0,0.3); border: 1px solid var(--border-light);
+        border-radius: 10px; padding: 16px; margin-top: 12px;
+        font-family: var(--font-mono); font-size: 0.72rem;
+        color: var(--text-secondary); line-height: 1.7;
+        white-space: pre-wrap; max-height: 400px; overflow-y: auto;
+    }
+
+    .li-gen-card {
+        background: rgba(0,0,0,0.15); border: 1px solid var(--border-light);
+        border-radius: 10px; padding: 14px 16px; margin-bottom: 10px;
+    }
+    .li-gen-title {
+        font-size: 0.78rem; font-weight: 700; color: #fff; margin-bottom: 6px;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .li-gen-list { font-size: 0.72rem; color: var(--text-muted); line-height: 1.8; padding-left: 16px; }
+
+    .li-actions {
+        display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap;
+    }
+
+    @media (max-width: 768px) {
+        .li-layout { flex-direction: column; }
+        .li-sidebar { width: 100%; position: static; display: flex; overflow-x: auto; gap: 0; }
+        .li-sidebar-item { white-space: nowrap; border-left: none; border-bottom: 2px solid transparent; }
+        .li-sidebar-item.active { border-bottom-color: #f59e0b; }
+        .li-dj-grid, .li-dj-grid-3, .li-svc-grid { grid-template-columns: 1fr; }
+        .li-kpi-row { grid-template-columns: 1fr 1fr; }
+    }
+</style>
+</head>
+<body>
+<div class="li-page">
+    <div class="li-header">
+        <div class="li-logo">LI</div>
+        <div>
+            <h1>Labs Institute — Site Content Builder</h1>
+            <div class="li-header-sub">Gather all information needed to build the marketing site</div>
+        </div>
+    </div>
+    <p class="li-intro">
+        Fill out each section below. Required fields are marked with <span style="color:var(--accent-red)">*</span>.
+        When complete, generate the site blueprint — structured content that becomes the context for developing labs.institute.
+    </p>
+
+    <div class="li-layout">
+        <div class="li-sidebar" id="li-sidebar"></div>
+        <div class="li-main" id="li-main"></div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    var SERVICES = [
+        { id: 'artist-mgmt', name: 'Artist Management', desc: 'Full-service management: bookings, career strategy, brand development' },
+        { id: 'booking', name: 'Booking Agency', desc: 'Connecting DJs with venues, promoters, and events' },
+        { id: 'event-promo', name: 'Event Promotion', desc: 'Planning, promoting, and running events under the Labs brand' },
+        { id: 'marketing', name: 'Marketing & PR', desc: 'Social media management, press kits, campaign strategy' },
+        { id: 'content', name: 'Content Production', desc: 'Mix recording, photography, video, promo materials' },
+        { id: 'development', name: 'DJ Development', desc: 'Mentoring emerging talent: skills, exposure, progression' },
+        { id: 'brand-collab', name: 'Brand Collaborations', desc: 'Partnerships with brands, venues, and other collectives' },
+        { id: 'licensing', name: 'Music Licensing', desc: 'Rights management, sync licensing, distribution support' },
+    ];
+
+    var SECTIONS = [
+        { id: 'brand', num: '01', title: 'Brand Identity', desc: 'Company name, tagline, values, and brand voice' },
+        { id: 'vision', num: '02', title: 'Vision & Mission', desc: 'Where Labs Institute is going and what it does' },
+        { id: 'services', num: '03', title: 'Services & Offerings', desc: 'What Labs Institute provides to DJs and clients' },
+        { id: 'roster', num: '04', title: 'DJ Roster & Profiles', desc: 'Current artists with bios, genres, socials, and progress KPIs' },
+        { id: 'proof', num: '05', title: 'Proof of Value', desc: 'KPIs and case studies showing what Labs does for artists' },
+        { id: 'socials', num: '06', title: 'Social & Contact', desc: 'Company social channels, contact info, and CTAs' },
+        { id: 'site', num: '07', title: 'Site Structure & Design', desc: 'Page layout preferences, sections, and design direction' },
+        { id: 'output', num: '08', title: 'Generated Blueprint', desc: 'Review the structured output for site development' },
+    ];
+
+    var djCounter = 0;
+    var selectedServices = {};
+
+    function renderSidebar() {
+        var html = '';
+        SECTIONS.forEach(function(s) {
+            html += '<div class="li-sidebar-item" data-section="' + s.id + '" onclick="scrollToSection(\'' + s.id + '\')">' +
+                '<div class="li-sidebar-dot"></div>' + s.num + ' ' + s.title + '</div>';
+        });
+        document.getElementById('li-sidebar').innerHTML = html;
+    }
+
+    function renderSections() {
+        var html = '';
+
+        // 01 Brand
+        html += sectionOpen('brand', '01', 'Brand Identity', 'Name, tagline, core values, and the voice of the brand');
+        html += field('Company / Label Name', 'inp-name', 'input', 'Labs Institute', true);
+        html += field('Primary Tagline', 'inp-tagline', 'input', 'e.g. Founded For The Future', true);
+        html += field('Secondary Tagline', 'inp-tagline2', 'input', 'e.g. A one-line pitch for what Labs does');
+        html += field('Core Values', 'inp-values', 'textarea', 'One per line. e.g.\nReputation\nTransparency\nReinvestment\nFamily\nValue', true, 5);
+        html += field('Brand Voice / Tone', 'inp-voice', 'textarea', 'How should the site sound? e.g. Professional but underground. Confident, not corporate. Community-first.', false, 3);
+        html += field('Target Audience', 'inp-audience', 'textarea', 'Who is the site for? e.g. Emerging DJs looking for management, promoters seeking talent, event organisers', true, 3);
+        html += sectionClose();
+
+        // 02 Vision
+        html += sectionOpen('vision', '02', 'Vision & Mission', 'The big picture — where Labs is going and why it exists');
+        html += field('Vision Statement', 'inp-vision', 'textarea', 'The long-term goal. e.g. To be the go-to platform for underground DJ talent development in the UK', true, 3);
+        html += field('Mission Statement', 'inp-mission', 'textarea', 'What Labs does day-to-day. e.g. We manage, develop, and promote emerging and established DJs...', true, 3);
+        html += field('Origin Story', 'inp-origin', 'textarea', 'How and why Labs Institute started. This humanises the brand on the About page.', false, 4);
+        html += field('What Problem Does Labs Solve?', 'inp-problem', 'textarea', 'The pain point for DJs. e.g. Talented DJs struggle to get exposure, fair contracts, and structured career development', true, 3);
+        html += field('What Makes Labs Different?', 'inp-differentiator', 'textarea', 'Your edge. e.g. We reinvest in our artists. Transparent contracts. Data-driven development.', true, 3);
+        html += sectionClose();
+
+        // 03 Services
+        html += sectionOpen('services', '03', 'Services & Offerings', 'Select the services Labs Institute provides, add custom ones');
+        html += '<div class="li-svc-grid" id="svc-grid"></div>';
+        html += field('Additional Services', 'inp-custom-services', 'textarea', 'Any services not listed above, one per line', false, 3);
+        html += field('Pricing Model', 'inp-pricing-model', 'textarea', 'How are services priced? e.g. Commission-based, flat fee, retainer, per-event', false, 2);
+        html += sectionClose();
+
+        // 04 Roster
+        html += sectionOpen('roster', '04', 'DJ Roster & Profiles', 'Add each artist. This populates their profile page on the site.');
+        html += '<div id="dj-cards"></div>';
+        html += '<button class="btn btn-ghost btn-sm" onclick="addDJ()" style="margin-top:10px;">+ Add Artist</button>';
+        html += sectionClose();
+
+        // 05 Proof
+        html += sectionOpen('proof', '05', 'Proof of Value — What Labs Does for Artists', 'KPIs and case studies that show the site visitor what joining Labs means');
+        html += field('Headline KPIs', 'inp-headline-kpis', 'textarea', 'Big numbers for the hero section. One per line. e.g.\n12 Artists Managed\n150+ Gigs Booked\n3x Average Social Growth\n£50K+ Revenue Generated', true, 5);
+        html += field('Case Study / Success Story', 'inp-case-study', 'textarea', 'One DJ\'s journey. e.g. "DJ X joined Labs with 200 Instagram followers and 0 paid gigs. In 12 months: 5K followers, 24 gigs, and a residency at [venue]."', false, 4);
+        html += field('Testimonials', 'inp-testimonials', 'textarea', 'Quotes from artists or promoters. One per line with attribution. e.g.\n"Labs changed my career trajectory" — DJ Name\n"The most professional management we\'ve worked with" — Promoter Name', false, 4);
+        html += field('Before/After Metrics Template', 'inp-before-after', 'textarea', 'What KPIs do you track per DJ to show progress? e.g.\nInstagram followers (join vs now)\nMonthly gigs (join vs now)\nSoundCloud plays\nPaid vs unpaid gig ratio\nAverage fee per gig', true, 5);
+        html += sectionClose();
+
+        // 06 Socials
+        html += sectionOpen('socials', '06', 'Social & Contact', 'Company social channels and how people reach Labs');
+        var socialFields = [
+            ['Instagram', 'social-instagram', '@handle or URL'],
+            ['SoundCloud', 'social-soundcloud', 'URL'],
+            ['Mixcloud', 'social-mixcloud', 'URL'],
+            ['Spotify', 'social-spotify', 'Artist or playlist URL'],
+            ['YouTube', 'social-youtube', 'Channel URL'],
+            ['Facebook', 'social-facebook', 'Page URL'],
+            ['TikTok', 'social-tiktok', '@handle or URL'],
+            ['Resident Advisor', 'social-ra', 'Profile URL'],
+            ['Website', 'social-website', 'Current URL'],
+            ['Email', 'social-email', 'Contact email', true],
+            ['Phone', 'social-phone', 'Contact number'],
+        ];
+        socialFields.forEach(function(s) {
+            html += '<div style="display:grid;grid-template-columns:120px 1fr;gap:8px;margin-bottom:6px;align-items:center;">' +
+                '<span style="font-size:0.75rem;font-weight:600;color:var(--text-muted);">' + s[0] + (s[3] ? ' <span style="color:var(--accent-red)">*</span>' : '') + '</span>' +
+                '<input class="form-input" id="' + s[1] + '" placeholder="' + s[2] + '" style="padding:8px 10px;font-size:0.82rem;">' +
+                '</div>';
+        });
+        html += field('CTA Text for New Artists', 'inp-cta-artists', 'input', 'e.g. "Join the roster — apply now"');
+        html += field('CTA Text for Promoters/Venues', 'inp-cta-promoters', 'input', 'e.g. "Book our artists for your next event"');
+        html += sectionClose();
+
+        // 07 Site Structure
+        html += sectionOpen('site', '07', 'Site Structure & Design Notes', 'How the marketing site should be laid out');
+        html += field('Pages Needed', 'inp-pages', 'textarea', 'One per line. e.g.\nHome (hero + proof + CTA)\nAbout (origin + values + team)\nRoster (artist grid + profiles)\nServices\nEvents (past + upcoming)\nContact / Apply', true, 6);
+        html += field('Design References', 'inp-design-refs', 'textarea', 'Sites you like the look/feel of. e.g. "Boiler Room site — grid layout. Resident Advisor — clean artist profiles."', false, 3);
+        html += field('Must-Have Sections on Homepage', 'inp-hero-sections', 'textarea', 'e.g.\nHero with tagline + CTA\nKPI bar (artists managed, gigs booked)\nFeatured artists carousel\nLatest events\nTestimonials\nJoin CTA', false, 6);
+        html += field('Embedded Content', 'inp-embeds', 'textarea', 'What should be embedded? e.g. SoundCloud player, Spotify playlist, Instagram feed, YouTube videos', false, 3);
+        html += field('Current Site Notes', 'inp-current-notes', 'textarea', 'What exists at labs.institute now? What to keep, change, or remove?', false, 3);
+        html += sectionClose();
+
+        // 08 Output
+        html += sectionOpen('output', '08', 'Generated Blueprint', 'Review the structured output. Save to project memory or copy as a development prompt.');
+        html += '<div class="li-actions" style="margin-bottom:14px;">' +
+            '<button class="btn btn-primary btn-sm" onclick="generateBlueprint()">Generate Blueprint</button>' +
+            '<button class="btn btn-ghost btn-sm" onclick="saveToMemory()">Save to Project Memory</button>' +
+            '<button class="btn btn-ghost btn-sm" onclick="copyBlueprint()">Copy as Prompt</button>' +
+            '</div>';
+        html += '<div id="li-blueprint-cards"></div>';
+        html += '<div class="li-field-label" style="margin-top:16px;">Raw Prompt (for deep research or site development)</div>';
+        html += '<div class="li-output-block" id="li-blueprint-prompt">Click "Generate Blueprint" to create the output.</div>';
+        html += '<div class="li-field-label">JSON Export</div>';
+        html += '<div class="li-output-block" id="li-blueprint-json"></div>';
+        html += sectionClose();
+
+        document.getElementById('li-main').innerHTML = html;
+        renderServiceGrid();
+        addDJ(); addDJ();
+    }
+
+    function sectionOpen(id, num, title, desc) {
+        return '<div class="li-section" id="section-' + id + '">' +
+            '<div class="li-section-hdr"><div class="li-section-num">' + num + '</div>' +
+            '<div class="li-section-title">' + title + '</div></div>' +
+            '<div class="li-section-desc">' + desc + '</div>';
+    }
+    function sectionClose() { return '</div>'; }
+
+    function field(label, id, type, placeholder, required, rows) {
+        var cls = required ? 'li-field-label li-required' : 'li-field-label';
+        var html = '<div class="' + cls + '">' + esc(label) + '</div>';
+        if (type === 'textarea') {
+            html += '<textarea class="form-textarea" id="' + id + '" rows="' + (rows || 3) + '" placeholder="' + esc(placeholder || '') + '"></textarea>';
+        } else {
+            html += '<input class="form-input" id="' + id + '" placeholder="' + esc(placeholder || '') + '">';
+        }
+        return html;
+    }
+
+    function renderServiceGrid() {
+        var html = '';
+        SERVICES.forEach(function(s) {
+            html += '<div class="li-svc-card" data-svc="' + s.id + '">' +
+                '<div class="li-svc-name">' + s.name + '</div>' +
+                '<div class="li-svc-desc">' + s.desc + '</div></div>';
+        });
+        document.getElementById('svc-grid').innerHTML = html;
+        document.querySelectorAll('.li-svc-card').forEach(function(card) {
+            card.addEventListener('click', function() {
+                var id = this.dataset.svc;
+                selectedServices[id] = !selectedServices[id];
+                this.classList.toggle('selected', selectedServices[id]);
+            });
+        });
+    }
+
+    window.addDJ = function() {
+        djCounter++;
+        var n = djCounter;
+        var html = '<div class="li-dj-card" id="dj-card-' + n + '">' +
+            '<div class="li-dj-card-hdr"><div class="li-dj-card-title">Artist #' + n + '</div>' +
+            '<button class="li-dj-remove" onclick="removeDJ(' + n + ')">&#10005; Remove</button></div>' +
+
+            '<div class="li-dj-grid">' +
+            '<div><div class="li-field-label li-required">Artist / DJ Name</div>' +
+            '<input class="form-input dj-name" placeholder="Stage name"></div>' +
+            '<div><div class="li-field-label">Real Name</div>' +
+            '<input class="form-input dj-real-name" placeholder="Optional — for contracts"></div>' +
+            '</div>' +
+
+            '<div class="li-dj-grid-3">' +
+            '<div><div class="li-field-label li-required">Genres</div>' +
+            '<input class="form-input dj-genres" placeholder="e.g. techno, house"></div>' +
+            '<div><div class="li-field-label">Tier</div>' +
+            '<select class="form-select dj-tier"><option value="emerging">Emerging</option><option value="developing">Developing</option><option value="established">Established</option><option value="headliner">Headliner</option></select></div>' +
+            '<div><div class="li-field-label">Date Joined</div>' +
+            '<input class="form-input dj-joined" type="month" placeholder="YYYY-MM"></div>' +
+            '</div>' +
+
+            '<div class="li-field-label">Bio / About</div>' +
+            '<textarea class="form-textarea dj-bio" rows="2" placeholder="Short bio for their profile page"></textarea>' +
+
+            '<div class="li-field-label">Social Links</div>' +
+            '<div class="li-dj-grid">' +
+            '<input class="form-input dj-instagram" placeholder="Instagram @handle">' +
+            '<input class="form-input dj-soundcloud" placeholder="SoundCloud URL">' +
+            '<input class="form-input dj-spotify" placeholder="Spotify URL">' +
+            '<input class="form-input dj-mixcloud" placeholder="Mixcloud URL">' +
+            '</div>' +
+
+            '<div class="li-field-label">Progress KPIs (since joining Labs)</div>' +
+            '<div class="li-kpi-row">' +
+            '<div class="li-kpi-cell"><label>Gigs Booked</label><input class="dj-kpi-gigs" type="number" placeholder="0"></div>' +
+            '<div class="li-kpi-cell"><label>Paid Gigs</label><input class="dj-kpi-paid" type="number" placeholder="0"></div>' +
+            '<div class="li-kpi-cell"><label>IG Followers</label><input class="dj-kpi-ig" type="number" placeholder="0"></div>' +
+            '<div class="li-kpi-cell"><label>SC Plays</label><input class="dj-kpi-sc" type="number" placeholder="0"></div>' +
+            '</div>' +
+            '<div class="li-kpi-row">' +
+            '<div class="li-kpi-cell"><label>IG at Join</label><input class="dj-kpi-ig-join" type="number" placeholder="0"></div>' +
+            '<div class="li-kpi-cell"><label>SC at Join</label><input class="dj-kpi-sc-join" type="number" placeholder="0"></div>' +
+            '<div class="li-kpi-cell"><label>Avg Fee (£)</label><input class="dj-kpi-fee" type="number" placeholder="0"></div>' +
+            '<div class="li-kpi-cell"><label>Releases</label><input class="dj-kpi-releases" type="number" placeholder="0"></div>' +
+            '</div>' +
+
+            '<div class="li-field-label">Recent Highlights</div>' +
+            '<textarea class="form-textarea dj-highlights" rows="2" placeholder="e.g. Residency at The Warehouse, played Parklife, released on Defected"></textarea>' +
+            '</div>';
+
+        document.getElementById('dj-cards').insertAdjacentHTML('beforeend', html);
+        updateCardTitles();
+    };
+
+    window.removeDJ = function(n) {
+        var card = document.getElementById('dj-card-' + n);
+        if (card) card.remove();
+        updateCardTitles();
+    };
+
+    function updateCardTitles() {
+        document.querySelectorAll('.li-dj-card').forEach(function(card, i) {
+            var nameInput = card.querySelector('.dj-name');
+            var title = card.querySelector('.li-dj-card-title');
+            function update() { title.textContent = nameInput.value || ('Artist #' + (i + 1)); }
+            nameInput.removeEventListener('input', update);
+            nameInput.addEventListener('input', update);
+            update();
+        });
+    }
+
+    window.scrollToSection = function(id) {
+        var el = document.getElementById('section-' + id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    function val(id) {
+        var el = document.getElementById(id);
+        return el ? el.value.trim() : '';
+    }
+
+    function collectAll() {
+        var djs = [];
+        document.querySelectorAll('.li-dj-card').forEach(function(card) {
+            var name = card.querySelector('.dj-name').value.trim();
+            if (!name) return;
+            djs.push({
+                name: name,
+                real_name: card.querySelector('.dj-real-name').value.trim(),
+                genres: card.querySelector('.dj-genres').value.split(',').map(function(g){return g.trim();}).filter(Boolean),
+                tier: card.querySelector('.dj-tier').value,
+                joined: card.querySelector('.dj-joined').value,
+                bio: card.querySelector('.dj-bio').value.trim(),
+                socials: {
+                    instagram: card.querySelector('.dj-instagram').value.trim(),
+                    soundcloud: card.querySelector('.dj-soundcloud').value.trim(),
+                    spotify: card.querySelector('.dj-spotify').value.trim(),
+                    mixcloud: card.querySelector('.dj-mixcloud').value.trim(),
+                },
+                kpis: {
+                    gigs_booked: parseInt(card.querySelector('.dj-kpi-gigs').value) || 0,
+                    paid_gigs: parseInt(card.querySelector('.dj-kpi-paid').value) || 0,
+                    ig_followers: parseInt(card.querySelector('.dj-kpi-ig').value) || 0,
+                    ig_at_join: parseInt(card.querySelector('.dj-kpi-ig-join').value) || 0,
+                    sc_plays: parseInt(card.querySelector('.dj-kpi-sc').value) || 0,
+                    sc_at_join: parseInt(card.querySelector('.dj-kpi-sc-join').value) || 0,
+                    avg_fee: parseInt(card.querySelector('.dj-kpi-fee').value) || 0,
+                    releases: parseInt(card.querySelector('.dj-kpi-releases').value) || 0,
+                },
+                highlights: card.querySelector('.dj-highlights').value.trim(),
+            });
+        });
+
+        var svcs = SERVICES.filter(function(s) { return selectedServices[s.id]; }).map(function(s) { return { id: s.id, name: s.name, desc: s.desc }; });
+        var customSvcs = val('inp-custom-services').split('\n').filter(Boolean);
+        customSvcs.forEach(function(s) { svcs.push({ id: 'custom', name: s.trim(), desc: '' }); });
+
+        var socials = {};
+        ['instagram','soundcloud','mixcloud','spotify','youtube','facebook','tiktok','ra','website','email','phone'].forEach(function(s) {
+            var v = val('social-' + s);
+            if (v) socials[s] = v;
+        });
+
+        return {
+            brand: {
+                name: val('inp-name') || 'Labs Institute',
+                tagline: val('inp-tagline'),
+                tagline_secondary: val('inp-tagline2'),
+                values: val('inp-values').split('\n').filter(Boolean),
+                voice: val('inp-voice'),
+                audience: val('inp-audience'),
+            },
+            vision: {
+                vision: val('inp-vision'),
+                mission: val('inp-mission'),
+                origin: val('inp-origin'),
+                problem: val('inp-problem'),
+                differentiator: val('inp-differentiator'),
+            },
+            services: svcs,
+            pricing_model: val('inp-pricing-model'),
+            roster: djs,
+            proof: {
+                headline_kpis: val('inp-headline-kpis').split('\n').filter(Boolean),
+                case_study: val('inp-case-study'),
+                testimonials: val('inp-testimonials').split('\n').filter(Boolean),
+                before_after_template: val('inp-before-after').split('\n').filter(Boolean),
+            },
+            socials: socials,
+            ctas: {
+                artists: val('inp-cta-artists'),
+                promoters: val('inp-cta-promoters'),
+            },
+            site: {
+                pages: val('inp-pages').split('\n').filter(Boolean),
+                design_refs: val('inp-design-refs'),
+                hero_sections: val('inp-hero-sections').split('\n').filter(Boolean),
+                embeds: val('inp-embeds'),
+                current_notes: val('inp-current-notes'),
+            },
+            generated_at: new Date().toISOString(),
+        };
+    }
+
+    window.generateBlueprint = function() {
+        var data = collectAll();
+
+        var cards = '';
+        cards += genCard('Brand', 'purple', [
+            data.brand.name + ' — "' + (data.brand.tagline || 'No tagline set') + '"',
+            'Values: ' + (data.brand.values.join(', ') || 'Not set'),
+            'Audience: ' + (data.brand.audience || 'Not set'),
+        ]);
+        cards += genCard('Vision', 'blue', [
+            data.vision.vision || 'Not set',
+            'Differentiator: ' + (data.vision.differentiator || 'Not set'),
+        ]);
+        cards += genCard('Services (' + data.services.length + ')', 'amber', data.services.map(function(s) { return s.name; }));
+        cards += genCard('Roster (' + data.roster.length + ' artists)', 'green', data.roster.map(function(dj) {
+            var growth = dj.kpis.ig_at_join > 0 ? ' (IG: ' + dj.kpis.ig_at_join + ' → ' + dj.kpis.ig_followers + ')' : '';
+            return dj.name + ' — ' + dj.tier + ', ' + dj.genres.join('/') + growth;
+        }));
+        cards += genCard('Proof of Value', 'gold', data.proof.headline_kpis.length > 0 ? data.proof.headline_kpis : ['No KPIs set']);
+        cards += genCard('Site Pages', 'blue', data.site.pages.length > 0 ? data.site.pages : ['No pages defined']);
+
+        document.getElementById('li-blueprint-cards').innerHTML = cards;
+
+        var prompt = buildPrompt(data);
+        document.getElementById('li-blueprint-prompt').textContent = prompt;
+        document.getElementById('li-blueprint-json').textContent = JSON.stringify(data, null, 2);
+
+        scrollToSection('output');
+    };
+
+    function genCard(title, color, items) {
+        var html = '<div class="li-gen-card"><div class="li-gen-title"><span class="badge ' + color + '">' + esc(title) + '</span></div><ul class="li-gen-list">';
+        items.forEach(function(item) { html += '<li>' + esc(item) + '</li>'; });
+        return html + '</ul></div>';
+    }
+
+    function buildPrompt(data) {
+        var lines = [];
+        lines.push('# Labs Institute — Marketing Site Blueprint');
+        lines.push('Generated: ' + new Date().toLocaleDateString('en-GB'));
+        lines.push('');
+
+        lines.push('## Brand Identity');
+        lines.push('- **Name:** ' + data.brand.name);
+        if (data.brand.tagline) lines.push('- **Tagline:** ' + data.brand.tagline);
+        if (data.brand.tagline_secondary) lines.push('- **Secondary:** ' + data.brand.tagline_secondary);
+        if (data.brand.values.length) lines.push('- **Values:** ' + data.brand.values.join(' / '));
+        if (data.brand.voice) lines.push('- **Voice:** ' + data.brand.voice);
+        if (data.brand.audience) lines.push('- **Audience:** ' + data.brand.audience);
+
+        lines.push('');
+        lines.push('## Vision & Mission');
+        if (data.vision.vision) lines.push('- **Vision:** ' + data.vision.vision);
+        if (data.vision.mission) lines.push('- **Mission:** ' + data.vision.mission);
+        if (data.vision.problem) lines.push('- **Problem:** ' + data.vision.problem);
+        if (data.vision.differentiator) lines.push('- **Differentiator:** ' + data.vision.differentiator);
+        if (data.vision.origin) { lines.push(''); lines.push('### Origin Story'); lines.push(data.vision.origin); }
+
+        if (data.services.length) {
+            lines.push('');
+            lines.push('## Services (' + data.services.length + ')');
+            data.services.forEach(function(s) { lines.push('- **' + s.name + '** — ' + s.desc); });
+            if (data.pricing_model) lines.push('- **Pricing:** ' + data.pricing_model);
+        }
+
+        if (data.roster.length) {
+            lines.push('');
+            lines.push('## Artist Roster (' + data.roster.length + ')');
+            data.roster.forEach(function(dj) {
+                lines.push('');
+                lines.push('### ' + dj.name + ' (' + dj.tier + ')');
+                if (dj.genres.length) lines.push('- **Genres:** ' + dj.genres.join(', '));
+                if (dj.joined) lines.push('- **Joined:** ' + dj.joined);
+                if (dj.bio) lines.push('- **Bio:** ' + dj.bio);
+                var socLinks = [];
+                Object.keys(dj.socials).forEach(function(k) { if (dj.socials[k]) socLinks.push(k + ': ' + dj.socials[k]); });
+                if (socLinks.length) lines.push('- **Socials:** ' + socLinks.join(' | '));
+                var k = dj.kpis;
+                if (k.gigs_booked) {
+                    lines.push('- **KPIs:** ' + k.gigs_booked + ' gigs (' + k.paid_gigs + ' paid), avg fee £' + k.avg_fee);
+                    if (k.ig_at_join || k.ig_followers) lines.push('  - IG: ' + k.ig_at_join + ' → ' + k.ig_followers + ' followers');
+                    if (k.sc_at_join || k.sc_plays) lines.push('  - SC: ' + k.sc_at_join + ' → ' + k.sc_plays + ' plays');
+                    if (k.releases) lines.push('  - ' + k.releases + ' releases');
+                }
+                if (dj.highlights) lines.push('- **Highlights:** ' + dj.highlights);
+            });
+        }
+
+        if (data.proof.headline_kpis.length) {
+            lines.push('');
+            lines.push('## Proof of Value');
+            lines.push('### Headline KPIs');
+            data.proof.headline_kpis.forEach(function(k) { lines.push('- ' + k); });
+            if (data.proof.case_study) { lines.push('### Case Study'); lines.push(data.proof.case_study); }
+            if (data.proof.testimonials.length) {
+                lines.push('### Testimonials');
+                data.proof.testimonials.forEach(function(t) { lines.push('- ' + t); });
+            }
+        }
+
+        if (Object.keys(data.socials).length) {
+            lines.push('');
+            lines.push('## Social & Contact');
+            Object.keys(data.socials).forEach(function(k) { lines.push('- **' + k + ':** ' + data.socials[k]); });
+        }
+
+        if (data.site.pages.length) {
+            lines.push('');
+            lines.push('## Site Structure');
+            lines.push('### Pages');
+            data.site.pages.forEach(function(p) { lines.push('- ' + p); });
+            if (data.site.hero_sections.length) {
+                lines.push('### Homepage Sections');
+                data.site.hero_sections.forEach(function(s) { lines.push('- ' + s); });
+            }
+            if (data.site.design_refs) lines.push('### Design References\n' + data.site.design_refs);
+            if (data.site.embeds) lines.push('### Embedded Content\n' + data.site.embeds);
+        }
+
+        return lines.join('\n');
+    }
+
+    window.saveToMemory = function() {
+        var data = collectAll();
+        fetch('/api/projects/labs-institute/memory/store', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                content: JSON.stringify(data),
+                type: 'context',
+                tags: ['onboarding', 'site-blueprint', 'marketing', 'requirements'],
+                source: 'site-content-builder',
+            })
+        }).then(function(r) { return r.json(); }).then(function() {
+            showToast('Saved to Labs Institute project memory');
+        }).catch(function() {
+            showToast('API offline — copy the JSON manually', true);
+        });
+    };
+
+    window.copyBlueprint = function() {
+        var text = document.getElementById('li-blueprint-prompt').textContent;
+        navigator.clipboard.writeText(text).then(function() {
+            showToast('Blueprint prompt copied');
+        });
+    };
+
+    function showToast(msg, isError) {
+        var t = document.createElement('div');
+        t.className = 'toast show' + (isError ? ' error' : '');
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(function() { t.classList.remove('show'); }, 2500);
+        setTimeout(function() { t.remove(); }, 3000);
+    }
+
+    function esc(s) {
+        if (!s) return '';
+        var d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+    }
+
+    // Scroll spy
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+            if (e.isIntersecting) {
+                var id = e.target.id.replace('section-', '');
+                document.querySelectorAll('.li-sidebar-item').forEach(function(item) {
+                    item.classList.toggle('active', item.dataset.section === id);
+                });
+            }
+        });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+
+    renderSidebar();
+    renderSections();
+
+    SECTIONS.forEach(function(s) {
+        var el = document.getElementById('section-' + s.id);
+        if (el) observer.observe(el);
+    });
+})();
+</script>
+</body>
+</html>
