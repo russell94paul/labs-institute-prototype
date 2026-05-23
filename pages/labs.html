@@ -812,7 +812,7 @@ Social metrics → Periodic snapshots → Pattern detection
             var tabs=['Bio','Stats','Releases','Timeline','Venues','Socials'];
             h+='<div style="display:flex;gap:0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)">';
             tabs.forEach(function(tab,ti){
-                h+='<div class="dj-tab" data-dj="'+djIdx+'" data-tab="'+tab.toLowerCase()+'" onclick="switchDJTab('+djIdx+\',\''+tab.toLowerCase()+'\')" style="padding:8px 16px;font-size:.58rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:'+(ti===0?'#000':'var(--gy)')+';cursor:pointer;border-bottom:2px solid '+(ti===0?'#000':'transparent')+';transition:all .15s">';
+                h+='<div class="dj-tab" data-dj="'+djIdx+'" data-tab="'+tab.toLowerCase()+'" onclick="switchDJTab('+djIdx+',\''+tab.toLowerCase()+'\')" style="padding:8px 16px;font-size:.58rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:'+(ti===0?'#000':'var(--gy)')+';cursor:pointer;border-bottom:2px solid '+(ti===0?'#000':'transparent')+';transition:all .15s">';
                 h+=tab+'</div>';
             });
             h+='</div>';
