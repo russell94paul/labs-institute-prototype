@@ -22,7 +22,8 @@
     .L[data-neon="true"] .S-dj,.L[data-neon="true"] .S-svc,
     .L[data-neon="true"] .S-dj-release,.L[data-neon="true"] .S-dj-profile,
     .L[data-neon="true"] .G-card,.L[data-neon="true"] .G-sum-card,
-    .L[data-neon="true"] .W-step-card,.L[data-neon="true"] .W-results{
+    .L[data-neon="true"] .W-step-card,.L[data-neon="true"] .W-results,
+    .L[data-neon="true"] .neon-card{
         border-color:var(--glow)!important;
         background:rgba(255,255,255,.03)!important;
         box-shadow:0 0 6px var(--glow),inset 0 0 12px rgba(255,255,255,.01);
@@ -44,7 +45,7 @@
     /* Hover glow — only on direct interactive cards */
     .L[data-neon="true"] .R-phase:hover,.L[data-neon="true"] .R-tier:hover,
     .L[data-neon="true"] .A-dj:hover,.L[data-neon="true"] .S-dj:hover,.L[data-neon="true"] .S-svc:hover,
-    .L[data-neon="true"] .G-card:hover{
+    .L[data-neon="true"] .G-card:hover,.L[data-neon="true"] .neon-card:hover{
         box-shadow:0 0 12px var(--glow),0 0 30px var(--glow)!important;
         background:rgba(255,255,255,.05)!important}
 
@@ -400,36 +401,36 @@
             <div class="S-section-tag">New Releases</div>
             <div class="S-section-title">Latest From Our Artists</div>
             <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px">
-                <div style="border:1px solid var(--bd);border-radius:10px;padding:20px;transition:border-color .2s" onmouseenter="this.style.borderColor='#000'" onmouseleave="this.style.borderColor='rgba(0,0,0,.08)'">
+                <div class="neon-card" style="border:1px solid var(--bd);border-radius:10px;padding:20px;transition:all .2s">
                     <div style="font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gy);margin-bottom:8px">Latest Single</div>
                     <div style="font-size:.88rem;font-weight:900;letter-spacing:.02em;text-transform:uppercase">Charm</div>
                     <div style="font-size:.68rem;color:var(--gy);margin-top:4px">Luciid</div>
                     <div style="font-size:.62rem;color:var(--gy);margin-top:2px">Beatport #15 Hard Techno</div>
-                    <div style="margin-top:12px;height:4px;background:rgba(0,0,0,.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:72%;background:var(--bk);border-radius:2px"></div></div>
+                    <div style="margin-top:12px;height:4px;background:rgba(128,128,128,.1);border-radius:2px;overflow:hidden"><div style="height:100%;width:72%;background:currentColor;border-radius:2px;opacity:.6"></div></div>
                     <div style="font-size:.55rem;color:var(--gy);margin-top:4px">72K streams</div>
                 </div>
-                <div style="border:1px solid var(--bd);border-radius:10px;padding:20px;transition:border-color .2s" onmouseenter="this.style.borderColor='#000'" onmouseleave="this.style.borderColor='rgba(0,0,0,.08)'">
+                <div class="neon-card" style="border:1px solid var(--bd);border-radius:10px;padding:20px;transition:all .2s">
                     <div style="font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gy);margin-bottom:8px">Album</div>
                     <div style="font-size:.88rem;font-weight:900;letter-spacing:.02em;text-transform:uppercase">Reeluv</div>
                     <div style="font-size:.68rem;color:var(--gy);margin-top:4px">Luciid</div>
                     <div style="font-size:.62rem;color:var(--gy);margin-top:2px">Full-length LP — 2024</div>
-                    <div style="margin-top:12px;height:4px;background:rgba(0,0,0,.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:85%;background:var(--bk);border-radius:2px"></div></div>
+                    <div style="margin-top:12px;height:4px;background:rgba(128,128,128,.1);border-radius:2px;overflow:hidden"><div style="height:100%;width:85%;background:currentColor;border-radius:2px;opacity:.6"></div></div>
                     <div style="font-size:.55rem;color:var(--gy);margin-top:4px">180K streams</div>
                 </div>
-                <div style="border:1px solid var(--bd);border-radius:10px;padding:20px;transition:border-color .2s" onmouseenter="this.style.borderColor='#000'" onmouseleave="this.style.borderColor='rgba(0,0,0,.08)'">
+                <div class="neon-card" style="border:1px solid var(--bd);border-radius:10px;padding:20px;transition:all .2s">
                     <div style="font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gy);margin-bottom:8px">Breakout</div>
                     <div style="font-size:.88rem;font-weight:900;letter-spacing:.02em;text-transform:uppercase">Paro Hour</div>
                     <div style="font-size:.68rem;color:var(--gy);margin-top:4px">Luciid — Kneaded Pains</div>
                     <div style="font-size:.62rem;color:var(--gy);margin-top:2px">The track that started it all</div>
-                    <div style="margin-top:12px;height:4px;background:rgba(0,0,0,.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:100%;background:var(--bk);border-radius:2px"></div></div>
+                    <div style="margin-top:12px;height:4px;background:rgba(128,128,128,.1);border-radius:2px;overflow:hidden"><div style="height:100%;width:100%;background:currentColor;border-radius:2px;opacity:.6"></div></div>
                     <div style="font-size:.55rem;color:var(--gy);margin-top:4px">2.1M streams</div>
                 </div>
-                <div style="border:1px solid var(--bd);border-radius:10px;padding:20px;transition:border-color .2s" onmouseenter="this.style.borderColor='#000'" onmouseleave="this.style.borderColor='rgba(0,0,0,.08)'">
+                <div class="neon-card" style="border:1px solid var(--bd);border-radius:10px;padding:20px;transition:all .2s">
                     <div style="font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gy);margin-bottom:8px">Remix</div>
                     <div style="font-size:.88rem;font-weight:900;letter-spacing:.02em;text-transform:uppercase">Sound Bath</div>
                     <div style="font-size:.68rem;color:var(--gy);margin-top:4px">Dubfire — Luciid Remix</div>
                     <div style="font-size:.62rem;color:var(--gy);margin-top:2px">Remixed for the legend</div>
-                    <div style="margin-top:12px;height:4px;background:rgba(0,0,0,.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:45%;background:var(--bk);border-radius:2px"></div></div>
+                    <div style="margin-top:12px;height:4px;background:rgba(128,128,128,.1);border-radius:2px;overflow:hidden"><div style="height:100%;width:45%;background:currentColor;border-radius:2px;opacity:.6"></div></div>
                     <div style="font-size:.55rem;color:var(--gy);margin-top:4px">95K streams</div>
                 </div>
             </div>
@@ -470,12 +471,12 @@
 
         <!-- Dual CTA -->
         <div class="S-cta-wrap" style="display:grid;grid-template-columns:1fr 1fr">
-            <div class="S-cta-panel" style="padding:60px 40px;text-align:center;border:1px solid rgba(128,128,128,.15);background:rgba(255,255,255,.03)">
+            <div class="S-cta-panel neon-card" style="padding:60px 40px;text-align:center;border:1px solid rgba(128,128,128,.15);background:rgba(255,255,255,.03)">
                 <div style="font-size:1rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">For DJs</div>
                 <div style="font-size:.78rem;opacity:.5;margin-bottom:24px;max-width:400px;margin-left:auto;margin-right:auto;line-height:1.7">Want structured management, transparent deals, and data-driven career growth?</div>
                 <button style="padding:12px 32px;border:1px solid rgba(128,128,128,.2);border-radius:4px;background:transparent;color:inherit;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-family:inherit;transition:all .15s" onmouseenter="this.style.background='rgba(128,128,128,.08)'" onmouseleave="this.style.background='transparent'">Join The Roster</button>
             </div>
-            <div class="S-cta-panel" style="padding:60px 40px;text-align:center;border:1px solid rgba(128,128,128,.15);background:rgba(255,255,255,.02)">
+            <div class="S-cta-panel neon-card" style="padding:60px 40px;text-align:center;border:1px solid rgba(128,128,128,.15);background:rgba(255,255,255,.02)">
                 <div style="font-size:1rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">For Promoters</div>
                 <div style="font-size:.78rem;opacity:.5;margin-bottom:24px;max-width:400px;margin-left:auto;margin-right:auto;line-height:1.7">Looking for professional, reliable underground techno DJs for your next event?</div>
                 <button style="padding:12px 32px;border:1px solid rgba(128,128,128,.2);border-radius:4px;background:transparent;color:inherit;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-family:inherit;transition:all .15s" onmouseenter="this.style.background='rgba(128,128,128,.08)'" onmouseleave="this.style.background='transparent'">Book Our Artists</button>
