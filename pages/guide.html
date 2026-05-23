@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+    .G{padding:40px;max-width:800px;margin:0 auto;font-family:'Helvetica Neue',Arial,sans-serif;color:#111;line-height:1.8}
+    .G h1{font-size:1.6rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+    .G .sub{font-size:.78rem;color:#999;margin-bottom:32px}
+    .G h2{font-size:.82rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin:32px 0 12px;padding-bottom:8px;border-bottom:1px solid #eee}
+    .G h3{font-size:.75rem;font-weight:700;color:#555;margin:16px 0 6px}
+    .G p,.G li{font-size:.78rem;color:#444}
+    .G ul{padding-left:18px;margin:8px 0}
+    .G li{margin-bottom:6px}
+    .G .tab-card{display:grid;grid-template-columns:120px 1fr;gap:16px;padding:16px;border:1px solid #eee;border-radius:8px;margin-bottom:10px}
+    .G .tab-name{font-size:.75rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
+    .G .tab-desc{font-size:.72rem;color:#555}
+    .G .hotkey{display:inline-block;padding:2px 8px;background:#f5f5f5;border:1px solid #ddd;border-radius:4px;font-size:.65rem;font-family:monospace;color:#333}
+    .G .try{background:#f8f8f8;border:1px solid #eee;border-radius:8px;padding:14px 18px;margin:10px 0;font-size:.72rem;color:#333;border-left:3px solid #000}
+    .G .try strong{color:#000}
+    .G .note{background:#fffce8;border:1px solid #f0e68c;border-radius:8px;padding:12px 16px;margin:10px 0;font-size:.72rem;color:#665}
+    .G a{color:#2563eb;text-decoration:none}
+    .G a:hover{text-decoration:underline}
+    .G .footer{margin-top:40px;padding-top:20px;border-top:1px solid #eee;font-size:.65rem;color:#999;text-align:center;letter-spacing:.06em;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="G">
+    <h1>Labs Institute — Prototype Guide</h1>
+    <div class="sub">How to navigate and explore the platform prototype</div>
+
+    <h2>Overview</h2>
+    <p>This prototype shows what the Labs Institute platform will look like and do. It has <strong>6 tabs</strong> across the top bar, plus <strong>theme and layout selectors</strong> that change the entire look in real-time.</p>
+
+    <div class="note">This is a working prototype — not a final product. Data is sample/seed data. The goal is to show the vision, validate the design direction, and demonstrate the platform's capabilities.</div>
+
+    <h2>The 6 Tabs</h2>
+
+    <div class="tab-card">
+        <div class="tab-name">Site Preview</div>
+        <div class="tab-desc">The public marketing site as visitors would see it. Shows the hero marquee, KPI stats, Luciid's full artist profile (career timeline, releases, venues, festivals, streaming stats), services, "With Labs vs Without" comparison, and dual CTAs for DJs and promoters.</div>
+    </div>
+
+    <div class="tab-card">
+        <div class="tab-name">Designs</div>
+        <div class="tab-desc">
+            <strong>5 theme options × 4 layout options = 20 combinations.</strong> Each renders a full interactive preview with:
+            <ul>
+                <li><strong>Live ticking KPI counters</strong> — numbers increment in real-time</li>
+                <li><strong>Career scrubber</strong> — drag the slider from 2012→2026 and watch all stats animate</li>
+                <li><strong>AI simulation</strong> — Lab-Intelligence types out real suggestions live</li>
+                <li><strong>3D globe</strong> — spinning globe showing every city Luciid has played, with flight paths</li>
+                <li><strong>AI chat demo</strong> — type a question and get a context-aware response</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="tab-card">
+        <div class="tab-name">Admin</div>
+        <div class="tab-desc">The founder's content editor. Change any text (brand name, tagline, KPIs, about section) and it updates the Site Preview tab in real-time. Add/remove artists and services. Click "Save to Project Memory" to persist changes.</div>
+    </div>
+
+    <div class="tab-card">
+        <div class="tab-name">Roadmap</div>
+        <div class="tab-desc">The full P0–P10 build plan showing the three-tier architecture (Marketing Site, Owner Portal, DJ Portal) and the Lab-Intelligence self-improvement flow diagram.</div>
+    </div>
+
+    <div class="tab-card">
+        <div class="tab-name">Apps</div>
+        <div class="tab-desc">Feature roadmaps for the two portals. Switch between <strong>Founder Portal</strong> (24 features: dashboard, roster, booking pipeline, marketing hub, finances, AI intelligence) and <strong>DJ Portal</strong> (21 features: content, calendar, growth, chat, finances).</div>
+    </div>
+
+    <div class="tab-card">
+        <div class="tab-name">Components</div>
+        <div class="tab-desc">Deep-dive into each technical component: Lab-Intelligence (AI engine), Lab-Wiki (knowledge base), Chat (AI assistant), Analytics, Social Integration, and Booking Pipeline. Each has a concrete example, metrics, and feature list.</div>
+    </div>
+
+    <h2>Theme & Layout Selectors</h2>
+    <p>In the top-right corner of the header bar, two dropdowns let you change the look of the entire prototype:</p>
+
+    <h3>Themes (5 options)</h3>
+    <ul>
+        <li><strong>Chrome</strong> — current labs.institute design: white, clean, chrome accents</li>
+        <li><strong>Dark Pulse</strong> — black background, neon green, rave-energy feel</li>
+        <li><strong>Gradient</strong> — deep purple-blue flowing gradients, futuristic</li>
+        <li><strong>Brutalist</strong> — raw monospace typography, harsh contrasts, red accents</li>
+        <li><strong>Glass</strong> — frosted glass cards, soft blue glows on dark background</li>
+    </ul>
+
+    <h3>Layouts (4 options)</h3>
+    <ul>
+        <li><strong>A — Hero Marquee</strong> — scrolling text hero + vertical scroll (full interactive experience)</li>
+        <li><strong>B — Split Screen</strong> — text/CTAs left, artist card + stats right</li>
+        <li><strong>C — Card Grid</strong> — bento-style dashboard with charts embedded</li>
+        <li><strong>D — Cinematic</strong> — oversized logo, full-bleed, dramatic</li>
+    </ul>
+    <p>Themes apply across all tabs. Layout affects the Designs tab preview.</p>
+
+    <h2>Interactive Features to Try</h2>
+
+    <div class="try"><strong>Career Scrubber:</strong> Go to Designs tab → Layout A → drag the timeline slider from left (2012) to right (2026). Watch all stats, milestone text, and growth percentage change in real-time.</div>
+
+    <div class="try"><strong>AI Chat:</strong> Designs tab → Layout A → scroll to the chat at the bottom. Try typing:
+        <ul>
+            <li>"What should we quote for Printworks?"</li>
+            <li>"growth roadmap"</li>
+            <li>"booking pipeline"</li>
+            <li>"venue recommendations"</li>
+            <li>"strategy analysis"</li>
+        </ul>
+    </div>
+
+    <div class="try"><strong>Live Counters:</strong> Designs tab → watch the KPI bar numbers tick up every 2 seconds (Instagram followers, streams, SoundCloud plays).</div>
+
+    <div class="try"><strong>AI Simulation:</strong> Designs tab → Layout A → the "Lab-Intelligence — Live" panel types out AI-generated suggestions automatically, cycling through opportunities, gap detection, pricing, growth tips, and insights.</div>
+
+    <div class="try"><strong>Globe:</strong> All layouts → scroll down to see the spinning 3D globe with glowing dots on 17 cities Luciid has played, with flight-path arcs from Manchester.</div>
+
+    <div class="try"><strong>Admin Live Edit:</strong> Go to Admin tab → change the "Stat 1" value from "54K" to "100K" → switch to Site Preview tab → the KPI bar shows "100K".</div>
+
+    <h2>Artist Data</h2>
+    <p>The prototype is populated with real data for <strong>Luciid (Luke Pollock)</strong> — the first artist on the Labs Institute roster:</p>
+    <ul>
+        <li>54K Instagram followers, 7.1K RA followers</li>
+        <li>2M+ Spotify streams (Paro Hour)</li>
+        <li>Released on Kneaded Pains, Suara, NineTimesNine</li>
+        <li>Founded AGONY label</li>
+        <li>Played: Fabrik Madrid, OST Berlin, Terminal V, VERKNIPT, Echelon, Cocoricò</li>
+        <li>Supported by: Amelie Lens, Kobosil, Dubfire, 999999999</li>
+        <li>Career timeline: 2012 (started) → 2018 (Luciid moniker) → 2022 (Paro Hour breakout) → 2026 (international festival circuit)</li>
+    </ul>
+
+    <h2>What This Prototype Demonstrates</h2>
+    <ul>
+        <li><strong>Marketing site</strong> — how labs.institute will look and convert both DJs and promoters</li>
+        <li><strong>Admin portal</strong> — how the founder manages site content without coding</li>
+        <li><strong>Artist profiles</strong> — deep career progression with data-driven proof of value</li>
+        <li><strong>AI intelligence</strong> — how Lab-Intelligence generates actionable suggestions</li>
+        <li><strong>Platform vision</strong> — the full roadmap from marketing site to AI-powered management</li>
+        <li><strong>Design flexibility</strong> — 20 theme/layout combinations to choose from</li>
+    </ul>
+
+    <div class="footer">Labs Institute &middot; Founded For The Future &middot; Prototype v1.0</div>
+</div>
+</body>
+</html>

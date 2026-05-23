@@ -211,6 +211,7 @@
             <div class="L-mode" data-v="roadmap">Roadmap</div>
             <div class="L-mode" data-v="apps">Apps</div>
             <div class="L-mode" data-v="tech">Components</div>
+            <div class="L-mode" data-v="guide">Guide</div>
         </div>
         <div style="display:flex;align-items:center;gap:12px">
             <select id="theme-global" onchange="applyGlobalTheme(this.value)" style="padding:5px 10px;background:var(--wh);border:1px solid var(--bd);border-radius:3px;font-size:.58rem;font-family:var(--ff);font-weight:600;cursor:pointer">
@@ -358,6 +359,11 @@
             </select>
         </div>
         <div id="app-preview" style="padding:30px 40px;max-width:1100px;margin:0 auto"></div>
+    </div>
+
+    <!-- ============ GUIDE ============ -->
+    <div class="L-view" id="v-guide">
+        <div id="guide-content" style="max-height:calc(100vh - 60px);overflow-y:auto"></div>
     </div>
 
     <!-- ============ COMPONENTS ============ -->
@@ -1546,6 +1552,14 @@ Social metrics → Periodic snapshots → Pattern detection
             el.style.background=d.bg;el.style.borderColor=d.cardBorder;
         });
     }
+
+    // Load guide
+    fetch('/pages/guide.html').then(function(r){return r.text()}).then(function(html){
+        var m=html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+        var gc=document.getElementById('guide-content');
+        if(gc&&m) gc.innerHTML=m[1];
+        else if(gc) gc.innerHTML=html;
+    }).catch(function(){});
 
     // Init designs tab
     switchDesign('chrome');
