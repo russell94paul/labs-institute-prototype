@@ -1,0 +1,163 @@
+[
+  {
+    "id": "mem_21b3ee48075a",
+    "project": "labs-institute",
+    "content": "{\"brand\":{\"name\":\"Labs Institute\",\"tagline\":\"Founded For The Future\",\"desc\":\"We manage, develop, and promote emerging and established DJs in the underground electronic music scene.\",\"values\":\"Reputation, Transparency, Reinvestment, Family, Value\",\"about\":\"Labs Institute was founded to give underground DJs what the industry doesn't \u2014 transparency, reinvestment, and a structured path from open-deck nights to headline slots. Every penny of commission goes back into artist development, better events, and building a community that lasts.\"},\"kpis\":[{\"value\":\"54K\",\"label\":\"Instagram Reach\"},{\"value\":\"2M+\",\"label\":\"Track Streams\"},{\"value\":\"10+\",\"label\":\"Countries Played\"},{\"value\":\"6\",\"label\":\"Labels Released On\"}],\"roster\":[{\"name\":\"Luciid\",\"genre\":\"Hard Techno / Schranz\",\"tier\":\"established\",\"gigs\":11,\"ig\":\"54.0K\",\"fee\":\"\u2014\"}],\"services\":[{\"name\":\"Artist Management\",\"desc\":\"Career strategy, brand development, day-to-day management\"},{\"name\":\"Booking Agency\",\"desc\":\"Securing gigs, negotiating fees, managing the pipeline\"},{\"name\":\"Event Promotion\",\"desc\":\"Planning, marketing, and running events\"},{\"name\":\"Social Media\",\"desc\":\"Content strategy, posting schedule, audience growth\"},{\"name\":\"DJ Development\",\"desc\":\"Mentoring emerging talent: skills, exposure, progression\"},{\"name\":\"Content Production\",\"desc\":\"Mix recording, photography, video, press kits\"}],\"generated_at\":\"2026-05-23T12:12:44.606Z\"}",
+    "source": "labs-admin",
+    "type": "context",
+    "tags": [
+      "site-content",
+      "admin"
+    ],
+    "metadata": {},
+    "session_id": "",
+    "status": "active",
+    "created_at": "2026-05-23T12:12:44.613274+00:00",
+    "updated_at": "2026-05-23T12:12:44.613312+00:00",
+    "retrieval_count": 0
+  },
+  {
+    "id": "mem_7a113d7e5763",
+    "project": "labs-institute",
+    "content": "MVP site must have 5 pages: Home (hero+KPIs+dual CTA), Artists (roster grid), Artist Profile (/artists/luciid with timeline+stats+releases+embeds), About (origin+values+with-vs-without comparison), Contact (split DJ application + promoter booking forms)",
+    "source": "research-001",
+    "type": "decision",
+    "tags": [
+      "site",
+      "architecture",
+      "mvp"
+    ],
+    "metadata": {},
+    "session_id": "",
+    "status": "active",
+    "created_at": "2026-05-23T12:20:00.024660+00:00",
+    "updated_at": "2026-05-23T12:20:00.024677+00:00",
+    "retrieval_count": 0
+  },
+  {
+    "id": "mem_09c8e8f5d653",
+    "project": "labs-institute",
+    "content": "Artist profiles should combine narrative bio with hard metrics (streams, followers, venues) - this is the pattern that converts best, used by RFYN and Primary Talent. Story + Stats + Social Proof + Activity.",
+    "source": "research-001",
+    "type": "pattern",
+    "tags": [
+      "profile",
+      "conversion",
+      "design"
+    ],
+    "metadata": {},
+    "session_id": "",
+    "status": "active",
+    "created_at": "2026-05-23T12:20:00.058402+00:00",
+    "updated_at": "2026-05-23T12:20:00.058415+00:00",
+    "retrieval_count": 0
+  },
+  {
+    "id": "mem_338f2881a716",
+    "project": "labs-institute",
+    "content": "Two conversion funnels: DJ funnel (Home?Artists?Profile?Apply form) and Promoter funnel (Home?Roster?Profile?Booking Inquiry). Each step needs proof of value to move visitors forward.",
+    "source": "research-001",
+    "type": "pattern",
+    "tags": [
+      "conversion",
+      "funnel",
+      "marketing"
+    ],
+    "metadata": {},
+    "session_id": "",
+    "status": "active",
+    "created_at": "2026-05-23T12:20:00.088020+00:00",
+    "updated_at": "2026-05-23T12:20:00.088033+00:00",
+    "retrieval_count": 0
+  },
+  {
+    "id": "mem_42130c32e452",
+    "project": "labs-institute",
+    "content": "Standard UK artist management commission is ~10% of gross booking fees. Labs should frame as outcome-based: 'We only succeed if you succeed'. Show With Labs vs Without Labs comparison on About page.",
+    "source": "research-001",
+    "type": "fact",
+    "tags": [
+      "pricing",
+      "commission",
+      "value-prop"
+    ],
+    "metadata": {},
+    "session_id": "",
+    "status": "active",
+    "created_at": "2026-05-23T12:20:00.110456+00:00",
+    "updated_at": "2026-05-23T12:20:00.110480+00:00",
+    "retrieval_count": 0
+  },
+  {
+    "id": "mem_30ca238b4552",
+    "project": "labs-institute",
+    "content": "Static or hybrid site generated from JSON gives best performance and SEO. 53% of mobile users abandon after 3 seconds. Lazy-load SoundCloud/Spotify embeds below the fold.",
+    "source": "research-001",
+    "type": "fact",
+    "tags": [
+      "performance",
+      "seo",
+      "technical"
+    ],
+    "metadata": {},
+    "session_id": "",
+    "status": "active",
+    "created_at": "2026-05-23T12:20:00.133892+00:00",
+    "updated_at": "2026-05-23T12:20:00.133916+00:00",
+    "retrieval_count": 0
+  },
+  {
+    "id": "mem_0ee0faf42229",
+    "project": "labs-institute",
+    "content": "Admin CMS should be guided form-driven editing with plain-language fields, not raw WYSIWYG. Collapsible sections, inline help text, conditional logic to hide empty sections. Minimise decision fatigue.",
+    "source": "research-001",
+    "type": "pattern",
+    "tags": [
+      "admin",
+      "ux",
+      "cms"
+    ],
+    "metadata": {},
+    "session_id": "",
+    "status": "active",
+    "created_at": "2026-05-23T12:20:00.157064+00:00",
+    "updated_at": "2026-05-23T12:20:00.157074+00:00",
+    "retrieval_count": 0
+  },
+  {
+    "id": "mem_10cfed034b2f",
+    "project": "labs-institute",
+    "content": "Target SEO keywords: 'DJ management Manchester', 'book underground techno DJ UK', 'artist management underground'. Use in page titles, H1s, meta descriptions. Register Google Business profile.",
+    "source": "research-001",
+    "type": "fact",
+    "tags": [
+      "seo",
+      "keywords",
+      "marketing"
+    ],
+    "metadata": {},
+    "session_id": "",
+    "status": "active",
+    "created_at": "2026-05-23T12:20:00.181771+00:00",
+    "updated_at": "2026-05-23T12:20:00.181792+00:00",
+    "retrieval_count": 0
+  },
+  {
+    "id": "mem_11761d6e97bb",
+    "project": "labs-institute",
+    "content": "Reserve /dashboard URL path for future portals. Use /artists/[slug] for artist pages. Structure content as page templates so new features slot in without redesign.",
+    "source": "research-001",
+    "type": "decision",
+    "tags": [
+      "architecture",
+      "urls",
+      "future-proofing"
+    ],
+    "metadata": {},
+    "session_id": "",
+    "status": "active",
+    "created_at": "2026-05-23T12:20:00.206498+00:00",
+    "updated_at": "2026-05-23T12:20:00.206520+00:00",
+    "retrieval_count": 0
+  }
+]
