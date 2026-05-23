@@ -1995,28 +1995,28 @@ Social metrics → Periodic snapshots → Pattern detection
 
     // Activity carousel
     var activityItems=[
-        {tag:'Upcoming',tagColor:'#22c55e',title:'Cocoricò, Rimini',detail:'May 30 — with Luca Agnelli, AEREA live, Future666. One of Italy\'s most iconic techno venues.',link:'https://ra.co/dj/luciid'},
-        {tag:'Release',tagColor:'#2563eb',title:'Charm — Beatport #15',detail:'Peaked at #15 on Beatport Hard Techno chart. 72K streams and climbing. Available on all platforms.',link:'https://www.beatport.com/artist/luciid/687182'},
-        {tag:'Recent',tagColor:'#7c3aed',title:'EUPHORIK @ OST Berlin',detail:'May 2 — 983 attendees. Peak energy 2am-3am. 2 rebooking inquiries generated from the night.',link:null},
-        {tag:'Festival',tagColor:'#f59e0b',title:'VERKNIPT — Day & Night Festival',detail:'Jul 25, Turbinenhalle Oberhausen. 25-artist lineup. Luciid confirmed for the main stage.',link:'https://ra.co/dj/luciid'},
-        {tag:'Press',tagColor:'#ec4899',title:'Four/Four Magazine Feature',detail:'"It\'s about falling in love with music as an art form again" — in-depth interview covering the AGONY label journey.',link:'https://fourfourmag.com/luciid-its-about-falling-in-love-with-music-as-an-art-form/'},
-        {tag:'Milestone',tagColor:'#22c55e',title:'Paro Hour — 2.1M Streams',detail:'The breakout track on Kneaded Pains that started it all. Still gaining 15K streams/week, 2 years after release.',link:'https://open.spotify.com/artist/luciid'},
-        {tag:'Festival',tagColor:'#f59e0b',title:'Echelon Festival 2026',detail:'Aug 14, Bad Aibling Bavaria. 108-artist festival. International showcase.',link:'https://ra.co/dj/luciid'},
-        {tag:'Recent',tagColor:'#7c3aed',title:'Terminal V Festival — Edinburgh',detail:'Apr 18, Royal Highland Centre. 449 attendees. Scotland\'s premier electronic music festival.',link:null}
+        {dj:'Luciid',tag:'Upcoming',tagColor:'#22c55e',title:'Cocoricò, Rimini',detail:'May 30 — with Luca Agnelli, AEREA live, Future666. One of Italy\'s most iconic techno venues.',link:'https://ra.co/dj/luciid'},
+        {dj:'Luciid',tag:'Release',tagColor:'#2563eb',title:'Charm — Beatport #15',detail:'Peaked at #15 on Beatport Hard Techno chart. 72K streams and climbing. Available on all platforms.',link:'https://www.beatport.com/artist/luciid/687182'},
+        {dj:'Luciid',tag:'Recent',tagColor:'#7c3aed',title:'EUPHORIK @ OST Berlin',detail:'May 2 — 983 attendees. Peak energy 2am-3am. 2 rebooking inquiries generated from the night.',link:'https://ra.co/dj/luciid'},
+        {dj:'Luciid',tag:'Festival',tagColor:'#f59e0b',title:'VERKNIPT — Day & Night Festival',detail:'Jul 25, Turbinenhalle Oberhausen. 25-artist lineup. Confirmed for main stage.',link:'https://ra.co/dj/luciid'},
+        {dj:'Luciid',tag:'Press',tagColor:'#ec4899',title:'Four/Four Magazine Feature',detail:'"It\'s about falling in love with music as an art form again" — in-depth interview on the AGONY label journey.',link:'https://fourfourmag.com/luciid-its-about-falling-in-love-with-music-as-an-art-form/'},
+        {dj:'Luciid',tag:'Milestone',tagColor:'#22c55e',title:'Paro Hour — 2.1M Streams',detail:'The breakout track on Kneaded Pains. Still gaining 15K streams/week, 2 years after release.',link:'https://open.spotify.com/artist/luciid'},
+        {dj:'Luciid',tag:'Festival',tagColor:'#f59e0b',title:'Echelon Festival 2026',detail:'Aug 14, Bad Aibling Bavaria. 108-artist festival. International showcase.',link:'https://ra.co/dj/luciid'},
+        {dj:'Luciid',tag:'Recent',tagColor:'#7c3aed',title:'Terminal V Festival — Edinburgh',detail:'Apr 18, Royal Highland Centre. 449 attendees. Scotland\'s premier electronic music festival.',link:'https://ra.co/dj/luciid'}
     ];
     var actCarousel=document.getElementById('activity-carousel');
     var actIdx=0;
     function rotateActivity(){
         if(!actCarousel) return;
         var item=activityItems[actIdx%activityItems.length];
-        var linkStart=item.link?'<a href="'+item.link+'" target="_blank" style="text-decoration:none;color:inherit">':'';
-        var linkEnd=item.link?'</a>':'';
-        actCarousel.innerHTML=linkStart+'<div style="display:flex;align-items:center;gap:12px;height:36px;animation:fadeIn .4s ease">'+
+        var wrap=item.link?['<a href="'+item.link+'" target="_blank" style="text-decoration:none;color:inherit">','</a>']:['',''];
+        actCarousel.innerHTML=wrap[0]+'<div style="display:flex;align-items:center;gap:12px;height:36px;animation:fadeIn .4s ease">'+
             '<span style="font-size:.5rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:10px;background:'+item.tagColor+'22;color:'+item.tagColor+'">'+item.tag+'</span>'+
+            '<span style="font-size:.68rem;font-weight:700;color:#fff;letter-spacing:.04em">'+item.dj+'</span>'+
             '<span style="font-size:.72rem;font-weight:700;letter-spacing:.02em">'+item.title+'</span>'+
             '<span style="font-size:.62rem;color:#777">'+item.detail+'</span>'+
             (item.link?'<span style="font-size:.5rem;color:#555;margin-left:4px">→</span>':'')+
-            '</div>'+linkEnd;
+            '</div>'+wrap[1];
         actIdx++;
     }
     rotateActivity();
