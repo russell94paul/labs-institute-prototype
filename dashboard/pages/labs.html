@@ -2572,6 +2572,17 @@ Social metrics → Periodic snapshots → Pattern detection
         if(styles){styles.forEach(function(s){var el=document.createElement('style');el.textContent=s.replace(/<\/?style[^>]*>/gi,'');document.head.appendChild(el);});}
         var scripts=html.match(/<script\b[^>]*>([\s\S]*?)<\/script>/gi);
         if(scripts){scripts.forEach(function(s){var code=s.replace(/<\/?script[^>]*>/gi,'');var el=document.createElement('script');el.textContent=code;document.body.appendChild(el);});}
+        // Fix: re-attach onchange handlers after DOM is ready
+        setTimeout(function(){
+            var userSel=document.getElementById('wf-user');
+            var wfSel=document.getElementById('wf-select');
+            if(userSel&&window.loadWorkflows){
+                userSel.onchange=function(){window.loadWorkflows()};
+            }
+            if(wfSel&&window.loadWorkflow){
+                wfSel.onchange=function(){window.loadWorkflow()};
+            }
+        },100);
     }).catch(function(){});
 
     // Global chat panel
