@@ -211,6 +211,7 @@
             <div class="L-mode" data-v="roadmap">Roadmap</div>
             <div class="L-mode" data-v="apps">Apps</div>
             <div class="L-mode" data-v="tech">Components</div>
+            <div class="L-mode" data-v="workflows">Workflows</div>
             <div class="L-mode" data-v="guide">Guide</div>
         </div>
         <div style="display:flex;align-items:center;gap:12px">
@@ -359,6 +360,11 @@
             </select>
         </div>
         <div id="app-preview" style="padding:30px 40px;max-width:1100px;margin:0 auto"></div>
+    </div>
+
+    <!-- ============ WORKFLOWS ============ -->
+    <div class="L-view" id="v-workflows">
+        <div id="workflows-content" style="max-height:calc(100vh - 60px);overflow-y:auto"></div>
     </div>
 
     <!-- ============ GUIDE ============ -->
@@ -1552,6 +1558,18 @@ Social metrics → Periodic snapshots → Pattern detection
             el.style.background=d.bg;el.style.borderColor=d.cardBorder;
         });
     }
+
+    // Load workflows
+    fetch('/pages/workflows.html').then(function(r){return r.text()}).then(function(html){
+        var gc=document.getElementById('workflows-content');
+        if(!gc) return;
+        var m=html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+        gc.innerHTML=m?m[1]:html;
+        var styles=html.match(/<style[^>]*>([\s\S]*?)<\/style>/gi);
+        if(styles){styles.forEach(function(s){var el=document.createElement('style');el.textContent=s.replace(/<\/?style[^>]*>/gi,'');document.head.appendChild(el);});}
+        var scripts=html.match(/<script\b[^>]*>([\s\S]*?)<\/script>/gi);
+        if(scripts){scripts.forEach(function(s){var code=s.replace(/<\/?script[^>]*>/gi,'');var el=document.createElement('script');el.textContent=code;document.body.appendChild(el);});}
+    }).catch(function(){});
 
     // Load guide
     fetch('/pages/guide.html').then(function(r){return r.text()}).then(function(html){
