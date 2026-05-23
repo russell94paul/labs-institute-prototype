@@ -214,15 +214,22 @@
 
 <script>
 window.goToTab=function(tab){
-    var tabBtn=document.querySelector('.L-mode[data-v="'+tab+'"]');
-    if(tabBtn){tabBtn.click();return;}
-    document.querySelectorAll('.L-mode').forEach(function(m){
+    // Find all mode tabs and views in the parent document
+    var modes=document.querySelectorAll('.L-mode');
+    var views=document.querySelectorAll('.L-view');
+    if(!modes.length){
+        // Try parent frames
+        modes=(window.parent||window).document.querySelectorAll('.L-mode');
+        views=(window.parent||window).document.querySelectorAll('.L-view');
+    }
+    modes.forEach(function(m){
         m.classList.remove('on');
-        if(m.dataset.v===tab) m.classList.add('on');
+        if(m.getAttribute('data-v')===tab) m.classList.add('on');
     });
-    document.querySelectorAll('.L-view').forEach(function(v){v.classList.remove('on')});
-    var t=document.getElementById('v-'+tab);
-    if(t) t.classList.add('on');
+    views.forEach(function(v){v.classList.remove('on')});
+    var target=document.getElementById('v-'+tab);
+    if(!target) target=(window.parent||window).document.getElementById('v-'+tab);
+    if(target) target.classList.add('on');
 };
 </script>
 </body>
