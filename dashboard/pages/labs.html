@@ -2657,8 +2657,8 @@ Social metrics → Periodic snapshots → Pattern detection
             var h='';
             CITIES.forEach(function(c){
                 h+='<span style="display:inline-flex;align-items:center;gap:6px;margin-right:14px;margin-bottom:4px">';
-                h+='<span style="width:6px;height:6px;border-radius:50%;background:'+(c.home?d.accent:'rgba('+d.accentRgb+',.4)')+'"></span>';
-                h+='<span style="'+(c.home?'font-weight:700':'')+'">'+c.name+'</span></span>';
+                h+='<span style="width:6px;height:6px;border-radius:50%;background:'+d.accent+'"></span>';
+                h+='<span>'+c.name+(c.home?' (HQ)':'')+'</span></span>';
             });
             cl.innerHTML=h;
         }
