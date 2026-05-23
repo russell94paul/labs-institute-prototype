@@ -132,7 +132,7 @@
         </div>
 
         <div class="topnav-links" id="topnav-links">
-            <a class="topnav-link" data-route="labs-onboarding">
+            <a class="topnav-link" data-route="labs">
                 <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                 Labs Institute
             </a>
@@ -227,7 +227,8 @@
     <script>
     (function() {
         var routes = {
-            'labs-onboarding': { path: 'pages/labs-onboarding.html', label: 'Labs Institute Onboarding' },
+            'labs':            { path: 'pages/labs.html',            label: 'Labs Institute' },
+            'labs-onboarding': { path: 'pages/labs-onboarding.html', label: 'Labs Onboarding' },
             'groovenet':    { path: 'pages/groovenet.html',    label: 'GrooveNet' },
             'build-studio': { path: 'pages/build-studio.html', label: 'Build Studio' },
             'onboarding':   { path: 'pages/onboarding-studio.html', label: 'Product Onboarding Studio' },
@@ -357,7 +358,7 @@
 
         // Boot: route from hash or default to conductor
         var hash = window.location.hash.replace('#', '').split('&')[0];
-        window.navigateTo(hash && routes[hash] ? hash : 'labs-onboarding');
+        window.navigateTo(hash && routes[hash] ? hash : 'labs');
 
         // Handle back/forward
         window.addEventListener('hashchange', function() {
