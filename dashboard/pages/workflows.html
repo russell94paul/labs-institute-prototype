@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <style>
-    .W{--bg:#fff;--fg:#000;--gy:#999;--lt:#f5f5f5;--bd:rgba(0,0,0,.08);--ac:#2563eb;--gn:#16a34a;--am:#f59e0b;--rd:#dc2626;--pr:#7c3aed;--ff:'Helvetica Neue',Arial,sans-serif;--mn:'Consolas',monospace}
+    .W{--bg:inherit;--fg:inherit;--gy:#999;--lt:rgba(128,128,128,.08);--bd:rgba(128,128,128,.15);--ac:#2563eb;--gn:#16a34a;--am:#f59e0b;--rd:#dc2626;--pr:#7c3aed;--ff:'Helvetica Neue',Arial,sans-serif;--mn:'Consolas',monospace}
     .W *{margin:0;padding:0;box-sizing:border-box}
-    .W{font-family:var(--ff);color:var(--fg);background:var(--bg);min-height:100vh}
+    .W{font-family:var(--ff);color:inherit;background:inherit;min-height:100vh}
 
     .W-bar{display:flex;align-items:center;gap:14px;padding:14px 32px;border-bottom:1px solid var(--bd);flex-wrap:wrap}
     .W-bar label{font-size:.52rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gy)}
@@ -24,10 +24,10 @@
     .W-dag{position:relative;padding:20px 0}
     .W-step{display:grid;grid-template-columns:60px 1fr;gap:0;margin-bottom:0;position:relative}
     .W-step-line{display:flex;flex-direction:column;align-items:center}
-    .W-step-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--bd);background:var(--bg);z-index:2;transition:all .3s}
+    .W-step-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--bd);background:transparent;z-index:2;transition:all .3s}
     .W-step-dot.active{border-color:var(--ac);background:var(--ac);box-shadow:0 0 0 4px rgba(37,99,235,.15)}
     .W-step-dot.done{border-color:var(--gn);background:var(--gn)}
-    .W-step-dot.waiting{border-color:var(--bd);background:var(--bg)}
+    .W-step-dot.waiting{border-color:var(--bd);background:transparent}
     .W-step-connector{width:2px;flex:1;background:var(--bd);min-height:20px;transition:background .3s}
     .W-step-connector.done{background:var(--gn)}
     .W-step-connector.active{background:linear-gradient(180deg,var(--ac),var(--bd));animation:flowPulse 2s ease-in-out infinite}
@@ -49,7 +49,7 @@
     .W-ai{background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.1);border-radius:6px;padding:10px 14px;margin-bottom:10px;font-size:.68rem;line-height:1.6;position:relative;animation:fadeSlide .4s ease}
     .W-ai-tag{font-size:.5rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ac);margin-bottom:4px;display:flex;align-items:center;gap:6px}
     .W-ai-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--ac);animation:pulseGlow 1.5s ease-in-out infinite}
-    .W-ai-text{color:#444}
+    .W-ai-text{color:inherit;opacity:.7}
     .W-ai-options{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
     .W-ai-opt{padding:4px 12px;border:1px solid rgba(37,99,235,.2);border-radius:20px;font-size:.6rem;font-weight:600;color:var(--ac);cursor:pointer;transition:all .15s}
     .W-ai-opt:hover{background:rgba(37,99,235,.08);border-color:var(--ac)}
@@ -68,7 +68,7 @@
     .W-results{border:1px solid var(--bd);border-radius:10px;padding:24px;margin-top:20px}
     .W-results-title{font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
     .W-kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px}
-    .W-kpi{text-align:center;padding:14px;background:var(--lt);border-radius:8px}
+    .W-kpi{text-align:center;padding:14px;background:rgba(128,128,128,.06);border-radius:8px}
     .W-kpi-val{font-size:1.4rem;font-weight:200;font-family:var(--mn)}
     .W-kpi-label{font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gy);margin-top:4px}
 
@@ -76,7 +76,7 @@
     .W-compare{width:100%;border-collapse:collapse;font-size:.72rem;margin:14px 0}
     .W-compare th{text-align:left;padding:10px;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gy);border-bottom:2px solid var(--fg)}
     .W-compare td{padding:10px;border-bottom:1px solid var(--bd)}
-    .W-compare tr:hover td{background:var(--lt)}
+    .W-compare tr:hover td{background:rgba(128,128,128,.06)}
     .W-compare .best{font-weight:700;color:var(--gn)}
     .W-compare .worst{color:var(--rd)}
 
@@ -96,7 +96,7 @@
     .W-lib-card-kpis span{font-weight:700;color:var(--fg)}
 
     /* Optimizer */
-    .W-opt{background:var(--lt);border:1px solid var(--bd);border-radius:10px;padding:20px;margin-top:16px}
+    .W-opt{background:rgba(128,128,128,.06);border:1px solid var(--bd);border-radius:10px;padding:20px;margin-top:16px}
     .W-opt-title{font-size:.68rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
     .W-opt-progress{height:6px;background:var(--bd);border-radius:3px;overflow:hidden;margin:10px 0}
     .W-opt-fill{height:100%;background:var(--ac);border-radius:3px;transition:width .3s;width:0}
@@ -109,7 +109,7 @@
     .W-action-pri.p3{background:rgba(37,99,235,.08);color:var(--ac)}
 
     /* Timeline progress bar */
-    .W-timeline{margin:16px 0;padding:14px 18px;background:var(--lt);border-radius:8px;border:1px solid var(--bd)}
+    .W-timeline{margin:16px 0;padding:14px 18px;background:rgba(128,128,128,.06);border-radius:8px;border:1px solid var(--bd)}
     .W-timeline-title{font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gy);margin-bottom:8px;display:flex;justify-content:space-between}
     .W-timeline-bar{display:flex;height:28px;border-radius:6px;overflow:hidden;background:var(--bd)}
     .W-timeline-seg{display:flex;align-items:center;justify-content:center;font-size:.5rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff;transition:all .5s;position:relative;overflow:hidden}
@@ -173,7 +173,7 @@
                     <span style="font-size:.55rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gy)">Lab-Intelligence</span>
                 </div>
                 <div id="builder-msgs" style="padding:12px 14px;min-height:140px;max-height:260px;overflow-y:auto">
-                    <div style="padding:8px 12px;background:var(--lt);border-radius:6px;font-size:.68rem;color:#444;line-height:1.7">What would you like to accomplish?<br><br>Examples:<br>• "Plan a tour across Berlin, Amsterdam and Paris"<br>• "Grow from 1K to 10K Instagram followers"<br>• "Onboard a new DJ to the roster"<br>• "Plan a label showcase event"</div>
+                    <div style="padding:8px 12px;background:rgba(128,128,128,.06);border-radius:6px;font-size:.68rem;color:inherit;opacity:.8;line-height:1.7">What would you like to accomplish?<br><br>Examples:<br>• "Plan a tour across Berlin, Amsterdam and Paris"<br>• "Grow from 1K to 10K Instagram followers"<br>• "Onboard a new DJ to the roster"<br>• "Plan a label showcase event"</div>
                 </div>
                 <div style="padding:8px 12px;border-top:1px solid var(--bd);display:flex;gap:6px">
                     <input id="builder-input" class="W-input" style="flex:1" placeholder="Describe your goal..." onkeydown="if(event.key==='Enter')buildWorkflow()">
@@ -641,9 +641,9 @@
         h+='</div>';
 
         // Summary
-        h+='<div style="margin-top:28px;padding:16px;background:var(--lt);border-radius:8px">';
+        h+='<div style="margin-top:28px;padding:16px;background:rgba(128,128,128,.06);border-radius:8px">';
         h+='<div style="font-size:.68rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Summary</div>';
-        h+='<div style="font-size:.72rem;line-height:1.8;color:#444">';
+        h+='<div style="font-size:.72rem;line-height:1.8;color:inherit;opacity:.7">';
         h+='Best revenue: <strong>Run #'+(bestIdx+1)+' (£'+bestRev+')</strong>. ';
         var avgRev=Math.round(runs.reduce(function(s,r){return s+r.metrics.revenue},0)/runs.length);
         h+='Average across runs: <strong>£'+avgRev+'</strong>. ';
@@ -750,17 +750,17 @@
         h+='<div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:12px">';
         h+='<div style="padding:16px;background:rgba(22,163,74,.04);border:1px solid rgba(22,163,74,.15);border-radius:8px">';
         h+='<div style="font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gn);margin-bottom:6px">Best Outcome (#1)</div>';
-        h+='<div style="font-size:.68rem;color:#444;line-height:1.8">Fee: £'+best.revenue+' | Rating: '+best.rating+'/5 | Rebook: '+best.rebookingProb+'%</div></div>';
+        h+='<div style="font-size:.68rem;color:inherit;opacity:.7;line-height:1.8">Fee: £'+best.revenue+' | Rating: '+best.rating+'/5 | Rebook: '+best.rebookingProb+'%</div></div>';
         h+='<div style="padding:16px;background:rgba(220,38,38,.04);border:1px solid rgba(220,38,38,.15);border-radius:8px">';
         h+='<div style="font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--rd);margin-bottom:6px">Trade-off (#'+simRuns.length+')</div>';
-        h+='<div style="font-size:.68rem;color:#444;line-height:1.8">Fee: £'+worst.revenue+' | Rating: '+worst.rating+'/5 | Rebook: '+worst.rebookingProb+'%</div></div>';
+        h+='<div style="font-size:.68rem;color:inherit;opacity:.7;line-height:1.8">Fee: £'+worst.revenue+' | Rating: '+worst.rating+'/5 | Rebook: '+worst.rebookingProb+'%</div></div>';
         h+='</div>';
 
         // Summary
-        h+='<div style="margin-top:16px;padding:16px;background:var(--lt);border-radius:8px">';
+        h+='<div style="margin-top:16px;padding:16px;background:rgba(128,128,128,.06);border-radius:8px">';
         h+='<div style="font-size:.68rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Optimizer Summary</div>';
         var avgRev=Math.round(simRuns.reduce(function(s,r){return s+r.metrics.revenue},0)/simRuns.length);
-        h+='<div style="font-size:.72rem;line-height:1.8;color:#444">';
+        h+='<div style="font-size:.72rem;line-height:1.8;color:inherit;opacity:.7">';
         h+='Optimized for: <strong>'+optFor+'</strong>. Best: <strong>£'+best.revenue+'</strong> ('+best.rating+'/5 rating). ';
         h+='Average: <strong>£'+avgRev+'</strong>. Range: £'+worst.revenue+' — £'+best.revenue+'. ';
         h+='Recommendation: <strong>Quote £'+best.revenue+'</strong> with flexibility to £'+Math.round(best.revenue*0.9/50)*50+' for high-value venues.';
@@ -899,7 +899,7 @@
             h+='</div>';
 
             // Self-improvement note
-            h+='<div style="margin-top:16px;padding:14px 18px;background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.1);border-radius:8px;font-size:.68rem;color:#444;line-height:1.7">';
+            h+='<div style="margin-top:16px;padding:14px 18px;background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.1);border-radius:8px;font-size:.68rem;color:inherit;opacity:.7;line-height:1.7">';
             h+='<strong style="color:var(--ac)">Self-Improvement Loop:</strong> Every saved workflow and feedback entry is stored in Lab-Intelligence. ';
             h+='Positive outcomes become <em>patterns</em> — the AI will suggest similar approaches in future workflows. ';
             h+='Negative outcomes become <em>anti-patterns</em> — the AI will steer away from those choices. ';
@@ -910,7 +910,7 @@
         lib.innerHTML=h;
     };
 
-    function toast(m){var t=document.createElement('div');t.style.cssText='position:fixed;bottom:24px;right:24px;padding:12px 20px;background:#f5f5f5;border:1px solid #ddd;border-radius:6px;font-size:.72rem;font-weight:600;z-index:600;letter-spacing:.04em;text-transform:uppercase;animation:fadeSlide .3s ease';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.style.opacity='0';t.style.transition='opacity .3s'},2500);setTimeout(function(){t.remove()},3000)}
+    function toast(m){var t=document.createElement('div');t.style.cssText='position:fixed;bottom:24px;right:24px;padding:12px 20px;background:rgba(128,128,128,.06);border:1px solid #ddd;border-radius:6px;font-size:.72rem;font-weight:600;z-index:600;letter-spacing:.04em;text-transform:uppercase;animation:fadeSlide .3s ease';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.style.opacity='0';t.style.transition='opacity .3s'},2500);setTimeout(function(){t.remove()},3000)}
     function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
 
     // AI Builder
@@ -942,10 +942,10 @@
         setTimeout(function(){
             if(tpl){
                 builderSteps=tpl.map(function(s,i){return{id:i,n:s.n,d:s.d}});
-                msgs.innerHTML+='<div style="padding:8px 12px;background:var(--lt);border-radius:6px;margin:6px 0;font-size:.68rem"><strong>'+title+'</strong> — '+builderSteps.length+' steps generated. Edit below.</div>';
+                msgs.innerHTML+='<div style="padding:8px 12px;background:rgba(128,128,128,.06);border-radius:6px;margin:6px 0;font-size:.68rem"><strong>'+title+'</strong> — '+builderSteps.length+' steps generated. Edit below.</div>';
             } else {
                 builderSteps=[{id:0,n:'Define Goal',d:msg},{id:1,n:'Research',d:'Pull context from Lab-Intelligence'},{id:2,n:'Plan',d:'Break into steps'},{id:3,n:'Execute',d:'Do the work'},{id:4,n:'Review',d:'Check results'},{id:5,n:'Capture',d:'Store learnings'}];
-                msgs.innerHTML+='<div style="padding:8px 12px;background:var(--lt);border-radius:6px;margin:6px 0;font-size:.68rem">Custom 6-step workflow generated. Be more specific for a detailed plan.</div>';
+                msgs.innerHTML+='<div style="padding:8px 12px;background:rgba(128,128,128,.06);border-radius:6px;margin:6px 0;font-size:.68rem">Custom 6-step workflow generated. Be more specific for a detailed plan.</div>';
                 title='Custom';
             }
             msgs.scrollTop=msgs.scrollHeight;
@@ -957,7 +957,7 @@
         var h='<div style="font-size:.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">'+esc(title)+' — '+builderSteps.length+' Steps</div>';
         builderSteps.forEach(function(s,i){
             h+='<div style="display:flex;gap:8px;margin:4px 0;align-items:center">';
-            h+='<div style="width:20px;height:20px;border-radius:50%;background:var(--lt);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:.5rem;font-weight:700;color:var(--gy);flex-shrink:0">'+(i+1)+'</div>';
+            h+='<div style="width:20px;height:20px;border-radius:50%;background:rgba(128,128,128,.06);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:.5rem;font-weight:700;color:var(--gy);flex-shrink:0">'+(i+1)+'</div>';
             h+='<div style="flex:1;font-size:.65rem"><strong>'+esc(s.n)+'</strong> — <span style="color:var(--gy)">'+esc(s.d)+'</span></div>';
             h+='<button class="W-btn W-btn-sm" style="font-size:.5rem;padding:2px 6px" onclick="bEdit('+s.id+')">Edit</button>';
             h+='<button class="W-btn W-btn-sm" style="font-size:.5rem;padding:2px 6px;color:var(--rd)" onclick="bRm('+s.id+')">X</button>';
