@@ -158,12 +158,33 @@
             <button class="W-btn W-btn-primary" onclick="runWorkflow()">Run Workflow</button>
             <button class="W-btn W-btn-green" onclick="runOptimizer()">Optimize</button>
             <button class="W-btn W-btn-ghost" onclick="showLibrary()">Library</button>
+            <button class="W-btn W-btn-amber" onclick="toggleBuilder()">AI Builder</button>
         </div>
     </div>
 
     <div class="W-main" id="wf-main">
+        <!-- AI Workflow Builder -->
+        <div id="wf-builder" style="display:none;margin-bottom:24px">
+            <div class="W-title">AI Workflow Builder</div>
+            <div class="W-sub">Describe what you want to accomplish — Lab-Intelligence will generate a custom workflow you can edit and run.</div>
+            <div style="border:1px solid var(--bd);border-radius:8px;overflow:hidden;margin-top:12px">
+                <div style="padding:8px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:6px">
+                    <div style="width:6px;height:6px;border-radius:50%;background:var(--gn);animation:flowPulse 2s ease-in-out infinite"></div>
+                    <span style="font-size:.55rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gy)">Lab-Intelligence</span>
+                </div>
+                <div id="builder-msgs" style="padding:12px 14px;min-height:140px;max-height:260px;overflow-y:auto">
+                    <div style="padding:8px 12px;background:var(--lt);border-radius:6px;font-size:.68rem;color:#444;line-height:1.7">What would you like to accomplish?<br><br>Examples:<br>• "Plan a tour across Berlin, Amsterdam and Paris"<br>• "Grow from 1K to 10K Instagram followers"<br>• "Onboard a new DJ to the roster"<br>• "Plan a label showcase event"</div>
+                </div>
+                <div style="padding:8px 12px;border-top:1px solid var(--bd);display:flex;gap:6px">
+                    <input id="builder-input" class="W-input" style="flex:1" placeholder="Describe your goal..." onkeydown="if(event.key==='Enter')buildWorkflow()">
+                    <button class="W-btn W-btn-primary W-btn-sm" onclick="buildWorkflow()">Build</button>
+                </div>
+            </div>
+            <div id="builder-result" style="margin-top:12px"></div>
+        </div>
+
         <div class="W-title" id="wf-title">Select a workflow to begin</div>
-        <div class="W-sub" id="wf-sub">Choose a user role and workflow from the dropdowns above, then click Run Workflow.</div>
+        <div class="W-sub" id="wf-sub">Choose a user role and workflow from the dropdowns above, then click Run Workflow. Or click AI Builder to create a custom workflow.</div>
         <div id="wf-dag"></div>
         <div id="wf-results"></div>
         <div id="wf-compare"></div>
@@ -891,6 +912,81 @@
 
     function toast(m){var t=document.createElement('div');t.style.cssText='position:fixed;bottom:24px;right:24px;padding:12px 20px;background:#f5f5f5;border:1px solid #ddd;border-radius:6px;font-size:.72rem;font-weight:600;z-index:600;letter-spacing:.04em;text-transform:uppercase;animation:fadeSlide .3s ease';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.style.opacity='0';t.style.transition='opacity .3s'},2500);setTimeout(function(){t.remove()},3000)}
     function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+    // AI Builder
+    var builderSteps=[];
+    var BTPL={
+        tour:[{n:'Route Planning',d:'Map cities, dates, venue targets'},{n:'Venue Research',d:'Lab-Wiki: capacity, genre, contacts'},{n:'Budget',d:'Transport, accommodation per city'},{n:'Outreach',d:'Contact venues with EPK'},{n:'Confirm Dates',d:'Contracts, deposits'},{n:'Book Logistics',d:'Flights, hotels, transfers'},{n:'Promo Campaign',d:'Poster, teasers, city reveals'},{n:'Execute Tour',d:'Travel, perform, log, post'},{n:'Review',d:'Revenue, costs, contacts, learnings'}],
+        grow:[{n:'Audit',d:'Followers, engagement, content types'},{n:'Competitors',d:'Study 5 DJs at 10K+'},{n:'Strategy',d:'Content pillars: BTS, live, previews'},{n:'Schedule',d:'5x/week, optimal times'},{n:'Engage',d:'30min/day: comments, DMs'},{n:'Collab',d:'2 B2B sets/month'},{n:'Check-in',d:'Monthly: adjust mix'},{n:'Milestone',d:'Celebrate at 5K/10K'}],
+        onboard:[{n:'Assess',d:'Scan socials, streams, genre fit'},{n:'Call',d:'30min: goals, expectations'},{n:'Terms',d:'Commission, exclusivity'},{n:'Sign',d:'Contract, digital signature'},{n:'Profile',d:'Bio, photos, socials, rate card'},{n:'Baseline',d:'Record all KPIs'},{n:'Goals',d:'90-day targets'},{n:'Quick Wins',d:'2 gig apps, 1 social fix'}],
+        event:[{n:'Concept',d:'Theme, date, genre'},{n:'Venue',d:'Match capacity, sound, budget'},{n:'Lineup',d:'Roster DJs + guests'},{n:'Budget',d:'Costs, ticket price'},{n:'Marketing',d:'Artwork, event pages'},{n:'Sales',d:'Launch, track, adjust'},{n:'Week-Of',d:'Confirm all logistics'},{n:'Event Day',d:'Sound check, sets, recording'},{n:'Post-Event',d:'Payments, recordings, learnings'}]
+    };
+
+    window.toggleBuilder=function(){
+        var b=document.getElementById('wf-builder');
+        b.style.display=b.style.display==='none'?'block':'none';
+    };
+
+    window.buildWorkflow=function(){
+        var inp=document.getElementById('builder-input');
+        var msg=inp.value.trim();if(!msg)return;inp.value='';
+        var msgs=document.getElementById('builder-msgs');
+        msgs.innerHTML+='<div style="padding:8px 12px;background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.08);border-radius:6px;margin:6px 0;font-size:.68rem;margin-left:auto;max-width:80%">'+esc(msg)+'</div>';
+
+        var lower=msg.toLowerCase(),tpl=null,title='';
+        if(lower.match(/tour|cities|travel|europe/)){tpl=BTPL.tour;title='Multi-City Tour';}
+        else if(lower.match(/grow|instagram|follower|ig|10k/)){tpl=BTPL.grow;title='Instagram Growth';}
+        else if(lower.match(/onboard|new.*dj|roster|sign/)){tpl=BTPL.onboard;title='DJ Onboarding';}
+        else if(lower.match(/event|showcase|night|party/)){tpl=BTPL.event;title='Label Showcase';}
+
+        setTimeout(function(){
+            if(tpl){
+                builderSteps=tpl.map(function(s,i){return{id:i,n:s.n,d:s.d}});
+                msgs.innerHTML+='<div style="padding:8px 12px;background:var(--lt);border-radius:6px;margin:6px 0;font-size:.68rem"><strong>'+title+'</strong> — '+builderSteps.length+' steps generated. Edit below.</div>';
+            } else {
+                builderSteps=[{id:0,n:'Define Goal',d:msg},{id:1,n:'Research',d:'Pull context from Lab-Intelligence'},{id:2,n:'Plan',d:'Break into steps'},{id:3,n:'Execute',d:'Do the work'},{id:4,n:'Review',d:'Check results'},{id:5,n:'Capture',d:'Store learnings'}];
+                msgs.innerHTML+='<div style="padding:8px 12px;background:var(--lt);border-radius:6px;margin:6px 0;font-size:.68rem">Custom 6-step workflow generated. Be more specific for a detailed plan.</div>';
+                title='Custom';
+            }
+            msgs.scrollTop=msgs.scrollHeight;
+            renderBuilder(title);
+        },600);
+    };
+
+    function renderBuilder(title){
+        var h='<div style="font-size:.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">'+esc(title)+' — '+builderSteps.length+' Steps</div>';
+        builderSteps.forEach(function(s,i){
+            h+='<div style="display:flex;gap:8px;margin:4px 0;align-items:center">';
+            h+='<div style="width:20px;height:20px;border-radius:50%;background:var(--lt);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:.5rem;font-weight:700;color:var(--gy);flex-shrink:0">'+(i+1)+'</div>';
+            h+='<div style="flex:1;font-size:.65rem"><strong>'+esc(s.n)+'</strong> — <span style="color:var(--gy)">'+esc(s.d)+'</span></div>';
+            h+='<button class="W-btn W-btn-sm" style="font-size:.5rem;padding:2px 6px" onclick="bEdit('+s.id+')">Edit</button>';
+            h+='<button class="W-btn W-btn-sm" style="font-size:.5rem;padding:2px 6px;color:var(--rd)" onclick="bRm('+s.id+')">X</button>';
+            h+='</div>';
+        });
+        h+='<div style="display:flex;gap:6px;margin-top:8px">';
+        h+='<button class="W-btn W-btn-ghost W-btn-sm" onclick="bAdd()">+ Add</button>';
+        h+='<button class="W-btn W-btn-primary W-btn-sm" onclick="bRun()">Run This Workflow</button>';
+        h+='</div>';
+        document.getElementById('builder-result').innerHTML=h;
+    }
+
+    window.bRm=function(id){builderSteps=builderSteps.filter(function(s){return s.id!==id});renderBuilder('Custom');};
+    window.bEdit=function(id){var s=builderSteps.find(function(x){return x.id===id});if(!s)return;var n=prompt('Name:',s.n);if(!n)return;var d=prompt('Description:',s.d);if(d===null)return;s.n=n;s.d=d;renderBuilder('Custom');};
+    window.bAdd=function(){var n=prompt('Step name:');if(!n)return;builderSteps.push({id:Date.now(),n:n,d:prompt('Description:','')||''});renderBuilder('Custom');};
+    window.bRun=function(){
+        // Convert builder steps into a runnable workflow format
+        currentWorkflow={id:'custom',name:'Custom Workflow',desc:'AI-generated workflow',steps:builderSteps.map(function(s){
+            return{name:s.n,desc:s.d,inputs:[{id:'input',label:'Your Input',ph:'',ai:'Follow Lab-Intelligence suggestion above'}],aiSuggest:'Lab-Intelligence: For "'+s.n+'" — '+s.d+'. Consider your current resources, timeline, and goals.',aiOptions:['Follow suggestion','Modify approach','Skip this step']};
+        })};
+        currentStepIdx=0;
+        stepData=currentWorkflow.steps.map(function(){return{values:{},aiChoice:''}});
+        document.getElementById('wf-builder').style.display='none';
+        document.getElementById('wf-title').textContent=currentWorkflow.name;
+        document.getElementById('wf-sub').textContent=currentWorkflow.desc;
+        document.getElementById('wf-results').innerHTML='';
+        document.getElementById('wf-compare').innerHTML='';
+        renderDAG();
+    };
 
     loadWorkflows();
     loadWorkflow();
