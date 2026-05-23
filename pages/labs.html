@@ -132,6 +132,7 @@
     .S-values-item{font-size:1rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--bk);padding:0 40px;flex-shrink:0}
     .S-values-dot{color:var(--gy);padding:0 20px;font-size:1.2rem;flex-shrink:0}
     @keyframes valScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    @keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
     /* CTA */
     .S-cta{text-align:center;padding:80px 40px;background:var(--bk);color:var(--wh)}
@@ -255,72 +256,6 @@
     <!-- ============ SITE PREVIEW ============ -->
     <div class="L-view on" id="v-site" style="position:relative">
 
-        <!-- Activity pane — top right -->
-        <div id="activity-pane" style="position:fixed;top:46px;right:12px;width:260px;z-index:50;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.06);max-height:calc(100vh - 56px);overflow-y:auto;font-family:var(--ff)">
-            <div style="padding:10px 14px;border-bottom:1px solid rgba(0,0,0,.06);display:flex;align-items:center;justify-content:space-between">
-                <div style="font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#999">Latest</div>
-                <div style="display:flex;align-items:center;gap:6px">
-                    <div style="width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 2s ease-in-out infinite"></div>
-                    <span onclick="this.closest('#activity-pane').style.display='none'" style="cursor:pointer;font-size:12px;color:#ccc;line-height:1" title="Close">&#10005;</span>
-                </div>
-            </div>
-
-            <div style="padding:8px 14px;border-bottom:1px solid rgba(0,0,0,.04)">
-                <div style="font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:#bbb;margin-bottom:6px">Upcoming</div>
-                <a href="https://ra.co/dj/luciid" target="_blank" style="display:flex;gap:8px;align-items:center;text-decoration:none;color:inherit;padding:4px 0">
-                    <div style="width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0"></div>
-                    <div><div style="font-size:.65rem;font-weight:700">Cocoricò, Italy</div><div style="font-size:.55rem;color:#999">May 30 — w/ Luca Agnelli</div></div>
-                </a>
-                <a href="https://ra.co/dj/luciid" target="_blank" style="display:flex;gap:8px;align-items:center;text-decoration:none;color:inherit;padding:4px 0">
-                    <div style="width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0"></div>
-                    <div><div style="font-size:.65rem;font-weight:700">VERKNIPT, Germany</div><div style="font-size:.55rem;color:#999">Jul 25 — Day & Night</div></div>
-                </a>
-                <a href="https://ra.co/dj/luciid" target="_blank" style="display:flex;gap:8px;align-items:center;text-decoration:none;color:inherit;padding:4px 0">
-                    <div style="width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0"></div>
-                    <div><div style="font-size:.65rem;font-weight:700">Echelon Festival</div><div style="font-size:.55rem;color:#999">Aug 14 — Bavaria</div></div>
-                </a>
-            </div>
-
-            <div style="padding:8px 14px;border-bottom:1px solid rgba(0,0,0,.04)">
-                <div style="font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:#bbb;margin-bottom:6px">New Releases</div>
-                <a href="https://www.beatport.com/artist/luciid/687182" target="_blank" style="display:flex;gap:8px;align-items:center;text-decoration:none;color:inherit;padding:4px 0">
-                    <div style="width:16px;height:16px;border-radius:3px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;font-size:8px;flex-shrink:0">&#9835;</div>
-                    <div><div style="font-size:.65rem;font-weight:700">Charm</div><div style="font-size:.55rem;color:#999">Beatport #15 — 72K plays</div></div>
-                </a>
-                <a href="https://open.spotify.com/artist/luciid" target="_blank" style="display:flex;gap:8px;align-items:center;text-decoration:none;color:inherit;padding:4px 0">
-                    <div style="width:16px;height:16px;border-radius:3px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;font-size:8px;flex-shrink:0">&#9835;</div>
-                    <div><div style="font-size:.65rem;font-weight:700">Paro Hour</div><div style="font-size:.55rem;color:#999">2.1M streams — Kneaded Pains</div></div>
-                </a>
-            </div>
-
-            <div style="padding:8px 14px;border-bottom:1px solid rgba(0,0,0,.04)">
-                <div style="font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:#bbb;margin-bottom:6px">Recent</div>
-                <div style="display:flex;gap:8px;align-items:center;padding:4px 0">
-                    <div style="width:6px;height:6px;border-radius:50%;background:#2563eb;flex-shrink:0"></div>
-                    <div><div style="font-size:.62rem;font-weight:600">OST Berlin — EUPHORIK</div><div style="font-size:.52rem;color:#999">983 ppl — May 2</div></div>
-                </div>
-                <a href="https://fourfourmag.com/luciid-its-about-falling-in-love-with-music-as-an-art-form/" target="_blank" style="display:flex;gap:8px;align-items:center;text-decoration:none;color:inherit;padding:4px 0">
-                    <div style="width:6px;height:6px;border-radius:50%;background:#f59e0b;flex-shrink:0"></div>
-                    <div><div style="font-size:.62rem;font-weight:600">Four/Four Magazine</div><div style="font-size:.52rem;color:#999">Feature — Apr 2026</div></div>
-                </a>
-                <div style="display:flex;gap:8px;align-items:center;padding:4px 0">
-                    <div style="width:6px;height:6px;border-radius:50%;background:#7c3aed;flex-shrink:0"></div>
-                    <div><div style="font-size:.62rem;font-weight:600">Terminal V Festival</div><div style="font-size:.52rem;color:#999">Edinburgh — Apr 18</div></div>
-                </div>
-            </div>
-
-            <div style="padding:8px 14px">
-                <div style="font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:#bbb;margin-bottom:6px">Links</div>
-                <div style="display:flex;gap:6px;flex-wrap:wrap">
-                    <a href="https://instagram.com/luciidmusic" target="_blank" style="font-size:.55rem;padding:3px 8px;border:1px solid rgba(0,0,0,.08);border-radius:10px;text-decoration:none;color:#777;font-weight:600;transition:border-color .15s" onmouseenter="this.style.borderColor='#000'" onmouseleave="this.style.borderColor='rgba(0,0,0,.08)'">Instagram</a>
-                    <a href="https://soundcloud.com/thisisluciid" target="_blank" style="font-size:.55rem;padding:3px 8px;border:1px solid rgba(0,0,0,.08);border-radius:10px;text-decoration:none;color:#777;font-weight:600;transition:border-color .15s" onmouseenter="this.style.borderColor='#000'" onmouseleave="this.style.borderColor='rgba(0,0,0,.08)'">SoundCloud</a>
-                    <a href="https://ra.co/dj/luciid" target="_blank" style="font-size:.55rem;padding:3px 8px;border:1px solid rgba(0,0,0,.08);border-radius:10px;text-decoration:none;color:#777;font-weight:600;transition:border-color .15s" onmouseenter="this.style.borderColor='#000'" onmouseleave="this.style.borderColor='rgba(0,0,0,.08)'">RA</a>
-                    <a href="https://www.beatport.com/artist/luciid/687182" target="_blank" style="font-size:.55rem;padding:3px 8px;border:1px solid rgba(0,0,0,.08);border-radius:10px;text-decoration:none;color:#777;font-weight:600;transition:border-color .15s" onmouseenter="this.style.borderColor='#000'" onmouseleave="this.style.borderColor='rgba(0,0,0,.08)'">Beatport</a>
-                    <a href="https://open.spotify.com/artist/luciid" target="_blank" style="font-size:.55rem;padding:3px 8px;border:1px solid rgba(0,0,0,.08);border-radius:10px;text-decoration:none;color:#777;font-weight:600;transition:border-color .15s" onmouseenter="this.style.borderColor='#000'" onmouseleave="this.style.borderColor='rgba(0,0,0,.08)'">Spotify</a>
-                </div>
-            </div>
-        </div>
-
         <!-- Logo above hero -->
         <div class="S-logo">
             <div class="S-logo-text" id="site-logo">LABS</div>
@@ -342,6 +277,47 @@
 
         <!-- KPI bar -->
         <div class="S-kpis" id="site-kpis"></div>
+
+        <!-- Activity ticker -->
+        <div style="overflow:hidden;padding:10px 0;border-bottom:1px solid var(--bd);background:#fafafa">
+            <div style="display:flex;animation:tickerScroll 40s linear infinite;white-space:nowrap">
+                <div style="display:flex;gap:0;flex-shrink:0">
+                    <a href="https://ra.co/dj/luciid" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:0 24px;text-decoration:none;color:inherit;font-size:.65rem"><span style="width:5px;height:5px;border-radius:50%;background:#22c55e;flex-shrink:0"></span><strong>Upcoming</strong>&nbsp;Cocoricò, Italy — May 30</a>
+                    <span style="color:rgba(0,0,0,.1);padding:0 4px">/</span>
+                    <a href="https://www.beatport.com/artist/luciid/687182" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:0 24px;text-decoration:none;color:inherit;font-size:.65rem"><span style="width:5px;height:5px;border-radius:50%;background:#2563eb;flex-shrink:0"></span><strong>Charm</strong>&nbsp;#15 Beatport Hard Techno</a>
+                    <span style="color:rgba(0,0,0,.1);padding:0 4px">/</span>
+                    <span style="display:inline-flex;align-items:center;gap:6px;padding:0 24px;font-size:.65rem"><span style="width:5px;height:5px;border-radius:50%;background:#7c3aed;flex-shrink:0"></span><strong>Terminal V</strong>&nbsp;Edinburgh — Apr 18</span>
+                    <span style="color:rgba(0,0,0,.1);padding:0 4px">/</span>
+                    <a href="https://ra.co/dj/luciid" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:0 24px;text-decoration:none;color:inherit;font-size:.65rem"><span style="width:5px;height:5px;border-radius:50%;background:#22c55e;flex-shrink:0"></span><strong>VERKNIPT</strong>&nbsp;Germany — Jul 25</a>
+                    <span style="color:rgba(0,0,0,.1);padding:0 4px">/</span>
+                    <span style="display:inline-flex;align-items:center;gap:6px;padding:0 24px;font-size:.65rem"><span style="width:5px;height:5px;border-radius:50%;background:#2563eb;flex-shrink:0"></span><strong>OST Berlin</strong>&nbsp;983 attendees — May 2</span>
+                    <span style="color:rgba(0,0,0,.1);padding:0 4px">/</span>
+                    <a href="https://fourfourmag.com/luciid-its-about-falling-in-love-with-music-as-an-art-form/" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:0 24px;text-decoration:none;color:inherit;font-size:.65rem"><span style="width:5px;height:5px;border-radius:50%;background:#f59e0b;flex-shrink:0"></span><strong>Press</strong>&nbsp;Four/Four Magazine feature</a>
+                    <span style="color:rgba(0,0,0,.1);padding:0 4px">/</span>
+                    <a href="https://open.spotify.com/artist/luciid" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:0 24px;text-decoration:none;color:inherit;font-size:.65rem"><span style="width:5px;height:5px;border-radius:50%;background:#22c55e;flex-shrink:0"></span><strong>Paro Hour</strong>&nbsp;2.1M streams</a>
+                    <span style="color:rgba(0,0,0,.1);padding:0 4px">/</span>
+                    <span style="display:inline-flex;align-items:center;gap:6px;padding:0 24px;font-size:.65rem"><span style="width:5px;height:5px;border-radius:50%;background:#22c55e;flex-shrink:0"></span><strong>Echelon Festival</strong>&nbsp;Bavaria — Aug 14</span>
+                    <span style="color:rgba(0,0,0,.1);padding:0 4px">/</span>
+                </div>
+                <div style="display:flex;gap:0;flex-shrink:0">
+                    <a href="https://ra.co/dj/luciid" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:0 24px;text-decoration:none;color:inherit;font-size:.65rem"><span style="width:5px;height:5px;border-radius:50%;background:#22c55e;flex-shrink:0"></span><strong>Upcoming</strong>&nbsp;Cocoricò, Italy — May 30</a>
+                    <span style="color:rgba(0,0,0,.1);padding:0 4px">/</span>
+                    <a href="https://www.beatport.com/artist/luciid/687182" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:0 24px;text-decoration:none;color:inherit;font-size:.65rem"><span style="width:5px;height:5px;border-radius:50%;background:#2563eb;flex-shrink:0"></span><strong>Charm</strong>&nbsp;#15 Beatport Hard Techno</a>
+                    <span style="color:rgba(0,0,0,.1);padding:0 4px">/</span>
+                    <span style="display:inline-flex;align-items:center;gap:6px;padding:0 24px;font-size:.65rem"><span style="width:5px;height:5px;border-radius:50%;background:#7c3aed;flex-shrink:0"></span><strong>Terminal V</strong>&nbsp;Edinburgh — Apr 18</span>
+                    <span style="color:rgba(0,0,0,.1);padding:0 4px">/</span>
+                    <a href="https://ra.co/dj/luciid" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:0 24px;text-decoration:none;color:inherit;font-size:.65rem"><span style="width:5px;height:5px;border-radius:50%;background:#22c55e;flex-shrink:0"></span><strong>VERKNIPT</strong>&nbsp;Germany — Jul 25</a>
+                    <span style="color:rgba(0,0,0,.1);padding:0 4px">/</span>
+                    <span style="display:inline-flex;align-items:center;gap:6px;padding:0 24px;font-size:.65rem"><span style="width:5px;height:5px;border-radius:50%;background:#2563eb;flex-shrink:0"></span><strong>OST Berlin</strong>&nbsp;983 attendees — May 2</span>
+                    <span style="color:rgba(0,0,0,.1);padding:0 4px">/</span>
+                    <a href="https://fourfourmag.com/luciid-its-about-falling-in-love-with-music-as-an-art-form/" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:0 24px;text-decoration:none;color:inherit;font-size:.65rem"><span style="width:5px;height:5px;border-radius:50%;background:#f59e0b;flex-shrink:0"></span><strong>Press</strong>&nbsp;Four/Four Magazine feature</a>
+                    <span style="color:rgba(0,0,0,.1);padding:0 4px">/</span>
+                    <a href="https://open.spotify.com/artist/luciid" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:0 24px;text-decoration:none;color:inherit;font-size:.65rem"><span style="width:5px;height:5px;border-radius:50%;background:#22c55e;flex-shrink:0"></span><strong>Paro Hour</strong>&nbsp;2.1M streams</a>
+                    <span style="color:rgba(0,0,0,.1);padding:0 4px">/</span>
+                    <span style="display:inline-flex;align-items:center;gap:6px;padding:0 24px;font-size:.65rem"><span style="width:5px;height:5px;border-radius:50%;background:#22c55e;flex-shrink:0"></span><strong>Echelon Festival</strong>&nbsp;Bavaria — Aug 14</span>
+                </div>
+            </div>
+        </div>
 
         <!-- Values marquee -->
         <div class="S-values">
