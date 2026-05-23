@@ -803,6 +803,30 @@ Social metrics → Periodic snapshots → Pattern detection
         h+='<div style="opacity:.4">Initialising Lab-Intelligence...</div>';
         h+='</div></div></div>';
 
+        // GLOBE — cities played
+        h+='<div style="padding:40px;max-width:1000px;margin:0 auto">';
+        h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center">';
+        h+='<div>';
+        h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:12px">Global Reach</div>';
+        h+='<canvas id="globe-canvas" width="400" height="400" style="width:100%;max-width:400px;display:block;margin:0 auto"></canvas>';
+        h+='</div>';
+        h+='<div>';
+        h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:14px">Cities Played</div>';
+        h+='<div id="globe-cities" style="font-size:.68rem;color:'+d.textMuted+';line-height:2.2"></div>';
+        h+='</div></div></div>';
+
+        // AI CHAT DEMO
+        h+='<div style="padding:0 40px 40px;max-width:1000px;margin:0 auto">';
+        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:10px;overflow:hidden;'+(d.anim==='glass'?'backdrop-filter:blur(12px);':'')+'">';
+        h+='<div style="padding:10px 20px;border-bottom:1px solid '+d.cardBorder+';display:flex;align-items:center;gap:8px">';
+        h+='<div style="width:8px;height:8px;border-radius:50%;background:'+d.accent+';animation:pulseGlow 1.5s ease-in-out infinite"></div>';
+        h+='<div style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+'">Lab-Intelligence Chat — Interactive Demo</div></div>';
+        h+='<div id="chat-messages" style="padding:16px 20px;min-height:180px;max-height:300px;overflow-y:auto"></div>';
+        h+='<div style="padding:10px 16px;border-top:1px solid '+d.cardBorder+';display:flex;gap:8px">';
+        h+='<input id="chat-input" style="flex:1;padding:10px 14px;background:rgba('+d.accentRgb+',.04);border:1px solid '+d.cardBorder+';border-radius:6px;color:inherit;font-size:.75rem;font-family:var(--ff);outline:none" placeholder="Ask about Luciid, pricing, venues, strategy...">';
+        h+='<button onclick="sendChat()" style="padding:8px 20px;background:'+d.accent+';border:none;border-radius:6px;color:'+(id==='pulse'||id==='glass'?'#000':id==='brutalist'?'#fff':d.bg)+';font-size:.62rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;font-family:var(--ff)">Send</button>';
+        h+='</div></div></div>';
+
         // CTA
         h+='<div style="text-align:center;padding:60px 40px;border-top:1px solid '+d.cardBorder+'">';
         h+='<div style="font-size:.85rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px">Join The Roster</div>';
@@ -888,6 +912,195 @@ Social metrics → Periodic snapshots → Pattern detection
         setTimeout(function(){
             if(feed){feed.innerHTML='';typeAISuggestion();}
         },1500);
+
+        // GLOBE RENDERING
+        var CITIES=[
+            {name:'Manchester',lat:53.48,lon:-2.24,home:true},
+            {name:'Dublin',lat:53.35,lon:-6.26},{name:'Belfast',lat:54.60,lon:-5.93},
+            {name:'Madrid',lat:40.42,lon:-3.70},{name:'Barcelona',lat:41.39,lon:2.17},
+            {name:'Paris',lat:48.86,lon:2.35},{name:'Amsterdam',lat:52.37,lon:4.90},
+            {name:'Berlin',lat:52.52,lon:13.41},{name:'Stuttgart',lat:48.78,lon:9.18},
+            {name:'Munich',lat:48.14,lon:11.58},{name:'Helsinki',lat:60.17,lon:24.94},
+            {name:'Budapest',lat:47.50,lon:19.04},{name:'Edinburgh',lat:55.95,lon:-3.19},
+            {name:'London',lat:51.51,lon:-0.13},{name:'Rimini',lat:44.06,lon:12.57},
+            {name:'Glasgow',lat:55.86,lon:-4.25},{name:'Oberhausen',lat:51.47,lon:6.85}
+        ];
+        var canvas=document.getElementById('globe-canvas');
+        if(canvas){
+            var ctx=canvas.getContext('2d');
+            var W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,R=160;
+            var rot=0;
+            var globeColor=d.accent;
+            var globeBg=d.bg==='#fff'||d.bg==='#ffffff'||d.bg==='#f5f5f0'?'#000':'#fff';
+
+            function toScreen(lat,lon,rotation){
+                var phi=(90-lat)*Math.PI/180;
+                var theta=(lon+rotation)*Math.PI/180;
+                var x=R*Math.sin(phi)*Math.cos(theta);
+                var y=-R*Math.cos(phi);
+                var z=R*Math.sin(phi)*Math.sin(theta);
+                return {x:cx+x,y:cy+y,z:z,visible:z>0};
+            }
+
+            function drawGlobe(){
+                ctx.clearRect(0,0,W,H);
+
+                // Globe outline
+                ctx.beginPath();
+                ctx.arc(cx,cy,R,0,Math.PI*2);
+                ctx.strokeStyle='rgba('+(d.bg==='#fff'||d.bg==='#ffffff'||d.bg==='#f5f5f0'?'0,0,0':'255,255,255')+',.08)';
+                ctx.lineWidth=1;
+                ctx.stroke();
+
+                // Grid lines
+                ctx.strokeStyle='rgba('+(d.bg==='#fff'||d.bg==='#ffffff'||d.bg==='#f5f5f0'?'0,0,0':'255,255,255')+',.04)';
+                ctx.lineWidth=0.5;
+                for(var lat=-60;lat<=60;lat+=30){
+                    ctx.beginPath();
+                    for(var lon=0;lon<=360;lon+=5){
+                        var p=toScreen(lat,lon,rot);
+                        if(p.visible){if(lon===0||!toScreen(lat,lon-5,rot).visible)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);}
+                    }
+                    ctx.stroke();
+                }
+                for(var lon=-180;lon<180;lon+=30){
+                    ctx.beginPath();
+                    for(var lat=-90;lat<=90;lat+=5){
+                        var p=toScreen(lat,lon,rot);
+                        if(p.visible){if(lat===-90||!toScreen(lat-5,lon,rot).visible)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);}
+                    }
+                    ctx.stroke();
+                }
+
+                // Flight paths from Manchester
+                var home=CITIES[0];
+                CITIES.forEach(function(city,i){
+                    if(i===0) return;
+                    var p1=toScreen(home.lat,home.lon,rot);
+                    var p2=toScreen(city.lat,city.lon,rot);
+                    if(p1.visible&&p2.visible){
+                        ctx.beginPath();
+                        ctx.moveTo(p1.x,p1.y);
+                        var midLat=(home.lat+city.lat)/2+8;
+                        var midLon=(home.lon+city.lon)/2;
+                        var pm=toScreen(midLat,midLon,rot);
+                        ctx.quadraticCurveTo(pm.x,pm.y,p2.x,p2.y);
+                        ctx.strokeStyle='rgba('+d.accentRgb+',.15)';
+                        ctx.lineWidth=1;
+                        ctx.stroke();
+                    }
+                });
+
+                // City dots
+                CITIES.forEach(function(city){
+                    var p=toScreen(city.lat,city.lon,rot);
+                    if(!p.visible) return;
+                    var dotR=city.home?6:4;
+                    ctx.beginPath();
+                    ctx.arc(p.x,p.y,dotR,0,Math.PI*2);
+                    ctx.fillStyle=city.home?globeColor:d.accent;
+                    ctx.fill();
+                    // Glow
+                    ctx.beginPath();
+                    ctx.arc(p.x,p.y,dotR+4,0,Math.PI*2);
+                    ctx.fillStyle='rgba('+d.accentRgb+',.15)';
+                    ctx.fill();
+                    // Pulse ring on home
+                    if(city.home){
+                        var pulseR=dotR+6+Math.sin(Date.now()/400)*4;
+                        ctx.beginPath();
+                        ctx.arc(p.x,p.y,pulseR,0,Math.PI*2);
+                        ctx.strokeStyle='rgba('+d.accentRgb+',.3)';
+                        ctx.lineWidth=1;
+                        ctx.stroke();
+                    }
+                });
+
+                rot+=0.3;
+                requestAnimationFrame(drawGlobe);
+            }
+            drawGlobe();
+
+            // City list
+            var cityList=document.getElementById('globe-cities');
+            if(cityList){
+                var cl='';
+                CITIES.forEach(function(c){
+                    cl+='<div style="display:inline-flex;align-items:center;gap:6px;margin-right:16px;margin-bottom:4px">';
+                    cl+='<div style="width:6px;height:6px;border-radius:50%;background:'+(c.home?d.accent:'rgba('+d.accentRgb+',.4)')+'"></div>';
+                    cl+='<span style="'+(c.home?'font-weight:700;color:'+d.fg:'')+'">'+c.name+'</span></div>';
+                });
+                cityList.innerHTML=cl;
+            }
+        }
+
+        // AI CHAT DEMO
+        var CHAT_RESPONSES={
+            'default':'Based on Lab-Intelligence data, I can help with pricing, venue recommendations, growth strategies, booking pipeline status, and DJ development roadmaps. Try asking about a specific venue, event, or strategy.',
+            'price':'Based on Lab-Wiki data: Luciid\'s current tier (established) with 54K IG, 2M+ streams, and Beatport charting supports fees of £400-800 for club nights, £800-1,500 for festivals. For Manchester venues specifically: Hidden (£300-500), YES (£400-700), Warehouse Project (£800-1,200). Always factor in travel costs for non-local gigs.',
+            'venue':'Lab-Wiki venue intelligence: Luciid performs best at venues with Funktion-One sound systems — 40% higher rebooking rate. Top-performing venues by audience response: Fabrik Madrid (peak energy at 3am), OST Berlin (140+ BPM preferred), The Telegraph Building Belfast (hometown crowd bonus). Upcoming recommendations: Printworks London (3,000 cap, techno-forward Fridays).',
+            'growth':'Lab-Intelligence growth roadmap for Luciid (next 90 days):\n\n1. CONTENT: Post 3x studio BTS clips/week (2.4x higher engagement than flyers)\n2. RELEASES: Submit "Charm" remix pack to Drumcode — genre fit is 87%\n3. GIGS: Apply to Awakenings NL (open submissions close Jun 15)\n4. SOCIAL: Instagram Reels of live sets — avg 12K views vs 3K for static posts\n5. COLLAB: B2B set with Per Pleks at AGONY label night — combined reach 92K\n\nProjected impact: +8K IG followers, +3 festival bookings, +£4K revenue in Q3.',
+            'booking':'Current booking pipeline:\n\nINQUIRIES (3): Printworks London (Mar), fabric (Apr), Sonar Off (Jun)\nQUOTING (1): Printworks — recommended £1,100 based on comparable acts\nCONTRACT SENT (1): VERKNIPT Festival — €1,200, awaiting signature\nCONFIRMED (2): Terminal V Edinburgh (Apr 18), Echelon Bavaria (Aug 14)\n\nRevenue: £4,200 confirmed, £2,200 in pipeline. On track for £8K this quarter.',
+            'strategy':'Lab-Intelligence analysis of Luciid\'s optimal strategy:\n\nSTRENGTHS: Beatport charting, AGONY label ownership, strong live energy\nGAPS: SoundCloud growth stalled, no YouTube presence, no podcast/radio shows\n\nTop 3 priorities by ROI:\n1. Launch monthly mix series on YouTube (LOW effort, HIGH growth — untapped 2B user platform)\n2. Guest mix on HÖR Berlin (already played their Budapest event — warm lead)\n3. Pricing increase for EU festivals: current avg €1K is 20% below tier benchmark\n\nRisk: Over-touring in Q3 could dilute brand exclusivity. Cap at 6 gigs/month.'
+        };
+
+        var chatEl=document.getElementById('chat-messages');
+        if(chatEl){
+            addChatMsg('ai','Welcome to Lab-Intelligence. Ask me anything about Luciid\'s career, pricing, venues, growth strategy, or booking pipeline.');
+        }
+
+        var chatInput=document.getElementById('chat-input');
+        if(chatInput){
+            chatInput.addEventListener('keydown',function(e){
+                if(e.key==='Enter') sendChat();
+            });
+        }
+
+        window.sendChat=function(){
+            var input=document.getElementById('chat-input');
+            var msg=input.value.trim();
+            if(!msg) return;
+            input.value='';
+            addChatMsg('user',msg);
+
+            var response=CHAT_RESPONSES['default'];
+            var lower=msg.toLowerCase();
+            if(lower.match(/pric|fee|cost|quote|how much|rate/)) response=CHAT_RESPONSES['price'];
+            else if(lower.match(/venue|club|where|fabric|printworks|warehouse/)) response=CHAT_RESPONSES['venue'];
+            else if(lower.match(/grow|roadmap|plan|next|improve|strategy|develop/)) response=CHAT_RESPONSES['growth'];
+            else if(lower.match(/book|pipeline|inquiry|gig|confirm|contract/)) response=CHAT_RESPONSES['booking'];
+            else if(lower.match(/strateg|strength|weak|gap|analys|priority|roi/)) response=CHAT_RESPONSES['strategy'];
+
+            // Typing indicator
+            var typing=document.createElement('div');
+            typing.id='chat-typing';
+            typing.style.cssText='padding:8px 14px;margin:6px 0;font-size:.65rem;color:'+d.textMuted+';font-style:italic';
+            typing.textContent='Lab-Intelligence is thinking...';
+            document.getElementById('chat-messages').appendChild(typing);
+            chatEl.scrollTop=chatEl.scrollHeight;
+
+            setTimeout(function(){
+                var t=document.getElementById('chat-typing');
+                if(t)t.remove();
+                addChatMsg('ai',response);
+            },800+Math.random()*1200);
+        };
+
+        function addChatMsg(role,text){
+            var el=document.createElement('div');
+            var isAI=role==='ai';
+            el.style.cssText='padding:10px 14px;margin:6px 0;border-radius:8px;font-size:.72rem;line-height:1.8;white-space:pre-wrap;max-width:85%;animation:fadeIn .2s ease;'+
+                (isAI?'background:rgba('+d.accentRgb+',.06);border:1px solid rgba('+d.accentRgb+',.1);color:'+d.fg:
+                'background:rgba('+d.accentRgb+',.12);border:1px solid rgba('+d.accentRgb+',.2);color:'+d.fg+';margin-left:auto');
+            if(isAI){
+                el.innerHTML='<div style="font-size:.5rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.accent+';margin-bottom:4px">Lab-Intelligence</div>'+esc(text);
+            } else {
+                el.innerHTML='<div style="font-size:.5rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:4px">You</div>'+esc(text);
+            }
+            var container=document.getElementById('chat-messages');
+            container.appendChild(el);
+            container.scrollTop=container.scrollHeight;
+        }
     };
 
     var TECH={
