@@ -725,22 +725,133 @@
     window.saveToLibrary=function(){
         var latest=runs.length?runs[runs.length-1]:null;
         if(!latest) return;
+        latest.savedAt=new Date().toISOString();
+        latest.feedback=null;
         library.push(latest);
-        toast('Saved to workflow library');
+
+        // Store to Lab-Intelligence (project memory) for self-improvement
+        var memoryEntry={
+            content:JSON.stringify({
+                workflow:latest.name,
+                metrics:latest.metrics,
+                steps:latest.steps.map(function(s){return{values:s.values,aiChoice:s.aiChoice}}),
+                optimize:latest.optimize,
+                timestamp:latest.timestamp
+            }),
+            type:'pattern',
+            tags:['workflow','simulation',latest.name.toLowerCase().replace(/\s+/g,'-')],
+            source:'workflow-simulator',
+            session_id:'workflow-'+Date.now()
+        };
+        fetch('/api/projects/labs-institute/memory/store',{
+            method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify(memoryEntry)
+        }).then(function(){
+            toast('Saved to Library + Lab-Intelligence');
+        }).catch(function(){
+            toast('Saved to Library (API offline)');
+        });
+
+        // Also store to Lab-Wiki as a learning
+        fetch('/api/projects/labs-institute/memory/store',{
+            method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                content:'Workflow "'+latest.name+'" completed. Revenue: £'+latest.metrics.revenue+'. Rating: '+latest.metrics.rating+'/5. Key choices: '+latest.steps.filter(function(s){return s.aiChoice}).map(function(s){return s.aiChoice}).join(', '),
+                type:'learning',
+                tags:['workflow-outcome','self-improve'],
+                source:'workflow-simulator'
+            })
+        }).catch(function(){});
     };
+
+    window.addFeedback=function(libIdx,feedback){
+        if(!library[libIdx]) return;
+        library[libIdx].feedback=feedback;
+        // Store feedback in Lab-Intelligence for future improvement
+        fetch('/api/projects/labs-institute/memory/store',{
+            method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                content:'Workflow feedback for "'+library[libIdx].name+'": '+feedback+'. Revenue was £'+library[libIdx].metrics.revenue+'. Rating: '+library[libIdx].metrics.rating+'/5.',
+                type:feedback==='positive'?'pattern':'anti-pattern',
+                tags:['workflow-feedback','self-improve',feedback],
+                source:'workflow-simulator'
+            })
+        }).catch(function(){});
+        toast('Feedback saved — Lab-Intelligence will learn from this');
+        showLibrary();
+    };
+
     window.showLibrary=function(){
         var lib=document.getElementById('wf-library');
         lib.style.display=lib.style.display==='none'?'block':'none';
         if(lib.style.display==='none') return;
         var h='<div class="W-results"><div class="W-results-title">Workflow Library ('+library.length+' saved)</div>';
+        h+='<div style="font-size:.68rem;color:var(--gy);margin-bottom:14px;line-height:1.7">Each saved workflow feeds into Lab-Intelligence. Patterns from successful workflows improve future AI suggestions. Feedback on outcomes helps the system learn what works and what doesn\'t.</div>';
         if(!library.length){h+='<div style="font-size:.72rem;color:var(--gy)">No workflows saved yet. Run a workflow and click "Save to Library".</div>';}
         else{
+            // Summary stats
+            var totalRuns=library.length;
+            var avgRev=Math.round(library.reduce(function(s,r){return s+r.metrics.revenue},0)/totalRuns);
+            var avgRating=(library.reduce(function(s,r){return s+r.metrics.rating},0)/totalRuns).toFixed(1);
+            var positiveCount=library.filter(function(r){return r.feedback==='positive'}).length;
+            var negativeCount=library.filter(function(r){return r.feedback==='negative'}).length;
+
+            h+='<div class="W-kpi-row" style="margin-bottom:16px">';
+            h+='<div class="W-kpi"><div class="W-kpi-val">'+totalRuns+'</div><div class="W-kpi-label">Total Runs</div></div>';
+            h+='<div class="W-kpi"><div class="W-kpi-val">£'+avgRev+'</div><div class="W-kpi-label">Avg Revenue</div></div>';
+            h+='<div class="W-kpi"><div class="W-kpi-val">'+avgRating+'/5</div><div class="W-kpi-label">Avg Rating</div></div>';
+            h+='<div class="W-kpi"><div class="W-kpi-val">'+positiveCount+'</div><div class="W-kpi-label">Positive Outcomes</div></div>';
+            h+='</div>';
+
+            // Comparison chart
+            if(library.length>1){
+                h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gy);margin-bottom:6px">Revenue Across All Saved Workflows</div>';
+                h+='<div class="W-chart">';
+                var maxRev=Math.max.apply(null,library.map(function(r){return r.metrics.revenue}));
+                var colors=['var(--ac)','var(--gn)','var(--pr)','var(--am)','var(--rd)','#14b8a6','#ec4899','#8b5cf6','#f59e0b','#6366f1'];
+                library.forEach(function(r,i){
+                    var pct=Math.max(5,Math.round(r.metrics.revenue/maxRev*100));
+                    var fbColor=r.feedback==='positive'?'var(--gn)':r.feedback==='negative'?'var(--rd)':colors[i%colors.length];
+                    h+='<div class="W-chart-bar" style="height:'+pct+'%;background:'+fbColor+'"><div class="W-chart-bar-val">£'+r.metrics.revenue+'</div><div class="W-chart-bar-label">#'+(i+1)+'</div></div>';
+                });
+                h+='</div>';
+            }
+
+            // Cards
             h+='<div class="W-lib">';
             library.forEach(function(r,i){
-                h+='<div class="W-lib-card"><div class="W-lib-card-name">'+esc(r.name)+'</div>';
-                h+='<div class="W-lib-card-meta">'+r.timestamp+'</div>';
-                h+='<div class="W-lib-card-kpis"><span>£'+r.metrics.revenue+'</span> fee &middot; <span>'+r.metrics.rating+'/5</span> rating &middot; <span>'+r.metrics.rebookingProb+'%</span> rebook</div></div>';
+                var fbBadge='';
+                if(r.feedback==='positive') fbBadge='<span style="font-size:.5rem;padding:2px 8px;border-radius:10px;background:rgba(22,163,74,.08);color:var(--gn);font-weight:700;margin-left:8px">POSITIVE</span>';
+                else if(r.feedback==='negative') fbBadge='<span style="font-size:.5rem;padding:2px 8px;border-radius:10px;background:rgba(220,38,38,.08);color:var(--rd);font-weight:700;margin-left:8px">NEEDS IMPROVEMENT</span>';
+
+                h+='<div class="W-lib-card">';
+                h+='<div class="W-lib-card-name">'+esc(r.name)+fbBadge+'</div>';
+                h+='<div class="W-lib-card-meta">'+r.timestamp+(r.optimize?' &middot; Optimized for: '+r.optimize:'')+'</div>';
+                h+='<div class="W-lib-card-kpis"><span>£'+r.metrics.revenue+'</span> fee &middot; <span>'+r.metrics.rating+'/5</span> rating &middot; <span>'+r.metrics.rebookingProb+'%</span> rebook</div>';
+
+                // Key choices made
+                var choices=r.steps?r.steps.filter(function(s){return s.aiChoice}).map(function(s){return s.aiChoice}):'';
+                if(choices.length){
+                    h+='<div style="font-size:.58rem;color:var(--gy);margin-top:6px">Choices: '+choices.join(' → ')+'</div>';
+                }
+
+                // Feedback buttons
+                if(!r.feedback){
+                    h+='<div style="display:flex;gap:6px;margin-top:8px">';
+                    h+='<button class="W-btn W-btn-sm" style="background:rgba(22,163,74,.08);color:var(--gn);border:1px solid rgba(22,163,74,.2)" onclick="addFeedback('+i+',\'positive\')">Worked Well</button>';
+                    h+='<button class="W-btn W-btn-sm" style="background:rgba(220,38,38,.08);color:var(--rd);border:1px solid rgba(220,38,38,.2)" onclick="addFeedback('+i+',\'negative\')">Needs Improvement</button>';
+                    h+='</div>';
+                }
+                h+='</div>';
             });
+            h+='</div>';
+
+            // Self-improvement note
+            h+='<div style="margin-top:16px;padding:14px 18px;background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.1);border-radius:8px;font-size:.68rem;color:#444;line-height:1.7">';
+            h+='<strong style="color:var(--ac)">Self-Improvement Loop:</strong> Every saved workflow and feedback entry is stored in Lab-Intelligence. ';
+            h+='Positive outcomes become <em>patterns</em> — the AI will suggest similar approaches in future workflows. ';
+            h+='Negative outcomes become <em>anti-patterns</em> — the AI will steer away from those choices. ';
+            h+='After '+Math.max(5,10-totalRuns)+' more runs, suggestions will be noticeably more accurate for your specific context.';
             h+='</div>';
         }
         h+='</div>';
