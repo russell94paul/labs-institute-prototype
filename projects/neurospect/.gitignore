@@ -1,0 +1,26 @@
+# Claude Code local config (contains API keys, permissions)
+.claude/settings.local.json
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Personal wiki scratch (gitignored per-wiki too, belt-and-suspenders)
+*/scratch/
+
+# Orchestrator runtime data (session logs)
+platform/orchestrator/data/sessions/
+platform/orchestrator/data/sessions.json
+
+# Netlify local state
+.netlify/
+
+# Standalone repo clones (pre-monorepo)
+neurospect-api/
+
+# Binary archives
+neurospect-ui.zip
+
+# Temp extractions
+neurospect-ui-extracted/
