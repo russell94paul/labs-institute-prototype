@@ -206,6 +206,7 @@
         <div class="L-brand">LABS.INSTITUTE</div>
         <div class="L-modes">
             <div class="L-mode on" data-v="site">Site Preview</div>
+            <div class="L-mode" data-v="designs">Designs</div>
             <div class="L-mode" data-v="admin">Admin</div>
             <div class="L-mode" data-v="roadmap">Roadmap</div>
         </div>
@@ -301,6 +302,44 @@
         </div>
 
         <div class="S-footer">&copy; 2026 Labs Institute &middot; Manchester, UK &middot; Founded For The Future</div>
+    </div>
+
+    <!-- ============ DESIGNS ============ -->
+    <div class="L-view" id="v-designs">
+        <div style="padding:24px 40px;max-width:1100px;margin:0 auto">
+
+            <!-- Design selector -->
+            <div style="display:flex;gap:16px;align-items:center;margin-bottom:24px;flex-wrap:wrap">
+                <div>
+                    <label style="font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gy);display:block;margin-bottom:6px">Site Design Concept</label>
+                    <select id="design-select" onchange="switchDesign(this.value)" style="padding:10px 16px;background:var(--wh);border:1px solid var(--bd);border-radius:4px;font-size:.78rem;font-family:var(--ff);font-weight:600;min-width:260px;cursor:pointer">
+                        <option value="chrome">01 — Minimal Chrome (Current)</option>
+                        <option value="pulse">02 — Dark Pulse</option>
+                        <option value="gradient">03 — Gradient Flow</option>
+                        <option value="brutalist">04 — Brutalist Mono</option>
+                        <option value="glass">05 — Glass Morphism</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gy);display:block;margin-bottom:6px">Technical Components</label>
+                    <select id="tech-select" onchange="switchTech(this.value)" style="padding:10px 16px;background:var(--wh);border:1px solid var(--bd);border-radius:4px;font-size:.78rem;font-family:var(--ff);font-weight:600;min-width:260px;cursor:pointer">
+                        <option value="overview">Overview — All Components</option>
+                        <option value="intelligence">Lab-Intelligence — AI Growth Engine</option>
+                        <option value="wiki">Lab-Wiki — Knowledge Base</option>
+                        <option value="chat">Chat — AI-Assisted Communication</option>
+                        <option value="analytics">Analytics — Performance Dashboard</option>
+                        <option value="social">Social Integration — Platform Connectors</option>
+                        <option value="booking">Booking — Contract & Gig Pipeline</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Design preview area -->
+            <div id="design-preview" style="border:1px solid var(--bd);border-radius:8px;overflow:hidden;min-height:600px"></div>
+
+            <!-- Tech component area -->
+            <div id="tech-preview" style="margin-top:24px"></div>
+        </div>
     </div>
 
     <!-- ============ ADMIN ============ -->
@@ -620,6 +659,198 @@ Social metrics → Periodic snapshots → Pattern detection
     renderAdminDJs();
     renderAdminSvcs();
     sync();
+
+    // ============ DESIGNS TAB ============
+
+    var DESIGNS={
+        chrome:{ name:'Minimal Chrome', bg:'#fff', fg:'#000', accent:'#c0c0c0', accentRgb:'192,192,192',
+            desc:'Current design. White space, chrome logo, bold black type. Clean and professional.',
+            heroStyle:'background:#fff;color:#000', cardBg:'#fff', cardBorder:'rgba(0,0,0,.1)', textMuted:'#999',
+            anim:'none', logo:'background:linear-gradient(135deg,#666,#ddd,#888);-webkit-background-clip:text;-webkit-text-fill-color:transparent' },
+        pulse:{ name:'Dark Pulse', bg:'#0a0a0a', fg:'#fff', accent:'#00ff88', accentRgb:'0,255,136',
+            desc:'Dark mode with neon green pulse accents. Grid layout. Rave-energy feel.',
+            heroStyle:'background:#0a0a0a;color:#fff', cardBg:'#111', cardBorder:'rgba(0,255,136,.15)', textMuted:'#666',
+            anim:'pulse', logo:'color:#00ff88;text-shadow:0 0 20px rgba(0,255,136,.5)' },
+        gradient:{ name:'Gradient Flow', bg:'#0f0f1a', fg:'#fff', accent:'#8b5cf6', accentRgb:'139,92,246',
+            desc:'Deep dark with flowing purple-blue gradients. Cards with depth. Futuristic and immersive.',
+            heroStyle:'background:linear-gradient(135deg,#0f0f1a,#1a0a2e,#0a1628);color:#fff', cardBg:'rgba(255,255,255,.03)', cardBorder:'rgba(139,92,246,.2)', textMuted:'#777',
+            anim:'flow', logo:'background:linear-gradient(90deg,#8b5cf6,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200%;animation:gradShift 3s linear infinite' },
+        brutalist:{ name:'Brutalist Mono', bg:'#f5f5f0', fg:'#111', accent:'#ff0000', accentRgb:'255,0,0',
+            desc:'Raw, bold, unapologetic. Monospace type, harsh contrasts, red accents. Stands out from every other agency.',
+            heroStyle:'background:#f5f5f0;color:#111;border:4px solid #111', cardBg:'#fff', cardBorder:'#111', textMuted:'#666',
+            anim:'glitch', logo:'font-family:monospace;color:#111;border-bottom:4px solid #ff0000' },
+        glass:{ name:'Glass Morphism', bg:'#0a0a1a', fg:'#fff', accent:'#38bdf8', accentRgb:'56,189,248',
+            desc:'Frosted glass cards on a deep dark background. Soft glows, blur effects. Premium and modern.',
+            heroStyle:'background:linear-gradient(160deg,#0a0a1a,#0f1a2e);color:#fff', cardBg:'rgba(255,255,255,.05)', cardBorder:'rgba(255,255,255,.1)', textMuted:'#88a',
+            anim:'glow', logo:'color:#38bdf8;text-shadow:0 0 30px rgba(56,189,248,.4)' }
+    };
+
+    var chartData={labels:['2018','2019','2020','2021','2022','2023','2024','2025','2026'],ig:[200,500,1200,3500,8000,18000,32000,45000,54000],streams:[0,0,0,5000,50000,800000,1500000,1800000,2100000],gigs:[2,5,8,12,20,35,48,55,30]};
+
+    function cssBar(vals,max,color,labels){
+        var h='<div style="display:flex;align-items:flex-end;gap:3px;height:120px;padding-top:10px">';
+        vals.forEach(function(v,i){
+            var pct=Math.max(2,(v/max)*100);
+            h+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">'+
+                '<div style="font-size:.5rem;color:inherit;opacity:.6">'+formatNum(v)+'</div>'+
+                '<div style="width:100%;height:'+pct+'%;background:'+color+';border-radius:3px 3px 0 0;min-height:2px;transition:height .5s"></div>'+
+                '<div style="font-size:.48rem;opacity:.4">'+labels[i]+'</div></div>';
+        });
+        return h+'</div>';
+    }
+
+    window.switchDesign=function(id){
+        var d=DESIGNS[id]; if(!d) return;
+        var accentA='rgba('+d.accentRgb+',.15)';
+        var h='<div style="'+d.heroStyle+';font-family:var(--ff);overflow:hidden">';
+
+        // Hero
+        h+='<div style="text-align:center;padding:60px 30px 40px;position:relative;overflow:hidden">';
+        if(d.anim==='pulse') h+='<div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba('+d.accentRgb+',.08) 0%,transparent 70%);animation:pulseGlow 3s ease-in-out infinite"></div>';
+        if(d.anim==='flow') h+='<div style="position:absolute;inset:0;background:linear-gradient(45deg,rgba('+d.accentRgb+',.05),transparent,rgba(56,189,248,.05));background-size:400%;animation:gradShift 8s linear infinite"></div>';
+        if(d.anim==='glow') h+='<div style="position:absolute;top:50%;left:50%;width:300px;height:300px;background:radial-gradient(circle,rgba('+d.accentRgb+',.12),transparent);transform:translate(-50%,-50%);filter:blur(60px);animation:pulseGlow 4s ease-in-out infinite"></div>';
+
+        h+='<div style="position:relative;z-index:1">';
+        h+='<div style="font-size:2.4rem;font-weight:900;letter-spacing:.2em;text-transform:uppercase;'+d.logo+';margin-bottom:8px">LABS</div>';
+        h+='<div style="font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:'+d.textMuted+'">Founded For The Future</div>';
+
+        // Scrolling text
+        h+='<div style="margin:30px -30px;overflow:hidden"><div style="display:flex;animation:marquee 15s linear infinite;white-space:nowrap">';
+        for(var r=0;r<4;r++) h+='<span style="font-size:2.5rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase;padding-right:40px;opacity:.15;flex-shrink:0">FOUNDED FOR THE FUTURE</span>';
+        h+='</div></div>';
+
+        h+='<div style="font-size:.75rem;color:'+d.textMuted+';max-width:400px;margin:0 auto;line-height:1.7">Underground Techno DJ Management. Manchester, UK.</div>';
+        h+='</div></div>';
+
+        // KPI bar
+        h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid '+d.cardBorder+';border-bottom:1px solid '+d.cardBorder+'">';
+        [{v:'54K',l:'Instagram'},{v:'2M+',l:'Streams'},{v:'10+',l:'Countries'},{v:'6',l:'Labels'}].forEach(function(k){
+            h+='<div style="text-align:center;padding:24px 12px;border-right:1px solid '+d.cardBorder+'">'+
+                '<div style="font-size:1.8rem;font-weight:200;font-family:var(--mn)">'+k.v+'</div>'+
+                '<div style="font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-top:4px">'+k.l+'</div></div>';
+        });
+        h+='</div>';
+
+        // Artist card
+        h+='<div style="padding:30px"><div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:10px;padding:24px;'+(d.anim==='glass'?'backdrop-filter:blur(12px);':'')+'">';
+        h+='<div style="display:flex;gap:16px;align-items:center;margin-bottom:16px">';
+        h+='<div style="width:56px;height:56px;border-radius:50%;background:'+accentA+';display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:'+d.accent+'">L</div>';
+        h+='<div><div style="font-size:1rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase">Luciid</div>';
+        h+='<div style="font-size:.65rem;color:'+d.textMuted+'">Hard Techno &middot; Schranz &middot; Established</div></div></div>';
+
+        // Charts
+        h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">';
+        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:14px">';
+        h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:8px">Instagram Growth</div>';
+        h+=cssBar(chartData.ig,54000,d.accent,chartData.labels);
+        h+='</div>';
+        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:14px">';
+        h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:8px">Spotify Streams</div>';
+        h+=cssBar(chartData.streams,2100000,d.accent,chartData.labels);
+        h+='</div></div>';
+
+        // Gigs chart
+        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:14px;margin-top:12px">';
+        h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:8px">Gigs Per Year</div>';
+        h+=cssBar(chartData.gigs,55,d.accent,chartData.labels);
+        h+='</div>';
+
+        h+='</div></div>';
+
+        // CTA
+        h+='<div style="text-align:center;padding:40px 30px;border-top:1px solid '+d.cardBorder+'">';
+        h+='<div style="font-size:.85rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px">Join The Roster</div>';
+        h+='<button style="padding:12px 32px;border:none;border-radius:'+(id==='brutalist'?'0':'4px')+';background:'+d.accent+';color:'+(id==='pulse'||id==='glass'?'#000':id==='brutalist'?'#fff':d.bg)+';font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-family:var(--ff)">Apply Now</button>';
+        h+='</div>';
+
+        h+='</div>';
+        document.getElementById('design-preview').innerHTML=h;
+    };
+
+    var TECH={
+        overview:{title:'All Components',items:[
+            {name:'Lab-Intelligence',icon:'&#9889;',desc:'Vector DB ingesting gig outcomes, social metrics, campaign results. Detects patterns, generates growth roadmaps, surfaces improvement suggestions ranked by ROI/complexity/growth.',color:'#8b5cf6'},
+            {name:'Lab-Wiki',icon:'&#128214;',desc:'Structured knowledge base: what works at which venues, optimal pricing by location, best promo strategies by genre. Searchable by founder and DJs.',color:'#3b82f6'},
+            {name:'Chat + AI Assistant',icon:'&#128172;',desc:'Founder ↔ DJ messaging with AI that pulls context from Lab-Intelligence + Lab-Wiki. Growth roadmaps, event post-mortems, gap detection.',color:'#10b981'},
+            {name:'Analytics Dashboard',icon:'&#128200;',desc:'Real-time KPI tracking: social growth, streaming numbers, gig frequency, revenue, fan engagement. Before/after comparisons.',color:'#f59e0b'},
+            {name:'Social Integration',icon:'&#127760;',desc:'Connectors to Instagram, SoundCloud, Spotify, Mixcloud, RA. Auto-pull follower counts, play stats, event listings.',color:'#ec4899'},
+            {name:'Booking Pipeline',icon:'&#128197;',desc:'Full lifecycle: inquiry → quote → contract → deposit → confirm → event → payment → follow-up → post-mortem. Digital signatures.',color:'#14b8a6'}
+        ]},
+        intelligence:{title:'Lab-Intelligence — AI Growth Engine',detail:true,
+            example:'Luciid hasn\'t posted on Instagram in 12 days. His last 3 posts with behind-the-scenes studio content got 2.4x higher engagement than flyer reposts. Suggestion: Post a studio session clip this week. Expected impact: +500 followers, +15% engagement rate.',
+            features:['Pattern detection across all artist data','Personalised growth roadmaps per DJ','Event post-mortems with actionable insights','Pricing recommendations based on market data','Gap detection: missed opportunities, inactive periods','Suggestion ranking: ROI × feasibility × growth potential'],
+            metrics:[{label:'Suggestions/week',value:'5-10'},{label:'Accuracy (after 3mo)',value:'~72%'},{label:'Growth boost',value:'+40%'},{label:'Time saved/week',value:'3-5 hrs'}]},
+        wiki:{title:'Lab-Wiki — Knowledge Base',detail:true,
+            example:'Venue: Fabric London. Capacity: 1,600. Sound: Funktion-One. Best nights: Fridays (techno). Typical fee: £300-800 support, £1K-3K headline. Contact: [booking@fabriclondon.com]. Notes from last booking: "Crowd prefers 140+ BPM after midnight. Bring USB backup, CDJs are Pioneer 3000s."',
+            features:['Venue profiles with crowd data and booking contacts','Genre intelligence: trends, audience demographics','Pricing database by city, venue size, event type','Marketing playbook: what content works, best posting times','Promoter directory with reliability ratings','Lessons learned from every event'],
+            metrics:[{label:'Venue profiles',value:'70+'},{label:'Pricing data points',value:'200+'},{label:'Event learnings',value:'Growing'},{label:'Search speed',value:'<1s'}]},
+        chat:{title:'Chat — AI-Assisted Communication',detail:true,
+            example:'Founder: "Luciid has a booking inquiry from Printworks for March. What should we quote?"\nAI: "Based on Lab-Wiki: Printworks is 3,000 cap, premium venue. Luciid\'s tier (established) + his Beatport #15 chart position suggests £800-1,200 for a support slot. Similar acts (Per Pleks, ACRAZE) quoted £1K-1.5K there in Q4 2025. Recommendation: Quote £1,000 with flexibility to £850."',
+            features:['Real-time founder ↔ DJ messaging','AI assistant answers from Lab-Intelligence + Lab-Wiki','Generate growth roadmaps on demand','Event preparation briefs (venue info, crowd profile, past sets)','Proactive gap alerts ("No recording from Friday\'s set")','Chat history feeds back into Lab-Intelligence'],
+            metrics:[{label:'Response time',value:'<3s'},{label:'Context sources',value:'Wiki + Intel'},{label:'Languages',value:'EN'},{label:'Availability',value:'24/7'}]},
+        analytics:{title:'Analytics — Performance Dashboard',detail:true,
+            example:'Dashboard showing: Luciid\'s Instagram grew 23% this month (vs 8% benchmark for his tier). SoundCloud plays flat — suggest uploading the Terminal V set recording. 3 new booking inquiries this week, 1 converted. Revenue on track: £2,400 this month vs £1,800 target.',
+            features:['Real-time social metrics across all platforms','Streaming analytics: Spotify, SoundCloud, Mixcloud','Gig frequency and revenue tracking','Before/after comparisons (join date baseline)','Tier progression tracking against benchmarks','Automated weekly/monthly PDF reports'],
+            metrics:[{label:'Data sources',value:'6 platforms'},{label:'Update frequency',value:'Daily'},{label:'KPIs tracked',value:'15+'},{label:'Report types',value:'3'}]},
+        social:{title:'Social Integration — Platform Connectors',detail:true,
+            example:'Auto-pulled overnight: Instagram +127 followers (54,127 total). Spotify monthly listeners: 45,200 (+3.2%). New SoundCloud play milestone: 500K on "Fxck". RA event added: Cocoricò May 30. Action: Update artist profile KPIs automatically.',
+            features:['Instagram: followers, engagement, post performance (Graph API)','Spotify: monthly listeners, streams, playlist adds (Web API)','SoundCloud: plays, followers (manual + scraping fallback)','Mixcloud: plays, favourites','Resident Advisor: events, followers (scraping)','Bandcamp: sales, plays'],
+            metrics:[{label:'Platforms',value:'6-10'},{label:'Auto-pull',value:'4/6'},{label:'Manual entry',value:'2/6'},{label:'Sync interval',value:'Daily'}]},
+        booking:{title:'Booking — Contract & Gig Pipeline',detail:true,
+            example:'Pipeline: 3 inquiries → 1 quoting (Printworks, £1K) → 1 contract sent (VERKNIPT, €1.2K, awaiting signature) → 2 confirmed upcoming (Terminal V Apr 18, Echelon Aug 14). Revenue this quarter: £4,200 confirmed, £2,200 pipeline.',
+            features:['Inquiry tracking with source attribution','Quote generation with market-rate suggestions','Contract templates with digital signature','Payment milestones and invoice generation','Event day checklist and logistics','Post-event follow-up automation'],
+            metrics:[{label:'Pipeline stages',value:'7'},{label:'Avg close rate',value:'~35%'},{label:'Contract templates',value:'3'},{label:'Payment tracking',value:'Real-time'}]}
+    };
+
+    window.switchTech=function(id){
+        var t=TECH[id]; if(!t) return;
+        var h='';
+        if(id==='overview'){
+            h+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">';
+            t.items.forEach(function(item){
+                h+='<div style="border:1px solid var(--bd);border-radius:8px;padding:20px;border-top:3px solid '+item.color+'">';
+                h+='<div style="font-size:1.4rem;margin-bottom:8px">'+item.icon+'</div>';
+                h+='<div style="font-size:.75rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">'+item.name+'</div>';
+                h+='<div style="font-size:.68rem;color:var(--gy);line-height:1.7">'+item.desc+'</div>';
+                h+='</div>';
+            });
+            h+='</div>';
+        } else if(t.detail) {
+            h+='<div style="border:1px solid var(--bd);border-radius:8px;padding:24px">';
+            h+='<div style="font-size:.78rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px">'+t.title+'</div>';
+
+            // Example
+            h+='<div style="background:#f8f8f8;border:1px solid var(--bd);border-radius:6px;padding:16px;margin-bottom:16px;border-left:3px solid var(--bk)">';
+            h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gy);margin-bottom:8px">Example</div>';
+            h+='<div style="font-size:.72rem;color:#444;line-height:1.8;white-space:pre-wrap">'+esc(t.example)+'</div></div>';
+
+            // Metrics
+            h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">';
+            t.metrics.forEach(function(m){
+                h+='<div style="text-align:center;padding:14px;background:#fafafa;border:1px solid var(--bd);border-radius:6px">';
+                h+='<div style="font-size:1.2rem;font-weight:200;font-family:var(--mn)">'+m.value+'</div>';
+                h+='<div style="font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gy);margin-top:4px">'+m.label+'</div></div>';
+            });
+            h+='</div>';
+
+            // Features
+            h+='<div style="font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gy);margin-bottom:8px">Features</div>';
+            h+='<ul style="font-size:.72rem;color:#555;line-height:2;padding-left:16px">';
+            t.features.forEach(function(f){h+='<li>'+esc(f)+'</li>';});
+            h+='</ul></div>';
+        }
+        document.getElementById('tech-preview').innerHTML=h;
+    };
+
+    // Init designs tab
+    switchDesign('chrome');
+    switchTech('overview');
+
+    // Add animation keyframes
+    var styleEl=document.createElement('style');
+    styleEl.textContent='@keyframes pulseGlow{0%,100%{opacity:.6}50%{opacity:1}}@keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}@keyframes glitchShift{0%,100%{transform:none}25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}';
+    document.head.appendChild(styleEl);
+
 })();
 </script>
 </body>
