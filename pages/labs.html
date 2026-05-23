@@ -2175,6 +2175,14 @@ Social metrics → Periodic snapshots → Pattern detection
         // Enable neon glow on dark themes
         root.dataset.neon=isLight?'false':'true';
 
+        // Auto-tag all bordered elements with neon-card class
+        root.querySelectorAll('div,a,td,th,tr').forEach(function(el){
+            var s=el.getAttribute('style')||'';
+            if(s.indexOf('border:1px solid')!==-1&&s.indexOf('border-radius')!==-1&&!el.classList.contains('neon-card')){
+                el.classList.add('neon-card');
+            }
+        });
+
         // Force-fix all hardcoded light backgrounds on dark themes
         if(!isLight){
             root.querySelectorAll('*').forEach(function(el){
