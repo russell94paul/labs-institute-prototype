@@ -306,6 +306,11 @@
             updateActiveLink(route);
             updateBreadcrumbs(route);
 
+            var fullscreen = (route === 'labs');
+            document.querySelector('.topnav').style.display = fullscreen ? 'none' : '';
+            document.querySelector('.breadcrumb-bar').style.display = fullscreen ? 'none' : '';
+            document.querySelector('.content-area').style.minHeight = fullscreen ? '100vh' : '';
+
             var pagePath = routes[route].path;
             var loadBar = document.getElementById('loading-bar');
             var content = document.getElementById('page-content');
