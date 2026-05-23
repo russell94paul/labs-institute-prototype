@@ -842,7 +842,7 @@ Social metrics → Periodic snapshots → Pattern detection
     ];
     var djData=[];
     var rosterData=[];
-    fetch('/data/labs-roster.json').then(function(r){return r.ok?r.json():[]}).then(function(d){
+    fetch('data/labs-roster.json').then(function(r){return r.ok?r.json():[]}).then(function(d){
         rosterData=d||[];
         djData=rosterData.map(function(dj){return{name:dj.name,genre:dj.genres.slice(0,2).join(' / '),tier:dj.tier,gigs:dj.venues_played?dj.venues_played.length:0,ig:formatNum(dj.kpis&&dj.kpis.current?dj.kpis.current.ig_followers:0),fee:'—'}});
         renderAdminDJs();renderSiteRoster();sync();
@@ -2563,7 +2563,7 @@ Social metrics → Periodic snapshots → Pattern detection
     setInterval(rotateActivity,5000);
 
     // Load workflows
-    fetch('/pages/workflows.html').then(function(r){return r.text()}).then(function(html){
+    fetch('pages/workflows.html').then(function(r){return r.text()}).then(function(html){
         var gc=document.getElementById('workflows-content');
         if(!gc) return;
         var m=html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
@@ -2728,7 +2728,7 @@ Social metrics → Periodic snapshots → Pattern detection
     };
 
     // Load architecture
-    fetch('/pages/architecture.html').then(function(r){return r.text()}).then(function(html){
+    fetch('pages/architecture.html').then(function(r){return r.text()}).then(function(html){
         var m=html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
         var el=document.getElementById('architecture-content');
         if(el&&m) el.innerHTML=m[1]; else if(el) el.innerHTML=html;
@@ -2736,7 +2736,7 @@ Social metrics → Periodic snapshots → Pattern detection
     }).catch(function(){});
 
     // Load guide
-    fetch('/pages/guide.html').then(function(r){return r.text()}).then(function(html){
+    fetch('pages/guide.html').then(function(r){return r.text()}).then(function(html){
         var m=html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
         var gc=document.getElementById('guide-content');
         if(gc&&m) gc.innerHTML=m[1];
