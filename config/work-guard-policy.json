@@ -1,0 +1,31 @@
+{
+  "lockFilePath": ".conductor/runtime/session-lock.json",
+  "heartbeatTimeoutMinutes": 10,
+  "blockOnDirtyWorkingTree": true,
+  "requireCommitBeforeNextPhase": true,
+  "allowDocsOnlyParallelIfNonOverlapping": true,
+  "allowParallelWorktrees": true,
+  "maxConcurrentWorktrees": 2,
+  "staleLockBehavior": "require-approval",
+  "highRiskRequiresApproval": true,
+  "queuedJobBehavior": "notify-only",
+  "staleQueueEntryMaxAgeHours": 24,
+  "blockedPaths": [
+    "engine/",
+    "dashboard/pages/",
+    "config/phase-status.json",
+    "config/work-guard-policy.json"
+  ],
+  "approvalRequiredFor": [
+    "force-release-lock",
+    "skip-commit-checkpoint",
+    "override-dirty-tree-gate",
+    "high-risk-phase-execution",
+    "queue-priority-override"
+  ],
+  "safeAutoRunTaskTypes": [
+    "research-ingestion-docs-only",
+    "docs-update",
+    "status-check"
+  ]
+}

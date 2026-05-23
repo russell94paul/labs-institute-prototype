@@ -1,0 +1,38 @@
+{
+  "lockId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "repoPath": "C:\\Users\\PaulRussell\\repos\\conductor",
+  "branch": "conductor-platform-rebuild",
+  "worktreePath": null,
+  "phaseId": "P0-pipeline-dag",
+  "sessionType": "phase-execution",
+  "owner": "claude-code",
+  "pid": 12345,
+  "startedAt": "2026-05-19T14:30:00Z",
+  "lastHeartbeatAt": "2026-05-19T14:35:00Z",
+  "status": "active",
+  "touchedPaths": [
+    "engine/pipelines.py",
+    "engine/phases.py",
+    "config/phase-status.json"
+  ],
+  "expectedCommitRequired": true,
+  "latestCommitAtStart": "22dd6cf",
+  "handoffPath": "docs/build/session-handoffs/p0-pipeline-dag-engine-handoff.md",
+  "allowParallel": false,
+  "riskLevel": "high",
+  "queuedJobs": [
+    {
+      "jobId": "f1e2d3c4-b5a6-7890-fedc-ba0987654321",
+      "requestedAt": "2026-05-19T14:40:00Z",
+      "sessionType": "research-ingestion",
+      "phaseId": null,
+      "requestedBy": "user",
+      "priority": "normal",
+      "estimatedPaths": [
+        "docs/research/syntheses/"
+      ],
+      "status": "queued",
+      "reason": "Lock held by phase-execution on P0-pipeline-dag"
+    }
+  ]
+}

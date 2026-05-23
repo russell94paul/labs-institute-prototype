@@ -20,6 +20,10 @@ from typing import Any, Dict, Optional
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from engine import sessions
+from engine import bootstrap
+from engine import pipelines
+from engine import work_guard
+from engine import events
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DASHBOARD_ROOT = REPO_ROOT / "dashboard"
@@ -154,6 +158,258 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return self._send_error_json(404, f"Session {sid} not found")
         self._send_json({"ok": True})
 
+    # --- Bootstrap handlers ---
+
+    def _handle_get_bootstrap_phases(self) -> None:
+        phases = bootstrap.get_all_phases()
+        self._send_json(phases)
+
+    def _handle_get_bootstrap_summary(self) -> None:
+        summary = bootstrap.get_summary()
+        self._send_json(summary)
+
+    def _handle_get_bootstrap_phase(self, phase_id: str) -> None:
+        phase = bootstrap.get_phase(phase_id)
+        if not phase:
+            return self._send_error_json(404, f"Phase {phase_id} not found")
+        self._send_json(phase)
+
+    def _handle_patch_bootstrap_phase(self, phase_id: str) -> None:
+        body = self._json_body()
+        if not body:
+            return self._send_error_json(400, "Request body required")
+        new_status = body.get("status")
+        if not new_status:
+            return self._send_error_json(400, "status is required")
+        result = bootstrap.update_phase_status(phase_id, new_status, **{
+            k: body[k] for k in ("nextRecommendedAction", "activeSessionId", "lastUpdated")
+            if k in body
+        })
+        if not result:
+            return self._send_error_json(404, f"Phase {phase_id} not found")
+        self._send_json(result)
+
+    def _handle_post_bootstrap_blocker(self, phase_id: str) -> None:
+        body = self._json_body()
+        if not body or "blockerPhaseId" not in body:
+            return self._send_error_json(400, "blockerPhaseId is required")
+        action = body.get("action", "add")
+        if action == "clear":
+            result = bootstrap.clear_blocker(phase_id, body["blockerPhaseId"])
+        else:
+            result = bootstrap.add_blocker(phase_id, body["blockerPhaseId"])
+        if not result:
+            return self._send_error_json(404, f"Phase {phase_id} not found")
+        self._send_json(result)
+
+    def _match_bootstrap_route(self) -> Optional[tuple]:
+        path = self.path.split("?")[0]
+        m = re.match(r"^/api/bootstrap/phases/([a-zA-Z0-9_-]+)(?:/(\w+))?$", path)
+        if m:
+            return m.group(1), m.group(2)
+        return None
+
+    # --- Pipeline handlers ---
+
+    def _match_pipeline_route(self) -> Optional[tuple]:
+        path = self.path.split("?")[0]
+        m = re.match(r"^/api/pipelines/(pipe_[a-f0-9]+)(?:/(.+))?$", path)
+        if m:
+            return m.group(1), m.group(2)
+        return None
+
+    def _handle_get_pipelines(self) -> None:
+        query = self.path.split("?", 1)[1] if "?" in self.path else ""
+        params = dict(p.split("=", 1) for p in query.split("&") if "=" in p)
+        result = pipelines.list_pipelines(
+            project_slug=params.get("project"),
+            status=params.get("status"),
+        )
+        self._send_json(result)
+
+    def _handle_post_pipelines(self) -> None:
+        body = self._json_body()
+        if not body:
+            return self._send_error_json(400, "Request body required")
+
+        name = body.get("name", "")
+        template = body.get("template", "")
+        if not name or not template:
+            return self._send_error_json(400, "name and template are required")
+
+        pipe, err = pipelines.create_pipeline(
+            name=name,
+            template_slug=template,
+            project_slug=body.get("project_slug", ""),
+            repo_path=body.get("repo_path", str(REPO_ROOT)),
+            variables=body.get("variables", {}),
+            model=body.get("model", DEFAULT_CONFIG["default_model"]),
+            budget_usd=float(body.get("budget_usd", DEFAULT_CONFIG["default_budget_usd"])),
+            timeout_min=int(body.get("timeout_min", DEFAULT_CONFIG["default_timeout_min"])),
+        )
+        if err:
+            return self._send_error_json(400, err)
+
+        if body.get("auto_start"):
+            pipelines.start_pipeline(pipe["id"], session_launcher=_pipeline_session_launcher)
+
+        print(f"[conductor] Created pipeline {pipe['id']}")
+        self._send_json(pipe, 201)
+
+    def _handle_get_pipeline(self, pid: str) -> None:
+        pipe = pipelines.get_pipeline(pid)
+        if not pipe:
+            return self._send_error_json(404, f"Pipeline {pid} not found")
+        self._send_json(pipe)
+
+    def _handle_get_pipeline_summary(self, pid: str) -> None:
+        summary = pipelines.get_pipeline_summary(pid)
+        if not summary:
+            return self._send_error_json(404, f"Pipeline {pid} not found")
+        self._send_json(summary)
+
+    def _handle_post_pipeline_start(self, pid: str) -> None:
+        ok, msg = pipelines.start_pipeline(pid, session_launcher=_pipeline_session_launcher)
+        if not ok:
+            return self._send_error_json(409, msg)
+        self._send_json({"ok": True, "message": msg})
+
+    def _handle_post_pipeline_advance(self, pid: str) -> None:
+        ok, msg = pipelines.advance_pipeline(pid, session_launcher=_pipeline_session_launcher)
+        if not ok:
+            return self._send_error_json(409, msg)
+        self._send_json({"ok": True, "message": msg})
+
+    def _handle_post_pipeline_cancel(self, pid: str) -> None:
+        ok, msg = pipelines.cancel_pipeline(pid)
+        if not ok:
+            return self._send_error_json(409, msg)
+        self._send_json({"ok": True, "message": msg})
+
+    def _handle_post_stage_retry(self, pid: str, stage_name: str) -> None:
+        ok, msg = pipelines.retry_stage(pid, stage_name, session_launcher=_pipeline_session_launcher)
+        if not ok:
+            return self._send_error_json(409, msg)
+        self._send_json({"ok": True, "message": msg})
+
+    def _handle_post_stage_skip(self, pid: str, stage_name: str) -> None:
+        ok, msg = pipelines.skip_stage(pid, stage_name, session_launcher=_pipeline_session_launcher)
+        if not ok:
+            return self._send_error_json(409, msg)
+        self._send_json({"ok": True, "message": msg})
+
+    def _handle_post_gate_approve(self, pid: str, stage_name: str) -> None:
+        ok, msg = pipelines.approve_gate(pid, stage_name, session_launcher=_pipeline_session_launcher)
+        if not ok:
+            return self._send_error_json(409, msg)
+        self._send_json({"ok": True, "message": msg})
+
+    def _handle_get_templates(self) -> None:
+        self._send_json(pipelines.list_templates())
+
+    def _handle_get_pipeline_dry_run(self) -> None:
+        query = self.path.split("?", 1)[1] if "?" in self.path else ""
+        params = dict(p.split("=", 1) for p in query.split("&") if "=" in p)
+        template = params.get("template", "")
+        if not template:
+            return self._send_error_json(400, "template query param required")
+        result, err = pipelines.dry_run(template)
+        if err:
+            return self._send_error_json(400, err)
+        self._send_json(result)
+
+    # --- Work Guard handlers ---
+
+    def _handle_get_work_guard_status(self) -> None:
+        status = work_guard.get_status(str(REPO_ROOT))
+        self._send_json(status)
+
+    def _handle_get_work_guard_safe_to_run(self) -> None:
+        result = work_guard.safe_to_run(str(REPO_ROOT))
+        self._send_json(result)
+
+    def _handle_post_work_guard_lock(self) -> None:
+        body = self._json_body()
+        if not body:
+            return self._send_error_json(400, "Request body required")
+        ok = work_guard.acquire_lock(str(REPO_ROOT), body)
+        if not ok:
+            return self._send_error_json(409, "Lock already held — cannot acquire")
+        self._send_json({"ok": True, "lock": work_guard.read_lock(str(REPO_ROOT))}, 201)
+
+    def _handle_delete_work_guard_lock(self) -> None:
+        body = self._json_body()
+        lock_id = (body or {}).get("lockId", "")
+        if not lock_id:
+            return self._send_error_json(400, "lockId is required")
+        ok = work_guard.release_lock(str(REPO_ROOT), lock_id)
+        if not ok:
+            return self._send_error_json(409, "Lock not found or lockId mismatch")
+        self._send_json({"ok": True})
+
+    def _handle_post_work_guard_heartbeat(self) -> None:
+        body = self._json_body()
+        lock_id = (body or {}).get("lockId", "")
+        if not lock_id:
+            return self._send_error_json(400, "lockId is required")
+        ok = work_guard.update_heartbeat(str(REPO_ROOT), lock_id)
+        if not ok:
+            return self._send_error_json(409, "Lock not found or lockId mismatch")
+        self._send_json({"ok": True})
+
+    # --- Event handlers ---
+
+    def _handle_sse_stream(self) -> None:
+        self.send_response(200)
+        self.send_header("Content-Type", "text/event-stream")
+        self.send_header("Cache-Control", "no-cache")
+        self.send_header("Connection", "keep-alive")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("X-Accel-Buffering", "no")
+        self.end_headers()
+
+        from queue import Empty
+
+        q = events.subscribe()
+        try:
+            connect_msg = json.dumps({"status": "connected"})
+            self.wfile.write(f"event: connected\ndata: {connect_msg}\n\n".encode("utf-8"))
+            self.wfile.flush()
+
+            while not events.is_shutdown():
+                try:
+                    event = q.get(timeout=25)
+                    if event.get("type") == "__shutdown__":
+                        break
+                    payload = json.dumps(event)
+                    msg = f"id: {event['id']}\nevent: {event['type']}\ndata: {payload}\n\n"
+                    self.wfile.write(msg.encode("utf-8"))
+                    self.wfile.flush()
+                except Empty:
+                    self.wfile.write(b": keepalive\n\n")
+                    self.wfile.flush()
+        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError, OSError):
+            pass
+        finally:
+            events.unsubscribe(q)
+
+    def _handle_get_events(self) -> None:
+        query = self.path.split("?", 1)[1] if "?" in self.path else ""
+        params = dict(p.split("=", 1) for p in query.split("&") if "=" in p)
+        limit = int(params.get("limit", "50"))
+        event_type = params.get("type", "")
+        since = params.get("since", "")
+
+        history = events.get_history(
+            limit=limit,
+            event_type=event_type or None,
+            since=since or None,
+        )
+        self._send_json({"events": history, "total": len(history)})
+
+    def _handle_get_events_stats(self) -> None:
+        self._send_json(events.get_stats())
+
     # --- Config handler ---
 
     def _handle_get_config(self) -> None:
@@ -168,6 +424,42 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return self._handle_get_sessions()
         if path == "/api/config":
             return self._handle_get_config()
+        if path == "/api/pipelines":
+            return self._handle_get_pipelines()
+        if path == "/api/templates":
+            return self._handle_get_templates()
+        if path == "/api/pipelines/dry-run":
+            return self._handle_get_pipeline_dry_run()
+        if path == "/api/events/stream":
+            return self._handle_sse_stream()
+        if path == "/api/events":
+            return self._handle_get_events()
+        if path == "/api/events/stats":
+            return self._handle_get_events_stats()
+        if path == "/api/work-guard/status":
+            return self._handle_get_work_guard_status()
+        if path == "/api/work-guard/safe-to-run":
+            return self._handle_get_work_guard_safe_to_run()
+        if path == "/api/bootstrap/phases":
+            return self._handle_get_bootstrap_phases()
+        if path == "/api/bootstrap/summary":
+            return self._handle_get_bootstrap_summary()
+
+        pmatch = self._match_pipeline_route()
+        if pmatch:
+            pid, action = pmatch
+            if action is None:
+                return self._handle_get_pipeline(pid)
+            if action == "summary":
+                return self._handle_get_pipeline_summary(pid)
+            return self._send_error_json(404, f"Unknown action: {action}")
+
+        bmatch = self._match_bootstrap_route()
+        if bmatch:
+            phase_id, action = bmatch
+            if action is None:
+                return self._handle_get_bootstrap_phase(phase_id)
+            return self._send_error_json(404, f"Unknown action: {action}")
 
         match = self._match_session_route()
         if match:
@@ -185,6 +477,39 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
 
         if path == "/api/sessions":
             return self._handle_post_sessions()
+        if path == "/api/pipelines":
+            return self._handle_post_pipelines()
+        if path == "/api/work-guard/lock":
+            return self._handle_post_work_guard_lock()
+        if path == "/api/work-guard/heartbeat":
+            return self._handle_post_work_guard_heartbeat()
+
+        pmatch = self._match_pipeline_route()
+        if pmatch:
+            pid, action = pmatch
+            if action == "start":
+                return self._handle_post_pipeline_start(pid)
+            if action == "advance":
+                return self._handle_post_pipeline_advance(pid)
+            if action == "cancel":
+                return self._handle_post_pipeline_cancel(pid)
+            m = re.match(r"^stages/([a-zA-Z0-9_-]+)/(retry|skip|approve)$", action or "")
+            if m:
+                stage_name, op = m.group(1), m.group(2)
+                if op == "retry":
+                    return self._handle_post_stage_retry(pid, stage_name)
+                if op == "skip":
+                    return self._handle_post_stage_skip(pid, stage_name)
+                if op == "approve":
+                    return self._handle_post_gate_approve(pid, stage_name)
+            return self._send_error_json(404, f"Unknown action: {action}")
+
+        bmatch = self._match_bootstrap_route()
+        if bmatch:
+            phase_id, action = bmatch
+            if action == "blocker":
+                return self._handle_post_bootstrap_blocker(phase_id)
+            return self._send_error_json(404, f"Unknown action: {action}")
 
         match = self._match_session_route()
         if match:
@@ -196,6 +521,13 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
         return self._send_error_json(404, "Not found")
 
     def do_PATCH(self) -> None:
+        bmatch = self._match_bootstrap_route()
+        if bmatch:
+            phase_id, action = bmatch
+            if action is None:
+                return self._handle_patch_bootstrap_phase(phase_id)
+            return self._send_error_json(404, f"Unknown action: {action}")
+
         match = self._match_session_route()
         if match:
             sid, action = match
@@ -205,6 +537,9 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
         return self._send_error_json(404, "Not found")
 
     def do_DELETE(self) -> None:
+        path = self.path.split("?")[0]
+        if path == "/api/work-guard/lock":
+            return self._handle_delete_work_guard_lock()
         match = self._match_session_route()
         if match:
             sid, action = match
@@ -230,8 +565,41 @@ class ThreadingHTTPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     daemon_threads = True
 
 
+def _pipeline_session_launcher(pipeline: Dict[str, Any], stage: Dict[str, Any]) -> str:
+    """Create a session for a pipeline stage.  Returns the session ID."""
+    session = sessions.create_session(
+        project_slug=pipeline.get("project_slug", ""),
+        repo_path=pipeline.get("repo_path", str(REPO_ROOT)),
+        prompt=stage.get("prompt", ""),
+        template=stage.get("template", "implement"),
+        model=stage.get("model", DEFAULT_CONFIG["default_model"]),
+        budget_usd=float(stage.get("budget_usd", DEFAULT_CONFIG["default_budget_usd"])),
+        timeout_min=int(stage.get("timeout_min", DEFAULT_CONFIG["default_timeout_min"])),
+        use_worktree=True,
+        task_id=f"{pipeline['id']}/{stage['name']}",
+        task_title=stage.get("label", stage["name"]),
+    )
+
+    def _on_complete(sess):
+        success = sess.get("status") == "succeeded"
+        pipelines.handle_stage_complete(
+            pid=pipeline["id"],
+            stage_name=stage["name"],
+            success=success,
+            error=sess.get("error"),
+            cost_usd=sess.get("cost_usd", 0.0),
+            session_launcher=_pipeline_session_launcher,
+        )
+
+    sessions.set_on_complete(_on_complete)
+    return session["id"]
+
+
 def _shutdown() -> None:
     print("[conductor] Shutting down — cleaning up sessions...")
+    events.emit("system.shutdown", {}, source="server")
+    events.shutdown()
+    pipelines.shutdown()
     sessions.shutdown()
     print("[conductor] Shutdown complete.")
 
@@ -254,9 +622,23 @@ def main() -> None:
         default_config=DEFAULT_CONFIG,
     )
 
+    pipelines.configure(
+        data_dir=DATA_DIR,
+        sessions_dir=SESSIONS_DIR,
+        repo_root=REPO_ROOT,
+    )
+    pipelines.load_state()
+
+    events.configure(max_events=500)
+    events.emit("system.startup", {"port": PORT}, source="server")
+
     print(f"[conductor] Conductor — Product Orchestrator")
     print(f"[conductor] Dashboard:  http://127.0.0.1:{PORT}/")
     print(f"[conductor] API:        http://127.0.0.1:{PORT}/api/sessions")
+    print(f"[conductor] Pipelines:  http://127.0.0.1:{PORT}/api/pipelines")
+    print(f"[conductor] Templates:  http://127.0.0.1:{PORT}/api/templates")
+    print(f"[conductor] Events:     http://127.0.0.1:{PORT}/api/events")
+    print(f"[conductor] SSE:        http://127.0.0.1:{PORT}/api/events/stream")
     print(f"[conductor] Max parallel: {DEFAULT_CONFIG['max_parallel']}")
     print()
 

@@ -1,0 +1,176 @@
+[
+  {
+    "id": "01",
+    "title": "Multi-Tenant SaaS, RLS & Client Portals",
+    "status": "synthesized",
+    "priority": 1,
+    "promptPath": "docs/research/prompts/01-multi-tenant-saas-rls-client-portals.md",
+    "expectedOutputFile": "01-multi-tenant-saas-rls-client-portals.report.md",
+    "inboxPath": "local-inputs/research-inbox/",
+    "synthesisPath": "docs/research/syntheses/01-multi-tenant-saas-rls-client-portals.synthesis.md",
+    "affectsModules": [
+      "engine/server.py",
+      "engine/sessions.py",
+      "dashboard/pages/client-portal",
+      "database schema",
+      "API authorization"
+    ],
+    "dependsOn": [],
+    "recommendedOrder": 1,
+    "lastUpdated": "2026-05-19",
+    "decisionsCreated": ["DEC-001", "DEC-002"],
+    "notes": "Foundational — most other topics depend on the tenancy model decision."
+  },
+  {
+    "id": "02",
+    "title": "Agent Orchestration, DAGs & Parallelization",
+    "status": "synthesized",
+    "priority": 1,
+    "promptPath": "docs/research/prompts/02-agent-orchestration-dag-parallelization.md",
+    "expectedOutputFile": "02-agent-orchestration-dag-parallelization.report.md",
+    "inboxPath": "local-inputs/research-inbox/",
+    "synthesisPath": "docs/research/syntheses/02-agent-orchestration-dag-parallelization.synthesis.md",
+    "affectsModules": [
+      "engine/pipelines.py",
+      "engine/phases.py",
+      "engine/agents.py",
+      "engine/sessions.py",
+      "dashboard/pages/dag-view"
+    ],
+    "dependsOn": [],
+    "recommendedOrder": 2,
+    "lastUpdated": "2026-05-19",
+    "decisionsCreated": ["DEC-003", "DEC-004"],
+    "notes": "Core differentiator — the orchestration engine is the heart of Conductor."
+  },
+  {
+    "id": "03",
+    "title": "AI-Guided Onboarding & Decision Simulation",
+    "status": "pending",
+    "priority": 5,
+    "promptPath": "docs/research/prompts/03-ai-product-onboarding-decision-simulation.md",
+    "expectedOutputFile": "03-ai-product-onboarding-decision-simulation.report.md",
+    "inboxPath": "local-inputs/research-inbox/",
+    "synthesisPath": "docs/research/syntheses/03-onboarding-simulation-synthesis.md",
+    "affectsModules": [
+      "dashboard/pages/onboarding",
+      "dashboard/pages/simulator",
+      "engine/context.py",
+      "engine/phases.py"
+    ],
+    "dependsOn": ["01", "02", "05"],
+    "recommendedOrder": 5,
+    "lastUpdated": "2026-05-18",
+    "notes": "Builds on architecture and memory system decisions."
+  },
+  {
+    "id": "04",
+    "title": "Data Platform Modernization Factory",
+    "status": "pending",
+    "priority": 4,
+    "promptPath": "docs/research/prompts/04-data-platform-modernization-factory.md",
+    "expectedOutputFile": "04-data-platform-modernization-factory.report.md",
+    "inboxPath": "local-inputs/research-inbox/",
+    "synthesisPath": "docs/research/syntheses/04-data-modernization-synthesis.md",
+    "affectsModules": [
+      "engine/pipelines.py",
+      "engine/scaffolder.py",
+      "templates/migration",
+      "docs/inputs/05-current-aldc-service-inventory.md",
+      "docs/inputs/06-current-client-migration-notes.md"
+    ],
+    "dependsOn": ["01", "02"],
+    "recommendedOrder": 4,
+    "lastUpdated": "2026-05-18",
+    "notes": "Directly relevant to the ALDC proof case."
+  },
+  {
+    "id": "05",
+    "title": "Context, Memory, Vector DB & Self-Improvement",
+    "status": "synthesized",
+    "priority": 3,
+    "promptPath": "docs/research/prompts/05-context-memory-vector-db-self-improvement.md",
+    "expectedOutputFile": "05-context-memory-vector-db-self-improvement.report.md",
+    "inboxPath": "local-inputs/research-inbox/",
+    "synthesisPath": "docs/research/syntheses/05-context-memory-vector-db-self-improvement.synthesis.md",
+    "affectsModules": [
+      "engine/context.py",
+      "vector DB infrastructure",
+      "memory evaluation pipeline",
+      "agent context injection"
+    ],
+    "dependsOn": ["01", "02"],
+    "recommendedOrder": 3,
+    "lastUpdated": "2026-05-19",
+    "decisionsCreated": ["DEC-008", "DEC-009", "DEC-010"],
+    "notes": "Critical for self-improvement capability — Conductor's long-term moat."
+  },
+  {
+    "id": "06",
+    "title": "Secure Credential & Artifact Workflows",
+    "status": "pending",
+    "priority": 6,
+    "promptPath": "docs/research/prompts/06-secure-credential-artifact-workflows.md",
+    "expectedOutputFile": "06-secure-credential-artifact-workflows.report.md",
+    "inboxPath": "local-inputs/research-inbox/",
+    "synthesisPath": "docs/research/syntheses/06-credential-security-synthesis.md",
+    "affectsModules": [
+      "engine/server.py",
+      "dashboard/pages/credential-portal",
+      "vault integration",
+      "audit logging"
+    ],
+    "dependsOn": ["01", "04"],
+    "recommendedOrder": 6,
+    "lastUpdated": "2026-05-18",
+    "notes": "Depends on tenancy and migration architecture decisions."
+  },
+  {
+    "id": "07",
+    "title": "Market Intelligence & Growth Engine",
+    "status": "pending",
+    "priority": 7,
+    "promptPath": "docs/research/prompts/07-market-intelligence-growth-engine.md",
+    "expectedOutputFile": "07-market-intelligence-growth-engine.report.md",
+    "inboxPath": "local-inputs/research-inbox/",
+    "synthesisPath": "docs/research/syntheses/07-market-growth-synthesis.md",
+    "affectsModules": [
+      "dashboard/pages/market-intelligence",
+      "engine/context.py",
+      "pricing model",
+      "growth experiments"
+    ],
+    "dependsOn": ["01", "02", "03"],
+    "recommendedOrder": 7,
+    "lastUpdated": "2026-05-18",
+    "notes": "Growth layer — builds on top of the core platform."
+  },
+  {
+    "id": "08-hybrid-context-fabric-wiki-memory-knowledge-graph",
+    "title": "Hybrid Context Fabric: Wiki, Memory, Knowledge Graph, and Project Context Packs",
+    "status": "synthesized",
+    "priority": 1,
+    "promptPath": "docs/research/prompts/08-hybrid-context-fabric-wiki-memory-knowledge-graph.md",
+    "expectedOutputFile": "08-hybrid-context-fabric-wiki-memory-knowledge-graph.report.md",
+    "inboxPath": "local-inputs/research-inbox/08-hybrid-context-fabric-wiki-memory-knowledge-graph.report.md",
+    "synthesisPath": "docs/research/syntheses/08-hybrid-context-fabric-wiki-memory-knowledge-graph.synthesis.md",
+    "affectsModules": [
+      "context-manager",
+      "memory-context-manager",
+      "knowledge-workspace",
+      "project-memory",
+      "source-adapters",
+      "agent-context-packs",
+      "self-improvement-loop",
+      "client-portal",
+      "build-studio"
+    ],
+    "dependsOn": [
+      "05-context-memory-vector-db-self-improvement"
+    ],
+    "recommendedOrder": 3,
+    "lastUpdated": "2026-05-19",
+    "decisionsCreated": ["DEC-005", "DEC-006", "DEC-007"],
+    "notes": "Evaluate a hybrid context fabric combining repos/wiki, zeus-memory, generated structured knowledge, knowledge graphs, vector search, project-specific memory, metadata-first retrieval, and evaluation-gated self-improvement."
+  }
+]

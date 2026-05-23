@@ -1,20 +1,25 @@
-# LABS Institute Platform Documentation Index
+# Conductor Platform Documentation
 
-This folder contains the source-of-truth documentation for the LABS Institute Growth & Gig Intelligence Platform.
+## Directory Structure
 
-## Recommended reading order for the orchestrator
+| Directory | Purpose |
+|-----------|---------|
+| `inputs/` | Non-secret product inputs (vision, personas, use cases, demo, inventory) |
+| `research/` | Deep Research prompts, syntheses, decisions, status tracking |
+| `architecture/` | Architecture documents and policies |
+| `decisions/` | Architecture Decision Records (ADRs) |
+| `prompts/` | Claude Code execution prompts (ingestion, synthesis, design) |
+| `build/` | Build tracking (change manifest, blockers, approvals, rollback, reports) |
+| `reference-repos/` | Cross-repo analysis and integration opportunities |
+| `checklists/` | Pre-build and compliance checklists |
+| `templates/` | Reusable document templates |
 
-1. `docs/product/labs-institute-growth-gig-intelligence-platform.md`
-2. `docs/product/mvp-scope.md`
-3. `docs/architecture/data-model.md`
-4. `docs/architecture/permissions-model.md`
-5. `docs/workflows/master-simulator.md`
-6. `docs/workflows/roadmap-builder.md`
-7. `docs/build/backlog.md`
-8. `docs/build/acceptance-criteria.md`
-9. `docs/research/labs-institute/assumptions.md`
-10. `docs/research/labs-institute/deep-research.md`
+## Build Pack
 
-## Rule
+The source-of-truth build pack is at:
 
-Raw research should live in `docs/research/labs-institute/deep-research.md`, but build decisions should be extracted into smaller product, architecture, workflow, and backlog documents.
+```
+conductor_platform_build_pack_v5/conductor_platform_build_pack_v5/
+```
+
+It contains the master build sequence, architecture docs, prompt files, ADRs, checklists, and templates for the Conductor platform rebuild.

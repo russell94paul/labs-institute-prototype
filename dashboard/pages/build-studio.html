@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Build Studio</title>
+    <link rel="stylesheet" href="../styles/base.css">
+    <style>
+    .studio-shell { padding: 0; }
+
+    .studio-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 20px 24px 12px; flex-wrap: wrap; gap: 12px;
+    }
+    .studio-header-left { display: flex; align-items: center; gap: 14px; }
+    .studio-title {
+        font-size: 1.15rem; font-weight: 800; letter-spacing: 0.12em;
+        background: linear-gradient(90deg, #38bdf8, #a78bfa, #4ade80);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .studio-subtitle {
+        font-size: 0.62rem; color: var(--text-dim); text-transform: uppercase;
+        letter-spacing: 0.14em; font-weight: 600;
+    }
+    .studio-header-right { display: flex; align-items: center; gap: 8px; }
+
+    .studio-wg-banner {
+        display: flex; align-items: center; gap: 12px;
+        padding: 8px 24px; border-bottom: 1px solid var(--border-subtle);
+        font-size: 0.72rem;
+    }
+    .studio-wg-indicator {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 4px 12px; border-radius: 8px; font-weight: 700;
+        font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .studio-wg-unlocked { background: rgba(74,222,128,0.12); color: var(--accent-green); border: 1px solid rgba(74,222,128,0.25); }
+    .studio-wg-locked { background: rgba(251,191,36,0.12); color: var(--accent-gold); border: 1px solid rgba(251,191,36,0.25); }
+    .studio-wg-stale { background: rgba(248,113,113,0.12); color: var(--accent-red); border: 1px solid rgba(248,113,113,0.25); }
+    .studio-wg-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .studio-wg-dot-green { background: var(--accent-green); }
+    .studio-wg-dot-amber { background: var(--accent-gold); }
+    .studio-wg-dot-red { background: var(--accent-red); }
+    .studio-wg-detail { font-size: 0.68rem; color: var(--text-dim); }
+    .studio-safe-pill {
+        font-weight: 700; padding: 3px 10px; border-radius: 6px;
+        font-size: 0.62rem; text-transform: uppercase;
+    }
+    .studio-safe-yes { background: rgba(74,222,128,0.15); color: var(--accent-green); }
+    .studio-safe-no { background: rgba(248,113,113,0.15); color: var(--accent-red); }
+
+    .studio-kpi-strip {
+        display: flex; align-items: center; gap: 10px;
+        padding: 8px 24px 14px; flex-wrap: wrap;
+    }
+    .studio-kpi {
+        display: flex; align-items: center; gap: 6px;
+        font-size: 0.7rem; color: var(--text-dim);
+        background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle);
+        border-radius: 8px; padding: 5px 12px;
+    }
+    .studio-kpi-val {
+        font-family: var(--font-mono); font-weight: 800;
+        color: var(--text-secondary); font-size: 0.78rem;
+    }
+    .studio-kpi-val.green { color: var(--accent-green); }
+    .studio-kpi-val.blue { color: var(--accent-blue); }
+    .studio-kpi-val.amber { color: var(--accent-amber); }
+    .studio-kpi-val.red { color: var(--accent-red); }
+    .studio-kpi-val.purple { color: var(--accent-purple); }
+
+    .studio-tabs {
+        display: flex; gap: 2px; padding: 0 24px;
+        border-bottom: 1px solid var(--border-light);
+        overflow-x: auto;
+    }
+    .studio-tab {
+        padding: 8px 16px; font-size: 0.72rem; font-weight: 600;
+        color: var(--text-dim); cursor: pointer;
+        border-bottom: 2px solid transparent;
+        transition: color 0.2s, border-color 0.2s;
+        white-space: nowrap;
+    }
+    .studio-tab:hover { color: var(--text-secondary); }
+    .studio-tab.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); }
+    .studio-tab .tab-count {
+        font-family: var(--font-mono); font-size: 0.58rem;
+        background: rgba(255,255,255,0.06); padding: 1px 6px;
+        border-radius: 8px; margin-left: 4px;
+    }
+
+    .studio-panel { display: none; padding: 20px 24px; }
+    .studio-panel.active { display: block; }
+
+    .studio-section-title {
+        font-size: 0.72rem; font-weight: 700; color: var(--text-label);
+        text-transform: uppercase; letter-spacing: 0.08em;
+        margin-bottom: 10px;
+    }
+
+    .studio-card {
+        background: var(--card-gradient); border-radius: var(--card-radius);
+        border: 1px solid var(--border-light); padding: 16px 20px;
+        margin-bottom: 12px;
+    }
+    .studio-card-header {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 8px;
+    }
+    .studio-card-title { font-size: 0.82rem; font-weight: 700; color: #fff; }
+
+    /* Status pills */
+    .st-pill {
+        font-size: 0.6rem; font-weight: 700; padding: 3px 8px;
+        border-radius: 6px; text-transform: uppercase; letter-spacing: 0.04em;
+        text-align: center; white-space: nowrap; display: inline-block;
+    }
+    .st-pill-completed { background: rgba(74,222,128,0.15); color: var(--accent-green); }
+    .st-pill-running { background: rgba(56,189,248,0.15); color: var(--accent-blue); }
+    .st-pill-eligible { background: rgba(167,139,250,0.15); color: var(--accent-purple); }
+    .st-pill-not_started { background: rgba(255,255,255,0.05); color: var(--text-dim); }
+    .st-pill-blocked { background: rgba(248,113,113,0.15); color: var(--accent-red); }
+    .st-pill-failed { background: rgba(248,113,113,0.2); color: var(--accent-red); }
+    .st-pill-needs_review { background: rgba(251,191,36,0.15); color: var(--accent-gold); }
+    .st-pill-skipped { background: rgba(255,255,255,0.04); color: var(--text-faint); }
+    .st-pill-cancelled { background: rgba(255,255,255,0.04); color: var(--text-faint); }
+
+    .st-risk {
+        font-size: 0.6rem; font-weight: 700; padding: 2px 8px;
+        border-radius: 6px; text-transform: uppercase; text-align: center;
+        display: inline-block;
+    }
+    .st-risk-low { background: rgba(74,222,128,0.1); color: var(--accent-green); }
+    .st-risk-medium { background: rgba(251,146,60,0.1); color: var(--accent-amber); }
+    .st-risk-high { background: rgba(248,113,113,0.1); color: var(--accent-red); }
+
+    .st-complexity {
+        font-size: 0.6rem; font-weight: 700; padding: 2px 8px;
+        border-radius: 6px; text-align: center; display: inline-block;
+        background: rgba(255,255,255,0.04); color: var(--text-muted);
+        font-family: var(--font-mono);
+    }
+
+    .st-parallel {
+        font-size: 0.6rem; padding: 2px 8px; border-radius: 6px;
+        text-align: center; font-weight: 600; display: inline-block;
+    }
+    .st-parallel-yes { background: rgba(74,222,128,0.1); color: var(--accent-green); }
+    .st-parallel-no { background: rgba(255,255,255,0.04); color: var(--text-dim); }
+
+    /* Overview grid */
+    .overview-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    }
+    .overview-grid-full { grid-column: 1 / -1; }
+    @media (max-width: 800px) { .overview-grid { grid-template-columns: 1fr; } }
+
+    .overview-progress {
+        height: 8px; background: rgba(255,255,255,0.06);
+        border-radius: 4px; overflow: hidden; margin: 8px 0;
+    }
+    .overview-progress-fill {
+        height: 100%; border-radius: 4px;
+        background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+        transition: width 0.6s ease;
+    }
+
+    /* Phase row */
+    .studio-phase-row {
+        display: grid;
+        grid-template-columns: 32px 1fr 100px 80px 80px 100px;
+        align-items: center; gap: 10px;
+        padding: 10px 14px; border-radius: 8px;
+        border: 1px solid var(--border-subtle);
+        margin-bottom: 6px; cursor: pointer;
+        transition: background 0.15s, border-color 0.15s;
+    }
+    .studio-phase-row:hover {
+        background: rgba(255,255,255,0.02);
+        border-color: var(--border-medium);
+    }
+    .studio-phase-idx {
+        font-family: var(--font-mono); font-size: 0.68rem;
+        color: var(--text-dim); font-weight: 700; text-align: center;
+    }
+    .studio-phase-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .studio-phase-name {
+        font-size: 0.78rem; font-weight: 700; color: var(--text-primary);
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .studio-phase-desc {
+        font-size: 0.65rem; color: var(--text-dim);
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* DAG */
+    .studio-dag-node {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 6px 12px; border-radius: 8px;
+        border: 1px solid var(--border-light);
+        font-size: 0.72rem; font-weight: 600;
+        margin: 4px; cursor: pointer;
+        transition: background 0.15s;
+    }
+    .studio-dag-node:hover { background: rgba(255,255,255,0.04); }
+    .studio-dag-arrow { font-size: 0.7rem; color: var(--text-faint); margin: 0 4px; }
+    .studio-dag-row { display: flex; align-items: center; flex-wrap: wrap; margin-bottom: 6px; }
+
+    /* Queue items */
+    .studio-queue-item {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 10px 14px; border-radius: 8px;
+        border: 1px solid var(--border-subtle);
+        margin-bottom: 6px;
+    }
+    .studio-queue-item:hover { border-color: var(--border-medium); }
+    .studio-queue-left { display: flex; align-items: center; gap: 10px; }
+    .studio-queue-right { display: flex; align-items: center; gap: 8px; }
+
+    /* Buttons */
+    .studio-btn {
+        font-size: 0.65rem; font-weight: 700; padding: 5px 12px;
+        border-radius: 6px; border: 1px solid var(--border-light);
+        background: rgba(255,255,255,0.04); color: var(--text-secondary);
+        cursor: pointer; transition: background 0.15s;
+        text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .studio-btn:hover { background: rgba(255,255,255,0.08); }
+    .studio-btn-primary {
+        background: rgba(56,189,248,0.15); color: var(--accent-blue);
+        border-color: rgba(56,189,248,0.3);
+    }
+    .studio-btn-primary:hover { background: rgba(56,189,248,0.25); }
+    .studio-btn-success {
+        background: rgba(74,222,128,0.12); color: var(--accent-green);
+        border-color: rgba(74,222,128,0.25);
+    }
+
+    /* Table */
+    .studio-table {
+        width: 100%; border-collapse: collapse; font-size: 0.72rem;
+    }
+    .studio-table th {
+        text-align: left; padding: 8px 12px; font-weight: 700;
+        color: var(--text-dim); text-transform: uppercase;
+        letter-spacing: 0.06em; font-size: 0.62rem;
+        border-bottom: 1px solid var(--border-light);
+    }
+    .studio-table td {
+        padding: 8px 12px; border-bottom: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+    }
+
+    .studio-empty {
+        text-align: center; padding: 40px 20px;
+        color: var(--text-dim); font-size: 0.78rem;
+    }
+
+    .studio-copy-box {
+        position: relative;
+        font-family: var(--font-mono); font-size: 0.7rem;
+        background: rgba(0,0,0,0.3); padding: 10px 14px;
+        border-radius: 8px; border: 1px solid var(--border-subtle);
+        color: var(--text-muted); word-break: break-all;
+    }
+    .studio-copy-btn {
+        position: absolute; top: 6px; right: 6px;
+        font-size: 0.58rem; padding: 2px 8px; border-radius: 4px;
+        background: rgba(255,255,255,0.06); border: 1px solid var(--border-light);
+        color: var(--text-dim); cursor: pointer;
+    }
+    .studio-copy-btn:hover { background: rgba(255,255,255,0.1); }
+
+    /* Next action panel */
+    .next-action-panel {
+        background: linear-gradient(135deg, rgba(56,189,248,0.06), rgba(167,139,250,0.06));
+        border: 1px solid rgba(56,189,248,0.2);
+        border-radius: 12px; padding: 16px 20px;
+    }
+    .next-action-label {
+        font-size: 0.62rem; font-weight: 700; color: var(--accent-blue);
+        text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px;
+    }
+    .next-action-title {
+        font-size: 0.88rem; font-weight: 700; color: #fff; margin-bottom: 4px;
+    }
+    .next-action-desc { font-size: 0.75rem; color: var(--text-muted); }
+
+    /* Detail overlay */
+    .studio-overlay {
+        display: none; position: fixed; inset: 0; z-index: 200;
+        background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+    }
+    .studio-overlay.active { display: flex; align-items: center; justify-content: center; }
+    .studio-detail-panel {
+        background: var(--bg-primary); border: 1px solid var(--border-medium);
+        border-radius: 16px; width: 680px; max-width: 95vw;
+        max-height: 85vh; overflow-y: auto; padding: 24px;
+    }
+    .studio-detail-close {
+        float: right; cursor: pointer; font-size: 1.2rem;
+        color: var(--text-dim); background: none; border: none; padding: 4px 8px;
+    }
+    .studio-detail-close:hover { color: #fff; }
+    .studio-detail-section {
+        margin-top: 16px; padding-top: 12px;
+        border-top: 1px solid var(--border-subtle);
+    }
+    .studio-detail-label {
+        font-size: 0.62rem; font-weight: 700; color: var(--text-dim);
+        text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px;
+    }
+    .studio-detail-val { font-size: 0.78rem; color: var(--text-secondary); }
+
+    /* Event feed */
+    .studio-event-row {
+        display: grid;
+        grid-template-columns: 140px 1fr 90px;
+        align-items: center; gap: 10px;
+        padding: 8px 14px; border-radius: 6px;
+        border: 1px solid var(--border-subtle);
+        margin-bottom: 4px; font-size: 0.72rem;
+        transition: background 0.15s;
+    }
+    .studio-event-row:hover { background: rgba(255,255,255,0.02); }
+    .studio-event-time {
+        font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-dim);
+    }
+    .studio-event-type {
+        font-weight: 700; font-size: 0.68rem;
+        padding: 2px 8px; border-radius: 4px; display: inline-block;
+    }
+    .studio-event-type-phase { background: rgba(167,139,250,0.12); color: var(--accent-purple); }
+    .studio-event-type-pipeline { background: rgba(56,189,248,0.12); color: var(--accent-blue); }
+    .studio-event-type-session { background: rgba(251,146,60,0.12); color: var(--accent-amber); }
+    .studio-event-type-work_guard { background: rgba(74,222,128,0.12); color: var(--accent-green); }
+    .studio-event-type-system { background: rgba(255,255,255,0.06); color: var(--text-muted); }
+    .studio-event-detail { color: var(--text-secondary); }
+    .studio-event-source {
+        font-size: 0.62rem; color: var(--text-dim); text-align: right;
+        font-family: var(--font-mono);
+    }
+
+    .studio-sse-status {
+        display: inline-flex; align-items: center; gap: 5px;
+        font-size: 0.6rem; font-weight: 600; padding: 3px 10px;
+        border-radius: 6px; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .studio-sse-connected { background: rgba(74,222,128,0.12); color: var(--accent-green); }
+    .studio-sse-disconnected { background: rgba(248,113,113,0.12); color: var(--accent-red); }
+    .studio-sse-connecting { background: rgba(251,191,36,0.12); color: var(--accent-gold); }
+    .studio-sse-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+    .studio-sse-dot-on { background: var(--accent-green); }
+    .studio-sse-dot-off { background: var(--accent-red); }
+    .studio-sse-dot-wait { background: var(--accent-gold); }
+
+    .studio-event-stats {
+        display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;
+    }
+    .studio-event-stat {
+        font-size: 0.68rem; color: var(--text-dim);
+        background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle);
+        border-radius: 6px; padding: 4px 10px;
+    }
+    .studio-event-stat-val {
+        font-family: var(--font-mono); font-weight: 700;
+        color: var(--text-secondary); margin-left: 4px;
+    }
+
+    /* Work Guard detail */
+    .studio-wg-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    @media (max-width: 700px) { .studio-wg-grid { grid-template-columns: 1fr; } }
+    .studio-wg-check-row {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 8px 12px; border-radius: 6px;
+        border: 1px solid var(--border-subtle);
+        font-size: 0.72rem; margin-bottom: 4px;
+    }
+    .studio-wg-pass { color: var(--accent-green); font-weight: 700; }
+    .studio-wg-fail { color: var(--accent-red); font-weight: 700; }
+
+    /* Decision cards */
+    .decision-card {
+        border: 1px solid var(--border-light); border-radius: 10px;
+        padding: 14px 18px; margin-bottom: 8px;
+        background: rgba(255,255,255,0.015);
+        transition: border-color 0.15s;
+    }
+    .decision-card:hover { border-color: var(--border-medium); }
+    .decision-header {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 6px;
+    }
+    .decision-id {
+        font-family: var(--font-mono); font-size: 0.7rem;
+        font-weight: 700; color: var(--accent-purple);
+    }
+    .decision-title {
+        font-size: 0.78rem; font-weight: 700; color: var(--text-primary);
+    }
+    .decision-status {
+        font-size: 0.58rem; font-weight: 700; padding: 2px 8px;
+        border-radius: 6px; text-transform: uppercase;
+    }
+    .decision-status-proposed { background: rgba(167,139,250,0.12); color: var(--accent-purple); }
+    .decision-status-approved { background: rgba(74,222,128,0.12); color: var(--accent-green); }
+    .decision-status-deferred { background: rgba(255,255,255,0.05); color: var(--text-dim); }
+    .decision-detail { font-size: 0.7rem; color: var(--text-muted); }
+    .decision-gates { font-size: 0.65rem; color: var(--text-dim); margin-top: 4px; }
+
+    /* Toast */
+    .studio-toast {
+        position: fixed; bottom: 24px; right: 24px; z-index: 300;
+        padding: 10px 18px; border-radius: 8px;
+        background: var(--bg-card-1); border: 1px solid var(--accent-green);
+        color: var(--accent-green); font-size: 0.72rem; font-weight: 600;
+        opacity: 0; transition: opacity 0.3s; pointer-events: none;
+    }
+    .studio-toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+    <div class="studio-shell">
+        <div class="studio-header">
+            <div class="studio-header-left">
+                <div>
+                    <div class="studio-title">BUILD STUDIO</div>
+                    <div class="studio-subtitle">Conductor Control Surface</div>
+                </div>
+            </div>
+            <div class="studio-header-right">
+                <span class="studio-sse-status studio-sse-connecting" id="studio-sse-badge">
+                    <span class="studio-sse-dot studio-sse-dot-wait" id="studio-sse-dot"></span>
+                    <span id="studio-sse-label">Connecting</span>
+                </span>
+                <button class="studio-btn" onclick="Studio.refresh()">Refresh</button>
+            </div>
+        </div>
+
+        <div class="studio-wg-banner" id="studio-wg-banner">
+            <span class="studio-wg-indicator studio-wg-unlocked" id="studio-wg-lock-badge">
+                <span class="studio-wg-dot studio-wg-dot-green" id="studio-wg-dot"></span>
+                <span id="studio-wg-lock-label">Loading...</span>
+            </span>
+            <span class="studio-safe-pill studio-safe-yes" id="studio-safe-badge">...</span>
+            <span class="studio-wg-detail" id="studio-wg-detail"></span>
+            <button class="studio-btn" onclick="Studio.refreshWorkGuard()" style="margin-left:auto;font-size:0.6rem;">Check</button>
+        </div>
+
+        <div class="studio-kpi-strip" id="studio-kpi-strip"></div>
+
+        <div class="studio-tabs" id="studio-tabs">
+            <div class="studio-tab active" data-panel="overview">Overview</div>
+            <div class="studio-tab" data-panel="roadmap">Roadmap</div>
+            <div class="studio-tab" data-panel="dag">Dependencies</div>
+            <div class="studio-tab" data-panel="queue">Work Queue</div>
+            <div class="studio-tab" data-panel="approvals">Approvals</div>
+            <div class="studio-tab" data-panel="blockers">Blockers</div>
+            <div class="studio-tab" data-panel="events">Events</div>
+            <div class="studio-tab" data-panel="workguard">Work Guard</div>
+            <div class="studio-tab" data-panel="reports">Reports</div>
+            <div class="studio-tab" data-panel="changes">Changes</div>
+        </div>
+
+        <!-- Overview Panel -->
+        <div class="studio-panel active" id="panel-overview">
+            <div class="overview-grid">
+                <div class="studio-card overview-grid-full">
+                    <div class="studio-card-header">
+                        <div class="studio-card-title">Build Progress</div>
+                        <div id="overview-progress-pct" style="font-family:var(--font-mono);font-size:0.82rem;font-weight:800;color:var(--accent-green);"></div>
+                    </div>
+                    <div class="overview-progress">
+                        <div class="overview-progress-fill" id="overview-progress-bar" style="width:0%"></div>
+                    </div>
+                    <div style="display:flex;gap:16px;margin-top:8px;font-size:0.68rem;color:var(--text-dim);" id="overview-progress-detail"></div>
+                </div>
+
+                <div id="overview-next-action"></div>
+
+                <div class="studio-card">
+                    <div class="studio-card-header">
+                        <div class="studio-card-title">Phase Status</div>
+                    </div>
+                    <div id="overview-phase-summary"></div>
+                </div>
+
+                <div class="studio-card">
+                    <div class="studio-card-header">
+                        <div class="studio-card-title">Decisions</div>
+                    </div>
+                    <div id="overview-decision-summary"></div>
+                </div>
+
+                <div class="studio-card">
+                    <div class="studio-card-header">
+                        <div class="studio-card-title">Recent Activity</div>
+                    </div>
+                    <div id="overview-recent-events"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Roadmap Panel -->
+        <div class="studio-panel" id="panel-roadmap">
+            <div class="studio-section-title">Phase Roadmap</div>
+            <div id="studio-roadmap-list"></div>
+        </div>
+
+        <!-- DAG Panel -->
+        <div class="studio-panel" id="panel-dag">
+            <div class="studio-section-title">Dependency Graph</div>
+            <div id="studio-dag-view"></div>
+            <div style="margin-top:16px;">
+                <div class="studio-section-title">Critical Path</div>
+                <div id="studio-critical-path"></div>
+            </div>
+        </div>
+
+        <!-- Work Queue Panel -->
+        <div class="studio-panel" id="panel-queue">
+            <div class="studio-section-title">Eligible Work Queue</div>
+            <div id="studio-queue-list"></div>
+            <div style="margin-top:20px;">
+                <div class="studio-section-title">Next Recommended</div>
+                <div id="studio-next-rec"></div>
+            </div>
+        </div>
+
+        <!-- Approvals Panel -->
+        <div class="studio-panel" id="panel-approvals">
+            <div class="studio-section-title">Decision Queue</div>
+            <div id="studio-decision-list"></div>
+            <div style="margin-top:20px;">
+                <div class="studio-section-title">Approval-Gated Phases</div>
+                <div id="studio-approvals-list"></div>
+            </div>
+        </div>
+
+        <!-- Blockers Panel -->
+        <div class="studio-panel" id="panel-blockers">
+            <div class="studio-section-title">Current Blockers</div>
+            <div id="studio-blockers-list"></div>
+        </div>
+
+        <!-- Events Panel -->
+        <div class="studio-panel" id="panel-events">
+            <div class="studio-section-title">Live Event Feed</div>
+            <div class="studio-event-stats" id="studio-event-stats"></div>
+            <div id="studio-event-feed"></div>
+        </div>
+
+        <!-- Work Guard Panel -->
+        <div class="studio-panel" id="panel-workguard">
+            <div class="studio-section-title">Work Guard Status</div>
+            <div class="studio-wg-grid">
+                <div class="studio-card">
+                    <div class="studio-card-header"><div class="studio-card-title">Git State</div></div>
+                    <div id="studio-wg-git-detail">Loading...</div>
+                </div>
+                <div class="studio-card">
+                    <div class="studio-card-header"><div class="studio-card-title">Session Lock</div></div>
+                    <div id="studio-wg-lock-detail">Loading...</div>
+                </div>
+            </div>
+            <div class="studio-card" style="margin-top:12px;">
+                <div class="studio-card-header">
+                    <div class="studio-card-title">Safety Checks</div>
+                    <span class="studio-safe-pill studio-safe-yes" id="studio-wg-safe-detail">...</span>
+                </div>
+                <div id="studio-wg-checks-list">Loading...</div>
+            </div>
+            <div class="studio-card" style="margin-top:12px;">
+                <div class="studio-card-header"><div class="studio-card-title">Recommended Action</div></div>
+                <div id="studio-wg-recommendation" style="font-size:0.78rem;color:var(--text-secondary);">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Reports Panel -->
+        <div class="studio-panel" id="panel-reports">
+            <div class="studio-section-title">Build Reports</div>
+            <div id="studio-reports-list"></div>
+            <div style="margin-top:20px;">
+                <div class="studio-section-title">Session Handoffs</div>
+                <div id="studio-handoffs-list"></div>
+            </div>
+        </div>
+
+        <!-- Changes Panel -->
+        <div class="studio-panel" id="panel-changes">
+            <div class="studio-section-title">Rollback Center</div>
+            <div id="studio-rollback-list"></div>
+            <div style="margin-top:20px;">
+                <div class="studio-section-title">Change History</div>
+                <div id="studio-changes-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phase Detail Overlay -->
+    <div class="studio-overlay" id="studio-detail-overlay">
+        <div class="studio-detail-panel" id="studio-detail-panel">
+            <button class="studio-detail-close" onclick="Studio.closeDetail()">&times;</button>
+            <div id="studio-detail-content"></div>
+        </div>
+    </div>
+
+    <div class="studio-toast" id="studio-toast"></div>
+
+    <script>
+    var Studio = (function() {
+        var phases = [];
+        var summary = {};
+        var wgData = null;
+        var liveEvents = [];
+        var maxLiveEvents = 100;
+        var evtSource = null;
+
+        var decisions = [
+            { id: 'DEC-001', title: 'Default Tenancy Model', status: 'proposed', gatesP1: false, phase: 'DB migration' },
+            { id: 'DEC-002', title: 'Secrets Management Backend', status: 'proposed', gatesP1: false, phase: 'Agent runtime' },
+            { id: 'DEC-003', title: 'Worktree Isolation Model', status: 'proposed', gatesP1: true, phase: 'Pipeline enhancement' },
+            { id: 'DEC-004', title: 'Event Store Technology', status: 'proposed', gatesP1: true, phase: 'During/after P1' },
+            { id: 'DEC-005', title: 'Vector Store for Context Fabric', status: 'deferred', gatesP1: false, phase: 'Context fabric' },
+            { id: 'DEC-006', title: 'Wiki Repo Role', status: 'proposed', gatesP1: false, phase: 'Context fabric' },
+            { id: 'DEC-007', title: 'Memory Provider Integration', status: 'proposed', gatesP1: false, phase: 'Context fabric' },
+            { id: 'DEC-008', title: 'Memory Store MVP Scope', status: 'proposed', gatesP1: false, phase: 'Context fabric' },
+            { id: 'DEC-009', title: 'Memory Extraction Trigger', status: 'proposed', gatesP1: false, phase: 'Context fabric' },
+            { id: 'DEC-010', title: 'Evaluation Harness MVP Scope', status: 'proposed', gatesP1: false, phase: 'Context fabric' }
+        ];
+
+        function esc(s) {
+            if (!s) return '';
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function toast(msg) {
+            var el = document.getElementById('studio-toast');
+            el.textContent = msg;
+            el.classList.add('show');
+            setTimeout(function() { el.classList.remove('show'); }, 2000);
+        }
+
+        function copyText(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(function() { toast('Copied!'); });
+            }
+        }
+
+        function pillClass(s) { return 'st-pill st-pill-' + (s || 'not_started'); }
+        function riskClass(r) { return 'st-risk st-risk-' + (r || 'low'); }
+
+        function statusLabel(s) {
+            var map = {
+                'not_started': 'Not Started', 'eligible': 'Eligible', 'blocked': 'Blocked',
+                'running': 'Running', 'needs_review': 'Review', 'failed': 'Failed',
+                'completed': 'Completed', 'skipped': 'Skipped', 'cancelled': 'Cancelled'
+            };
+            return map[s] || s;
+        }
+
+        function dagNodeColor(status) {
+            var m = {
+                'completed': 'var(--accent-green)', 'running': 'var(--accent-blue)',
+                'eligible': 'var(--accent-purple)', 'blocked': 'var(--accent-red)',
+                'failed': 'var(--accent-red)', 'needs_review': 'var(--accent-gold)'
+            };
+            return m[status] || 'var(--text-dim)';
+        }
+
+        // --- Fetch ---
+        function fetchPhases() {
+            return fetch('/api/bootstrap/phases')
+                .then(function(r) { return r.json(); })
+                .then(function(data) { phases = data; return data; });
+        }
+
+        function fetchSummary() {
+            return fetch('/api/bootstrap/summary')
+                .then(function(r) { return r.json(); })
+                .then(function(data) { summary = data; return data; });
+        }
+
+        function fetchWorkGuard() {
+            return fetch('/api/work-guard/status')
+                .then(function(r) { return r.json(); })
+                .then(function(data) { wgData = data; return data; })
+                .catch(function() { wgData = null; return null; });
+        }
+
+        // --- KPIs ---
+        function renderKPIs() {
+            var sc = summary.statusCounts || {};
+            var html = '';
+            html += '<div class="studio-kpi">Total <span class="studio-kpi-val">' + (summary.totalPhases || 0) + '</span></div>';
+            html += '<div class="studio-kpi">Done <span class="studio-kpi-val green">' + (sc.completed || 0) + '</span></div>';
+            html += '<div class="studio-kpi">Running <span class="studio-kpi-val blue">' + (sc.running || 0) + '</span></div>';
+            html += '<div class="studio-kpi">Eligible <span class="studio-kpi-val purple">' + (summary.eligiblePhases || []).length + '</span></div>';
+            html += '<div class="studio-kpi">Blocked <span class="studio-kpi-val amber">' + (summary.blockedPhases || []).length + '</span></div>';
+            html += '<div class="studio-kpi">Decisions <span class="studio-kpi-val">' + decisions.length + '</span></div>';
+            document.getElementById('studio-kpi-strip').innerHTML = html;
+        }
+
+        // --- Overview ---
+        function renderOverview() {
+            var sc = summary.statusCounts || {};
+            var total = summary.totalPhases || 1;
+            var done = sc.completed || 0;
+            var pct = Math.round((done / total) * 100);
+
+            document.getElementById('overview-progress-pct').textContent = pct + '%';
+            document.getElementById('overview-progress-bar').style.width = pct + '%';
+            document.getElementById('overview-progress-detail').innerHTML =
+                '<span>Completed: <strong style="color:var(--accent-green);">' + done + '</strong></span>' +
+                '<span>Remaining: <strong style="color:var(--text-secondary);">' + (total - done) + '</strong></span>' +
+                '<span>Total: <strong style="color:var(--text-secondary);">' + total + '</strong></span>';
+
+            var nextId = summary.nextRecommended;
+            var pm = {};
+            for (var i = 0; i < phases.length; i++) pm[phases[i].phaseId] = phases[i];
+            var nextHtml = '';
+            if (nextId && pm[nextId]) {
+                var np = pm[nextId];
+                nextHtml += '<div class="next-action-panel">';
+                nextHtml += '<div class="next-action-label">Next Recommended Action</div>';
+                nextHtml += '<div class="next-action-title">' + esc(np.name) + '</div>';
+                nextHtml += '<div class="next-action-desc">' + esc(np.description || '') + '</div>';
+                nextHtml += '<div style="display:flex;gap:8px;margin-top:10px;align-items:center;">';
+                nextHtml += '<span class="' + pillClass(np.status) + '">' + statusLabel(np.status) + '</span>';
+                nextHtml += '<span class="' + riskClass(np.riskLevel) + '">' + (np.riskLevel || 'low') + '</span>';
+                if (np.approvalRequired) {
+                    nextHtml += '<span class="st-pill" style="background:rgba(251,191,36,0.15);color:var(--accent-gold);">Approval Required</span>';
+                }
+                nextHtml += '</div>';
+                if (np.promptPath) {
+                    nextHtml += '<div style="margin-top:10px;">';
+                    nextHtml += '<button class="studio-btn studio-btn-primary" onclick="Studio.showDetail(\'' + np.phaseId + '\')">View Details</button>';
+                    nextHtml += '</div>';
+                }
+                nextHtml += '</div>';
+            } else {
+                nextHtml += '<div class="next-action-panel">';
+                nextHtml += '<div class="next-action-label">Next Recommended Action</div>';
+                nextHtml += '<div class="next-action-title" style="color:var(--accent-green);">All phases complete or blocked</div>';
+                nextHtml += '<div class="next-action-desc">Review blockers or proceed to the next major milestone.</div>';
+                nextHtml += '</div>';
+            }
+            document.getElementById('overview-next-action').innerHTML = nextHtml;
+
+            var phaseHtml = '';
+            var statusOrder = ['running', 'eligible', 'not_started', 'blocked', 'completed'];
+            for (var si = 0; si < statusOrder.length; si++) {
+                var st = statusOrder[si];
+                var count = 0;
+                for (var pi = 0; pi < phases.length; pi++) {
+                    if (phases[pi].status === st) count++;
+                }
+                if (count > 0) {
+                    phaseHtml += '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;font-size:0.72rem;">';
+                    phaseHtml += '<span class="' + pillClass(st) + '">' + statusLabel(st) + '</span>';
+                    phaseHtml += '<span style="font-family:var(--font-mono);font-weight:700;color:var(--text-secondary);">' + count + '</span>';
+                    phaseHtml += '</div>';
+                }
+            }
+            document.getElementById('overview-phase-summary').innerHTML = phaseHtml;
+
+            var decHtml = '';
+            var decCounts = { proposed: 0, approved: 0, deferred: 0 };
+            for (var di = 0; di < decisions.length; di++) {
+                decCounts[decisions[di].status] = (decCounts[decisions[di].status] || 0) + 1;
+            }
+            var p1Gating = decisions.filter(function(d) { return d.gatesP1; });
+            decHtml += '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;font-size:0.72rem;">';
+            decHtml += '<span>Proposed</span><span style="font-family:var(--font-mono);font-weight:700;color:var(--accent-purple);">' + (decCounts.proposed || 0) + '</span></div>';
+            decHtml += '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;font-size:0.72rem;">';
+            decHtml += '<span>Approved</span><span style="font-family:var(--font-mono);font-weight:700;color:var(--accent-green);">' + (decCounts.approved || 0) + '</span></div>';
+            decHtml += '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;font-size:0.72rem;">';
+            decHtml += '<span>Deferred</span><span style="font-family:var(--font-mono);font-weight:700;color:var(--text-dim);">' + (decCounts.deferred || 0) + '</span></div>';
+            if (p1Gating.length > 0) {
+                decHtml += '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-subtle);font-size:0.68rem;color:var(--accent-gold);">';
+                decHtml += p1Gating.length + ' decision(s) soft-gate P1';
+                decHtml += '</div>';
+            }
+            document.getElementById('overview-decision-summary').innerHTML = decHtml;
+
+            var recentHtml = '';
+            var recent = liveEvents.slice(-5).reverse();
+            if (recent.length === 0) {
+                recentHtml = '<div style="font-size:0.72rem;color:var(--text-dim);padding:12px 0;">No recent events</div>';
+            } else {
+                for (var ri = 0; ri < recent.length; ri++) {
+                    var evt = recent[ri];
+                    recentHtml += '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:0.68rem;">';
+                    recentHtml += '<span class="studio-event-type ' + eventTypeClass(evt.type) + '" style="font-size:0.58rem;">' + esc(evt.type) + '</span>';
+                    recentHtml += '<span style="color:var(--text-muted);">' + esc(eventSummary(evt)) + '</span>';
+                    recentHtml += '</div>';
+                }
+            }
+            document.getElementById('overview-recent-events').innerHTML = recentHtml;
+        }
+
+        // --- Roadmap ---
+        function renderRoadmap() {
+            var html = '';
+            for (var i = 0; i < phases.length; i++) {
+                var p = phases[i];
+                html += '<div class="studio-phase-row" onclick="Studio.showDetail(\'' + p.phaseId + '\')">';
+                html += '<div class="studio-phase-idx">' + (i + 1) + '</div>';
+                html += '<div class="studio-phase-info">';
+                html += '<div class="studio-phase-name">' + esc(p.name) + '</div>';
+                html += '<div class="studio-phase-desc">' + esc(p.description || '') + '</div>';
+                html += '</div>';
+                html += '<div><span class="' + pillClass(p.status) + '">' + statusLabel(p.status) + '</span></div>';
+                html += '<div><span class="' + riskClass(p.riskLevel) + '">' + (p.riskLevel || 'low') + '</span></div>';
+                html += '<div><span class="st-complexity">' + (p.estimatedComplexity || '?') + '</span></div>';
+                html += '<div><span class="st-parallel ' + (p.canRunInParallel ? 'st-parallel-yes' : 'st-parallel-no') + '">';
+                html += p.canRunInParallel ? 'Parallel OK' : 'Serial';
+                html += '</span></div>';
+                html += '</div>';
+            }
+            document.getElementById('studio-roadmap-list').innerHTML = html || '<div class="studio-empty">No phases loaded</div>';
+        }
+
+        // --- DAG ---
+        function renderDAG() {
+            var pm = {};
+            for (var i = 0; i < phases.length; i++) pm[phases[i].phaseId] = phases[i];
+
+            var layers = [];
+            var placed = {};
+
+            function canPlace(p) {
+                var deps = p.dependencies || [];
+                for (var d = 0; d < deps.length; d++) {
+                    if (!placed[deps[d]]) return false;
+                }
+                return true;
+            }
+
+            var remaining = phases.slice();
+            var safety = 20;
+            while (remaining.length > 0 && safety > 0) {
+                safety--;
+                var layer = [];
+                var next = [];
+                for (var r = 0; r < remaining.length; r++) {
+                    if (canPlace(remaining[r])) {
+                        layer.push(remaining[r]);
+                        placed[remaining[r].phaseId] = true;
+                    } else {
+                        next.push(remaining[r]);
+                    }
+                }
+                if (layer.length === 0) { layers.push(next); break; }
+                layers.push(layer);
+                remaining = next;
+            }
+
+            var html = '';
+            for (var l = 0; l < layers.length; l++) {
+                html += '<div class="studio-dag-row">';
+                if (l > 0) html += '<span class="studio-dag-arrow">&#8595;</span> ';
+                for (var n = 0; n < layers[l].length; n++) {
+                    var ph = layers[l][n];
+                    var borderColor = dagNodeColor(ph.status);
+                    html += '<div class="studio-dag-node" style="border-color:' + borderColor + ';color:' + borderColor + ';" ';
+                    html += 'onclick="Studio.showDetail(\'' + ph.phaseId + '\')">';
+                    html += esc(ph.phaseId);
+                    html += '</div>';
+                    if (n < layers[l].length - 1) html += '<span class="studio-dag-arrow">|</span>';
+                }
+                html += '</div>';
+            }
+
+            var cpHtml = '';
+            var cp = summary.criticalPath || [];
+            for (var c = 0; c < cp.length; c++) {
+                if (c > 0) cpHtml += ' <span class="studio-dag-arrow">&#8594;</span> ';
+                var cph = pm[cp[c]];
+                var cColor = cph ? dagNodeColor(cph.status) : 'var(--text-dim)';
+                cpHtml += '<span class="studio-dag-node" style="border-color:' + cColor + ';color:' + cColor + ';">' + cp[c] + '</span>';
+            }
+
+            document.getElementById('studio-dag-view').innerHTML = html || '<div class="studio-empty">No dependency data</div>';
+            document.getElementById('studio-critical-path').innerHTML = cpHtml || '<div class="studio-empty">No critical path data</div>';
+        }
+
+        // --- Work Queue ---
+        function renderQueue() {
+            var pm = {};
+            for (var i = 0; i < phases.length; i++) pm[phases[i].phaseId] = phases[i];
+            var eligibleIds = summary.eligiblePhases || [];
+            var eligible = [];
+            for (var e = 0; e < eligibleIds.length; e++) {
+                if (pm[eligibleIds[e]]) eligible.push(pm[eligibleIds[e]]);
+            }
+            var running = phases.filter(function(p) { return p.status === 'running'; });
+
+            var html = '';
+            if (running.length > 0) {
+                html += '<div class="studio-card"><div class="studio-card-header"><div class="studio-card-title">Active Sessions</div></div>';
+                for (var r = 0; r < running.length; r++) {
+                    html += '<div class="studio-queue-item">';
+                    html += '<div class="studio-queue-left">';
+                    html += '<span class="' + pillClass('running') + '">Running</span>';
+                    html += '<span style="font-size:0.78rem;font-weight:600;">' + esc(running[r].name) + '</span>';
+                    html += '</div>';
+                    html += '<div class="studio-queue-right">';
+                    html += '<span style="font-size:0.65rem;color:var(--text-dim);">' + (running[r].branchName || '') + '</span>';
+                    html += '</div></div>';
+                }
+                html += '</div>';
+            }
+
+            if (eligible.length > 0) {
+                html += '<div class="studio-card"><div class="studio-card-header"><div class="studio-card-title">Ready to Start</div></div>';
+                for (var q = 0; q < eligible.length; q++) {
+                    var ep = eligible[q];
+                    html += '<div class="studio-queue-item">';
+                    html += '<div class="studio-queue-left">';
+                    html += '<span class="' + riskClass(ep.riskLevel) + '">' + (ep.riskLevel || 'low') + '</span>';
+                    html += '<span style="font-size:0.78rem;font-weight:600;">' + esc(ep.name) + '</span>';
+                    if (ep.approvalRequired) {
+                        html += '<span class="st-pill" style="background:rgba(251,191,36,0.15);color:var(--accent-gold);font-size:0.55rem;">Approval Required</span>';
+                    }
+                    html += '</div>';
+                    html += '<div class="studio-queue-right">';
+                    html += '<button class="studio-btn studio-btn-primary" onclick="event.stopPropagation();Studio.showDetail(\'' + ep.phaseId + '\')">Details</button>';
+                    html += '</div></div>';
+                }
+                html += '</div>';
+            }
+
+            var nextId = summary.nextRecommended;
+            var recHtml = '<div class="studio-empty">No recommendation — all phases complete or blocked</div>';
+            if (nextId && pm[nextId]) {
+                var np = pm[nextId];
+                recHtml = '<div class="studio-card">';
+                recHtml += '<div class="studio-card-header"><div class="studio-card-title">' + esc(np.name) + '</div>';
+                recHtml += '<span class="' + pillClass(np.status) + '">' + statusLabel(np.status) + '</span></div>';
+                recHtml += '<p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px;">' + esc(np.description || '') + '</p>';
+                recHtml += '</div>';
+            }
+
+            document.getElementById('studio-queue-list').innerHTML = html || '<div class="studio-empty">No eligible phases</div>';
+            document.getElementById('studio-next-rec').innerHTML = recHtml;
+        }
+
+        // --- Decisions ---
+        function renderDecisions() {
+            var html = '';
+            for (var i = 0; i < decisions.length; i++) {
+                var d = decisions[i];
+                html += '<div class="decision-card">';
+                html += '<div class="decision-header">';
+                html += '<div><span class="decision-id">' + d.id + '</span> <span class="decision-title">' + esc(d.title) + '</span></div>';
+                html += '<span class="decision-status decision-status-' + d.status + '">' + d.status + '</span>';
+                html += '</div>';
+                html += '<div class="decision-detail">Implementation phase: ' + esc(d.phase) + '</div>';
+                if (d.gatesP1) {
+                    html += '<div class="decision-gates">Soft-gates P1 — UI should account for this decision</div>';
+                }
+                html += '</div>';
+            }
+            document.getElementById('studio-decision-list').innerHTML = html;
+
+            var gated = summary.approvalGated || [];
+            var pm = {};
+            for (var j = 0; j < phases.length; j++) pm[phases[j].phaseId] = phases[j];
+
+            var aHtml = '';
+            if (gated.length === 0) {
+                aHtml = '<div class="studio-empty">No approval-gated phases</div>';
+            } else {
+                aHtml += '<table class="studio-table"><thead><tr>';
+                aHtml += '<th>Phase</th><th>Status</th><th>Risk</th><th>Required Agents</th>';
+                aHtml += '</tr></thead><tbody>';
+                for (var g = 0; g < gated.length; g++) {
+                    var ph = pm[gated[g]] || {};
+                    aHtml += '<tr>';
+                    aHtml += '<td style="font-weight:600;">' + esc(ph.name || gated[g]) + '</td>';
+                    aHtml += '<td><span class="' + pillClass(ph.status) + '">' + statusLabel(ph.status) + '</span></td>';
+                    aHtml += '<td><span class="' + riskClass(ph.riskLevel) + '">' + (ph.riskLevel || '?') + '</span></td>';
+                    aHtml += '<td>' + (ph.requiredAgents || []).join(', ') + '</td>';
+                    aHtml += '</tr>';
+                }
+                aHtml += '</tbody></table>';
+            }
+            document.getElementById('studio-approvals-list').innerHTML = aHtml;
+        }
+
+        // --- Blockers ---
+        function renderBlockers() {
+            var blocked = summary.blockedPhases || [];
+            var pm = {};
+            for (var i = 0; i < phases.length; i++) pm[phases[i].phaseId] = phases[i];
+
+            var html = '';
+            if (blocked.length === 0) {
+                html = '<div class="studio-empty">No blocked phases</div>';
+            } else {
+                html += '<table class="studio-table"><thead><tr>';
+                html += '<th>Phase</th><th>Missing Deps</th><th>Blocked By</th><th>Risk</th>';
+                html += '</tr></thead><tbody>';
+                for (var b = 0; b < blocked.length; b++) {
+                    var bp = blocked[b];
+                    var ph = pm[bp.phaseId] || {};
+                    html += '<tr>';
+                    html += '<td style="font-weight:600;">' + esc(ph.name || bp.phaseId) + '</td>';
+                    html += '<td>' + (bp.missingDeps || []).join(', ') + '</td>';
+                    html += '<td>' + (bp.blockedBy || []).join(', ') + '</td>';
+                    html += '<td><span class="' + riskClass(ph.riskLevel) + '">' + (ph.riskLevel || '?') + '</span></td>';
+                    html += '</tr>';
+                }
+                html += '</tbody></table>';
+            }
+            document.getElementById('studio-blockers-list').innerHTML = html;
+        }
+
+        // --- Events ---
+        function eventTypeClass(type) {
+            if (type.indexOf('phase') === 0) return 'studio-event-type-phase';
+            if (type.indexOf('pipeline') === 0) return 'studio-event-type-pipeline';
+            if (type.indexOf('session') === 0) return 'studio-event-type-session';
+            if (type.indexOf('work_guard') === 0) return 'studio-event-type-work_guard';
+            return 'studio-event-type-system';
+        }
+
+        function eventSummary(evt) {
+            var d = evt.data || {};
+            switch (evt.type) {
+                case 'phase.status_changed':
+                    return (d.name || d.phaseId || '') + ': ' + (d.oldStatus || '?') + ' → ' + (d.newStatus || '?');
+                case 'pipeline.created':
+                    return (d.name || d.pipelineId || '') + ' (template: ' + (d.template || '?') + ')';
+                case 'pipeline.started':
+                case 'pipeline.completed':
+                case 'pipeline.failed':
+                case 'pipeline.cancelled':
+                    return d.name || d.pipelineId || '';
+                case 'pipeline.stage.status_changed':
+                    return (d.stageLabel || d.stageName || '') + ': ' + (d.oldStatus || '?') + ' → ' + (d.newStatus || '?');
+                case 'session.created':
+                    return (d.sessionId || '') + ' [' + (d.template || '') + '/' + (d.model || '') + ']';
+                case 'session.started':
+                    return d.sessionId || '';
+                case 'session.completed':
+                    return (d.sessionId || '') + ' (' + (d.status || '?') + ')';
+                case 'work_guard.lock_acquired':
+                    return 'by ' + (d.owner || '?') + (d.phaseId ? ' for ' + d.phaseId : '');
+                case 'work_guard.lock_released':
+                    return d.lockId || '';
+                case 'system.startup':
+                    return 'port ' + (d.port || '?');
+                case 'system.shutdown':
+                    return '';
+                default:
+                    return JSON.stringify(d).slice(0, 80);
+            }
+        }
+
+        function formatTime(ts) {
+            if (!ts) return '';
+            try { return new Date(ts).toLocaleTimeString(); } catch (e) { return ts; }
+        }
+
+        function renderEventFeed() {
+            var html = '';
+            for (var i = liveEvents.length - 1; i >= 0; i--) {
+                var e = liveEvents[i];
+                html += '<div class="studio-event-row">';
+                html += '<div class="studio-event-time">' + formatTime(e.timestamp) + '</div>';
+                html += '<div>';
+                html += '<span class="studio-event-type ' + eventTypeClass(e.type) + '">' + esc(e.type) + '</span> ';
+                html += '<span class="studio-event-detail">' + esc(eventSummary(e)) + '</span>';
+                html += '</div>';
+                html += '<div class="studio-event-source">' + esc(e.source || '') + '</div>';
+                html += '</div>';
+            }
+            var el = document.getElementById('studio-event-feed');
+            if (el) el.innerHTML = html || '<div class="studio-empty">No events yet — waiting for activity</div>';
+        }
+
+        function renderEventStats() {
+            fetch('/api/events/stats')
+                .then(function(r) { return r.json(); })
+                .then(function(stats) {
+                    var html = '';
+                    html += '<div class="studio-event-stat">Total<span class="studio-event-stat-val">' + (stats.totalEvents || 0) + '</span></div>';
+                    html += '<div class="studio-event-stat">Buffer<span class="studio-event-stat-val">' + (stats.totalEvents || 0) + '/' + (stats.maxEvents || 500) + '</span></div>';
+                    html += '<div class="studio-event-stat">SSE Clients<span class="studio-event-stat-val">' + (stats.subscribers || 0) + '</span></div>';
+                    var el = document.getElementById('studio-event-stats');
+                    if (el) el.innerHTML = html;
+                })
+                .catch(function() {});
+        }
+
+        function loadEventHistory() {
+            fetch('/api/events?limit=50')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    liveEvents = data.events || [];
+                    renderEventFeed();
+                    renderEventStats();
+                    renderOverview();
+                })
+                .catch(function() {});
+        }
+
+        function updateSseBadge(state) {
+            var badge = document.getElementById('studio-sse-badge');
+            var dot = document.getElementById('studio-sse-dot');
+            var label = document.getElementById('studio-sse-label');
+            if (!badge) return;
+            badge.className = 'studio-sse-status';
+            dot.className = 'studio-sse-dot';
+            if (state === 'connected') {
+                badge.classList.add('studio-sse-connected');
+                dot.classList.add('studio-sse-dot-on');
+                label.textContent = 'Live';
+            } else if (state === 'connecting') {
+                badge.classList.add('studio-sse-connecting');
+                dot.classList.add('studio-sse-dot-wait');
+                label.textContent = 'Connecting';
+            } else {
+                badge.classList.add('studio-sse-disconnected');
+                dot.classList.add('studio-sse-dot-off');
+                label.textContent = 'Offline';
+            }
+        }
+
+        function connectSSE() {
+            if (evtSource) { evtSource.close(); evtSource = null; }
+            updateSseBadge('connecting');
+            evtSource = new EventSource('/api/events/stream');
+
+            evtSource.addEventListener('connected', function() { updateSseBadge('connected'); });
+
+            var eventTypes = [
+                'phase.status_changed', 'pipeline.created', 'pipeline.started',
+                'pipeline.completed', 'pipeline.failed', 'pipeline.cancelled',
+                'pipeline.stage.status_changed', 'session.created', 'session.started',
+                'session.completed', 'work_guard.lock_acquired', 'work_guard.lock_released',
+                'system.startup', 'system.shutdown'
+            ];
+            for (var t = 0; t < eventTypes.length; t++) {
+                evtSource.addEventListener(eventTypes[t], handleSSEEvent);
+            }
+
+            evtSource.onerror = function() { updateSseBadge('disconnected'); };
+            evtSource.onopen = function() { updateSseBadge('connected'); };
+        }
+
+        function handleSSEEvent(msg) {
+            try {
+                var evt = JSON.parse(msg.data);
+                liveEvents.push(evt);
+                if (liveEvents.length > maxLiveEvents) liveEvents.shift();
+                renderEventFeed();
+                autoRefreshOnEvent(evt);
+            } catch (e) {}
+        }
+
+        function autoRefreshOnEvent(evt) {
+            var type = evt.type || '';
+            if (type.indexOf('phase') === 0) {
+                fetchPhases().then(function() { fetchSummary().then(function() {
+                    renderKPIs(); renderRoadmap(); renderDAG(); renderQueue();
+                    renderBlockers(); renderDecisions(); renderOverview();
+                }); });
+            } else if (type.indexOf('pipeline') === 0 || type.indexOf('session') === 0) {
+                fetchSummary().then(function() { renderKPIs(); renderOverview(); });
+            } else if (type.indexOf('work_guard') === 0) {
+                refreshWorkGuard();
+            }
+        }
+
+        // --- Work Guard ---
+        function renderWorkGuardBanner() {
+            if (!wgData) {
+                document.getElementById('studio-wg-lock-label').textContent = 'Unavailable';
+                document.getElementById('studio-safe-badge').textContent = '?';
+                document.getElementById('studio-wg-detail').textContent = 'Server not reachable';
+                return;
+            }
+
+            var lockBadge = document.getElementById('studio-wg-lock-badge');
+            var dot = document.getElementById('studio-wg-dot');
+            var lockLabel = document.getElementById('studio-wg-lock-label');
+            var safeBadge = document.getElementById('studio-safe-badge');
+            var detail = document.getElementById('studio-wg-detail');
+
+            lockBadge.className = 'studio-wg-indicator';
+            dot.className = 'studio-wg-dot';
+
+            if (wgData.lockStatus === 'unlocked') {
+                lockBadge.classList.add('studio-wg-unlocked');
+                dot.classList.add('studio-wg-dot-green');
+                lockLabel.textContent = 'Unlocked';
+            } else if (wgData.lockStatus === 'stale') {
+                lockBadge.classList.add('studio-wg-stale');
+                dot.classList.add('studio-wg-dot-red');
+                lockLabel.textContent = 'Stale Lock';
+            } else {
+                lockBadge.classList.add('studio-wg-locked');
+                dot.classList.add('studio-wg-dot-amber');
+                lockLabel.textContent = 'Locked';
+            }
+
+            safeBadge.className = 'studio-safe-pill';
+            if (wgData.safeToRun) {
+                safeBadge.classList.add('studio-safe-yes');
+                safeBadge.textContent = 'Safe to Run';
+            } else {
+                safeBadge.classList.add('studio-safe-no');
+                safeBadge.textContent = 'Not Safe';
+            }
+
+            var parts = [];
+            if (wgData.git) {
+                parts.push(wgData.git.branch + ' @ ' + wgData.git.latestCommit);
+                if (!wgData.git.clean) parts.push(wgData.git.dirtyFileCount + ' dirty');
+            }
+            detail.textContent = parts.join(' | ');
+        }
+
+        function renderWorkGuardPanel() {
+            if (!wgData) return;
+
+            var gitHtml = '';
+            if (wgData.git) {
+                var g = wgData.git;
+                gitHtml += '<div class="studio-wg-check-row">Branch <span style="font-family:var(--font-mono);color:var(--accent-blue);">' + esc(g.branch) + '</span></div>';
+                gitHtml += '<div class="studio-wg-check-row">Latest Commit <span style="font-family:var(--font-mono);">' + esc(g.latestCommit) + '</span></div>';
+                gitHtml += '<div class="studio-wg-check-row">Commit Message <span style="color:var(--text-muted);font-size:0.68rem;">' + esc(g.commitMessage) + '</span></div>';
+                gitHtml += '<div class="studio-wg-check-row">Working Tree ';
+                if (g.clean) {
+                    gitHtml += '<span class="studio-wg-pass">Clean</span>';
+                } else {
+                    gitHtml += '<span class="studio-wg-fail">' + g.dirtyFileCount + ' dirty files</span>';
+                }
+                gitHtml += '</div>';
+            }
+            document.getElementById('studio-wg-git-detail').innerHTML = gitHtml || '<div class="studio-empty">No git data</div>';
+
+            var lockHtml = '';
+            if (wgData.lockStatus === 'unlocked') {
+                lockHtml = '<div style="text-align:center;padding:16px;color:var(--accent-green);font-weight:600;">No active lock</div>';
+            } else if (wgData.lock) {
+                var lk = wgData.lock;
+                lockHtml += '<div class="studio-wg-check-row">Lock ID <span style="font-family:var(--font-mono);font-size:0.65rem;">' + esc(lk.lockId) + '</span></div>';
+                lockHtml += '<div class="studio-wg-check-row">Owner <span>' + esc(lk.owner) + '</span></div>';
+                lockHtml += '<div class="studio-wg-check-row">Phase <span>' + esc(lk.phaseId || 'none') + '</span></div>';
+                lockHtml += '<div class="studio-wg-check-row">Stale? ';
+                lockHtml += '<span class="' + (lk.stale ? 'studio-wg-fail' : 'studio-wg-pass') + '">' + (lk.stale ? 'Yes' : 'No') + '</span></div>';
+            }
+            document.getElementById('studio-wg-lock-detail').innerHTML = lockHtml;
+
+            var checksHtml = '';
+            var checks = wgData.checks || {};
+            var checkItems = [
+                ['cleanWorkingTree', 'Clean Working Tree'],
+                ['noActiveLock', 'No Active Lock'],
+                ['previousPhaseCommitted', 'Previous Phase Committed']
+            ];
+            for (var c = 0; c < checkItems.length; c++) {
+                var key = checkItems[c][0];
+                var label = checkItems[c][1];
+                if (checks[key] !== undefined) {
+                    checksHtml += '<div class="studio-wg-check-row">' + label + ' ';
+                    checksHtml += '<span class="' + (checks[key] ? 'studio-wg-pass' : 'studio-wg-fail') + '">' + (checks[key] ? 'Pass' : 'Fail') + '</span></div>';
+                }
+            }
+            document.getElementById('studio-wg-checks-list').innerHTML = checksHtml || '<div class="studio-empty">No checks</div>';
+
+            var safeDetail = document.getElementById('studio-wg-safe-detail');
+            safeDetail.className = 'studio-safe-pill';
+            safeDetail.classList.add(wgData.safeToRun ? 'studio-safe-yes' : 'studio-safe-no');
+            safeDetail.textContent = wgData.safeToRun ? 'Safe to Run' : 'Not Safe';
+
+            document.getElementById('studio-wg-recommendation').innerHTML = esc(wgData.recommendedAction || 'No recommendation');
+        }
+
+        function refreshWorkGuard() {
+            fetchWorkGuard().then(function() {
+                renderWorkGuardBanner();
+                renderWorkGuardPanel();
+            });
+        }
+
+        // --- Reports ---
+        function renderReports() {
+            var html = '<table class="studio-table"><thead><tr>';
+            html += '<th>Phase</th><th>Report Path</th><th>Status</th>';
+            html += '</tr></thead><tbody>';
+            for (var i = 0; i < phases.length; i++) {
+                var p = phases[i];
+                if (!p.reportPath) continue;
+                html += '<tr>';
+                html += '<td style="font-weight:600;">' + esc(p.name) + '</td>';
+                html += '<td style="font-family:var(--font-mono);font-size:0.68rem;">' + esc(p.reportPath) + '</td>';
+                html += '<td><span class="' + pillClass(p.status) + '">' + statusLabel(p.status) + '</span></td>';
+                html += '</tr>';
+            }
+            html += '</tbody></table>';
+            document.getElementById('studio-reports-list').innerHTML = html;
+
+            var handoffs = [
+                { name: 'Bootstrap Prep', path: 'docs/build/session-handoffs/bootstrap-prep-and-console-handoff.md' },
+                { name: 'Bootstrap Console', path: 'docs/build/session-handoffs/bootstrap-orchestration-console-handoff.md' },
+                { name: 'P0 Pipeline DAG', path: 'docs/build/session-handoffs/p0-pipeline-dag-engine-handoff.md' },
+                { name: 'Research 01/02/08', path: 'docs/build/session-handoffs/deep-research-ingestion-01-02-08-handoff.md' },
+                { name: 'P0.5 Work Guard', path: 'docs/build/session-handoffs/p0-5-work-guard-handoff.md' },
+                { name: 'P0 Events', path: 'docs/build/session-handoffs/p0-events-handoff.md' },
+                { name: 'Decision Review', path: 'docs/build/session-handoffs/decision-review-before-p1-handoff.md' },
+                { name: 'Research 05', path: 'docs/build/session-handoffs/deep-research-ingestion-05-handoff.md' }
+            ];
+            var hHtml = '<table class="studio-table"><thead><tr><th>Session</th><th>Handoff</th></tr></thead><tbody>';
+            for (var h = 0; h < handoffs.length; h++) {
+                hHtml += '<tr><td style="font-weight:600;">' + handoffs[h].name + '</td>';
+                hHtml += '<td style="font-family:var(--font-mono);font-size:0.68rem;">' + handoffs[h].path + '</td></tr>';
+            }
+            hHtml += '</tbody></table>';
+            document.getElementById('studio-handoffs-list').innerHTML = hHtml;
+        }
+
+        // --- Changes / Rollback ---
+        function renderChanges() {
+            var rollbackDocs = [
+                { phase: 'Preflight', path: 'docs/build/rollback/preflight-autonomy-rollback-policy-rollback.md' },
+                { phase: 'Clean Start', path: 'docs/build/rollback/clean-start-reset-rollback.md' },
+                { phase: 'Restructure', path: 'docs/build/rollback/repo-restructure-roadmap-ingestion-rollback.md' },
+                { phase: 'Research Inputs', path: 'docs/build/rollback/research-inputs-intake-system-rollback.md' },
+                { phase: 'Bootstrap Console', path: 'docs/build/rollback/bootstrap-orchestration-console-rollback.md' }
+            ];
+
+            var rHtml = '<div class="studio-card"><div class="studio-card-header"><div class="studio-card-title">Rollback Plans</div></div>';
+            rHtml += '<table class="studio-table"><thead><tr><th>Phase</th><th>Rollback Doc</th></tr></thead><tbody>';
+            for (var r = 0; r < rollbackDocs.length; r++) {
+                rHtml += '<tr><td style="font-weight:600;">' + rollbackDocs[r].phase + '</td>';
+                rHtml += '<td style="font-family:var(--font-mono);font-size:0.68rem;">' + rollbackDocs[r].path + '</td></tr>';
+            }
+            rHtml += '</tbody></table></div>';
+
+            rHtml += '<div class="studio-card" style="margin-top:12px;">';
+            rHtml += '<div class="studio-card-header"><div class="studio-card-title">Quick Rollback</div></div>';
+            rHtml += '<p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px;">View recent commits to identify rollback targets:</p>';
+            rHtml += '<div class="studio-copy-box">git log --oneline -10<span class="studio-copy-btn" onclick="Studio.copyText(\'git log --oneline -10\')">Copy</span></div>';
+            rHtml += '</div>';
+            document.getElementById('studio-rollback-list').innerHTML = rHtml;
+
+            var cHtml = '<div class="studio-card"><div class="studio-card-header"><div class="studio-card-title">Change Manifest</div></div>';
+            cHtml += '<p style="font-size:0.72rem;color:var(--text-dim);">Full manifest: <code style="color:var(--accent-blue);font-family:var(--font-mono);font-size:0.68rem;">docs/build/change-manifest.md</code></p>';
+            cHtml += '</div>';
+            document.getElementById('studio-changes-list').innerHTML = cHtml;
+        }
+
+        // --- Detail Overlay ---
+        function showDetail(phaseId) {
+            var pm = {};
+            for (var i = 0; i < phases.length; i++) pm[phases[i].phaseId] = phases[i];
+            var p = pm[phaseId];
+            if (!p) return;
+
+            var html = '';
+            html += '<h3 style="margin-bottom:4px;">' + esc(p.name) + '</h3>';
+            html += '<div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:8px;">' + esc(p.phaseId) + '</div>';
+            html += '<p style="font-size:0.78rem;color:var(--text-muted);">' + esc(p.description || '') + '</p>';
+
+            html += '<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">';
+            html += '<span class="' + pillClass(p.status) + '">' + statusLabel(p.status) + '</span>';
+            html += '<span class="' + riskClass(p.riskLevel) + '">' + (p.riskLevel || 'low') + '</span>';
+            html += '<span class="st-complexity">' + (p.estimatedComplexity || '?') + '</span>';
+            html += '<span class="st-parallel ' + (p.canRunInParallel ? 'st-parallel-yes' : 'st-parallel-no') + '">';
+            html += p.canRunInParallel ? 'Parallel OK' : 'Serial';
+            html += '</span>';
+            if (p.approvalRequired) html += '<span class="st-pill" style="background:rgba(251,191,36,0.15);color:var(--accent-gold);">Approval Required</span>';
+            html += '</div>';
+
+            var sections = [
+                ['Dependencies', (p.dependencies || []).join(', ') || 'None'],
+                ['Blocks', (p.blocks || []).join(', ') || 'None'],
+                ['Blocked By', (p.blockedBy || []).join(', ') || 'None']
+            ];
+            for (var s = 0; s < sections.length; s++) {
+                html += '<div class="studio-detail-section">';
+                html += '<div class="studio-detail-label">' + sections[s][0] + '</div>';
+                html += '<div class="studio-detail-val">' + sections[s][1] + '</div>';
+                html += '</div>';
+            }
+
+            if (p.promptPath) {
+                html += '<div class="studio-detail-section">';
+                html += '<div class="studio-detail-label">Prompt Path</div>';
+                html += '<div class="studio-copy-box">' + esc(p.promptPath);
+                html += '<span class="studio-copy-btn" onclick="Studio.copyText(\'' + esc(p.promptPath) + '\')">Copy</span></div>';
+                html += '</div>';
+            }
+
+            if (p.reportPath) {
+                html += '<div class="studio-detail-section">';
+                html += '<div class="studio-detail-label">Report Path</div>';
+                html += '<div class="studio-detail-val" style="font-family:var(--font-mono);font-size:0.72rem;">' + esc(p.reportPath) + '</div>';
+                html += '</div>';
+            }
+
+            if (p.expectedFiles && p.expectedFiles.length > 0) {
+                html += '<div class="studio-detail-section">';
+                html += '<div class="studio-detail-label">Expected Files</div>';
+                for (var ef = 0; ef < p.expectedFiles.length; ef++) {
+                    html += '<div style="font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);padding:2px 0;">' + esc(p.expectedFiles[ef]) + '</div>';
+                }
+                html += '</div>';
+            }
+
+            if (p.requiredAgents && p.requiredAgents.length > 0) {
+                html += '<div class="studio-detail-section">';
+                html += '<div class="studio-detail-label">Required Agents</div>';
+                html += '<div class="studio-detail-val">' + p.requiredAgents.join(', ') + '</div>';
+                html += '</div>';
+            }
+
+            if (p.requiredArtifacts && p.requiredArtifacts.length > 0) {
+                html += '<div class="studio-detail-section">';
+                html += '<div class="studio-detail-label">Required Artifacts</div>';
+                html += '<div class="studio-detail-val">' + p.requiredArtifacts.join(', ') + '</div>';
+                html += '</div>';
+            }
+
+            html += '<div class="studio-detail-section">';
+            html += '<div class="studio-detail-label">Last Updated</div>';
+            html += '<div class="studio-detail-val">' + esc(p.lastUpdated || 'Unknown') + '</div>';
+            html += '</div>';
+
+            html += '<div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">';
+            if (p.status !== 'completed') {
+                html += '<button class="studio-btn studio-btn-success" onclick="Studio.markComplete(\'' + p.phaseId + '\')">Mark Complete</button>';
+            }
+            html += '</div>';
+
+            document.getElementById('studio-detail-content').innerHTML = html;
+            document.getElementById('studio-detail-overlay').classList.add('active');
+        }
+
+        function closeDetail() {
+            document.getElementById('studio-detail-overlay').classList.remove('active');
+        }
+
+        function markComplete(phaseId) {
+            fetch('/api/bootstrap/phases/' + phaseId, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'completed', lastUpdated: new Date().toISOString().slice(0, 10) })
+            }).then(function() { closeDetail(); refresh(); });
+        }
+
+        // --- Tabs ---
+        function initTabs() {
+            var tabs = document.querySelectorAll('#studio-tabs .studio-tab');
+            for (var t = 0; t < tabs.length; t++) {
+                tabs[t].addEventListener('click', function() {
+                    var panel = this.getAttribute('data-panel');
+                    var allTabs = document.querySelectorAll('#studio-tabs .studio-tab');
+                    var allPanels = document.querySelectorAll('.studio-panel');
+                    for (var i = 0; i < allTabs.length; i++) allTabs[i].classList.remove('active');
+                    for (var j = 0; j < allPanels.length; j++) allPanels[j].classList.remove('active');
+                    this.classList.add('active');
+                    var target = document.getElementById('panel-' + panel);
+                    if (target) target.classList.add('active');
+                });
+            }
+        }
+
+        // --- Refresh ---
+        function refresh() {
+            Promise.all([fetchPhases(), fetchSummary(), fetchWorkGuard()]).then(function() {
+                renderKPIs();
+                renderWorkGuardBanner();
+                renderWorkGuardPanel();
+                renderOverview();
+                renderRoadmap();
+                renderDAG();
+                renderQueue();
+                renderDecisions();
+                renderBlockers();
+                renderReports();
+                renderChanges();
+            });
+        }
+
+        function init() {
+            initTabs();
+            refresh();
+            connectSSE();
+            loadEventHistory();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+
+        return {
+            refresh: refresh,
+            refreshWorkGuard: refreshWorkGuard,
+            showDetail: showDetail,
+            closeDetail: closeDetail,
+            markComplete: markComplete,
+            copyText: copyText,
+            connectSSE: connectSSE,
+            loadEventHistory: loadEventHistory
+        };
+    })();
+    </script>
+</body>
+</html>
