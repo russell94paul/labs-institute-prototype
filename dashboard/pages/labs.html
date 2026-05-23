@@ -309,15 +309,26 @@
     <!-- ============ DESIGNS ============ -->
     <div class="L-view" id="v-designs">
         <!-- Design selector bar -->
-        <div style="padding:16px 40px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:16px">
-            <label style="font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gy)">Design Concept</label>
-            <select id="design-select" onchange="switchDesign(this.value)" style="padding:8px 14px;background:var(--wh);border:1px solid var(--bd);border-radius:4px;font-size:.75rem;font-family:var(--ff);font-weight:600;min-width:260px;cursor:pointer">
-                <option value="chrome">01 — Minimal Chrome (Current)</option>
-                <option value="pulse">02 — Dark Pulse</option>
-                <option value="gradient">03 — Gradient Flow</option>
-                <option value="brutalist">04 — Brutalist Mono</option>
-                <option value="glass">05 — Glass Morphism</option>
-            </select>
+        <div style="padding:16px 40px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+            <div>
+                <label style="font-size:.52rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gy);display:block;margin-bottom:4px">Theme</label>
+                <select id="design-select" onchange="switchDesign(this.value)" style="padding:8px 14px;background:var(--wh);border:1px solid var(--bd);border-radius:4px;font-size:.75rem;font-family:var(--ff);font-weight:600;min-width:240px;cursor:pointer">
+                    <option value="chrome">01 — Minimal Chrome</option>
+                    <option value="pulse">02 — Dark Pulse</option>
+                    <option value="gradient">03 — Gradient Flow</option>
+                    <option value="brutalist">04 — Brutalist Mono</option>
+                    <option value="glass">05 — Glass Morphism</option>
+                </select>
+            </div>
+            <div>
+                <label style="font-size:.52rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gy);display:block;margin-bottom:4px">Layout</label>
+                <select id="layout-select" onchange="switchLayout(this.value)" style="padding:8px 14px;background:var(--wh);border:1px solid var(--bd);border-radius:4px;font-size:.75rem;font-family:var(--ff);font-weight:600;min-width:260px;cursor:pointer">
+                    <option value="hero-scroll">A — Hero Marquee + Vertical Scroll</option>
+                    <option value="split-screen">B — Split Screen (Info | Visual)</option>
+                    <option value="card-grid">C — Card Grid Dashboard</option>
+                    <option value="cinematic">D — Cinematic Full-Bleed</option>
+                </select>
+            </div>
         </div>
         <!-- Full-width design preview -->
         <div id="design-preview" style="min-height:600px"></div>
@@ -739,6 +750,14 @@ Social metrics → Periodic snapshots → Pattern detection
         if(liveCounterInterval) clearInterval(liveCounterInterval);
         if(aiTypeInterval) clearInterval(aiTypeInterval);
         var accentA='rgba('+d.accentRgb+',.15)';
+
+        // Check for alternate layout
+        var altHTML=getLayoutHTML(d,id);
+        if(altHTML){
+            document.getElementById('design-preview').innerHTML=altHTML;
+            return;
+        }
+
         var h='<div id="design-root" style="'+d.heroStyle+';font-family:var(--ff);overflow:hidden">';
 
         // Hero
@@ -1190,6 +1209,163 @@ Social metrics → Periodic snapshots → Pattern detection
         }
         document.getElementById('tech-preview').innerHTML=h;
     };
+
+    // ============ LAYOUT SWITCHER ============
+    var currentLayout='hero-scroll';
+    window.switchLayout=function(id){
+        currentLayout=id;
+        var sel=document.getElementById('design-select');
+        switchDesign(sel?sel.value:'chrome');
+    };
+
+    // Called inside switchDesign to get layout-specific HTML
+    function getLayoutHTML(d,id){
+        var accentA='rgba('+d.accentRgb+',.15)';
+        if(currentLayout==='split-screen') return getSplitLayout(d,id,accentA);
+        if(currentLayout==='card-grid') return getCardGridLayout(d,id,accentA);
+        if(currentLayout==='cinematic') return getCinematicLayout(d,id,accentA);
+        return null; // default hero-scroll handled by main switchDesign
+    }
+
+    function getSplitLayout(d,id,accentA){
+        var h='<div style="'+d.heroStyle+';font-family:var(--ff);min-height:100vh">';
+        // Split hero
+        h+='<div style="display:grid;grid-template-columns:1fr 1fr;min-height:70vh">';
+        // Left — text
+        h+='<div style="display:flex;flex-direction:column;justify-content:center;padding:60px 50px;border-right:1px solid '+d.cardBorder+'">';
+        h+='<div style="font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:16px">Underground Techno DJ Management</div>';
+        h+='<div style="font-size:2.8rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;'+d.logo+';line-height:1.1;margin-bottom:16px">LABS<br>INSTITUTE</div>';
+        h+='<div style="font-size:.78rem;color:'+d.textMuted+';line-height:1.8;max-width:380px;margin-bottom:24px">We manage, develop, and promote DJs in the underground electronic music scene. Transparent contracts. Data-driven growth.</div>';
+        h+='<div style="display:flex;gap:10px"><button style="padding:12px 28px;background:'+d.accent+';border:none;border-radius:4px;color:'+(id==='pulse'||id==='glass'?'#000':d.bg)+';font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-family:var(--ff)">Join Roster</button>';
+        h+='<button style="padding:12px 28px;background:none;border:1px solid '+d.cardBorder+';border-radius:4px;color:'+d.fg+';font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-family:var(--ff)">Book Artists</button></div>';
+        h+='</div>';
+        // Right — artist card + stats
+        h+='<div style="display:flex;flex-direction:column;justify-content:center;padding:40px;position:relative;overflow:hidden">';
+        if(d.anim!=='none') h+='<div style="position:absolute;inset:0;background:radial-gradient(circle at 70% 30%,rgba('+d.accentRgb+',.06),transparent);animation:pulseGlow 4s ease-in-out infinite"></div>';
+        h+='<div style="position:relative;z-index:1">';
+        h+='<div style="font-size:.5rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:10px">Featured Artist</div>';
+        h+='<div style="display:flex;align-items:center;gap:14px;margin-bottom:20px"><div style="width:60px;height:60px;border-radius:50%;background:'+accentA+';display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:'+d.accent+'">L</div>';
+        h+='<div><div style="font-size:1.2rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase">Luciid</div><div style="font-size:.65rem;color:'+d.textMuted+'">Hard Techno &middot; Ireland &middot; Established</div></div></div>';
+        h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">';
+        [{v:'54K',l:'Instagram'},{v:'2M+',l:'Streams'},{v:'10+',l:'Countries'},{v:'6',l:'Labels'}].forEach(function(k){
+            h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:14px;text-align:center"><div style="font-size:1.4rem;font-weight:200;font-family:var(--mn)">'+k.v+'</div><div style="font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-top:4px">'+k.l+'</div></div>';
+        });
+        h+='</div>';
+        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:14px;margin-top:10px">';
+        h+='<div style="font-size:.5rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:6px">Spotify Streams</div>';
+        h+=cssBar(chartData.streams,2100000,d.accent,chartData.labels);
+        h+='</div>';
+        h+='</div></div></div>';
+        // Values bar
+        h+='<div style="display:flex;justify-content:center;gap:20px;padding:20px;border-top:1px solid '+d.cardBorder+';border-bottom:1px solid '+d.cardBorder+'">';
+        ['Reputation','Transparency','Reinvestment','Family','Value'].forEach(function(v){
+            h+='<div style="font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:'+d.textMuted+'">'+v+'</div>';
+        });
+        h+='</div>';
+        h+='</div>';
+        return h;
+    }
+
+    function getCardGridLayout(d,id,accentA){
+        var h='<div style="'+d.heroStyle+';font-family:var(--ff);min-height:100vh;padding:40px">';
+        // Header
+        h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:30px">';
+        h+='<div><div style="font-size:1.6rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase;'+d.logo+'">LABS</div>';
+        h+='<div style="font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;color:'+d.textMuted+'">Founded For The Future</div></div>';
+        h+='<div style="display:flex;gap:8px"><button style="padding:8px 20px;background:'+d.accent+';border:none;border-radius:4px;color:'+(id==='pulse'||id==='glass'?'#000':d.bg)+';font-size:.6rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;font-family:var(--ff)">Join</button>';
+        h+='<button style="padding:8px 20px;background:none;border:1px solid '+d.cardBorder+';border-radius:4px;color:'+d.fg+';font-size:.6rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;font-family:var(--ff)">Book</button></div></div>';
+
+        // Card grid
+        h+='<div style="display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:auto auto;gap:14px;max-width:1100px;margin:0 auto">';
+        // Artist card (spans 2 rows)
+        h+='<div style="grid-row:span 2;background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:10px;padding:28px;'+(d.anim==='glass'?'backdrop-filter:blur(12px);':'')+'">';
+        h+='<div style="font-size:.5rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:12px">Featured Artist</div>';
+        h+='<div style="display:flex;align-items:center;gap:14px;margin-bottom:16px"><div style="width:56px;height:56px;border-radius:50%;background:'+accentA+';display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:'+d.accent+'">L</div>';
+        h+='<div><div style="font-size:1.1rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase">Luciid</div><div style="font-size:.62rem;color:'+d.textMuted+'">Hard Techno &middot; Schranz &middot; Established</div></div></div>';
+        h+='<div style="font-size:.72rem;color:'+d.textMuted+';line-height:1.8;margin-bottom:16px">"Rising star of the harder techno fraternity. From Northern Ireland clubs to Berlin headliners."</div>';
+        h+='<div style="font-size:.5rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:6px">Instagram Growth</div>';
+        h+=cssBar(chartData.ig,54000,d.accent,chartData.labels);
+        h+='<div style="font-size:.5rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin:14px 0 6px">Streams</div>';
+        h+=cssBar(chartData.streams,2100000,d.accent,chartData.labels);
+        h+='</div>';
+
+        // KPI cards
+        [{v:'54K',l:'Instagram',sub:'+23% this month'},{v:'2.1M',l:'Total Streams',sub:'Paro Hour: 2M+'}].forEach(function(k){
+            h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:10px;padding:20px;text-align:center;'+(d.anim==='glass'?'backdrop-filter:blur(12px);':'')+'">';
+            h+='<div style="font-size:2rem;font-weight:200;font-family:var(--mn)">'+k.v+'</div>';
+            h+='<div style="font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-top:4px">'+k.l+'</div>';
+            h+='<div style="font-size:.55rem;color:'+d.accent+';margin-top:6px">'+k.sub+'</div></div>';
+        });
+        [{v:'10+',l:'Countries',sub:'EU, UK, Ireland'},{v:'6',l:'Labels',sub:'AGONY (own label)'}].forEach(function(k){
+            h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:10px;padding:20px;text-align:center;'+(d.anim==='glass'?'backdrop-filter:blur(12px);':'')+'">';
+            h+='<div style="font-size:2rem;font-weight:200;font-family:var(--mn)">'+k.v+'</div>';
+            h+='<div style="font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:'+d.textMuted+';margin-top:4px">'+k.l+'</div>';
+            h+='<div style="font-size:.55rem;color:'+d.accent+';margin-top:6px">'+k.sub+'</div></div>';
+        });
+        h+='</div>';
+
+        // Services row
+        h+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px;max-width:1100px;margin-left:auto;margin-right:auto">';
+        [{n:'Management',d:'Career strategy + brand development'},{n:'Booking',d:'Gig pipeline + fee negotiation'},{n:'Development',d:'Skills, exposure, tier progression'}].forEach(function(s){
+            h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:10px;padding:18px;'+(d.anim==='glass'?'backdrop-filter:blur(12px);':'')+'">';
+            h+='<div style="font-size:.7rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">'+s.n+'</div>';
+            h+='<div style="font-size:.62rem;color:'+d.textMuted+'">'+s.d+'</div></div>';
+        });
+        h+='</div></div>';
+        return h;
+    }
+
+    function getCinematicLayout(d,id,accentA){
+        var h='<div style="'+d.heroStyle+';font-family:var(--ff);overflow:hidden">';
+        // Full-bleed hero
+        h+='<div style="height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">';
+        // Background animation
+        h+='<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba('+d.accentRgb+',.08),transparent 60%),radial-gradient(ellipse at 70% 50%,rgba('+d.accentRgb+',.05),transparent 60%);animation:pulseGlow 6s ease-in-out infinite"></div>';
+        // Marquee behind
+        h+='<div style="position:absolute;top:50%;transform:translateY(-50%);width:100%;overflow:hidden;opacity:.06"><div style="display:flex;animation:marquee 12s linear infinite;white-space:nowrap">';
+        for(var r=0;r<6;r++) h+='<span style="font-size:8rem;font-weight:900;letter-spacing:.02em;text-transform:uppercase;padding-right:40px;flex-shrink:0">LABS</span>';
+        h+='</div></div>';
+        // Center content
+        h+='<div style="position:relative;z-index:1;text-align:center;max-width:600px;padding:0 40px">';
+        h+='<div style="font-size:4rem;font-weight:900;letter-spacing:.2em;text-transform:uppercase;'+d.logo+';line-height:1;margin-bottom:12px">LABS</div>';
+        h+='<div style="font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:30px">Founded For The Future</div>';
+        h+='<div style="width:40px;height:1px;background:'+d.accent+';margin:0 auto 30px"></div>';
+        h+='<div style="font-size:.82rem;color:'+d.textMuted+';line-height:1.9;margin-bottom:30px">Underground techno DJ management.<br>Transparent. Data-driven. Community-first.</div>';
+        // Inline stats
+        h+='<div style="display:flex;justify-content:center;gap:30px;margin-bottom:30px">';
+        [{v:'54K',l:'Reach'},{v:'2M+',l:'Streams'},{v:'10+',l:'Countries'}].forEach(function(k){
+            h+='<div><div style="font-size:1.6rem;font-weight:200;font-family:var(--mn)">'+k.v+'</div><div style="font-size:.45rem;letter-spacing:.12em;text-transform:uppercase;color:'+d.textMuted+';margin-top:2px">'+k.l+'</div></div>';
+        });
+        h+='</div>';
+        h+='<button style="padding:14px 40px;background:'+d.accent+';border:none;border-radius:0;color:'+(id==='pulse'||id==='glass'?'#000':d.bg)+';font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;font-family:var(--ff)">Enter</button>';
+        h+='</div></div>';
+
+        // Artist strip
+        h+='<div style="display:grid;grid-template-columns:1fr 2fr;border-top:1px solid '+d.cardBorder+'">';
+        h+='<div style="padding:40px;border-right:1px solid '+d.cardBorder+';display:flex;flex-direction:column;justify-content:center;align-items:center">';
+        h+='<div style="width:80px;height:80px;border-radius:50%;background:'+accentA+';display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:'+d.accent+';margin-bottom:12px">L</div>';
+        h+='<div style="font-size:1rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase">Luciid</div>';
+        h+='<div style="font-size:.6rem;color:'+d.textMuted+';margin-top:4px">Hard Techno &middot; Ireland</div>';
+        h+='</div>';
+        h+='<div style="padding:30px 40px">';
+        h+='<div style="font-size:.72rem;color:'+d.textMuted+';line-height:1.9;margin-bottom:16px">"From Northern Ireland clubs to Berlin headliners in a decade. Supported by Amelie Lens, Kobosil, Dubfire, 999999999. Founder of AGONY label."</div>';
+        h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">';
+        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:12px">';
+        h+='<div style="font-size:.48rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:6px">Instagram</div>';
+        h+=cssBar(chartData.ig,54000,d.accent,chartData.labels);
+        h+='</div>';
+        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:12px">';
+        h+='<div style="font-size:.48rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:6px">Streams</div>';
+        h+=cssBar(chartData.streams,2100000,d.accent,chartData.labels);
+        h+='</div>';
+        h+='<div style="background:'+d.cardBg+';border:1px solid '+d.cardBorder+';border-radius:8px;padding:12px">';
+        h+='<div style="font-size:.48rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:'+d.textMuted+';margin-bottom:6px">Gigs/Year</div>';
+        h+=cssBar(chartData.gigs,55,d.accent,chartData.labels);
+        h+='</div></div></div></div>';
+
+        h+='</div>';
+        return h;
+    }
 
     // ============ APPS TAB ============
 
