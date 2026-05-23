@@ -28,10 +28,7 @@
         box-shadow:0 0 6px var(--glow),inset 0 0 12px rgba(255,255,255,.01);
         transition:box-shadow .3s,border-color .3s}
 
-    /* Pulse animation on sections */
-    .L[data-neon="true"] .R-phase,.L[data-neon="true"] .R-tier,.L[data-neon="true"] .R-intel,
-    .L[data-neon="true"] .A-dj,.L[data-neon="true"] .A-info,.L[data-neon="true"] .A-section{
-        animation:neonPulse 3s ease-in-out infinite}
+    /* Static glow on sections — NO animation (prevents mass flashing) */
 
     /* Inputs — prominent with fill */
     .L[data-neon="true"] input,.L[data-neon="true"] select,.L[data-neon="true"] textarea{
