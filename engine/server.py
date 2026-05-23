@@ -24,6 +24,7 @@ from engine import bootstrap
 from engine import pipelines
 from engine import work_guard
 from engine import events
+from engine import memory
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DASHBOARD_ROOT = REPO_ROOT / "dashboard"
@@ -410,6 +411,160 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
     def _handle_get_events_stats(self) -> None:
         self._send_json(events.get_stats())
 
+    # --- GrooveNet handlers ---
+
+    def _groovenet_data_path(self, name: str) -> Path:
+        return DATA_DIR / f"groovenet-{name}.json"
+
+    def _groovenet_read(self, name: str) -> list:
+        p = self._groovenet_data_path(name)
+        if not p.exists():
+            return []
+        try:
+            return json.loads(p.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, ValueError):
+            return []
+
+    def _groovenet_write(self, name: str, data: list) -> None:
+        p = self._groovenet_data_path(name)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        tmp = p.with_suffix(".tmp")
+        tmp.write_text(json.dumps(data, indent=2), encoding="utf-8")
+        tmp.replace(p)
+
+    def _handle_get_groovenet_events(self) -> None:
+        self._send_json(self._groovenet_read("events"))
+
+    def _handle_post_groovenet_events(self) -> None:
+        body = self._json_body()
+        if not body:
+            return self._send_error_json(400, "Request body required")
+        evts = self._groovenet_read("events")
+        if not body.get("id"):
+            body["id"] = f"evt-{len(evts) + 1:03d}"
+        evts.append(body)
+        self._groovenet_write("events", evts)
+        self._send_json(body, 201)
+
+    def _handle_get_groovenet_sets(self) -> None:
+        self._send_json(self._groovenet_read("sets"))
+
+    def _handle_post_groovenet_sets(self) -> None:
+        body = self._json_body()
+        if not body:
+            return self._send_error_json(400, "Request body required")
+        all_sets = self._groovenet_read("sets")
+        if not body.get("id"):
+            body["id"] = f"set-{len(all_sets) + 1:03d}"
+        all_sets.append(body)
+        self._groovenet_write("sets", all_sets)
+        self._send_json(body, 201)
+
+    def _handle_get_groovenet_profile(self) -> None:
+        p = self._groovenet_data_path("profile")
+        if not p.exists():
+            return self._send_json({})
+        try:
+            self._send_json(json.loads(p.read_text(encoding="utf-8")))
+        except (json.JSONDecodeError, ValueError):
+            self._send_json({})
+
+    def _handle_put_groovenet_profile(self) -> None:
+        body = self._json_body()
+        if not body:
+            return self._send_error_json(400, "Request body required")
+        p = self._groovenet_data_path("profile")
+        p.parent.mkdir(parents=True, exist_ok=True)
+        tmp = p.with_suffix(".tmp")
+        tmp.write_text(json.dumps(body, indent=2), encoding="utf-8")
+        tmp.replace(p)
+        self._send_json(body)
+
+    # --- Memory handlers ---
+
+    def _match_memory_route(self) -> Optional[tuple]:
+        path = self.path.split("?")[0]
+        m = re.match(r"^/api/projects/([a-zA-Z0-9_-]+)/memory(?:/(.+))?$", path)
+        if m:
+            return m.group(1), m.group(2)
+        return None
+
+    def _parse_query_params(self) -> Dict[str, str]:
+        query = self.path.split("?", 1)[1] if "?" in self.path else ""
+        return dict(p.split("=", 1) for p in query.split("&") if "=" in p)
+
+    def _handle_get_memories(self, slug: str) -> None:
+        params = self._parse_query_params()
+        result = memory.list_memories(
+            project_slug=slug,
+            memory_type=params.get("type"),
+            status=params.get("status", "active"),
+            limit=int(params.get("limit", "50")),
+            offset=int(params.get("offset", "0")),
+        )
+        self._send_json(result)
+
+    def _handle_post_memory_store(self, slug: str) -> None:
+        body = self._json_body()
+        if not body or not body.get("content"):
+            return self._send_error_json(400, "content is required")
+        entry = memory.store(
+            project_slug=slug,
+            content=body["content"],
+            source=body.get("source", ""),
+            memory_type=body.get("type", "fact"),
+            tags=body.get("tags"),
+            metadata=body.get("metadata"),
+            session_id=body.get("session_id", ""),
+        )
+        self._send_json(entry, 201)
+
+    def _handle_post_memory_search(self, slug: str) -> None:
+        body = self._json_body()
+        if not body or not body.get("query"):
+            return self._send_error_json(400, "query is required")
+        results = memory.search(
+            project_slug=slug,
+            query=body["query"],
+            limit=int(body.get("limit", 10)),
+            memory_type=body.get("type"),
+            tags=body.get("tags"),
+        )
+        self._send_json({"results": results, "total": len(results)})
+
+    def _handle_get_memory_by_id(self, slug: str, memory_id: str) -> None:
+        entry = memory.recall(slug, memory_id)
+        if not entry:
+            return self._send_error_json(404, f"Memory {memory_id} not found")
+        evidence = memory.get_evidence(slug, memory_id)
+        entry["evidence"] = evidence
+        self._send_json(entry)
+
+    def _handle_patch_memory(self, slug: str, memory_id: str) -> None:
+        body = self._json_body()
+        if not body:
+            return self._send_error_json(400, "Request body required")
+        result = memory.update_memory(slug, memory_id, body)
+        if not result:
+            return self._send_error_json(404, f"Memory {memory_id} not found")
+        self._send_json(result)
+
+    def _handle_post_memory_evidence(self, slug: str, memory_id: str) -> None:
+        body = self._json_body()
+        if not body or not body.get("reference"):
+            return self._send_error_json(400, "reference is required")
+        record = memory.add_evidence(
+            project_slug=slug,
+            memory_id=memory_id,
+            evidence_type=body.get("type", "reference"),
+            reference=body["reference"],
+            description=body.get("description", ""),
+        )
+        self._send_json(record, 201)
+
+    def _handle_get_memory_stats(self, slug: str) -> None:
+        self._send_json(memory.get_stats(slug))
+
     # --- Config handler ---
 
     def _handle_get_config(self) -> None:
@@ -444,6 +599,23 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return self._handle_get_bootstrap_phases()
         if path == "/api/bootstrap/summary":
             return self._handle_get_bootstrap_summary()
+        if path == "/api/groovenet/events":
+            return self._handle_get_groovenet_events()
+        if path == "/api/groovenet/sets":
+            return self._handle_get_groovenet_sets()
+        if path == "/api/groovenet/profile":
+            return self._handle_get_groovenet_profile()
+
+        mmatch = self._match_memory_route()
+        if mmatch:
+            slug, action = mmatch
+            if action is None:
+                return self._handle_get_memories(slug)
+            if action == "stats":
+                return self._handle_get_memory_stats(slug)
+            if action.startswith("mem_"):
+                return self._handle_get_memory_by_id(slug, action)
+            return self._send_error_json(404, f"Unknown memory action: {action}")
 
         pmatch = self._match_pipeline_route()
         if pmatch:
@@ -483,6 +655,22 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return self._handle_post_work_guard_lock()
         if path == "/api/work-guard/heartbeat":
             return self._handle_post_work_guard_heartbeat()
+        if path == "/api/groovenet/events":
+            return self._handle_post_groovenet_events()
+        if path == "/api/groovenet/sets":
+            return self._handle_post_groovenet_sets()
+
+        mmatch = self._match_memory_route()
+        if mmatch:
+            slug, action = mmatch
+            if action is None or action == "store":
+                return self._handle_post_memory_store(slug)
+            if action == "search":
+                return self._handle_post_memory_search(slug)
+            if action.startswith("mem_") and action.endswith("/evidence"):
+                mid = action.replace("/evidence", "")
+                return self._handle_post_memory_evidence(slug, mid)
+            return self._send_error_json(404, f"Unknown memory action: {action}")
 
         pmatch = self._match_pipeline_route()
         if pmatch:
@@ -521,6 +709,13 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
         return self._send_error_json(404, "Not found")
 
     def do_PATCH(self) -> None:
+        mmatch = self._match_memory_route()
+        if mmatch:
+            slug, action = mmatch
+            if action and action.startswith("mem_"):
+                return self._handle_patch_memory(slug, action)
+            return self._send_error_json(404, f"Unknown memory action: {action}")
+
         bmatch = self._match_bootstrap_route()
         if bmatch:
             phase_id, action = bmatch
@@ -534,6 +729,12 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             if action is None:
                 return self._handle_patch_session(sid)
             return self._send_error_json(404, f"Unknown action: {action}")
+        return self._send_error_json(404, "Not found")
+
+    def do_PUT(self) -> None:
+        path = self.path.split("?")[0]
+        if path == "/api/groovenet/profile":
+            return self._handle_put_groovenet_profile()
         return self._send_error_json(404, "Not found")
 
     def do_DELETE(self) -> None:
@@ -551,7 +752,7 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
     def do_OPTIONS(self) -> None:
         self.send_response(204)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
 

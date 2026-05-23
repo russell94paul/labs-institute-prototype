@@ -132,6 +132,10 @@
         </div>
 
         <div class="topnav-links" id="topnav-links">
+            <a class="topnav-link" data-route="groovenet">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none"/><path d="M9 9a3 3 0 106 0"/><path d="M15 15a3 3 0 10-6 0"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>
+                GrooveNet
+            </a>
             <a class="topnav-link" data-route="build-studio">
                 <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="9" x2="9" y2="21"/></svg>
                 Build Studio
@@ -219,6 +223,7 @@
     <script>
     (function() {
         var routes = {
+            'groovenet':    { path: 'pages/groovenet.html',    label: 'GrooveNet' },
             'build-studio': { path: 'pages/build-studio.html', label: 'Build Studio' },
             'onboarding':   { path: 'pages/onboarding-studio.html', label: 'Product Onboarding Studio' },
             'conductor':    { path: 'pages/conductor.html',    label: 'Conductor Console' },
@@ -347,7 +352,7 @@
 
         // Boot: route from hash or default to conductor
         var hash = window.location.hash.replace('#', '').split('&')[0];
-        window.navigateTo(hash && routes[hash] ? hash : 'conductor');
+        window.navigateTo(hash && routes[hash] ? hash : 'groovenet');
 
         // Handle back/forward
         window.addEventListener('hashchange', function() {

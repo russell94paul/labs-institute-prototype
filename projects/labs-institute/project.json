@@ -1,0 +1,47 @@
+{
+  "name": "Labs Institute",
+  "slug": "labs-institute",
+  "description": "DJ artist management portal — contracts, gig opportunities, marketing, location-based pricing models, and DJ profiles under the Labs Institute brand.",
+  "status": "next",
+  "build_order": 1,
+  "created": "2026-05-23",
+  "platform": "web-responsive",
+  "stack": {
+    "frontend": "vanilla-html-css-js",
+    "backend": "python",
+    "data": "json-file",
+    "future": ["postgres", "vector-db", "zeus-memory"]
+  },
+  "phases": [
+    {
+      "id": "P0",
+      "name": "DJ Profiles + Roster",
+      "status": "planned",
+      "description": "DJ profiles with genre, location, rate card, availability. Roster management for the label."
+    },
+    {
+      "id": "P1",
+      "name": "Gig Opportunities Feed",
+      "status": "planned",
+      "description": "Browse and match DJs to gig opportunities based on genre, location, and scale."
+    },
+    {
+      "id": "P2",
+      "name": "Contracts + Booking",
+      "status": "planned",
+      "description": "Contract templates, booking workflow from inquiry to confirmation."
+    },
+    {
+      "id": "P3",
+      "name": "Pricing Model",
+      "status": "planned",
+      "description": "Dynamic pricing based on location, event scale, DJ tier, and market data."
+    },
+    {
+      "id": "P4",
+      "name": "Marketing + Promotion",
+      "status": "planned",
+      "description": "Marketing tools, social media integration, promotional asset management."
+    }
+  ]
+}

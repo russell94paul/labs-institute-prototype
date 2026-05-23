@@ -1,0 +1,10 @@
+{
+  "name": "Neurospect",
+  "slug": "neurospect",
+  "description": "Details TBD — registered as a future Conductor-managed project.",
+  "status": "parked",
+  "build_order": 3,
+  "created": "2026-05-23",
+  "platform": "web-responsive",
+  "phases": []
+}

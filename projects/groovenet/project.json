@@ -1,0 +1,53 @@
+{
+  "name": "GrooveNet",
+  "slug": "groovenet",
+  "description": "DJ collective cross-collaboration platform for promotions, roster management, event discovery, financial pooling, and marketing intelligence.",
+  "status": "parked",
+  "build_order": 2,
+  "created": "2026-05-23",
+  "platform": "web-responsive",
+  "stack": {
+    "frontend": "vanilla-html-css-js",
+    "backend": "python",
+    "data": "json-file",
+    "future": ["postgres", "vector-db", "zeus-memory"]
+  },
+  "phases": [
+    {
+      "id": "P0",
+      "name": "Event Discovery + DJ Set Tracker",
+      "status": "planned",
+      "description": "Core event feed for DJs — discover gigs (paid/unpaid), track sets, ensure recordings get posted."
+    },
+    {
+      "id": "P1",
+      "name": "DJ Profiles + Collectives",
+      "status": "planned",
+      "description": "DJ profiles, crew/group creation, roster management."
+    },
+    {
+      "id": "P2",
+      "name": "Mix Sharing + Cross-Collab",
+      "status": "planned",
+      "description": "Share mixes across collectives, collaborative playlists."
+    },
+    {
+      "id": "P3",
+      "name": "Promotion + Event Management",
+      "status": "planned",
+      "description": "Groups manage their own promotions, event creation, lineup building."
+    },
+    {
+      "id": "P4",
+      "name": "Financial Management + Revenue Pool",
+      "status": "planned",
+      "description": "Per-group finances, revenue tracking, joint festival fund."
+    },
+    {
+      "id": "P5",
+      "name": "Marketing Intelligence",
+      "status": "planned",
+      "description": "Learn from past events — what worked, what didn't, audience patterns, optimal pricing."
+    }
+  ]
+}

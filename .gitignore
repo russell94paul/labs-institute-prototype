@@ -12,3 +12,5 @@ node_modules/
 local-inputs/research-inbox/*
 !local-inputs/research-inbox/README.md
 .conductor/runtime/
+pipelines.json
+.claude/settings.local.json.bak

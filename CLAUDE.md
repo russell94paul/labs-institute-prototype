@@ -11,6 +11,7 @@ conductor/
 │   ├── sessions.py         # Claude Code session lifecycle
 │   ├── pipelines.py        # DAG pipeline engine (YAML-driven)
 │   ├── phases.py           # Phase manager (markdown-driven)
+│   ├── memory.py           # Per-project memory store (zeus-memory patterns)
 │   ├── agents.py           # Agent registry + dispatch
 │   ├── context.py          # Pluggable context enrichment
 │   ├── events.py           # Event system + SSE pub/sub
@@ -22,7 +23,11 @@ conductor/
 │   └── pages/              # Per-page HTML files
 ├── templates/              # Pipeline + stack templates
 ├── agents/                 # Agent definitions (.md files)
-├── projects/               # Active project configs
+├── projects/               # Per-project configs, wikis, memory stores
+│   ├── <slug>/project.json # Project registry + phase definitions
+│   ├── <slug>/wiki/        # Per-project wiki (decisions, learnings, patterns)
+│   ├── <slug>/memory/      # Per-project memory ledger (zeus-memory lite)
+│   └── wiki-template/      # Wiki conventions template
 └── shared/prompts/         # Reusable prompt fragments
 ```
 
@@ -64,13 +69,34 @@ python engine/server.py
 - `GET    /api/agents` — list available agents
 - `POST   /api/agents/run` — run an agent
 
+### Memory (per-project, zeus-memory lite)
+- `GET    /api/projects/{slug}/memory` — list memories (query: `type`, `status`, `limit`, `offset`)
+- `POST   /api/projects/{slug}/memory` — store a memory
+- `POST   /api/projects/{slug}/memory/store` — store a memory (alias)
+- `POST   /api/projects/{slug}/memory/search` — keyword search memories
+- `GET    /api/projects/{slug}/memory/{id}` — recall a memory + evidence
+- `PATCH  /api/projects/{slug}/memory/{id}` — update a memory
+- `POST   /api/projects/{slug}/memory/{id}/evidence` — link evidence to a memory
+- `GET    /api/projects/{slug}/memory/stats` — memory store statistics
+
+### GrooveNet (project-specific)
+- `GET    /api/groovenet/events` — list events
+- `POST   /api/groovenet/events` — create event
+- `GET    /api/groovenet/sets` — list DJ sets
+- `POST   /api/groovenet/sets` — log a DJ set
+- `GET    /api/groovenet/profile` — get DJ profile
+- `PUT    /api/groovenet/profile` — update DJ profile
+
 ## Data Layer
 
-All state persisted as JSON in `dashboard/data/`:
-- `sessions.json` — session state + config
-- `pipelines.json` — pipeline state
-- `projects.json` — project registry
-- `data/sessions/` — per-session JSONL output files
+All state persisted as JSON:
+- `dashboard/data/sessions.json` — session state + config
+- `dashboard/data/pipelines.json` — pipeline state
+- `dashboard/data/projects.json` — project registry
+- `dashboard/data/sessions/` — per-session JSONL output files
+- `projects/<slug>/memory/memories.json` — per-project memory ledger
+- `projects/<slug>/memory/evidence.json` — memory evidence links
+- `projects/<slug>/memory/retrieval_log.json` — retrieval audit trail
 
 ## Key Patterns
 
