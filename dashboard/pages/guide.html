@@ -214,6 +214,8 @@
 
 <script>
 window.goToTab=function(tab){
+    var tabBtn=document.querySelector('.L-mode[data-v="'+tab+'"]');
+    if(tabBtn){tabBtn.click();return;}
     document.querySelectorAll('.L-mode').forEach(function(m){
         m.classList.remove('on');
         if(m.dataset.v===tab) m.classList.add('on');
