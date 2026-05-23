@@ -502,17 +502,34 @@ Social metrics → Periodic snapshots → Pattern detection
 <script>
 (function(){
     var PHASES=[
-        {id:'P0',name:'Marketing Site',desc:'Public site + admin portal to edit content via guided UI.',status:'active'},
-        {id:'P1',name:'DJ Profiles + Roster',desc:'Owner portal: profiles with genres, tier, rate card, socials, KPIs.',status:'planned'},
-        {id:'P2',name:'DJ Portal',desc:'Per-artist dashboard: content, social links, calendar, metrics.',status:'planned'},
-        {id:'P3',name:'Contracts + Booking',desc:'Templates, booking lifecycle, digital signing, status tracking.',status:'planned'},
-        {id:'P4',name:'Chat + Communication',desc:'Founder ↔ DJ messaging with AI assistant.',status:'planned'},
-        {id:'P5',name:'Lab-Intelligence',desc:'Vector DB: growth roadmaps, post-mortems, improvement suggestions.',status:'planned'},
-        {id:'P6',name:'Lab-Wiki',desc:'Knowledge base: venues, pricing, marketing playbook.',status:'planned'},
-        {id:'P7',name:'Pricing Engine',desc:'Dynamic pricing by location, venue, DJ tier, market data.',status:'planned'},
-        {id:'P8',name:'Marketing + Social',desc:'Content calendar, cross-platform posting, campaign tracking.',status:'planned'},
-        {id:'P9',name:'Gig Discovery',desc:'Opportunity feed, DJ-to-gig matching, application tracking.',status:'planned'},
-        {id:'P10',name:'Financial Management',desc:'Invoicing, commissions, P&L per event/DJ.',status:'planned'},
+        {id:'P0',name:'Marketing Site',desc:'Public site + admin portal to edit content via guided UI.',status:'active',cat:'product'},
+        {id:'P1',name:'DJ Profiles + Roster',desc:'Owner portal: profiles with genres, tier, rate card, socials, KPIs.',status:'planned',cat:'product'},
+        {id:'P2',name:'DJ Portal',desc:'Per-artist dashboard: content, social links, calendar, metrics.',status:'planned',cat:'product'},
+        {id:'P3',name:'Contracts + Booking',desc:'Templates, booking lifecycle, digital signing, status tracking.',status:'planned',cat:'product'},
+        {id:'P4',name:'Chat + Communication',desc:'Founder ↔ DJ messaging with AI assistant using Lab-Intelligence + Lab-Wiki context.',status:'planned',cat:'product'},
+        {id:'P5',name:'Lab-Intelligence Core',desc:'Vector DB foundation: memory store, embedding pipeline, retrieval API, suggestion engine.',status:'planned',cat:'intelligence'},
+        {id:'P6',name:'Lab-Wiki Core',desc:'Knowledge base: venue profiles, pricing data, marketing playbook, promoter directory, lessons learned.',status:'planned',cat:'intelligence'},
+        {id:'P7',name:'Pricing Engine',desc:'Dynamic pricing by location, venue, DJ tier, market data. Rate cards auto-updated from Lab-Intelligence.',status:'planned',cat:'product'},
+        {id:'P8',name:'Marketing + Social Tools',desc:'Content calendar, cross-platform posting, campaign tracking, audience analytics.',status:'planned',cat:'product'},
+        {id:'P9',name:'Gig Discovery',desc:'Opportunity feed, DJ-to-gig matching, application tracking.',status:'planned',cat:'product'},
+        {id:'P10',name:'Financial Management',desc:'Invoicing, commissions, P&L per event/DJ.',status:'planned',cat:'product'},
+        {id:'I1',name:'Instagram Integration',desc:'Meta Graph API: pull followers, engagement rate, post performance, audience demographics. Auto-snapshot daily.',status:'planned',cat:'integration'},
+        {id:'I2',name:'Spotify Integration',desc:'Spotify Web API: monthly listeners, top tracks, streams, playlist adds, artist profile data. Weekly sync.',status:'planned',cat:'integration'},
+        {id:'I3',name:'SoundCloud Integration',desc:'Scraping fallback (API deprecated): plays, followers, track stats. Manual entry + automated where possible.',status:'planned',cat:'integration'},
+        {id:'I4',name:'Resident Advisor Integration',desc:'RA scraping: event listings, follower count, past events, venue data. Feed into Lab-Wiki venue profiles.',status:'planned',cat:'integration'},
+        {id:'I5',name:'Mixcloud + Bandcamp',desc:'Mixcloud plays/favourites, Bandcamp sales/plays. Hybrid auto-pull + manual entry.',status:'planned',cat:'integration'},
+        {id:'I6',name:'Beatport + Charts',desc:'Chart positions, release tracking, genre rankings. Feed into DJ tier assessment and pricing model.',status:'planned',cat:'integration'},
+        {id:'I7',name:'YouTube + TikTok',desc:'YouTube Data API: subscribers, views, engagement. TikTok: follower count, video performance.',status:'planned',cat:'integration'},
+        {id:'S1',name:'Gig Outcome Ingestion',desc:'After every gig: attendance, crowd response, recording uploaded, promoter feedback, revenue. Auto-prompt DJ to log.',status:'planned',cat:'selfimprove'},
+        {id:'S2',name:'Social Metric Snapshots',desc:'Daily automated snapshot of all social KPIs per DJ. Stored in Lab-Intelligence for trend detection.',status:'planned',cat:'selfimprove'},
+        {id:'S3',name:'Workflow Outcome Learning',desc:'Every saved workflow + feedback stored as pattern/anti-pattern. AI suggestions improve based on what worked vs failed.',status:'planned',cat:'selfimprove'},
+        {id:'S4',name:'Venue Intelligence Loop',desc:'After each event: update Lab-Wiki venue profile with crowd data, sound notes, promoter reliability, optimal BPM. Compounding knowledge.',status:'planned',cat:'selfimprove'},
+        {id:'S5',name:'Pricing Calibration',desc:'Compare quoted fees vs actual outcomes (rebookings, crowd response). Auto-adjust pricing recommendations over time.',status:'planned',cat:'selfimprove'},
+        {id:'S6',name:'Content Performance Learning',desc:'Track which content types/times/formats drive the most growth per DJ. Lab-Intelligence personalises posting recommendations.',status:'planned',cat:'selfimprove'},
+        {id:'S7',name:'Campaign ROI Tracking',desc:'Every marketing campaign: spend vs streams/followers/bookings generated. Lab-Intelligence learns which strategies have best ROI.',status:'planned',cat:'selfimprove'},
+        {id:'S8',name:'Error + Gap Detection',desc:'AI monitors for gaps: missing recordings, inactive social accounts, unsigned contracts, stale wiki entries. Proactive alerts.',status:'planned',cat:'selfimprove'},
+        {id:'S9',name:'Cross-Artist Pattern Mining',desc:'Compare growth trajectories across all managed DJs. What worked for DJ A that DJ B should try? Cross-pollinate strategies.',status:'planned',cat:'selfimprove'},
+        {id:'S10',name:'Feedback Loop Scoring',desc:'Track suggestion acceptance rate per category. If pricing suggestions are 80% accepted but content suggestions only 40%, weight accordingly.',status:'planned',cat:'selfimprove'},
     ];
     var djData=[];
     var rosterData=[];
@@ -544,10 +561,26 @@ Social metrics → Periodic snapshots → Pattern detection
         });
     });
 
-    // Roadmap
+    // Roadmap — grouped by category
+    var cats=[
+        {key:'product',label:'Product Features',color:'var(--bl)',desc:'Core platform functionality for founder and DJ portals'},
+        {key:'integration',label:'Data Integrations',color:'var(--pr)',desc:'Social platforms and data sources feeding into Lab-Intelligence'},
+        {key:'intelligence',label:'Intelligence Layer',color:'var(--gn)',desc:'Lab-Intelligence vector DB + Lab-Wiki knowledge base'},
+        {key:'selfimprove',label:'Self-Improvement Loop',color:'var(--am)',desc:'Systems that learn from every interaction — the more you use it, the smarter it gets'}
+    ];
     var ph='';
-    PHASES.forEach(function(p){
-        ph+='<div class="R-phase"><div class="R-phase-id">'+p.id+'</div><div><div class="R-phase-name">'+p.name+'</div><div class="R-phase-desc">'+p.desc+'</div></div><div class="R-badge '+(p.status==='active'?'R-badge-active':'R-badge-planned')+'">'+p.status+'</div></div>';
+    cats.forEach(function(cat){
+        var items=PHASES.filter(function(p){return p.cat===cat.key});
+        if(!items.length) return;
+        ph+='<div style="margin-bottom:28px">';
+        ph+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><div style="width:10px;height:10px;border-radius:50%;background:'+cat.color+'"></div>';
+        ph+='<div style="font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase">'+cat.label+'</div>';
+        ph+='<div style="font-size:.55rem;color:var(--gy)">'+items.length+' items</div></div>';
+        ph+='<div style="font-size:.65rem;color:var(--gy);margin-bottom:12px;margin-left:20px">'+cat.desc+'</div>';
+        items.forEach(function(p){
+            ph+='<div class="R-phase" style="border-left:3px solid '+cat.color+'"><div class="R-phase-id">'+p.id+'</div><div><div class="R-phase-name">'+p.name+'</div><div class="R-phase-desc">'+p.desc+'</div></div><div class="R-badge '+(p.status==='active'?'R-badge-active':'R-badge-planned')+'">'+p.status+'</div></div>';
+        });
+        ph+='</div>';
     });
     document.getElementById('r-phases').innerHTML=ph;
 
