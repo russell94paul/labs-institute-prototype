@@ -2506,6 +2506,17 @@ Social metrics → Periodic snapshots → Pattern detection
         if(scripts){scripts.forEach(function(s){var code=s.replace(/<\/?script[^>]*>/gi,'');var el=document.createElement('script');el.textContent=code;document.body.appendChild(el);});}
     }).catch(function(){});
 
+    // goToTab — used by Guide page buttons
+    window.goToTab=function(tab){
+        document.querySelectorAll('.L-mode').forEach(function(m){
+            m.classList.remove('on');
+            if(m.getAttribute('data-v')===tab) m.classList.add('on');
+        });
+        document.querySelectorAll('.L-view').forEach(function(v){v.classList.remove('on')});
+        var t=document.getElementById('v-'+tab);
+        if(t) t.classList.add('on');
+    };
+
     // Load guide
     fetch('/pages/guide.html').then(function(r){return r.text()}).then(function(html){
         var m=html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
