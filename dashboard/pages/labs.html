@@ -2087,12 +2087,79 @@ Social metrics → Periodic snapshots → Pattern detection
             v.style.color=d.fg;
         });
 
-        // All loaded sub-pages (workflows, guide, etc)
-        document.querySelectorAll('#workflows-content, #guide-content').forEach(function(el){
-            if(el.firstChild){
-                el.firstChild.style.background=d.bg;
-                el.firstChild.style.color=d.fg;
-            }
+        var isLight=d.bg==='#fff'||d.bg==='#ffffff'||d.bg==='#f5f5f0'||d.bg==='#fafafa'||d.bg==='#fffef5'||d.bg==='#f0ece4'||d.bg==='#fafaf8';
+
+        // Site Preview — override all hardcoded backgrounds
+        document.querySelectorAll('.S-hero,.S-logo,.S-section,.S-values,.S-footer').forEach(function(el){
+            el.style.background=d.bg;el.style.color=d.fg;
+        });
+        document.querySelectorAll('.S-kpis').forEach(function(el){
+            el.style.background=isLight?'#fafafa':d.cardBg;el.style.borderColor=d.cardBorder;
+        });
+        document.querySelectorAll('.S-kpi').forEach(function(el){
+            el.style.borderColor=d.cardBorder;el.style.color=d.fg;
+        });
+        document.querySelectorAll('.S-kpi-label,.S-section-tag,.S-dj-genre,.S-dj-kpi,.S-svc-desc,.S-dj-profile-origin,.S-dj-tl-text,.S-dj-release-label,.S-subsection,.S-scroll').forEach(function(el){
+            el.style.color=d.textMuted;
+        });
+        document.querySelectorAll('.S-section-title,.S-dj-profile-name,.S-dj-name,.S-svc-name,.S-kpi-num,.S-dj-stat-num').forEach(function(el){
+            el.style.color=d.fg;
+        });
+        document.querySelectorAll('.S-marquee-text').forEach(function(el){el.style.color=d.fg;});
+        document.querySelectorAll('.S-values').forEach(function(el){
+            el.style.background=isLight?'#fafafa':d.cardBg;el.style.borderColor=d.cardBorder;
+        });
+        document.querySelectorAll('.S-values-item').forEach(function(el){el.style.color=d.fg;});
+        document.querySelectorAll('.S-dj,.S-svc,.S-dj-profile,.S-dj-release').forEach(function(el){
+            el.style.borderColor=d.cardBorder;el.style.background=isLight?'#fff':d.cardBg;
+        });
+        // Roster card borders
+        document.querySelectorAll('[style*="border:1px solid var(--bd)"],.dj-tab').forEach(function(el){
+            el.style.borderColor=d.cardBorder;
+        });
+        // About text
+        document.querySelectorAll('.S-about p,.S-dj-profile-bio,.S-dj-profile-quote').forEach(function(el){
+            el.style.color=isLight?'#555':d.textMuted;
+        });
+        // Comparison table
+        document.querySelectorAll('.S-section table td,.S-section table th').forEach(function(el){
+            el.style.color=isLight?'':d.textMuted;el.style.borderColor=d.cardBorder;
+        });
+        // CTA sections
+        document.querySelectorAll('.S-cta').forEach(function(el){
+            el.style.background=isLight?'#000':d.accent;
+        });
+        document.querySelectorAll('.S-footer').forEach(function(el){
+            el.style.borderColor=d.cardBorder;el.style.color=d.textMuted;
+        });
+
+        // Logo
+        var logo=document.querySelector('.S-logo-text');
+        if(logo) logo.style.cssText=d.logo+';font-size:2rem;font-weight:900;letter-spacing:.25em;text-transform:uppercase';
+
+        // Activity ticker bar
+        document.querySelectorAll('[style*="tickerScroll"]').forEach(function(el){
+            if(el.parentElement) el.parentElement.style.background=isLight?'#fafafa':d.cardBg;
+        });
+
+        // Admin tab
+        document.querySelectorAll('.A-input,.A-textarea').forEach(function(el){
+            el.style.background=isLight?'#fff':d.cardBg;el.style.color=d.fg;el.style.borderColor=d.cardBorder;
+        });
+        document.querySelectorAll('.A-info').forEach(function(el){el.style.background=isLight?'#f8f8f8':d.cardBg;el.style.borderColor=d.cardBorder;el.style.color=d.textMuted;});
+        document.querySelectorAll('.A-dj').forEach(function(el){el.style.borderColor=d.cardBorder;el.style.background=isLight?'#fff':d.cardBg;});
+        document.querySelectorAll('.A-title').forEach(function(el){el.style.color=isLight?'#000':d.accent;});
+        document.querySelectorAll('.A-label').forEach(function(el){el.style.color=d.textMuted;});
+        document.querySelectorAll('.A-section').forEach(function(el){el.style.borderColor=d.cardBorder;});
+
+        // Roadmap tab
+        document.querySelectorAll('.R-phase,.R-tier,.R-intel').forEach(function(el){el.style.borderColor=d.cardBorder;el.style.background=isLight?'#fff':d.cardBg;});
+        document.querySelectorAll('.R-phase-desc,.R-sub,.R-tier-desc,.R-phase-id').forEach(function(el){el.style.color=d.textMuted;});
+        document.querySelectorAll('.R-intel-flow').forEach(function(el){el.style.background=isLight?'#fafafa':d.bg;el.style.color=d.textMuted;});
+
+        // All loaded sub-pages (workflows, guide)
+        document.querySelectorAll('#workflows-content > *, #guide-content > *').forEach(function(el){
+            el.style.background=d.bg;el.style.color=d.fg;
         });
 
         // Selector/filter bars
@@ -2102,7 +2169,7 @@ Social metrics → Periodic snapshots → Pattern detection
 
         // Sticky activity bar
         var sticky=document.getElementById('sticky-activity');
-        if(sticky){sticky.style.background=d.bg;sticky.style.borderColor=d.cardBorder;}
+        if(sticky){sticky.style.background=isLight?'#000':d.bg;sticky.style.borderColor=d.cardBorder;}
     }
 
     // DJ profile tab switching
