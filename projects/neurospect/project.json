@@ -1,10 +1,99 @@
 {
-  "name": "Neurospect",
+  "name": "NeuroSpect",
   "slug": "neurospect",
-  "description": "Details TBD — registered as a future Conductor-managed project.",
-  "status": "parked",
+  "description": "AI trading intelligence platform for ICT/Smart Money traders. Data-foundation-first architecture: verified trading data, risk protection, ICT event detection, backtesting, AI coaching, forensics, scoring, rewards, advanced ML.",
+  "status": "active",
   "build_order": 3,
   "created": "2026-05-23",
   "platform": "web-responsive",
-  "phases": []
+  "stack": {
+    "frontend": "react-19-typescript-vite-tailwind-shadcn",
+    "backend": "fastapi-sqlalchemy-postgres",
+    "data": "postgres-16-alembic",
+    "ai": "anthropic-sdk-claude",
+    "storage": "cloudflare-r2-boto3",
+    "payments": "stripe",
+    "monitoring": "sentry",
+    "future": ["pgvector", "bm25-tsvector", "graph-db"]
+  },
+  "phases": [
+    {
+      "id": "P0",
+      "name": "Marketing + Demo",
+      "status": "in-progress",
+      "description": "Validate market interest through interactive marketing site, live simulator, ICT course, and EdgeLab demo. Technical validation: CI/CD, Sentry, data model audit."
+    },
+    {
+      "id": "P1",
+      "name": "Trading Data Foundation",
+      "status": "complete",
+      "description": "Normalized, verified trading data layer. BrokerAccount model, trade extensions, instrument metadata, CSV import, Tradovate sync, data quality checks."
+    },
+    {
+      "id": "P2",
+      "name": "Trader Workspace",
+      "status": "in-progress",
+      "description": "Daily-use trader workspace: full journal, analytics dashboard, behavior metrics (tilt, discipline, consistency). Free tier engagement layer."
+    },
+    {
+      "id": "P3",
+      "name": "Prop Shield",
+      "status": "complete",
+      "description": "Prop firm rule tracking, trailing drawdown monitoring, tilt lockouts, advisory alerts, Stripe billing. FIRST REVENUE: Mentor $29/mo, Trader $99/mo."
+    },
+    {
+      "id": "P4",
+      "name": "ICT Event Intelligence",
+      "status": "planned",
+      "description": "Programmable ICT event detection: FVGs, sweeps, order blocks, market structure, sessions as queryable events. Foundation for backtesting and forensics."
+    },
+    {
+      "id": "P5",
+      "name": "EdgeLab Core",
+      "status": "planned",
+      "description": "Event-driven backtesting engine (5A), strategy compiler + Monte Carlo + walk-forward (5B), dashboard + null test (5C). Research tier $199/mo."
+    },
+    {
+      "id": "P6",
+      "name": "AI Trade Review + RAG",
+      "status": "in-progress",
+      "description": "NeuroCore hybrid retrieval (BM25 + semantic + entity) and Mentor upgrade to multi-turn chat with citations, structured trade reviews, and context injection."
+    },
+    {
+      "id": "P7",
+      "name": "Edge Forensics",
+      "status": "planned",
+      "description": "Loss pattern mining, mistake taxonomy, hypothesis generation. Turns repeated losses into testable EdgeLab experiments."
+    },
+    {
+      "id": "P8",
+      "name": "NeuroScore + Leaderboard",
+      "status": "planned",
+      "description": "Risk-adjusted trader ranking (performance, drawdown, rules, consistency, tilt). Broker-verified trades only. Quant tier $349/mo."
+    },
+    {
+      "id": "P9",
+      "name": "NeuroFund Elite Rewards",
+      "status": "planned",
+      "description": "Company-sponsored rewards and eligibility program. NOT pooled capital. Compliance-critical: approved language, admin review, 50-member activation threshold."
+    },
+    {
+      "id": "P10",
+      "name": "Allocation Watchlist",
+      "status": "in-progress",
+      "description": "Internal workflow for identifying traders for challenge sponsorships, grants, or company-sponsored allocation consideration. Trader model cards, admin review."
+    },
+    {
+      "id": "P11",
+      "name": "Advanced ML Research",
+      "status": "planned",
+      "description": "NSLM evaluation framework (11A), hybrid models + regime detection (11B), NeuroQuant + NeuroTrader shadow mode (11C). Gated by Phase 5C null test."
+    },
+    {
+      "id": "P3-NG",
+      "name": "NeuroGraph",
+      "status": "in-progress",
+      "description": "Persistent trading intelligence graph. Nodes = trades, events, features, setups, patterns, concepts. Plan-mode-first: data source mapping, schema design, seed strategy."
+    }
+  ]
 }

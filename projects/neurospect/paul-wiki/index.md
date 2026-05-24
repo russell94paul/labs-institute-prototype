@@ -1,7 +1,7 @@
 ---
-tags: [index, neurollm]
+tags: [index, neurospect]
 created: 2026-05-09
-updated: 2026-05-09
+updated: 2026-05-23
 ---
 
 # Paul's NeuroSpect Wiki — Index
@@ -12,7 +12,7 @@ _Market research and analysis go here_
 
 ## Decisions
 
-_Product and business decisions go here_
+- [[DEC-001-conductor-integration]] — Neurospect → Conductor integration audit, mapping decisions, gap analysis (2026-05-23)
 
 ## Product
 
