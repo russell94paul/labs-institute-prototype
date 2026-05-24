@@ -1011,7 +1011,7 @@
     "phaseId": "ns-P0",
     "name": "Marketing + Demo",
     "project": "neurospect",
-    "status": "running",
+    "status": "completed",
     "dependencies": [],
     "blockedBy": [],
     "blocks": [],
@@ -1021,7 +1021,7 @@
     "canRunInParallel": true,
     "description": "Validate market interest through interactive marketing site, live simulator, ICT course, and EdgeLab demo.",
     "command": "/ns-phase0",
-    "lastUpdated": "2026-05-23",
+    "lastUpdated": "2026-05-24",
     "activeSessionId": "pipe_c7d29624"
   },
   {
@@ -1047,7 +1047,7 @@
     "phaseId": "ns-P2",
     "name": "Trader Workspace",
     "project": "neurospect",
-    "status": "in-progress",
+    "status": "running",
     "dependencies": [
       "ns-P1"
     ],
@@ -1061,7 +1061,8 @@
     "canRunInParallel": true,
     "description": "Daily-use trader workspace: full journal, analytics dashboard, behavior metrics. Free tier engagement layer.",
     "command": "/ns-phase2",
-    "lastUpdated": "2026-05-23"
+    "lastUpdated": "2026-05-23",
+    "activeSessionId": "pipe_4cb8946f"
   },
   {
     "phaseId": "ns-P3",
@@ -1304,6 +1305,313 @@
     "canRunInParallel": true,
     "description": "Persistent trading intelligence graph. Plan-mode-first: data source mapping, schema design, seed strategy.",
     "command": "/ns-phase3-neurograph",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "li-P0",
+    "name": "Site Content Builder + Marketing Page",
+    "project": "labs-institute",
+    "status": "in-progress",
+    "dependencies": [],
+    "blockedBy": [],
+    "blocks": [
+      "li-P1"
+    ],
+    "estimatedComplexity": "M",
+    "riskLevel": "low",
+    "approvalRequired": false,
+    "canRunInParallel": true,
+    "description": "Conductor-based intake UI to capture all site content. Output feeds labs.institute build.",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "li-P1",
+    "name": "DJ Profiles + Roster",
+    "project": "labs-institute",
+    "status": "planned",
+    "dependencies": [
+      "li-P0"
+    ],
+    "blockedBy": [],
+    "blocks": [
+      "li-P2",
+      "li-P3"
+    ],
+    "estimatedComplexity": "L",
+    "riskLevel": "low",
+    "approvalRequired": false,
+    "canRunInParallel": false,
+    "description": "DJ profiles with genre, tier, rate card, availability, socials, KPIs. Roster management dashboard.",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "li-P2",
+    "name": "DJ Portal — Content + Calendar",
+    "project": "labs-institute",
+    "status": "planned",
+    "dependencies": [
+      "li-P1"
+    ],
+    "blockedBy": [],
+    "blocks": [
+      "li-P4"
+    ],
+    "estimatedComplexity": "L",
+    "riskLevel": "low",
+    "approvalRequired": false,
+    "canRunInParallel": true,
+    "description": "Per-DJ dashboard: manage content, social links, gig calendar, track metrics.",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "li-P3",
+    "name": "Contracts + Booking Workflow",
+    "project": "labs-institute",
+    "status": "planned",
+    "dependencies": [
+      "li-P1"
+    ],
+    "blockedBy": [],
+    "blocks": [
+      "li-P10"
+    ],
+    "estimatedComplexity": "L",
+    "riskLevel": "medium",
+    "approvalRequired": false,
+    "canRunInParallel": true,
+    "description": "Contract templates, booking lifecycle (inquiry → quote → contract → confirm), status tracking.",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "li-P4",
+    "name": "Chat + Communication Hub",
+    "project": "labs-institute",
+    "status": "planned",
+    "dependencies": [
+      "li-P2"
+    ],
+    "blockedBy": [],
+    "blocks": [
+      "li-P5"
+    ],
+    "estimatedComplexity": "L",
+    "riskLevel": "medium",
+    "approvalRequired": false,
+    "canRunInParallel": false,
+    "description": "Founder ↔ DJ messaging. AI assistant answers from Lab-Wiki + Lab-Intelligence context.",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "li-P5",
+    "name": "Lab-Intelligence — AI Growth Engine",
+    "project": "labs-institute",
+    "status": "planned",
+    "dependencies": [
+      "li-P4"
+    ],
+    "blockedBy": [],
+    "blocks": [
+      "li-P6"
+    ],
+    "estimatedComplexity": "XL",
+    "riskLevel": "high",
+    "approvalRequired": false,
+    "canRunInParallel": false,
+    "description": "Vector DB ingesting gig outcomes, social metrics, campaign results. Growth roadmaps, improvement suggestions.",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "li-P6",
+    "name": "Lab-Wiki — Knowledge Base",
+    "project": "labs-institute",
+    "status": "planned",
+    "dependencies": [
+      "li-P5"
+    ],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "L",
+    "riskLevel": "low",
+    "approvalRequired": false,
+    "canRunInParallel": false,
+    "description": "Structured knowledge capture: what works at which venues, optimal pricing, best promo strategies.",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "li-P7",
+    "name": "Pricing Engine",
+    "project": "labs-institute",
+    "status": "planned",
+    "dependencies": [
+      "li-P1"
+    ],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "M",
+    "riskLevel": "medium",
+    "approvalRequired": false,
+    "canRunInParallel": true,
+    "description": "Dynamic pricing based on location, event scale, DJ tier, market data. Rate cards per DJ.",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "li-P8",
+    "name": "Marketing + Social Tools",
+    "project": "labs-institute",
+    "status": "planned",
+    "dependencies": [
+      "li-P2"
+    ],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "L",
+    "riskLevel": "low",
+    "approvalRequired": false,
+    "canRunInParallel": true,
+    "description": "Content calendar, cross-platform posting, campaign tracking, audience analytics.",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "li-P9",
+    "name": "Gig Discovery + DJ Matching",
+    "project": "labs-institute",
+    "status": "planned",
+    "dependencies": [
+      "li-P1"
+    ],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "L",
+    "riskLevel": "low",
+    "approvalRequired": false,
+    "canRunInParallel": true,
+    "description": "Event opportunity feed. Match DJs to gigs by genre, location, availability.",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "li-P10",
+    "name": "Financial Management",
+    "project": "labs-institute",
+    "status": "planned",
+    "dependencies": [
+      "li-P3"
+    ],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "L",
+    "riskLevel": "medium",
+    "approvalRequired": false,
+    "canRunInParallel": true,
+    "description": "Invoicing, payment tracking, commission calculator, P&L per event and per DJ.",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "gn-P0",
+    "name": "Event Discovery + DJ Set Tracker",
+    "project": "groovenet",
+    "status": "planned",
+    "dependencies": [],
+    "blockedBy": [],
+    "blocks": [
+      "gn-P1"
+    ],
+    "estimatedComplexity": "M",
+    "riskLevel": "low",
+    "approvalRequired": false,
+    "canRunInParallel": true,
+    "description": "Core event feed for DJs — discover gigs, track sets, ensure recordings get posted.",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "gn-P1",
+    "name": "DJ Profiles + Collectives",
+    "project": "groovenet",
+    "status": "planned",
+    "dependencies": [
+      "gn-P0"
+    ],
+    "blockedBy": [],
+    "blocks": [
+      "gn-P2",
+      "gn-P3"
+    ],
+    "estimatedComplexity": "L",
+    "riskLevel": "low",
+    "approvalRequired": false,
+    "canRunInParallel": false,
+    "description": "DJ profiles, crew/group creation, roster management.",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "gn-P2",
+    "name": "Mix Sharing + Cross-Collab",
+    "project": "groovenet",
+    "status": "planned",
+    "dependencies": [
+      "gn-P1"
+    ],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "L",
+    "riskLevel": "low",
+    "approvalRequired": false,
+    "canRunInParallel": true,
+    "description": "Share mixes across collectives, collaborative playlists.",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "gn-P3",
+    "name": "Promotion + Event Management",
+    "project": "groovenet",
+    "status": "planned",
+    "dependencies": [
+      "gn-P1"
+    ],
+    "blockedBy": [],
+    "blocks": [
+      "gn-P4"
+    ],
+    "estimatedComplexity": "L",
+    "riskLevel": "medium",
+    "approvalRequired": false,
+    "canRunInParallel": true,
+    "description": "Groups manage their own promotions, event creation, lineup building.",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "gn-P4",
+    "name": "Financial Management + Revenue Pool",
+    "project": "groovenet",
+    "status": "planned",
+    "dependencies": [
+      "gn-P3"
+    ],
+    "blockedBy": [],
+    "blocks": [
+      "gn-P5"
+    ],
+    "estimatedComplexity": "L",
+    "riskLevel": "high",
+    "approvalRequired": true,
+    "canRunInParallel": false,
+    "description": "Per-group finances, revenue tracking, joint festival fund.",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "gn-P5",
+    "name": "Marketing Intelligence",
+    "project": "groovenet",
+    "status": "planned",
+    "dependencies": [
+      "gn-P4"
+    ],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "L",
+    "riskLevel": "medium",
+    "approvalRequired": false,
+    "canRunInParallel": false,
+    "description": "Learn from past events — what worked, audience patterns, optimal pricing.",
     "lastUpdated": "2026-05-23"
   }
 ]
