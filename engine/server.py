@@ -1151,6 +1151,7 @@ def main() -> None:
         sessions_dir=SESSIONS_DIR,
         default_config=DEFAULT_CONFIG,
     )
+    sessions.load_state()
 
     pipelines.configure(
         data_dir=DATA_DIR,

@@ -111,11 +111,11 @@ def _load_state() -> None:
                 stage["error"] = "Server restarted"
                 stage["ended_at"] = _now_iso()
         if pipe.get("status") == "running":
-            has_running = any(
-                s["status"] in ("running", "ready")
+            has_active = any(
+                s["status"] in ("running", "ready", "waiting_for_approval")
                 for s in pipe.get("stages", [])
             )
-            if not has_running:
+            if not has_active:
                 pipe["status"] = "failed"
                 pipe["error"] = "Server restarted — pipeline did not complete"
         _pipelines[pid] = pipe
