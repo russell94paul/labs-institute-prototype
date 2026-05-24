@@ -799,6 +799,53 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
         phase_name = phase.get("name", phase_id)
         command = phase.get("command", "")
 
+        # Build rich phase context from project.json
+        phase_readme = phase.get("description", "")
+        pj_path = project_path / "project.json"
+        if pj_path.exists():
+            try:
+                pj = json.loads(pj_path.read_text(encoding="utf-8"))
+                project_desc = pj.get("description", "")
+                stack = pj.get("stack", {})
+                tiers = pj.get("tiers", {})
+                # Find the full phase definition from project.json
+                for pj_phase in pj.get("phases", []):
+                    if pj_phase.get("id") == phase_id.split("-", 1)[-1] or pj_phase.get("name") == phase_name:
+                        if pj_phase.get("description"):
+                            phase_readme = pj_phase["description"]
+                        break
+
+                # If no command file, build a rich prompt from project context
+                if not command:
+                    parts = [f"## Project: {pj.get('name', slug)}"]
+                    if project_desc:
+                        parts.append(f"\n{project_desc}")
+                    if stack:
+                        parts.append(f"\n### Stack\n{json.dumps(stack, indent=2)}")
+                    if tiers:
+                        parts.append("\n### Product Tiers")
+                        for k, v in tiers.items():
+                            parts.append(f"- **{k}**: {v}")
+                    # List all phases for context
+                    parts.append("\n### Roadmap Phases")
+                    for pj_ph in pj.get("phases", []):
+                        marker = ">>>" if pj_ph.get("name") == phase_name else "   "
+                        parts.append(f"{marker} {pj_ph.get('id', '?')}: {pj_ph.get('name', '')} [{pj_ph.get('status', 'planned')}]")
+                        if pj_ph.get("name") == phase_name:
+                            parts.append(f"    {pj_ph.get('description', '')}")
+                    parts.append(f"\n### Current Phase: {phase_name}")
+                    parts.append(phase_readme)
+                    parts.append("\nYou are working on the phase marked with >>>.")
+                    parts.append("First, produce a detailed phase specification with:")
+                    parts.append("- Concrete deliverables (files, endpoints, models, UI components)")
+                    parts.append("- Acceptance criteria (testable conditions)")
+                    parts.append("- Dependencies on other phases")
+                    parts.append("- Key constraints and risks")
+                    parts.append("\nThen produce the implementation plan.")
+                    phase_readme = "\n".join(parts)
+            except (json.JSONDecodeError, OSError):
+                pass
+
         pipe, err = pipelines.create_pipeline(
             name=f"{slug} — {phase_name}",
             template_slug=body.get("template", "standard-phase"),
@@ -807,7 +854,7 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             variables={
                 "phase_number": phase_id,
                 "phase_name": phase_name,
-                "phase_readme": phase.get("description", ""),
+                "phase_readme": phase_readme,
                 "phase_command": command,
             },
             model=body.get("model", DEFAULT_CONFIG["default_model"]),
