@@ -521,6 +521,18 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
         self._groovenet_write("sets", all_sets)
         self._send_json(body, 201)
 
+    def _handle_patch_groovenet_set(self, set_id: str) -> None:
+        body = self._json_body()
+        if not body:
+            return self._send_error_json(400, "Request body required")
+        all_sets = self._groovenet_read("sets")
+        for i, s in enumerate(all_sets):
+            if s.get("id") == set_id:
+                all_sets[i] = {**s, **body, "id": set_id}
+                self._groovenet_write("sets", all_sets)
+                return self._send_json(all_sets[i])
+        self._send_error_json(404, "Set not found")
+
     def _handle_get_groovenet_profile(self) -> None:
         p = self._groovenet_data_path("profile")
         if not p.exists():
@@ -1082,6 +1094,10 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             if action is None:
                 return self._handle_patch_bootstrap_phase(phase_id)
             return self._send_error_json(404, f"Unknown action: {action}")
+
+        gn_set_match = re.match(r"^/api/groovenet/sets/(.+)$", path)
+        if gn_set_match:
+            return self._handle_patch_groovenet_set(gn_set_match.group(1))
 
         match = self._match_session_route()
         if match:
