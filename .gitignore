@@ -4,6 +4,7 @@ __pycache__/
 dashboard/data/sessions/
 dashboard/data/sessions.json
 dashboard/data/pipelines.json
+dashboard/data/validations/
 *.tmp
 .env
 .venv/
