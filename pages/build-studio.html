@@ -435,6 +435,11 @@
                     <span class="studio-sse-dot studio-sse-dot-wait" id="studio-sse-dot"></span>
                     <span id="studio-sse-label">Connecting</span>
                 </span>
+                <select id="studio-project-filter" onchange="Studio.refresh()" style="font-size:0.72rem;font-weight:600;padding:5px 10px;border-radius:8px;border:1px solid var(--border-light);background:rgba(255,255,255,0.04);color:var(--text-secondary);cursor:pointer;">
+                    <option value="">All Projects</option>
+                    <option value="conductor">Conductor</option>
+                    <option value="neurospect">NeuroSpect</option>
+                </select>
                 <button class="studio-btn" onclick="Studio.refresh()">Refresh</button>
             </div>
         </div>
@@ -671,14 +676,23 @@
         }
 
         // --- Fetch ---
+        function getProjectFilter() {
+            var el = document.getElementById('studio-project-filter');
+            return el ? el.value : '';
+        }
+
         function fetchPhases() {
-            return fetch('/api/bootstrap/phases')
+            var pf = getProjectFilter();
+            var url = '/api/bootstrap/phases' + (pf ? '?project=' + pf : '');
+            return fetch(url)
                 .then(function(r) { return r.json(); })
                 .then(function(data) { phases = data; return data; });
         }
 
         function fetchSummary() {
-            return fetch('/api/bootstrap/summary')
+            var pf = getProjectFilter();
+            var url = '/api/bootstrap/summary' + (pf ? '?project=' + pf : '');
+            return fetch(url)
                 .then(function(r) { return r.json(); })
                 .then(function(data) { summary = data; return data; });
         }
