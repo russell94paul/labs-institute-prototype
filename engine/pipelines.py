@@ -663,10 +663,8 @@ def list_pipelines(
         result = [p for p in result if p.get("project_slug") == project_slug]
     if status:
         result = [p for p in result if p.get("status") == status]
-    result.sort(key=lambda p: (
-        _STATUS_ORDER.get(p.get("status", ""), 9),
-        -(p.get("created_at") or ""),
-    ))
+    result.sort(key=lambda p: p.get("created_at") or "", reverse=True)
+    result.sort(key=lambda p: _STATUS_ORDER.get(p.get("status", ""), 9))
     return result
 
 
