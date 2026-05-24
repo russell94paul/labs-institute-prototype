@@ -72,6 +72,7 @@ def configure(
 # ---------------------------------------------------------------------------
 _prompt_builder: Optional[Callable[[Dict[str, Any]], str]] = None
 _on_session_complete: Optional[Callable[[Dict[str, Any]], None]] = None
+_on_complete_callbacks: Dict[str, Callable[[Dict[str, Any]], None]] = {}
 
 
 def set_prompt_builder(fn: Callable[[Dict[str, Any]], str]) -> None:
@@ -85,13 +86,14 @@ def set_prompt_builder(fn: Callable[[Dict[str, Any]], str]) -> None:
 
 
 def set_on_complete(fn: Callable[[Dict[str, Any]], None]) -> None:
-    """Register a callback invoked after a session finishes.
-
-    Signature: fn(session) -> None
-    Called with the final session dict (status, cost, files_changed, etc.).
-    """
+    """Register a global fallback callback invoked after any session finishes."""
     global _on_session_complete
     _on_session_complete = fn
+
+
+def set_on_complete_for(sid: str, fn: Callable[[Dict[str, Any]], None]) -> None:
+    """Register a completion callback for a specific session (takes priority over global)."""
+    _on_complete_callbacks[sid] = fn
 
 
 # ---------------------------------------------------------------------------
@@ -367,12 +369,13 @@ def _run_session(sid: str) -> None:
     repo_root = Path(repo_path)
     if session.get("use_worktree"):
         is_first = session.pop("_pipeline_first_stage", True)
+        reuse = session.pop("_reuse_worktree", False)
         wt_path = _sessions_dir / (
             session["worktree_path"].replace(".sessions/", "")
             if session.get("worktree_path")
             else session["id"]
         )
-        if not is_first and wt_path.exists():
+        if (not is_first or reuse) and wt_path.exists():
             working_dir = str(wt_path)
         else:
             try:
@@ -549,10 +552,11 @@ def _run_session(sid: str) -> None:
         "costUsd": session.get("cost_usd", 0.0),
     }, source="sessions")
 
-    # Notify host application
-    if _on_session_complete is not None:
+    # Notify host application (per-session callback takes priority)
+    callback = _on_complete_callbacks.pop(sid, None) or _on_session_complete
+    if callback is not None:
         try:
-            _on_session_complete(session)
+            callback(session)
         except Exception:
             pass
 
@@ -742,6 +746,81 @@ def get_session_output(sid: str, max_lines: int = 100) -> Optional[Dict[str, Any
     total = len(all_lines)
     lines = all_lines[-max_lines:] if max_lines < total else all_lines
     return {"lines": lines, "total": total}
+
+
+def _extract_session_context(sid: str) -> str:
+    """Extract key output from a session's JSONL for context in continuation."""
+    output = get_session_output(sid, max_lines=500)
+    if not output:
+        return ""
+    parts = []
+    for line_str in output.get("lines", []):
+        try:
+            event = json.loads(line_str)
+            etype = event.get("type", "")
+            if etype == "assistant" and event.get("text"):
+                parts.append(event["text"])
+            elif etype == "result" and event.get("result"):
+                parts.append(f"Final result: {event['result']}")
+        except (json.JSONDecodeError, ValueError):
+            continue
+    context = "\n".join(parts)
+    if len(context) > 8000:
+        context = context[-8000:]
+    return context
+
+
+def continue_session(
+    original_sid: str,
+    user_input: str,
+    budget_usd: float = 5.0,
+    timeout_min: int = 60,
+) -> Optional[Dict[str, Any]]:
+    """Continue a completed/failed session with additional user input.
+
+    Creates a new session in the same worktree with context from the
+    original session's output plus the user's response.
+    """
+    with _lock:
+        original = _sessions.get(original_sid)
+        if not original:
+            return None
+        if original["status"] not in ("succeeded", "failed", "timeout"):
+            return None
+
+    context = _extract_session_context(original_sid)
+    continuation_prompt = (
+        "You are continuing a previous Claude Code session. The previous session "
+        "worked in this same directory. Here is what happened:\n\n"
+        "## Previous Session Output (summary)\n"
+        f"{context}\n\n"
+        "## User Direction\n"
+        f"The user has reviewed the previous work and wants you to:\n{user_input}\n\n"
+        "Continue working in this directory. The previous session's code changes "
+        "are already on disk. Pick up where it left off."
+    )
+
+    new_session = create_session(
+        project_slug=original.get("project_slug", ""),
+        repo_path=original.get("repo_path", ""),
+        prompt=continuation_prompt,
+        template=original.get("template", "implement"),
+        model=original.get("model", "sonnet"),
+        budget_usd=budget_usd,
+        timeout_min=timeout_min,
+        use_worktree=True,
+        task_id=original.get("task_id", ""),
+        task_title=original.get("task_title", "") + " (continued)",
+    )
+
+    with _lock:
+        new_session["continued_from"] = original_sid
+        new_session["worktree_path"] = original.get("worktree_path")
+        new_session["branch"] = original.get("branch")
+        new_session["_reuse_worktree"] = True
+        _flush_state()
+
+    return new_session
 
 
 # ---------------------------------------------------------------------------

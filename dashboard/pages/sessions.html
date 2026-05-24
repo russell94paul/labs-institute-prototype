@@ -585,11 +585,38 @@
             });
             html += '</div></div>';
 
+            // Session lineage
+            if (s.continued_from) {
+                html += '<div class="detail-section">';
+                html += '<div class="detail-section-title">Lineage</div>';
+                html += '<div class="detail-row"><span class="detail-row-label">Continued from</span>';
+                html += '<span class="detail-row-val" style="cursor:pointer;color:var(--accent-blue);" ';
+                html += 'onclick="window.openDetail(\'' + s.continued_from + '\')">' + s.continued_from + '</span></div>';
+                html += '</div>';
+            }
+
+            // Validation results
+            html += '<div class="detail-section" id="validation-section">';
+            html += '<div class="detail-section-title" style="display:flex;justify-content:space-between;align-items:center;">Validation';
+            html += '<button class="btn btn-ghost" style="font-size:0.6rem;padding:2px 8px;" onclick="window.revalidateSession(\'' + sessionId + '\')">Re-validate</button>';
+            html += '</div>';
+            html += '<div id="validation-results">Loading...</div>';
+            html += '</div>';
+
             // Learnings
             html += '<div class="detail-section">';
             html += '<div class="detail-section-title">Learnings</div>';
             html += '<textarea class="form-textarea form-input" id="detail-learnings" rows="3" placeholder="Capture learnings from this session..." onblur="window.saveLearnings(\'' + sessionId + '\')">' + (s.learnings || '') + '</textarea>';
             html += '</div>';
+
+            // Continue session (for terminal sessions)
+            if (['succeeded', 'failed', 'timeout'].indexOf(s.status) >= 0) {
+                html += '<div class="detail-section">';
+                html += '<div class="detail-section-title">Continue Session</div>';
+                html += '<textarea class="form-textarea form-input" id="continue-input" rows="3" placeholder="Provide direction for the continuation..."></textarea>';
+                html += '<button class="btn btn-primary btn-sm" style="margin-top:8px;" onclick="window.continueSession(\'' + sessionId + '\')">Launch Continuation</button>';
+                html += '</div>';
+            }
 
             // Actions
             html += '<div class="detail-actions">';
@@ -632,6 +659,9 @@
                     var outputEl = $('detail-output');
                     if (outputEl) outputEl.textContent = 'Unable to fetch output.';
                 });
+
+            // Load validation results
+            window.loadValidation(sessionId);
         }
 
         // --- API actions ---
@@ -658,6 +688,69 @@
             }).then(function(r) {
                 if (r.ok) showToast('Learnings saved');
             }).catch(function() {});
+        };
+
+        window.revalidateSession = function(sessionId) {
+            fetch('/api/sessions/' + sessionId + '/validate', { method: 'POST' })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    showToast('Validation complete');
+                    loadSessions();
+                    window.loadValidation(sessionId);
+                })
+                .catch(function() { showToast('Validation failed', true); });
+        };
+
+        window.loadValidation = function(sessionId) {
+            fetch('/api/sessions/' + sessionId + '/validation')
+                .then(function(r) { return r.ok ? r.json() : null; })
+                .then(function(report) {
+                    var el = document.getElementById('validation-results');
+                    if (!el) return;
+                    if (!report) { el.textContent = 'No validation results yet.'; return; }
+                    var html = '<div style="font-size:0.72rem;">';
+                    (report.results || []).forEach(function(r) {
+                        var icon = r.passed ? '<span style="color:var(--accent-green);">PASS</span>' : '<span style="color:var(--accent-red);">FAIL</span>';
+                        html += '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--border-subtle);">';
+                        html += icon;
+                        html += '<span style="font-weight:600;">' + r.check_name + '</span>';
+                        html += '<span style="color:var(--text-dim);font-size:0.65rem;margin-left:auto;">' + r.duration_ms + 'ms</span>';
+                        html += '</div>';
+                        if (r.output && !r.passed) {
+                            html += '<div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--text-dim);padding:4px 0 8px 24px;white-space:pre-wrap;max-height:80px;overflow:auto;">' + r.output.substring(0, 500) + '</div>';
+                        }
+                    });
+                    html += '</div>';
+                    el.innerHTML = html;
+                })
+                .catch(function() {
+                    var el = document.getElementById('validation-results');
+                    if (el) el.textContent = 'No validation results yet.';
+                });
+        };
+
+        window.continueSession = function(sessionId) {
+            var input = document.getElementById('continue-input');
+            if (!input || !input.value.trim()) {
+                showToast('Please provide direction for the continuation', true);
+                return;
+            }
+            fetch('/api/sessions/' + sessionId + '/continue', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ input: input.value.trim() })
+            })
+            .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+            .then(function(result) {
+                if (result.ok) {
+                    showToast('Continuation session launched: ' + result.data.id);
+                    window.closeDetail();
+                    loadSessions();
+                } else {
+                    showToast(result.data.error || 'Failed to continue session', true);
+                }
+            })
+            .catch(function() { showToast('Network error', true); });
         };
 
         window.cancelSession = function(sessionId) {

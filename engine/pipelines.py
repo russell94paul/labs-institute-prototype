@@ -35,7 +35,7 @@ _pipelines: Dict[str, Dict[str, Any]] = {}
 _on_stage_transition: Optional[Callable[[Dict[str, Any], Dict[str, Any], str, str], None]] = None
 
 # Valid states for pipelines and stages
-PIPELINE_STATES = {"pending", "running", "completed", "failed", "cancelled"}
+PIPELINE_STATES = {"pending", "running", "completed", "failed", "cancelled", "rolled_back"}
 STAGE_STATES = {
     "pending", "ready", "running", "blocked",
     "waiting_for_approval", "completed", "failed", "cancelled", "skipped",
@@ -341,6 +341,9 @@ def create_pipeline(
         "ended_at": None,
         "error": None,
         "cost_usd": 0.0,
+        "snapshot": None,
+        "rollback_history": [],
+        "merge_approved": False,
     }
 
     with _lock:
@@ -375,6 +378,11 @@ def start_pipeline(pid: str, session_launcher: Optional[Callable] = None) -> Tup
         pipeline["status"] = "running"
         pipeline["started_at"] = _now_iso()
 
+        from engine.stage_scripts.git_ops import snapshot_branch
+        pipeline["snapshot"] = snapshot_branch(
+            pipeline.get("repo_path", str(_repo_root)),
+        )
+
         ready = calculate_ready_stages(pipeline)
         for name in ready:
             _transition_stage(pipeline, name, "ready")
@@ -384,6 +392,7 @@ def start_pipeline(pid: str, session_launcher: Optional[Callable] = None) -> Tup
     events.emit("pipeline.started", {
         "pipelineId": pid,
         "name": pipeline.get("name"),
+        "snapshot": pipeline.get("snapshot", {}),
     }, source="pipelines")
 
     if session_launcher:
@@ -772,6 +781,80 @@ def _topological_sort(stages: List[Dict[str, Any]]) -> List[str]:
             if in_degree[dep] == 0:
                 queue.append(dep)
     return order
+
+
+# ---------------------------------------------------------------------------
+# Rollback + Merge
+# ---------------------------------------------------------------------------
+def rollback_pipeline(pid: str, reason: str = "") -> Tuple[bool, str]:
+    """Rollback a pipeline's worktree branch to the pre-pipeline snapshot."""
+    with _lock:
+        pipeline = _pipelines.get(pid)
+        if not pipeline:
+            return False, "Pipeline not found"
+        snapshot = pipeline.get("snapshot")
+        if not snapshot or snapshot.get("commit") == "unknown":
+            return False, "No snapshot available for rollback"
+
+    wt_path = _sessions_dir / pipeline.get("worktree_id", "")
+    if not wt_path.exists():
+        return False, "Worktree no longer exists"
+
+    from engine.stage_scripts.git_ops import rollback_to_snapshot
+    result = rollback_to_snapshot(str(wt_path), snapshot["commit"])
+
+    with _lock:
+        pipeline.setdefault("rollback_history", []).append({
+            "timestamp": _now_iso(),
+            "reason": reason,
+            "to_commit": snapshot["commit"],
+            "success": result.success,
+        })
+        if result.success:
+            pipeline["status"] = "rolled_back"
+            pipeline["ended_at"] = _now_iso()
+        _flush_state()
+
+    events.emit("pipeline.rolled_back", {
+        "pipelineId": pid,
+        "name": pipeline.get("name"),
+        "toCommit": snapshot["commit"][:12],
+        "reason": reason,
+        "success": result.success,
+    }, source="pipelines")
+
+    return result.success, result.summary or result.error or "Unknown error"
+
+
+def approve_merge(pid: str) -> Tuple[bool, str]:
+    """Approve merging a completed pipeline's branch."""
+    with _lock:
+        pipeline = _pipelines.get(pid)
+        if not pipeline:
+            return False, "Pipeline not found"
+        if pipeline["status"] != "completed":
+            return False, f"Pipeline is {pipeline['status']}, must be completed to merge"
+        pipeline["merge_approved"] = True
+        _flush_state()
+
+    events.emit("pipeline.merge_approved", {
+        "pipelineId": pid,
+        "name": pipeline.get("name"),
+    }, source="pipelines")
+
+    return True, "Merge approved"
+
+
+def get_snapshot(pid: str) -> Optional[Dict[str, Any]]:
+    with _lock:
+        pipeline = _pipelines.get(pid)
+        if not pipeline:
+            return None
+        return {
+            "snapshot": pipeline.get("snapshot"),
+            "rollback_history": pipeline.get("rollback_history", []),
+            "merge_approved": pipeline.get("merge_approved", False),
+        }
 
 
 # ---------------------------------------------------------------------------

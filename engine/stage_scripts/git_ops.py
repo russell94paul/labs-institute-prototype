@@ -2,8 +2,9 @@
 from __future__ import annotations
 
 import subprocess
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from . import ScriptContext, ScriptResult
 
@@ -71,3 +72,39 @@ def create_pr(ctx: ScriptContext) -> ScriptResult:
 
     pr_url = r.stdout.strip()
     return ScriptResult(success=True, summary=f"PR created: {pr_url}", data={"pr_url": pr_url})
+
+
+def snapshot_branch(repo_path: str, branch: str = "main") -> Dict[str, str]:
+    """Record the current HEAD of a branch before pipeline execution."""
+    try:
+        r = subprocess.run(
+            ["git", "rev-parse", branch],
+            cwd=repo_path, capture_output=True, text=True,
+        )
+        if r.returncode != 0:
+            return {"branch": branch, "commit": "unknown", "error": r.stderr.strip()}
+        return {
+            "branch": branch,
+            "commit": r.stdout.strip(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+    except OSError as exc:
+        return {"branch": branch, "commit": "unknown", "error": str(exc)}
+
+
+def rollback_to_snapshot(worktree_path: str, target_commit: str) -> ScriptResult:
+    """Reset a worktree branch to a specific commit."""
+    try:
+        r = subprocess.run(
+            ["git", "reset", "--hard", target_commit],
+            cwd=worktree_path, capture_output=True, text=True,
+        )
+        if r.returncode != 0:
+            return ScriptResult(success=False, error=f"git reset failed: {r.stderr}")
+        return ScriptResult(
+            success=True,
+            summary=f"Rolled back to {target_commit[:12]}",
+            data={"target_commit": target_commit},
+        )
+    except OSError as exc:
+        return ScriptResult(success=False, error=str(exc))

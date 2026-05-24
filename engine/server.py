@@ -25,6 +25,7 @@ from engine import pipelines
 from engine import work_guard
 from engine import events
 from engine import memory
+from engine import validation
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DASHBOARD_ROOT = REPO_ROOT / "dashboard"
@@ -158,6 +159,36 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
         if not ok:
             return self._send_error_json(404, f"Session {sid} not found")
         self._send_json({"ok": True})
+
+    def _handle_get_session_validation(self, sid: str) -> None:
+        report = validation.get_report(sid)
+        if not report:
+            return self._send_error_json(404, f"No validation report for {sid}")
+        self._send_json(report)
+
+    def _handle_post_session_validate(self, sid: str) -> None:
+        session = sessions.get_session(sid)
+        if not session:
+            return self._send_error_json(404, f"Session {sid} not found")
+        checks = validation.default_checks(session)
+        report = validation.run_validation(session, checks)
+        validation.apply_to_quality_gates(session, report)
+        sessions.update_session(sid, {"quality_gates": session["quality_gates"]})
+        self._send_json({"report": report.__dict__ if hasattr(report, '__dict__') else report})
+
+    def _handle_post_continue_session(self, sid: str) -> None:
+        body = self._json_body()
+        if not body or not body.get("input"):
+            return self._send_error_json(400, "input is required")
+        new_session = sessions.continue_session(
+            original_sid=sid,
+            user_input=body["input"],
+            budget_usd=float(body.get("budget_usd", DEFAULT_CONFIG["default_budget_usd"])),
+            timeout_min=int(body.get("timeout_min", DEFAULT_CONFIG["default_timeout_min"])),
+        )
+        if not new_session:
+            return self._send_error_json(404, "Session not found or not in terminal state")
+        self._send_json(new_session, 201)
 
     # --- Bootstrap handlers ---
 
@@ -304,6 +335,25 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
         if not ok:
             return self._send_error_json(409, msg)
         self._send_json({"ok": True, "message": msg})
+
+    def _handle_post_pipeline_rollback(self, pid: str) -> None:
+        body = self._json_body() or {}
+        ok, msg = pipelines.rollback_pipeline(pid, reason=body.get("reason", ""))
+        if not ok:
+            return self._send_error_json(409, msg)
+        self._send_json({"ok": True, "message": msg})
+
+    def _handle_post_pipeline_merge(self, pid: str) -> None:
+        ok, msg = pipelines.approve_merge(pid)
+        if not ok:
+            return self._send_error_json(409, msg)
+        self._send_json({"ok": True, "message": msg})
+
+    def _handle_get_pipeline_snapshot(self, pid: str) -> None:
+        data = pipelines.get_snapshot(pid)
+        if not data:
+            return self._send_error_json(404, f"Pipeline {pid} not found")
+        self._send_json(data)
 
     def _handle_get_templates(self) -> None:
         self._send_json(pipelines.list_templates())
@@ -619,6 +669,72 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
     def _handle_get_memory_stats(self, slug: str) -> None:
         self._send_json(memory.get_stats(slug))
 
+    # --- Project phases handlers ---
+
+    def _match_project_phases_route(self) -> Optional[tuple]:
+        path = self.path.split("?")[0]
+        m = re.match(r"^/api/projects/([a-zA-Z0-9_-]+)/phases(?:/([a-zA-Z0-9_-]+))?(?:/(\w+))?$", path)
+        if m:
+            return m.group(1), m.group(2), m.group(3)
+        return None
+
+    def _handle_get_project_phases(self, slug: str) -> None:
+        phases = bootstrap.get_all_phases(project=slug)
+        summary = bootstrap.get_summary(phases)
+        self._send_json({"phases": phases, "summary": summary})
+
+    def _handle_get_project_phase(self, slug: str, phase_id: str) -> None:
+        phase = bootstrap.get_phase(phase_id)
+        if not phase or phase.get("project") != slug:
+            return self._send_error_json(404, f"Phase {phase_id} not found in project {slug}")
+        self._send_json(phase)
+
+    def _handle_post_phase_execute(self, slug: str, phase_id: str) -> None:
+        phase = bootstrap.get_phase(phase_id)
+        if not phase or phase.get("project") != slug:
+            return self._send_error_json(404, f"Phase {phase_id} not found in project {slug}")
+
+        body = self._json_body() or {}
+
+        project_path = REPO_ROOT / "projects" / slug
+        if not project_path.exists():
+            return self._send_error_json(404, f"Project directory not found: {slug}")
+
+        phase_name = phase.get("name", phase_id)
+        command = phase.get("command", "")
+
+        pipe, err = pipelines.create_pipeline(
+            name=f"{slug} — {phase_name}",
+            template_slug=body.get("template", "standard-phase"),
+            project_slug=slug,
+            repo_path=str(project_path),
+            variables={
+                "phase_number": phase_id,
+                "phase_name": phase_name,
+                "phase_readme": phase.get("description", ""),
+                "phase_command": command,
+            },
+            model=body.get("model", DEFAULT_CONFIG["default_model"]),
+            budget_usd=float(body.get("budget_usd", DEFAULT_CONFIG["default_budget_usd"])),
+            timeout_min=int(body.get("timeout_min", DEFAULT_CONFIG["default_timeout_min"])),
+        )
+        if err:
+            return self._send_error_json(400, err)
+
+        bootstrap.update_phase_status(phase_id, "running", activeSessionId=pipe["id"])
+
+        if body.get("auto_start", True):
+            pipelines.start_pipeline(pipe["id"], session_launcher=_pipeline_session_launcher)
+
+        events.emit("phase.execution_started", {
+            "phaseId": phase_id,
+            "phaseName": phase_name,
+            "project": slug,
+            "pipelineId": pipe["id"],
+        }, source="server")
+
+        self._send_json({"phase": phase, "pipeline": pipe}, 201)
+
     # --- Config handler ---
 
     def _handle_get_config(self) -> None:
@@ -660,6 +776,15 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
         if path == "/api/groovenet/profile":
             return self._handle_get_groovenet_profile()
 
+        ppmatch = self._match_project_phases_route()
+        if ppmatch:
+            slug, phase_id, action = ppmatch
+            if phase_id is None:
+                return self._handle_get_project_phases(slug)
+            if action is None:
+                return self._handle_get_project_phase(slug, phase_id)
+            return self._send_error_json(404, f"Unknown action: {action}")
+
         rmatch = re.match(r"^/api/projects/([a-zA-Z0-9_-]+)/requests(?:/(.+))?$", path)
         if rmatch:
             slug, action = rmatch.group(1), rmatch.group(2)
@@ -685,6 +810,8 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
                 return self._handle_get_pipeline(pid)
             if action == "summary":
                 return self._handle_get_pipeline_summary(pid)
+            if action == "snapshot":
+                return self._handle_get_pipeline_snapshot(pid)
             return self._send_error_json(404, f"Unknown action: {action}")
 
         bmatch = self._match_bootstrap_route()
@@ -701,6 +828,8 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
                 return self._handle_get_session(sid)
             if action == "output":
                 return self._handle_get_output(sid)
+            if action == "validation":
+                return self._handle_get_session_validation(sid)
             return self._send_error_json(404, f"Unknown action: {action}")
 
         return super().do_GET()
@@ -720,6 +849,13 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return self._handle_post_groovenet_events()
         if path == "/api/groovenet/sets":
             return self._handle_post_groovenet_sets()
+        ppmatch = self._match_project_phases_route()
+        if ppmatch:
+            slug, phase_id, action = ppmatch
+            if phase_id and action == "execute":
+                return self._handle_post_phase_execute(slug, phase_id)
+            return self._send_error_json(404, f"Unknown phase action: {action}")
+
         if re.match(r"^/api/projects/[a-zA-Z0-9_-]+/requests$", path):
             slug = path.split("/")[3]
             return self._handle_post_request(slug)
@@ -745,6 +881,10 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
                 return self._handle_post_pipeline_advance(pid)
             if action == "cancel":
                 return self._handle_post_pipeline_cancel(pid)
+            if action == "rollback":
+                return self._handle_post_pipeline_rollback(pid)
+            if action == "merge":
+                return self._handle_post_pipeline_merge(pid)
             m = re.match(r"^stages/([a-zA-Z0-9_-]+)/(retry|skip|approve)$", action or "")
             if m:
                 stage_name, op = m.group(1), m.group(2)
@@ -768,6 +908,10 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             sid, action = match
             if action == "cancel":
                 return self._handle_cancel_session(sid)
+            if action == "validate":
+                return self._handle_post_session_validate(sid)
+            if action == "continue":
+                return self._handle_post_continue_session(sid)
             return self._send_error_json(404, f"Unknown action: {action}")
 
         return self._send_error_json(404, "Not found")
@@ -852,6 +996,22 @@ def _pipeline_session_launcher(pipeline: Dict[str, Any], stage: Dict[str, Any]) 
 
     def _on_complete(sess):
         success = sess.get("status") == "succeeded"
+
+        if success and sess.get("use_worktree"):
+            checks = validation.default_checks(sess)
+            if checks:
+                report = validation.run_validation(sess, checks)
+                validation.apply_to_quality_gates(sess, report)
+                if pipeline.get("project_slug"):
+                    validation.store_evidence(pipeline["project_slug"], sess["id"], report)
+                events.emit("session.validated", {
+                    "sessionId": sess["id"],
+                    "allPassed": report.all_passed,
+                    "results": len(report.results),
+                }, source="validation")
+                if not report.all_passed:
+                    success = False
+
         pipelines.handle_stage_complete(
             pid=pipeline["id"],
             stage_name=stage["name"],
@@ -861,7 +1021,7 @@ def _pipeline_session_launcher(pipeline: Dict[str, Any], stage: Dict[str, Any]) 
             session_launcher=_pipeline_session_launcher,
         )
 
-    sessions.set_on_complete(_on_complete)
+    sessions.set_on_complete_for(session["id"], _on_complete)
     return session["id"]
 
 
@@ -898,6 +1058,8 @@ def main() -> None:
         repo_root=REPO_ROOT,
     )
     pipelines.load_state()
+
+    validation.configure(data_dir=DATA_DIR)
 
     events.configure(max_events=500)
     events.emit("system.startup", {"port": PORT}, source="server")

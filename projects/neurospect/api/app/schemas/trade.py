@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict
 from app.models.enums import (
     BiasType,
     DisplacementType,
+    EmotionType,
     GradeType,
     KillZoneType,
     OppType,
@@ -49,6 +50,10 @@ class TradeCreate(BaseModel):
     displacement_quality: DisplacementType | None = None
     smt_confirmation: bool | None = None
 
+    # Journal (Phase 2)
+    emotion_tags: list[EmotionType] | None = None
+    pre_trade_checklist: dict | None = None
+
     # Allow creating in a non-default status (rare; triggers singleton guard if active)
     status: TradeStatus = TradeStatus.pre_trade
 
@@ -80,6 +85,15 @@ class TradeUpdate(BaseModel):
     entry_pda: PdaType | None = None
     displacement_quality: DisplacementType | None = None
     smt_confirmation: bool | None = None
+
+    # Journal (Phase 2)
+    emotion_tags: list[EmotionType] | None = None
+    pre_trade_checklist: dict | None = None
+    setup_notes: str | None = None
+    execution_notes: str | None = None
+    risk_notes: str | None = None
+    psychology_notes: str | None = None
+    lesson_learned: str | None = None
 
     # Post-trade fields
     exit_price: Decimal | None = None
@@ -130,6 +144,15 @@ class TradeResponse(BaseModel):
     entry_pda: PdaType | None
     displacement_quality: DisplacementType | None
     smt_confirmation: bool | None
+
+    # Journal (Phase 2)
+    emotion_tags: list[str] | None
+    pre_trade_checklist: dict | None
+    setup_notes: str | None
+    execution_notes: str | None
+    risk_notes: str | None
+    psychology_notes: str | None
+    lesson_learned: str | None
 
     # Post-Trade
     exit_price: Decimal | None

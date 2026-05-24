@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends
+from datetime import date
+
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.deps import get_current_user, get_db
@@ -16,7 +18,14 @@ from app.schemas.analytics import (
     RDistributionResponse,
     SummaryResponse,
 )
+from app.schemas.behavior import (
+    BehaviorMetricsResponse,
+    DrawdownResponse,
+    EquityCurveResponse,
+    MonthlyHeatmapResponse,
+)
 from app.services import analytics as svc
+from app.services import behavior as behavior_svc
 
 router = APIRouter(prefix="/api/analytics", tags=["analytics"])
 
@@ -82,3 +91,47 @@ async def r_distribution(
 ):
     buckets = await svc.get_r_distribution(db, current_user.id)
     return RDistributionResponse(buckets=[RBucket(**b) for b in buckets])
+
+
+@router.get("/behavior", response_model=BehaviorMetricsResponse)
+async def behavior_metrics(
+    date_start: date | None = Query(None),
+    date_end: date | None = Query(None),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    data = await behavior_svc.get_behavior_metrics(db, current_user.id, date_start, date_end)
+    return BehaviorMetricsResponse(**data)
+
+
+@router.get("/equity-curve", response_model=EquityCurveResponse)
+async def equity_curve(
+    date_start: date | None = Query(None),
+    date_end: date | None = Query(None),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    points = await svc.get_equity_curve(db, current_user.id, date_start, date_end)
+    return EquityCurveResponse(points=points)
+
+
+@router.get("/drawdown", response_model=DrawdownResponse)
+async def drawdown(
+    date_start: date | None = Query(None),
+    date_end: date | None = Query(None),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    data = await svc.get_drawdown(db, current_user.id, date_start, date_end)
+    return DrawdownResponse(**data)
+
+
+@router.get("/monthly-heatmap", response_model=MonthlyHeatmapResponse)
+async def monthly_heatmap(
+    date_start: date | None = Query(None),
+    date_end: date | None = Query(None),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    cells = await svc.get_monthly_heatmap(db, current_user.id, date_start, date_end)
+    return MonthlyHeatmapResponse(cells=cells)

@@ -6,11 +6,16 @@
     "status": "completed",
     "dependencies": [],
     "blockedBy": [],
-    "blocks": ["00-cleanup"],
+    "blocks": [
+      "00-cleanup"
+    ],
     "riskLevel": "low",
     "estimatedComplexity": "S",
     "estimatedContextRequired": "low",
-    "expectedFiles": ["docs/build/preflight-safety-report.md", "docs/architecture/autonomy-approval-rollback-policy.md"],
+    "expectedFiles": [
+      "docs/build/preflight-safety-report.md",
+      "docs/architecture/autonomy-approval-rollback-policy.md"
+    ],
     "allowedParallelism": false,
     "requiredAgents": [],
     "requiredArtifacts": [],
@@ -29,13 +34,20 @@
     "name": "Clean Start / Reset Branch",
     "description": "Remove old LABS Institute artifacts, quarantine uncertain files, align repo to Conductor platform direction.",
     "status": "completed",
-    "dependencies": ["00-preflight"],
+    "dependencies": [
+      "00-preflight"
+    ],
     "blockedBy": [],
-    "blocks": ["00-restructure"],
+    "blocks": [
+      "00-restructure"
+    ],
     "riskLevel": "medium",
     "estimatedComplexity": "M",
     "estimatedContextRequired": "medium",
-    "expectedFiles": ["docs/build/cleanup-inventory.md", "docs/build/clean-start-reset-report.md"],
+    "expectedFiles": [
+      "docs/build/cleanup-inventory.md",
+      "docs/build/clean-start-reset-report.md"
+    ],
     "allowedParallelism": false,
     "requiredAgents": [],
     "requiredArtifacts": [],
@@ -54,13 +66,21 @@
     "name": "Repo Restructure + Roadmap Ingestion",
     "description": "Create missing docs/config/template directories, ingest architecture docs and ADRs from build pack.",
     "status": "completed",
-    "dependencies": ["00-cleanup"],
+    "dependencies": [
+      "00-cleanup"
+    ],
     "blockedBy": [],
-    "blocks": ["00-topic08", "00-bootstrap"],
+    "blocks": [
+      "00-topic08",
+      "00-bootstrap"
+    ],
     "riskLevel": "low",
     "estimatedComplexity": "M",
     "estimatedContextRequired": "medium",
-    "expectedFiles": ["docs/roadmap/master-build-sequence.md", "docs/architecture/platform-architecture.md"],
+    "expectedFiles": [
+      "docs/roadmap/master-build-sequence.md",
+      "docs/architecture/platform-architecture.md"
+    ],
     "allowedParallelism": false,
     "requiredAgents": [],
     "requiredArtifacts": [],
@@ -79,13 +99,20 @@
     "name": "Topic 08 Hybrid Context Fabric Setup",
     "description": "Add Deep Research prompt and future design prompt for the hybrid context fabric.",
     "status": "completed",
-    "dependencies": ["00-restructure"],
+    "dependencies": [
+      "00-restructure"
+    ],
     "blockedBy": [],
-    "blocks": ["00-bootstrap"],
+    "blocks": [
+      "00-bootstrap"
+    ],
     "riskLevel": "low",
     "estimatedComplexity": "S",
     "estimatedContextRequired": "low",
-    "expectedFiles": ["docs/research/prompts/08-hybrid-context-fabric-wiki-memory-knowledge-graph.md", "docs/prompts/design-hybrid-context-fabric-from-repos.md"],
+    "expectedFiles": [
+      "docs/research/prompts/08-hybrid-context-fabric-wiki-memory-knowledge-graph.md",
+      "docs/prompts/design-hybrid-context-fabric-from-repos.md"
+    ],
     "allowedParallelism": true,
     "requiredAgents": [],
     "requiredArtifacts": [],
@@ -104,13 +131,22 @@
     "name": "Bootstrap Orchestration Console",
     "description": "Lightweight internal console for tracking phases, dependencies, blockers, and parallelization during the Conductor build.",
     "status": "completed",
-    "dependencies": ["00-restructure", "00-topic08"],
+    "dependencies": [
+      "00-restructure",
+      "00-topic08"
+    ],
     "blockedBy": [],
-    "blocks": ["P0-pipeline-dag"],
+    "blocks": [
+      "P0-pipeline-dag"
+    ],
     "riskLevel": "low",
     "estimatedComplexity": "L",
     "estimatedContextRequired": "high",
-    "expectedFiles": ["config/phase-status.json", "dashboard/pages/bootstrap.html", "engine/bootstrap.py"],
+    "expectedFiles": [
+      "config/phase-status.json",
+      "dashboard/pages/bootstrap.html",
+      "engine/bootstrap.py"
+    ],
     "allowedParallelism": false,
     "requiredAgents": [],
     "requiredArtifacts": [],
@@ -129,16 +165,31 @@
     "name": "P0 Pipeline DAG Engine",
     "description": "Core DAG-based pipeline engine with dependency resolution, parallel execution, and event streaming.",
     "status": "completed",
-    "dependencies": ["00-bootstrap"],
+    "dependencies": [
+      "00-bootstrap"
+    ],
     "blockedBy": [],
-    "blocks": ["P0-events", "P1-build-studio"],
+    "blocks": [
+      "P0-events",
+      "P1-build-studio"
+    ],
     "riskLevel": "high",
     "estimatedComplexity": "XL",
     "estimatedContextRequired": "high",
-    "expectedFiles": ["engine/pipelines.py", "engine/phases.py", "engine/events.py"],
+    "expectedFiles": [
+      "engine/pipelines.py",
+      "engine/phases.py",
+      "engine/events.py"
+    ],
     "allowedParallelism": false,
-    "requiredAgents": ["architect", "implementer", "reviewer"],
-    "requiredArtifacts": ["Topic 02 synthesis"],
+    "requiredAgents": [
+      "architect",
+      "implementer",
+      "reviewer"
+    ],
+    "requiredArtifacts": [
+      "Topic 02 synthesis"
+    ],
     "approvalRequired": true,
     "promptPath": "conductor_platform_build_pack_v5/conductor_platform_build_pack_v5/docs/prompts/P0-pipeline-dag-engine.md",
     "reportPath": "docs/build/p0-pipeline-dag-engine-build-report.md",
@@ -155,16 +206,29 @@
     "description": "Adds repo/session safety checks, lock model, queue policy, and dirty-tree gates before semi-autonomous or parallel execution.",
     "status": "completed",
     "priority": "P0.5",
-    "dependencies": ["P0-pipeline-dag"],
+    "dependencies": [
+      "P0-pipeline-dag"
+    ],
     "blockedBy": [],
-    "blocks": ["P0-events", "P1-build-studio"],
+    "blocks": [
+      "P0-events",
+      "P1-build-studio"
+    ],
     "riskLevel": "medium",
     "estimatedComplexity": "M",
     "estimatedContextRequired": "medium",
-    "expectedFiles": ["engine/work_guard.py", "config/work-guard-policy.json", "docs/architecture/repo-work-guard-session-lock.md"],
+    "expectedFiles": [
+      "engine/work_guard.py",
+      "config/work-guard-policy.json",
+      "docs/architecture/repo-work-guard-session-lock.md"
+    ],
     "allowedParallelism": false,
-    "requiredAgents": ["implementer"],
-    "requiredArtifacts": ["ADR-0009"],
+    "requiredAgents": [
+      "implementer"
+    ],
+    "requiredArtifacts": [
+      "ADR-0009"
+    ],
     "approvalRequired": true,
     "promptPath": "docs/prompts/00-p0-5-repo-work-guard-session-lock.md",
     "reportPath": "docs/build/work-guard-build-report.md",
@@ -186,15 +250,24 @@
     "name": "P0 Event System + SSE + Live Dashboard",
     "description": "Real-time event streaming for pipeline execution with server-sent events.",
     "status": "completed",
-    "dependencies": ["P0-pipeline-dag"],
+    "dependencies": [
+      "P0-pipeline-dag"
+    ],
     "blockedBy": [],
-    "blocks": ["P1-build-studio"],
+    "blocks": [
+      "P1-build-studio"
+    ],
     "riskLevel": "medium",
     "estimatedComplexity": "L",
     "estimatedContextRequired": "high",
-    "expectedFiles": ["engine/events.py", "dashboard/pages/bootstrap.html"],
+    "expectedFiles": [
+      "engine/events.py",
+      "dashboard/pages/bootstrap.html"
+    ],
     "allowedParallelism": false,
-    "requiredAgents": ["implementer"],
+    "requiredAgents": [
+      "implementer"
+    ],
     "requiredArtifacts": [],
     "approvalRequired": false,
     "promptPath": null,
@@ -211,16 +284,28 @@
     "name": "Build Studio MVP",
     "description": "Full build studio replacing the bootstrap console with persistent project management.",
     "status": "completed",
-    "dependencies": ["P0-pipeline-dag", "P0-events"],
+    "dependencies": [
+      "P0-pipeline-dag",
+      "P0-events"
+    ],
     "blockedBy": [],
     "blocks": [],
     "riskLevel": "high",
     "estimatedComplexity": "XL",
     "estimatedContextRequired": "high",
-    "expectedFiles": ["dashboard/pages/build-studio.html"],
+    "expectedFiles": [
+      "dashboard/pages/build-studio.html"
+    ],
     "allowedParallelism": false,
-    "requiredAgents": ["architect", "implementer", "reviewer"],
-    "requiredArtifacts": ["Topic 01 synthesis", "Topic 02 synthesis"],
+    "requiredAgents": [
+      "architect",
+      "implementer",
+      "reviewer"
+    ],
+    "requiredArtifacts": [
+      "Topic 01 synthesis",
+      "Topic 02 synthesis"
+    ],
     "approvalRequired": true,
     "promptPath": "conductor_platform_build_pack_v5/conductor_platform_build_pack_v5/docs/prompts/P1-build-studio-mvp.md",
     "reportPath": "docs/build/p1-build-studio-build-report.md",
@@ -236,16 +321,25 @@
     "name": "Product Onboarding Studio + Decision Simulator",
     "description": "AI-guided product onboarding questionnaire and budget/timeline/feature decision simulator.",
     "status": "completed",
-    "dependencies": ["P1-build-studio"],
+    "dependencies": [
+      "P1-build-studio"
+    ],
     "blockedBy": [],
     "blocks": [],
     "riskLevel": "medium",
     "estimatedComplexity": "XL",
     "estimatedContextRequired": "high",
-    "expectedFiles": ["dashboard/pages/onboarding-studio.html"],
+    "expectedFiles": [
+      "dashboard/pages/onboarding-studio.html"
+    ],
     "allowedParallelism": false,
-    "requiredAgents": ["architect", "implementer"],
-    "requiredArtifacts": ["Topic 03 synthesis"],
+    "requiredAgents": [
+      "architect",
+      "implementer"
+    ],
+    "requiredArtifacts": [
+      "Topic 03 synthesis"
+    ],
     "approvalRequired": true,
     "promptPath": "conductor_platform_build_pack_v5/conductor_platform_build_pack_v5/docs/prompts/P2-product-onboarding-studio.md",
     "reportPath": "docs/build/p2-product-onboarding-studio-build-report.md",
@@ -262,16 +356,31 @@
     "description": "Machine-executable phase template schema, variable injection, execution queue with priority/concurrency, and phase runner UI integrated into Build Studio.",
     "status": "not_started",
     "priority": "P3",
-    "dependencies": ["P2-onboarding"],
+    "dependencies": [
+      "P2-onboarding"
+    ],
     "blockedBy": [],
-    "blocks": ["P4-agent-runtime"],
+    "blocks": [
+      "P4-agent-runtime"
+    ],
     "riskLevel": "medium",
     "estimatedComplexity": "XL",
     "estimatedContextRequired": "high",
-    "expectedFiles": ["engine/templates.py", "engine/queue.py", "dashboard/pages/phase-runner.html", "config/template-schema.json"],
+    "expectedFiles": [
+      "engine/templates.py",
+      "engine/queue.py",
+      "dashboard/pages/phase-runner.html",
+      "config/template-schema.json"
+    ],
     "allowedParallelism": false,
-    "requiredAgents": ["architect", "implementer", "reviewer"],
-    "requiredArtifacts": ["Topic 02 synthesis"],
+    "requiredAgents": [
+      "architect",
+      "implementer",
+      "reviewer"
+    ],
+    "requiredArtifacts": [
+      "Topic 02 synthesis"
+    ],
     "approvalRequired": true,
     "promptPath": "docs/prompts/P3-phase-template-os-execution-queue.md",
     "reportPath": null,
@@ -279,8 +388,13 @@
     "activeSessionId": null,
     "canRunInParallel": false,
     "parallelizationReason": "Modifies engine execution model — must be serialized",
-    "relatedDecisions": ["DEC-003", "DEC-004"],
-    "relatedResearchTopics": ["Topic 02"],
+    "relatedDecisions": [
+      "DEC-003",
+      "DEC-004"
+    ],
+    "relatedResearchTopics": [
+      "Topic 02"
+    ],
     "decisionGating": {
       "DEC-003": "Approved 2026-05-19 — worktree model confirmed for template execution isolation",
       "DEC-004": "Approved 2026-05-19 — JSONL event persistence confirmed for execution audit trail"
@@ -294,16 +408,32 @@
     "description": "Agent registry, dispatch engine, per-task worktree isolation, merge queue, and agent status UI. Enables autonomous multi-agent execution through the pipeline engine.",
     "status": "not_started",
     "priority": "P4",
-    "dependencies": ["P3-phase-template-os"],
+    "dependencies": [
+      "P3-phase-template-os"
+    ],
     "blockedBy": [],
-    "blocks": ["P5-context-memory", "P12-infrastructure-deploy"],
+    "blocks": [
+      "P5-context-memory",
+      "P12-infrastructure-deploy"
+    ],
     "riskLevel": "high",
     "estimatedComplexity": "XL",
     "estimatedContextRequired": "high",
-    "expectedFiles": ["engine/agents.py", "engine/worktrees.py", "agents/*.md", "dashboard/pages/agent-runtime.html"],
+    "expectedFiles": [
+      "engine/agents.py",
+      "engine/worktrees.py",
+      "agents/*.md",
+      "dashboard/pages/agent-runtime.html"
+    ],
     "allowedParallelism": false,
-    "requiredAgents": ["architect", "implementer", "reviewer"],
-    "requiredArtifacts": ["Topic 02 synthesis"],
+    "requiredAgents": [
+      "architect",
+      "implementer",
+      "reviewer"
+    ],
+    "requiredArtifacts": [
+      "Topic 02 synthesis"
+    ],
     "approvalRequired": true,
     "promptPath": "docs/prompts/P4-agent-runtime-parallel-worktree.md",
     "reportPath": null,
@@ -311,8 +441,12 @@
     "activeSessionId": null,
     "canRunInParallel": false,
     "parallelizationReason": "Core execution layer — must be serialized",
-    "relatedDecisions": ["DEC-003"],
-    "relatedResearchTopics": ["Topic 02"],
+    "relatedDecisions": [
+      "DEC-003"
+    ],
+    "relatedResearchTopics": [
+      "Topic 02"
+    ],
     "decisionGating": {
       "DEC-003": "Must be approved — worktree isolation model is the foundation of this phase"
     },
@@ -325,16 +459,34 @@
     "description": "Memory ledger (candidate lifecycle), context retrieval engine, embedding pipeline, project context packs, and memory governance UI. Moved up from master sequence position 11 — research already synthesized.",
     "status": "not_started",
     "priority": "P5",
-    "dependencies": ["P4-agent-runtime"],
+    "dependencies": [
+      "P4-agent-runtime"
+    ],
     "blockedBy": [],
-    "blocks": ["P7-security-foundation", "P11-market-intelligence", "P13-self-improvement"],
+    "blocks": [
+      "P7-security-foundation",
+      "P11-market-intelligence",
+      "P13-self-improvement"
+    ],
     "riskLevel": "high",
     "estimatedComplexity": "XL",
     "estimatedContextRequired": "high",
-    "expectedFiles": ["engine/context.py", "engine/memory.py", "config/memory-policy.json", "dashboard/pages/context-memory.html"],
+    "expectedFiles": [
+      "engine/context.py",
+      "engine/memory.py",
+      "config/memory-policy.json",
+      "dashboard/pages/context-memory.html"
+    ],
     "allowedParallelism": false,
-    "requiredAgents": ["architect", "implementer", "reviewer"],
-    "requiredArtifacts": ["Topic 05 synthesis", "Topic 08 synthesis"],
+    "requiredAgents": [
+      "architect",
+      "implementer",
+      "reviewer"
+    ],
+    "requiredArtifacts": [
+      "Topic 05 synthesis",
+      "Topic 08 synthesis"
+    ],
     "approvalRequired": true,
     "promptPath": "docs/prompts/P5-context-memory-core-mvp.md",
     "reportPath": null,
@@ -342,8 +494,16 @@
     "activeSessionId": null,
     "canRunInParallel": false,
     "parallelizationReason": "Foundational data layer — must be serialized",
-    "relatedDecisions": ["DEC-005", "DEC-006", "DEC-007", "DEC-008"],
-    "relatedResearchTopics": ["Topic 05", "Topic 08"],
+    "relatedDecisions": [
+      "DEC-005",
+      "DEC-006",
+      "DEC-007",
+      "DEC-008"
+    ],
+    "relatedResearchTopics": [
+      "Topic 05",
+      "Topic 08"
+    ],
     "decisionGating": {
       "DEC-005": "Must be approved — vector store technology choice drives implementation",
       "DEC-006": "Should be approved — wiki repo role affects context ingestion design",
@@ -359,15 +519,21 @@
     "description": "Dashboard page for managing research topics, decision records, syntheses, and approval workflows. Lightweight governance surface for the growing decision corpus.",
     "status": "not_started",
     "priority": "P6",
-    "dependencies": ["P1-build-studio"],
+    "dependencies": [
+      "P1-build-studio"
+    ],
     "blockedBy": [],
     "blocks": [],
     "riskLevel": "low",
     "estimatedComplexity": "L",
     "estimatedContextRequired": "medium",
-    "expectedFiles": ["dashboard/pages/research-hub.html"],
+    "expectedFiles": [
+      "dashboard/pages/research-hub.html"
+    ],
     "allowedParallelism": true,
-    "requiredAgents": ["implementer"],
+    "requiredAgents": [
+      "implementer"
+    ],
     "requiredArtifacts": [],
     "approvalRequired": false,
     "promptPath": null,
@@ -388,16 +554,35 @@
     "description": "Tenant hierarchy (tenant → org → workspace → project), RLS policies, principal types (internal/portal/agent/service/connector), audit trail, and secrets broker abstraction.",
     "status": "not_started",
     "priority": "P7",
-    "dependencies": ["P5-context-memory"],
+    "dependencies": [
+      "P5-context-memory"
+    ],
     "blockedBy": [],
-    "blocks": ["P8-client-portal", "P9-trust-access", "P12-infrastructure-deploy", "P14-productization"],
+    "blocks": [
+      "P8-client-portal",
+      "P9-trust-access",
+      "P12-infrastructure-deploy",
+      "P14-productization"
+    ],
     "riskLevel": "high",
     "estimatedComplexity": "XL",
     "estimatedContextRequired": "high",
-    "expectedFiles": ["engine/tenants.py", "engine/rls.py", "engine/audit.py", "config/tenant-policy.json"],
+    "expectedFiles": [
+      "engine/tenants.py",
+      "engine/rls.py",
+      "engine/audit.py",
+      "config/tenant-policy.json"
+    ],
     "allowedParallelism": false,
-    "requiredAgents": ["architect", "implementer", "reviewer"],
-    "requiredArtifacts": ["Topic 01 synthesis", "Topic 06 synthesis"],
+    "requiredAgents": [
+      "architect",
+      "implementer",
+      "reviewer"
+    ],
+    "requiredArtifacts": [
+      "Topic 01 synthesis",
+      "Topic 06 synthesis"
+    ],
     "approvalRequired": true,
     "promptPath": null,
     "reportPath": null,
@@ -405,8 +590,14 @@
     "activeSessionId": null,
     "canRunInParallel": false,
     "parallelizationReason": "Security layer — must be serialized before any client-facing features",
-    "relatedDecisions": ["DEC-001", "DEC-002"],
-    "relatedResearchTopics": ["Topic 01", "Topic 06"],
+    "relatedDecisions": [
+      "DEC-001",
+      "DEC-002"
+    ],
+    "relatedResearchTopics": [
+      "Topic 01",
+      "Topic 06"
+    ],
     "decisionGating": {
       "DEC-001": "Must be approved — tenancy model is the foundation of this phase",
       "DEC-002": "Must be approved — secrets management drives the broker abstraction"
@@ -420,16 +611,30 @@
     "description": "Client-facing portal with artifact requests, credential submissions (via vault flow), roadmap view, decision log, approval workflows, release notes, and audit ledger. Clients see only portal_safe/client_visible data.",
     "status": "not_started",
     "priority": "P8",
-    "dependencies": ["P7-security-foundation"],
+    "dependencies": [
+      "P7-security-foundation"
+    ],
     "blockedBy": [],
-    "blocks": ["P9-trust-access", "P11-market-intelligence"],
+    "blocks": [
+      "P9-trust-access",
+      "P11-market-intelligence"
+    ],
     "riskLevel": "high",
     "estimatedComplexity": "XL",
     "estimatedContextRequired": "high",
-    "expectedFiles": ["engine/portal.py", "dashboard/pages/client-portal.html"],
+    "expectedFiles": [
+      "engine/portal.py",
+      "dashboard/pages/client-portal.html"
+    ],
     "allowedParallelism": false,
-    "requiredAgents": ["architect", "implementer", "reviewer"],
-    "requiredArtifacts": ["Topic 01 synthesis"],
+    "requiredAgents": [
+      "architect",
+      "implementer",
+      "reviewer"
+    ],
+    "requiredArtifacts": [
+      "Topic 01 synthesis"
+    ],
     "approvalRequired": true,
     "promptPath": null,
     "reportPath": null,
@@ -437,8 +642,13 @@
     "activeSessionId": null,
     "canRunInParallel": false,
     "parallelizationReason": "Depends on security foundation — must be serialized",
-    "relatedDecisions": ["DEC-001"],
-    "relatedResearchTopics": ["Topic 01", "Topic 03"],
+    "relatedDecisions": [
+      "DEC-001"
+    ],
+    "relatedResearchTopics": [
+      "Topic 01",
+      "Topic 03"
+    ],
     "decisionGating": {
       "DEC-001": "Already required by P7 — tenancy model must be in place"
     },
@@ -451,16 +661,32 @@
     "description": "Progressive 5-level access model (manual intake → docs → metadata → read-only → managed execution), vault/OAuth credential flow, access validation, and trust-level UI.",
     "status": "not_started",
     "priority": "P9",
-    "dependencies": ["P7-security-foundation", "P8-client-portal"],
+    "dependencies": [
+      "P7-security-foundation",
+      "P8-client-portal"
+    ],
     "blockedBy": [],
-    "blocks": ["P10-data-modernization"],
+    "blocks": [
+      "P10-data-modernization"
+    ],
     "riskLevel": "high",
     "estimatedComplexity": "XL",
     "estimatedContextRequired": "high",
-    "expectedFiles": ["engine/access.py", "engine/vault.py", "config/access-levels.json", "dashboard/pages/access-manager.html"],
+    "expectedFiles": [
+      "engine/access.py",
+      "engine/vault.py",
+      "config/access-levels.json",
+      "dashboard/pages/access-manager.html"
+    ],
     "allowedParallelism": false,
-    "requiredAgents": ["architect", "implementer", "reviewer"],
-    "requiredArtifacts": ["Topic 06 synthesis"],
+    "requiredAgents": [
+      "architect",
+      "implementer",
+      "reviewer"
+    ],
+    "requiredArtifacts": [
+      "Topic 06 synthesis"
+    ],
     "approvalRequired": true,
     "promptPath": null,
     "reportPath": null,
@@ -468,8 +694,12 @@
     "activeSessionId": null,
     "canRunInParallel": false,
     "parallelizationReason": "Depends on security + portal — must be serialized",
-    "relatedDecisions": ["DEC-002"],
-    "relatedResearchTopics": ["Topic 06"],
+    "relatedDecisions": [
+      "DEC-002"
+    ],
+    "relatedResearchTopics": [
+      "Topic 06"
+    ],
     "decisionGating": {
       "DEC-002": "Must be implemented — secrets management drives vault integration"
     },
@@ -482,16 +712,32 @@
     "description": "Migration planning: current-state inventory, source/pipeline/warehouse/dashboard audit, artifact gap register, scenario simulation, parity tests, dual-run, cutover, rollback, and operations monitoring. ALDC proof case.",
     "status": "not_started",
     "priority": "P10",
-    "dependencies": ["P9-trust-access"],
-    "blockedBy": ["service-inventory"],
-    "blocks": ["P15-ceo-rebuild"],
+    "dependencies": [
+      "P9-trust-access"
+    ],
+    "blockedBy": [
+      "service-inventory"
+    ],
+    "blocks": [
+      "P15-ceo-rebuild"
+    ],
     "riskLevel": "high",
     "estimatedComplexity": "XXL",
     "estimatedContextRequired": "high",
-    "expectedFiles": ["engine/migration.py", "dashboard/pages/data-modernization.html", "templates/migration-pipeline.yaml"],
+    "expectedFiles": [
+      "engine/migration.py",
+      "dashboard/pages/data-modernization.html",
+      "templates/migration-pipeline.yaml"
+    ],
     "allowedParallelism": false,
-    "requiredAgents": ["architect", "implementer", "reviewer"],
-    "requiredArtifacts": ["Topic 04 synthesis"],
+    "requiredAgents": [
+      "architect",
+      "implementer",
+      "reviewer"
+    ],
+    "requiredArtifacts": [
+      "Topic 04 synthesis"
+    ],
     "approvalRequired": true,
     "promptPath": null,
     "reportPath": null,
@@ -500,7 +746,9 @@
     "canRunInParallel": false,
     "parallelizationReason": "End-to-end migration workflow — must be serialized",
     "relatedDecisions": [],
-    "relatedResearchTopics": ["Topic 04"],
+    "relatedResearchTopics": [
+      "Topic 04"
+    ],
     "decisionGating": {},
     "lastUpdated": "2026-05-19",
     "nextRecommendedAction": null
@@ -511,16 +759,29 @@
     "description": "Competitor discovery, feature comparison, market gap analysis, persona discovery, positioning, pricing models, GTM planning, growth experiments, and compliance-aware marketing.",
     "status": "not_started",
     "priority": "P11",
-    "dependencies": ["P8-client-portal", "P5-context-memory"],
+    "dependencies": [
+      "P8-client-portal",
+      "P5-context-memory"
+    ],
     "blockedBy": [],
-    "blocks": ["P15-ceo-rebuild"],
+    "blocks": [
+      "P15-ceo-rebuild"
+    ],
     "riskLevel": "medium",
     "estimatedComplexity": "XL",
     "estimatedContextRequired": "high",
-    "expectedFiles": ["engine/market.py", "dashboard/pages/market-intelligence.html"],
+    "expectedFiles": [
+      "engine/market.py",
+      "dashboard/pages/market-intelligence.html"
+    ],
     "allowedParallelism": true,
-    "requiredAgents": ["architect", "implementer"],
-    "requiredArtifacts": ["Topic 07 synthesis"],
+    "requiredAgents": [
+      "architect",
+      "implementer"
+    ],
+    "requiredArtifacts": [
+      "Topic 07 synthesis"
+    ],
     "approvalRequired": true,
     "promptPath": null,
     "reportPath": null,
@@ -529,7 +790,9 @@
     "canRunInParallel": true,
     "parallelizationReason": "Independent feature — can parallelize with P9-P10 if dependencies met",
     "relatedDecisions": [],
-    "relatedResearchTopics": ["Topic 07"],
+    "relatedResearchTopics": [
+      "Topic 07"
+    ],
     "decisionGating": {},
     "lastUpdated": "2026-05-19",
     "nextRecommendedAction": null
@@ -540,15 +803,30 @@
     "description": "IaC placeholders, environment design, staging deploy, smoke tests, production approval, rollback automation, sandbox execution isolation, observability, incident readiness, and operations dashboards.",
     "status": "not_started",
     "priority": "P12",
-    "dependencies": ["P4-agent-runtime", "P7-security-foundation"],
+    "dependencies": [
+      "P4-agent-runtime",
+      "P7-security-foundation"
+    ],
     "blockedBy": [],
-    "blocks": ["P13-self-improvement", "P14-productization"],
+    "blocks": [
+      "P13-self-improvement",
+      "P14-productization"
+    ],
     "riskLevel": "high",
     "estimatedComplexity": "XL",
     "estimatedContextRequired": "high",
-    "expectedFiles": ["engine/sandbox.py", "engine/deploy.py", "config/environments.json", "dashboard/pages/operations.html"],
+    "expectedFiles": [
+      "engine/sandbox.py",
+      "engine/deploy.py",
+      "config/environments.json",
+      "dashboard/pages/operations.html"
+    ],
     "allowedParallelism": true,
-    "requiredAgents": ["architect", "implementer", "reviewer"],
+    "requiredAgents": [
+      "architect",
+      "implementer",
+      "reviewer"
+    ],
     "requiredArtifacts": [],
     "approvalRequired": true,
     "promptPath": null,
@@ -569,16 +847,31 @@
     "description": "Memory evaluation gates, prompt optimization candidates, quality regression testing, no-regression enforcement, quarantine for rejected improvements, and improvement analytics.",
     "status": "not_started",
     "priority": "P13",
-    "dependencies": ["P5-context-memory", "P12-infrastructure-deploy"],
+    "dependencies": [
+      "P5-context-memory",
+      "P12-infrastructure-deploy"
+    ],
     "blockedBy": [],
-    "blocks": ["P15-ceo-rebuild"],
+    "blocks": [
+      "P15-ceo-rebuild"
+    ],
     "riskLevel": "high",
     "estimatedComplexity": "XL",
     "estimatedContextRequired": "high",
-    "expectedFiles": ["engine/self_improve.py", "engine/evaluation.py", "config/evaluation-policy.json"],
+    "expectedFiles": [
+      "engine/self_improve.py",
+      "engine/evaluation.py",
+      "config/evaluation-policy.json"
+    ],
     "allowedParallelism": false,
-    "requiredAgents": ["architect", "implementer", "reviewer"],
-    "requiredArtifacts": ["Topic 05 synthesis"],
+    "requiredAgents": [
+      "architect",
+      "implementer",
+      "reviewer"
+    ],
+    "requiredArtifacts": [
+      "Topic 05 synthesis"
+    ],
     "approvalRequired": true,
     "promptPath": null,
     "reportPath": null,
@@ -586,8 +879,13 @@
     "activeSessionId": null,
     "canRunInParallel": false,
     "parallelizationReason": "Depends on memory + infrastructure — must be serialized",
-    "relatedDecisions": ["DEC-009", "DEC-010"],
-    "relatedResearchTopics": ["Topic 05"],
+    "relatedDecisions": [
+      "DEC-009",
+      "DEC-010"
+    ],
+    "relatedResearchTopics": [
+      "Topic 05"
+    ],
     "decisionGating": {
       "DEC-009": "Must be approved — extraction trigger model defines the improvement pipeline",
       "DEC-010": "Must be approved — evaluation harness scope defines quality gate depth"
@@ -601,16 +899,33 @@
     "description": "SaaS packaging: tenant provisioning automation, billing/usage hooks, onboarding flow automation, white-label capability, API key management, and usage dashboards.",
     "status": "not_started",
     "priority": "P14",
-    "dependencies": ["P7-security-foundation", "P12-infrastructure-deploy"],
-    "blockedBy": ["compliance-requirements"],
-    "blocks": ["P15-ceo-rebuild"],
+    "dependencies": [
+      "P7-security-foundation",
+      "P12-infrastructure-deploy"
+    ],
+    "blockedBy": [
+      "compliance-requirements"
+    ],
+    "blocks": [
+      "P15-ceo-rebuild"
+    ],
     "riskLevel": "high",
     "estimatedComplexity": "XL",
     "estimatedContextRequired": "high",
-    "expectedFiles": ["engine/saas.py", "config/saas-config.json", "dashboard/pages/admin.html"],
+    "expectedFiles": [
+      "engine/saas.py",
+      "config/saas-config.json",
+      "dashboard/pages/admin.html"
+    ],
     "allowedParallelism": true,
-    "requiredAgents": ["architect", "implementer", "reviewer"],
-    "requiredArtifacts": ["Topic 01 synthesis"],
+    "requiredAgents": [
+      "architect",
+      "implementer",
+      "reviewer"
+    ],
+    "requiredArtifacts": [
+      "Topic 01 synthesis"
+    ],
     "approvalRequired": true,
     "promptPath": null,
     "reportPath": null,
@@ -618,8 +933,12 @@
     "activeSessionId": null,
     "canRunInParallel": true,
     "parallelizationReason": "Packaging track — can parallelize with P10-P11 feature track",
-    "relatedDecisions": ["DEC-001"],
-    "relatedResearchTopics": ["Topic 01"],
+    "relatedDecisions": [
+      "DEC-001"
+    ],
+    "relatedResearchTopics": [
+      "Topic 01"
+    ],
     "decisionGating": {
       "DEC-001": "Must be fully implemented — tenancy model is the foundation of SaaS packaging"
     },
@@ -632,16 +951,29 @@
     "description": "Proof case: use Conductor to rebuild the CEO's enterprise knowledge-base and analytics product end-to-end. Validates the full platform lifecycle from onboarding through deployment.",
     "status": "not_started",
     "priority": "P15",
-    "dependencies": ["P10-data-modernization", "P11-market-intelligence", "P13-self-improvement", "P14-productization"],
+    "dependencies": [
+      "P10-data-modernization",
+      "P11-market-intelligence",
+      "P13-self-improvement",
+      "P14-productization"
+    ],
     "blockedBy": [],
     "blocks": [],
     "riskLevel": "high",
     "estimatedComplexity": "XXL",
     "estimatedContextRequired": "high",
-    "expectedFiles": ["projects/ceo-product/project.json"],
+    "expectedFiles": [
+      "projects/ceo-product/project.json"
+    ],
     "allowedParallelism": false,
-    "requiredAgents": ["architect", "implementer", "reviewer"],
-    "requiredArtifacts": ["All topic syntheses"],
+    "requiredAgents": [
+      "architect",
+      "implementer",
+      "reviewer"
+    ],
+    "requiredArtifacts": [
+      "All topic syntheses"
+    ],
     "approvalRequired": true,
     "promptPath": null,
     "reportPath": null,
@@ -649,10 +981,328 @@
     "activeSessionId": null,
     "canRunInParallel": false,
     "parallelizationReason": "Capstone phase — depends on all platform capabilities",
-    "relatedDecisions": ["DEC-001", "DEC-002", "DEC-003", "DEC-004", "DEC-005", "DEC-006", "DEC-007", "DEC-008", "DEC-009", "DEC-010"],
-    "relatedResearchTopics": ["Topic 01", "Topic 02", "Topic 03", "Topic 04", "Topic 05", "Topic 06", "Topic 07", "Topic 08"],
+    "relatedDecisions": [
+      "DEC-001",
+      "DEC-002",
+      "DEC-003",
+      "DEC-004",
+      "DEC-005",
+      "DEC-006",
+      "DEC-007",
+      "DEC-008",
+      "DEC-009",
+      "DEC-010"
+    ],
+    "relatedResearchTopics": [
+      "Topic 01",
+      "Topic 02",
+      "Topic 03",
+      "Topic 04",
+      "Topic 05",
+      "Topic 06",
+      "Topic 07",
+      "Topic 08"
+    ],
     "decisionGating": {},
     "lastUpdated": "2026-05-19",
     "nextRecommendedAction": null
+  },
+  {
+    "phaseId": "ns-P0",
+    "name": "Marketing + Demo",
+    "project": "neurospect",
+    "status": "in-progress",
+    "dependencies": [],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "M",
+    "riskLevel": "low",
+    "approvalRequired": false,
+    "canRunInParallel": true,
+    "description": "Validate market interest through interactive marketing site, live simulator, ICT course, and EdgeLab demo.",
+    "command": "/ns-phase0",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "ns-P1",
+    "name": "Trading Data Foundation",
+    "project": "neurospect",
+    "status": "completed",
+    "dependencies": [],
+    "blockedBy": [],
+    "blocks": [
+      "ns-P2",
+      "ns-P3"
+    ],
+    "estimatedComplexity": "L",
+    "riskLevel": "medium",
+    "approvalRequired": false,
+    "canRunInParallel": false,
+    "description": "Normalized, verified trading data layer. BrokerAccount model, trade extensions, instrument metadata, CSV import, Tradovate sync.",
+    "command": "/ns-phase1",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "ns-P2",
+    "name": "Trader Workspace",
+    "project": "neurospect",
+    "status": "in-progress",
+    "dependencies": [
+      "ns-P1"
+    ],
+    "blockedBy": [],
+    "blocks": [
+      "ns-P8"
+    ],
+    "estimatedComplexity": "L",
+    "riskLevel": "low",
+    "approvalRequired": false,
+    "canRunInParallel": true,
+    "description": "Daily-use trader workspace: full journal, analytics dashboard, behavior metrics. Free tier engagement layer.",
+    "command": "/ns-phase2",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "ns-P3",
+    "name": "Prop Shield",
+    "project": "neurospect",
+    "status": "completed",
+    "dependencies": [
+      "ns-P1"
+    ],
+    "blockedBy": [],
+    "blocks": [
+      "ns-P4",
+      "ns-P6",
+      "ns-P3-NG"
+    ],
+    "estimatedComplexity": "XL",
+    "riskLevel": "high",
+    "approvalRequired": true,
+    "canRunInParallel": true,
+    "description": "Prop firm rule tracking, trailing drawdown monitoring, tilt lockouts, Stripe billing. FIRST REVENUE.",
+    "command": "/ns-phase3",
+    "revenueEvent": "Mentor $29/mo, Trader $99/mo",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "ns-P4",
+    "name": "ICT Event Intelligence",
+    "project": "neurospect",
+    "status": "running",
+    "dependencies": [
+      "ns-P3"
+    ],
+    "blockedBy": [],
+    "blocks": [
+      "ns-P5A"
+    ],
+    "estimatedComplexity": "XL",
+    "riskLevel": "high",
+    "approvalRequired": false,
+    "canRunInParallel": false,
+    "description": "Programmable ICT event detection: FVGs, sweeps, order blocks, market structure, sessions as queryable events.",
+    "command": "/ns-phase4",
+    "lastUpdated": "2026-05-23",
+    "activeSessionId": "pipe_22f59ee0"
+  },
+  {
+    "phaseId": "ns-P5A",
+    "name": "EdgeLab Core — Engine",
+    "project": "neurospect",
+    "status": "planned",
+    "dependencies": [
+      "ns-P4"
+    ],
+    "blockedBy": [],
+    "blocks": [
+      "ns-P5B"
+    ],
+    "estimatedComplexity": "XL",
+    "riskLevel": "high",
+    "approvalRequired": false,
+    "canRunInParallel": false,
+    "description": "Event-driven backtesting engine and data pipeline.",
+    "command": "/ns-phase5a",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "ns-P5B",
+    "name": "EdgeLab Core — Detectors",
+    "project": "neurospect",
+    "status": "planned",
+    "dependencies": [
+      "ns-P5A"
+    ],
+    "blockedBy": [],
+    "blocks": [
+      "ns-P5C"
+    ],
+    "estimatedComplexity": "L",
+    "riskLevel": "medium",
+    "approvalRequired": false,
+    "canRunInParallel": false,
+    "description": "Detectors, statistical framework, and feature engineering.",
+    "command": "/ns-phase5b",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "ns-P5C",
+    "name": "EdgeLab Core — Dashboard",
+    "project": "neurospect",
+    "status": "planned",
+    "dependencies": [
+      "ns-P5B"
+    ],
+    "blockedBy": [],
+    "blocks": [
+      "ns-P7",
+      "ns-P11"
+    ],
+    "estimatedComplexity": "L",
+    "riskLevel": "medium",
+    "approvalRequired": false,
+    "canRunInParallel": false,
+    "description": "Dashboard, null test, experiment registry. Research $199/mo.",
+    "command": "/ns-phase5c",
+    "revenueEvent": "Research $199/mo",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "ns-P6",
+    "name": "AI Trade Review + RAG",
+    "project": "neurospect",
+    "status": "in-progress",
+    "dependencies": [
+      "ns-P3"
+    ],
+    "blockedBy": [],
+    "blocks": [
+      "ns-P7"
+    ],
+    "estimatedComplexity": "XL",
+    "riskLevel": "high",
+    "approvalRequired": false,
+    "canRunInParallel": true,
+    "description": "NeuroCore hybrid retrieval and Mentor upgrade to multi-turn chat with citations.",
+    "command": "/ns-phase6",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "ns-P7",
+    "name": "Edge Forensics",
+    "project": "neurospect",
+    "status": "planned",
+    "dependencies": [
+      "ns-P5C",
+      "ns-P6"
+    ],
+    "blockedBy": [],
+    "blocks": [
+      "ns-P8"
+    ],
+    "estimatedComplexity": "L",
+    "riskLevel": "medium",
+    "approvalRequired": false,
+    "canRunInParallel": false,
+    "description": "Loss pattern mining, mistake taxonomy, hypothesis generation.",
+    "command": "/ns-phase7",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "ns-P8",
+    "name": "NeuroScore + Leaderboard",
+    "project": "neurospect",
+    "status": "planned",
+    "dependencies": [
+      "ns-P2",
+      "ns-P7"
+    ],
+    "blockedBy": [],
+    "blocks": [
+      "ns-P9"
+    ],
+    "estimatedComplexity": "L",
+    "riskLevel": "high",
+    "approvalRequired": true,
+    "canRunInParallel": false,
+    "description": "Risk-adjusted trader ranking. Broker-verified trades only. Quant $349/mo.",
+    "command": "/ns-phase8",
+    "revenueEvent": "Quant $349/mo",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "ns-P9",
+    "name": "NeuroFund Elite Rewards",
+    "project": "neurospect",
+    "status": "planned",
+    "dependencies": [
+      "ns-P8"
+    ],
+    "blockedBy": [],
+    "blocks": [
+      "ns-P10"
+    ],
+    "estimatedComplexity": "L",
+    "riskLevel": "high",
+    "approvalRequired": true,
+    "canRunInParallel": false,
+    "description": "Company-sponsored rewards and eligibility program. Compliance-critical.",
+    "command": "/ns-phase9",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "ns-P10",
+    "name": "Allocation Watchlist",
+    "project": "neurospect",
+    "status": "in-progress",
+    "dependencies": [
+      "ns-P9"
+    ],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "M",
+    "riskLevel": "medium",
+    "approvalRequired": true,
+    "canRunInParallel": false,
+    "description": "Internal workflow for trader challenge sponsorships and allocation consideration.",
+    "command": "/ns-phase10",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "ns-P11",
+    "name": "Advanced ML Research",
+    "project": "neurospect",
+    "status": "planned",
+    "dependencies": [
+      "ns-P5C"
+    ],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "XL",
+    "riskLevel": "high",
+    "approvalRequired": true,
+    "canRunInParallel": false,
+    "description": "NSLM evaluation, hybrid models + regime detection, NeuroQuant + NeuroTrader shadow mode.",
+    "command": "/ns-phase11",
+    "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "ns-P3-NG",
+    "name": "NeuroGraph",
+    "project": "neurospect",
+    "status": "in-progress",
+    "dependencies": [
+      "ns-P3"
+    ],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "XL",
+    "riskLevel": "high",
+    "approvalRequired": false,
+    "canRunInParallel": true,
+    "description": "Persistent trading intelligence graph. Plan-mode-first: data source mapping, schema design, seed strategy.",
+    "command": "/ns-phase3-neurograph",
+    "lastUpdated": "2026-05-23"
   }
 ]

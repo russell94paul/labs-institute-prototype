@@ -41,8 +41,11 @@ def _phase_map(phases: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
     return {p["phaseId"]: p for p in phases}
 
 
-def get_all_phases() -> List[Dict[str, Any]]:
-    return _load_phases()
+def get_all_phases(project: Optional[str] = None) -> List[Dict[str, Any]]:
+    phases = _load_phases()
+    if project:
+        return [p for p in phases if p.get("project") == project]
+    return phases
 
 
 def get_phase(phase_id: str) -> Optional[Dict[str, Any]]:

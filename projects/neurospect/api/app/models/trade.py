@@ -3,13 +3,14 @@ from datetime import date, datetime
 from decimal import Decimal
 
 from sqlalchemy import BigInteger, Boolean, Date, DateTime, Enum as SAEnum, ForeignKey, Integer, Numeric, String, Text, func
-from sqlalchemy.dialects.postgresql import ARRAY, UUID
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base
 from app.models.enums import (
     BiasType,
     DisplacementType,
+    EmotionType,
     GradeType,
     KillZoneType,
     OppType,
@@ -89,6 +90,15 @@ class Trade(Base):
         SAEnum(GradeType, name="grade_type", create_type=False)
     )
     post_trade_notes: Mapped[str | None] = mapped_column(Text)
+
+    # Journal enhancements (Phase 2)
+    emotion_tags: Mapped[list[str] | None] = mapped_column(ARRAY(String))
+    pre_trade_checklist: Mapped[dict | None] = mapped_column(JSONB)
+    setup_notes: Mapped[str | None] = mapped_column(Text)
+    execution_notes: Mapped[str | None] = mapped_column(Text)
+    risk_notes: Mapped[str | None] = mapped_column(Text)
+    psychology_notes: Mapped[str | None] = mapped_column(Text)
+    lesson_learned: Mapped[str | None] = mapped_column(Text)
 
     # Dollar P&L from fill sync (populated by Tradovate fill apply; used by Prop Shield rule engine)
     pnl_usd: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))

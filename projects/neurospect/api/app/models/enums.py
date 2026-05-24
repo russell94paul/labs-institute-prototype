@@ -80,6 +80,15 @@ class TradeStatus(str, enum.Enum):
     closed = "closed"
 
 
+class EmotionType(str, enum.Enum):
+    confident = "confident"
+    fearful = "fearful"
+    greedy = "greedy"
+    patient = "patient"
+    impulsive = "impulsive"
+    revenge = "revenge"
+
+
 class CoachingEventStatus(str, enum.Enum):
     pending = "pending"
     complete = "complete"
