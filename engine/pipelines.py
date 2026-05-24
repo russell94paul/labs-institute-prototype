@@ -650,6 +650,9 @@ def get_pipeline(pid: str) -> Optional[Dict[str, Any]]:
         return dict(p) if p else None
 
 
+_STATUS_ORDER = {"running": 0, "pending": 1, "completed": 2, "failed": 3, "rolled_back": 4, "cancelled": 5}
+
+
 def list_pipelines(
     project_slug: Optional[str] = None,
     status: Optional[str] = None,
@@ -660,6 +663,10 @@ def list_pipelines(
         result = [p for p in result if p.get("project_slug") == project_slug]
     if status:
         result = [p for p in result if p.get("status") == status]
+    result.sort(key=lambda p: (
+        _STATUS_ORDER.get(p.get("status", ""), 9),
+        -(p.get("created_at") or ""),
+    ))
     return result
 
 

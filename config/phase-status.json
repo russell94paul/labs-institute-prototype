@@ -1011,7 +1011,7 @@
     "phaseId": "ns-P0",
     "name": "Marketing + Demo",
     "project": "neurospect",
-    "status": "in-progress",
+    "status": "running",
     "dependencies": [],
     "blockedBy": [],
     "blocks": [],
@@ -1021,7 +1021,8 @@
     "canRunInParallel": true,
     "description": "Validate market interest through interactive marketing site, live simulator, ICT course, and EdgeLab demo.",
     "command": "/ns-phase0",
-    "lastUpdated": "2026-05-23"
+    "lastUpdated": "2026-05-23",
+    "activeSessionId": "pipe_c7d29624"
   },
   {
     "phaseId": "ns-P1",

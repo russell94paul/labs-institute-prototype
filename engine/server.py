@@ -694,6 +694,11 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
         if not phase or phase.get("project") != slug:
             return self._send_error_json(404, f"Phase {phase_id} not found in project {slug}")
 
+        existing = pipelines.list_pipelines(project_slug=slug, status="running")
+        for p in existing:
+            if phase_id in p.get("name", ""):
+                return self._send_error_json(409, f"Phase {phase_id} already has a running pipeline: {p['id']}")
+
         body = self._json_body() or {}
 
         project_path = REPO_ROOT / "projects" / slug

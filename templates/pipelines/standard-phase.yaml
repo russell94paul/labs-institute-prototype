@@ -1,5 +1,5 @@
 name: "Standard Phase Pipeline"
-description: "Plan, implement, test, review gate, deploy — the default pipeline for any phase."
+description: "Plan, review plan, implement, test, review code, deploy — gated pipeline for any phase."
 
 stages:
   - name: plan
@@ -24,6 +24,13 @@ stages:
 
       {phase_readme}
 
+  - name: plan-review
+    label: "Review Plan"
+    type: gate
+    gate_type: manual
+    auto_advance: true
+    depends_on: [plan]
+
   - name: implement
     label: "Implement Deliverables"
     type: claude-p
@@ -32,7 +39,7 @@ stages:
     budget_usd: 8.0
     timeout_min: 90
     auto_advance: true
-    depends_on: [plan]
+    depends_on: [plan-review]
     prompt_template: |
       Implement the deliverables for Phase {phase_number}: {phase_name}.
       Follow the plan from the previous stage. Read existing code first to understand patterns.
