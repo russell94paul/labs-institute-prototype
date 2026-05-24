@@ -286,6 +286,9 @@
 
     /* ===== MOBILE ===== */
     @media(max-width:768px){
+        /* Prevent any horizontal scroll on the page */
+        .L{overflow-x:hidden}
+
         /* Top bar — wrap into rows, scroll tabs */
         .L-top{padding:8px 12px;height:auto;flex-wrap:wrap;gap:6px}
         .L-brand{font-size:.52rem}
