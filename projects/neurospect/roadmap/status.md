@@ -9,7 +9,7 @@ updated: 2026-05-23
 |---|---|---|---|---|---|---|---|
 | 0 | Marketing + Demo | — | in_progress | Paul | Waitlist | 2026-05-10 | — |
 | 1 | Trading Data Foundation | Trader Workspace | complete | Paul | — | 2026-05-10 | 2026-05-13 |
-| 2 | Trader Workspace | Trader Workspace | in_progress | Paul | — | 2026-05-10 | — |
+| 2 | Trader Workspace | Trader Workspace | complete | Paul | — | 2026-05-10 | 2026-05-24 |
 | 3 | Prop Shield | Prop Shield | complete | Paul | **Mentor $29 / Trader $99** | 2026-05-10 | 2026-05-13 |
 | 4 | ICT Event Intelligence | ICT Event Engine | not_started | — | — | — | — |
 | 5 | EdgeLab Core (5A/5B/5C) | EdgeLab | not_started | — | Research $199 | — | — |
@@ -55,7 +55,7 @@ Phase 0 (Marketing)
 
 **Phase 0 (Marketing + Demo)** is active. Phase 0A (marketing site, interactive demos, product guide) is substantially complete. Phase 0B (CI/CD, Sentry, data model audit) has not started.
 
-**Phase 2 (Trader Workspace)** is partially complete — analytics backend and dashboard/trades pages exist, but full journal and behavior metrics dashboard are not yet built.
+**Phase 2 (Trader Workspace)** is complete — journal fields, analytics dashboard (behavior metrics, tilt scoring, consistency charts), and enhanced trader workspace shipped 2026-05-24. Build passes (tsc + vite).
 
 **Phase 6 (AI Trade Review)** has partial implementation — coach backend with Claude integration, prompt loading, and trade-to-coach pipeline exist. Full RAG retrieval (NeuroCore) not yet started.
 

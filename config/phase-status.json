@@ -1047,7 +1047,7 @@
     "phaseId": "ns-P2",
     "name": "Trader Workspace",
     "project": "neurospect",
-    "status": "running",
+    "status": "completed",
     "dependencies": [
       "ns-P1"
     ],
@@ -1061,8 +1061,8 @@
     "canRunInParallel": true,
     "description": "Daily-use trader workspace: full journal, analytics dashboard, behavior metrics. Free tier engagement layer.",
     "command": "/ns-phase2",
-    "lastUpdated": "2026-05-23",
-    "activeSessionId": "pipe_acac7485"
+    "lastUpdated": "2026-05-24",
+    "activeSessionId": null
   },
   {
     "phaseId": "ns-P3",
