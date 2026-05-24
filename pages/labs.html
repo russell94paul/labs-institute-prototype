@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
     .L{--wh:#ffffff;--bk:#000;--gy:#999;--lt:#e5e5e5;--bd:rgba(0,0,0,.08);--bd2:rgba(0,0,0,.15);--ac:#888;--gd:#b8960c;--gn:#16a34a;--bl:#2563eb;--rd:#dc2626;--pr:#7c3aed;--ff:'Helvetica Neue',Arial,sans-serif;--mn:'Consolas','Courier New',monospace;--tr:.18em;--ts:.08em;--glow:rgba(56,189,248,.3)}
     .L *{margin:0;padding:0;box-sizing:border-box}
@@ -277,12 +278,170 @@
     .R-intel-title{font-size:.72rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
     .R-intel-flow{font-size:.68rem;color:var(--gy);line-height:2;font-family:var(--mn);background:#fafafa;padding:16px;border-radius:6px}
 
+    /* ===== TABLET ===== */
+    @media(max-width:900px){
+        .S-dj-profile-grid{grid-template-columns:1fr}
+        .S-dj-stats{grid-template-columns:repeat(2,1fr)}
+    }
+
+    /* ===== MOBILE ===== */
     @media(max-width:768px){
-        .L-top{padding:0 16px}.S-hero{height:80vh}.S-marquee-text{font-size:4rem}
-        .S-kpis{grid-template-columns:1fr 1fr}.S-svcs{grid-template-columns:1fr}
-        .S-section{padding:50px 20px}.R-tiers{grid-template-columns:1fr}
-        .R-phase{grid-template-columns:40px 1fr;gap:10px}.R-phase .R-badge{display:none}
+        /* Top bar — wrap into rows, scroll tabs */
+        .L-top{padding:8px 12px;height:auto;flex-wrap:wrap;gap:6px}
+        .L-brand{font-size:.52rem}
+        .L-modes{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;order:3;scrollbar-width:none;gap:0}
+        .L-modes::-webkit-scrollbar{display:none}
+        .L-mode{white-space:nowrap;padding:8px 10px;font-size:.48rem;flex-shrink:0}
+        .L-tagline{display:none}
+
+        /* Hero */
+        .S-hero{height:60vh}
+        .S-marquee-text{font-size:clamp(1.6rem,5vw,3rem)!important}
+        .S-logo-text{font-size:1.2rem!important}
+        .S-float{width:80px;height:80px}
+        .S-float-face{width:50px;height:50px}
+        .S-float-face:nth-child(3){width:45px;height:45px}
+
+        /* Sections */
+        .S-section{padding:40px 16px}
+        .S-section-title{font-size:1.2rem}
+
+        /* KPI bar */
+        .S-kpis{grid-template-columns:1fr 1fr}
+        .S-kpi{padding:24px 12px}
+        .S-kpi-num{font-size:1.8rem}
+
+        /* Services */
+        .S-svcs{grid-template-columns:1fr}
+
+        /* DJ profile */
+        .S-dj-profile-hdr{flex-direction:column;gap:12px}
+        .S-dj-stats{grid-template-columns:repeat(2,1fr)}
+        .S-dj-profile-grid{grid-template-columns:1fr}
+
+        /* Roadmap */
+        .R-page{padding:20px 16px}
+        .R-tiers{grid-template-columns:1fr}
+        .R-phase{grid-template-columns:40px 1fr;gap:8px}
+        .R-phase .R-badge{display:none}
+
+        /* Admin */
+        .A-page{padding:20px 16px}
         .A-row{grid-template-columns:1fr}
+
+        /* Chat panel — full width on mobile */
+        #chat-panel{width:100vw!important;right:-100vw!important}
+        #chat-panel[style*="right: 0"]{right:0!important}
+        #chat-toggle{bottom:60px;right:12px;width:40px;height:40px}
+
+        /* CTA */
+        .S-cta{padding:50px 20px}
+        .S-cta-title{font-size:1rem}
+        .S-footer{padding:20px 16px}
+    }
+
+    /* ===== INLINE-STYLE MOBILE OVERRIDES ===== */
+    @media(max-width:768px){
+        /* Dual CTA — stack to 1 column */
+        .S-cta-wrap{grid-template-columns:1fr!important}
+        .S-cta-panel{padding:40px 20px!important}
+
+        /* Globe sections — stack to 1 column */
+        #site-globe-always{padding:40px 16px!important}
+        #site-globe-always>div:last-child,
+        .S-section>div[style*="grid-template-columns:1fr 1fr"]{
+            grid-template-columns:1fr!important}
+
+        /* Sticky activity bar */
+        #sticky-activity>div{padding:8px 12px!important;flex-wrap:wrap;gap:8px!important}
+        #sticky-activity a[href]{padding:3px 6px!important;font-size:.45rem!important}
+        #activity-carousel{min-width:0;width:100%}
+
+        /* Comparison table */
+        .S-section table{font-size:.65rem!important}
+        .S-section table th,.S-section table td{padding:8px 6px!important}
+
+        /* DJ artist header row */
+        .S-dj-profile-avatar{width:40px!important;height:40px!important;font-size:16px!important}
+
+        /* DJ tabs — scroll horizontally */
+        div[style*="border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)"]{
+            overflow-x:auto!important;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+
+        /* DJ stats panel — 2 columns instead of 6 */
+        .dj-panel div[style*="grid-template-columns:repeat(6"]{
+            grid-template-columns:repeat(2,1fr)!important}
+
+        /* Request form grid */
+        #v-requests div[style*="grid-template-columns:1fr 140px 140px"]{
+            grid-template-columns:1fr!important}
+
+        /* Requests page padding */
+        #v-requests>div{padding:20px 16px!important}
+
+        /* Design/layout selector bar */
+        #v-designs>div:first-child{padding:12px 16px!important;gap:12px!important}
+        #v-designs select{min-width:180px!important;font-size:.68rem!important}
+
+        /* Apps page */
+        #app-preview{padding:20px 16px!important}
+        #v-apps>div:first-child{padding:12px 16px!important}
+
+        /* Tech/Components page */
+        #tech-preview{padding:20px 16px!important}
+        #v-tech>div:first-child{padding:12px 16px!important}
+
+        /* Theme/layout selectors in top bar */
+        .L-top>div:last-child{width:100%;order:2}
+        .L-top>div:last-child select{flex:1;min-width:0!important}
+
+        /* New releases grid */
+        .S-section div[style*="grid-template-columns:repeat(auto-fill,minmax(200px"]{
+            grid-template-columns:1fr!important}
+
+        /* Activity feed items */
+        .S-section>div[style*="max-width:700px"]>div{gap:8px!important}
+    }
+
+    /* ===== DESIGN PREVIEW MOBILE (JS-rendered inline grids) ===== */
+    @media(max-width:768px){
+        /* Live counter KPIs — 2 columns */
+        #design-root>div[style*="grid-template-columns:repeat(4"]{
+            grid-template-columns:repeat(2,1fr)!important}
+
+        /* Career scrubber output — stack */
+        #scrubber-output{grid-template-columns:1fr!important}
+
+        /* Charts — stack to 1 column */
+        #design-root div[style*="grid-template-columns:1fr 1fr 1fr"]{
+            grid-template-columns:1fr!important}
+
+        /* Globe in design preview — stack */
+        #design-root div[style*="grid-template-columns:1fr 1fr"]{
+            grid-template-columns:1fr!important}
+
+        /* Design preview padding */
+        #design-root>div[style*="padding:80px"]{padding:40px 16px 30px!important}
+        #design-root>div[style*="padding:30px 40px"],
+        #design-root>div[style*="padding:0 40px"],
+        #design-root>div[style*="padding:40px"]{padding-left:16px!important;padding-right:16px!important}
+    }
+
+    /* ===== SMALL PHONE ===== */
+    @media(max-width:480px){
+        .S-hero{height:50vh}
+        .S-kpis{grid-template-columns:1fr}
+        .S-kpi-num{font-size:1.4rem}
+        .S-section{padding:30px 12px}
+        .S-section-title{font-size:1rem}
+        .R-page{padding:16px 12px}
+        .A-page{padding:16px 12px}
+        .L-mode{font-size:.44rem;padding:6px 8px}
+        #sticky-activity a[href]{display:none!important}
+
+        /* Design preview — single column KPIs */
+        #design-root>div[style*="grid-template-columns:repeat"]{
+            grid-template-columns:1fr!important}
     }
 </style>
 </head>
@@ -869,7 +1028,8 @@ Social metrics → Periodic snapshots → Pattern detection
             document.getElementById('v-'+this.dataset.v).classList.add('on');
             var isSite=this.dataset.v==='site';
             document.getElementById('chat-toggle').style.display=isSite&&!chatPanelOpen?'flex':'none';
-            document.getElementById('chat-panel').style.right=isSite&&chatPanelOpen?'0':'-360px';
+            var chatOff=window.innerWidth<=768?'-100vw':'-360px';
+            document.getElementById('chat-panel').style.right=isSite&&chatPanelOpen?'0':chatOff;
         });
     });
 
@@ -2589,7 +2749,10 @@ Social metrics → Periodic snapshots → Pattern detection
     var chatPanelOpen=false;
     window.toggleChatPanel=function(){
         chatPanelOpen=!chatPanelOpen;
-        document.getElementById('chat-panel').style.right=chatPanelOpen?'0':'-360px';
+        var isMobile=window.innerWidth<=768;
+        var panel=document.getElementById('chat-panel');
+        if(isMobile){panel.style.width='100vw';panel.style.right=chatPanelOpen?'0':'-100vw';}
+        else{panel.style.width='360px';panel.style.right=chatPanelOpen?'0':'-360px';}
         document.getElementById('chat-toggle').style.display=chatPanelOpen?'none':'flex';
         if(chatPanelOpen) document.getElementById('global-chat-input').focus();
     };
