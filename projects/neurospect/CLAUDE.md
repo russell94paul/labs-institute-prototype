@@ -292,6 +292,46 @@ Accumulate these as you work. At session end, present them to Paul as potential 
 
 Do NOT flag trivial optimizations or well-understood patterns. Flag only where deep research would meaningfully change the implementation approach.
 
+### SIHRE External Wiki (Obsidian Vault)
+
+The SIHRE framework has a dedicated Obsidian vault at `C:\Users\PaulRussell\Documents\SIHRE-Framework\` that serves as the master knowledge base for the NeuroFusion-13 architecture — separate from the Neurospect project wiki because SIHRE is a framework-level concept that may apply beyond NeuroSpect.
+
+**Whenever working on anything related to SIHRE / NeuroFusion-13, proactively update this wiki:**
+
+1. **New findings** — any discovery, technique, paper, insight, or implementation decision related to the 13 signals, fusion architecture, or meta-orchestrator gets written to the appropriate folder
+2. **Create folders as needed** — organize by topic. If a finding doesn't fit an existing folder, create one. Keep the structure clean and navigable.
+3. **Restructure when necessary** — if the wiki grows disorganized, proactively reorganize folders and files. Move content to better locations, split large files, merge related small files.
+
+**Current structure:**
+```
+SIHRE-Framework/                    # Obsidian vault root
+├── SIHRE Framework/                # Core framework knowledge
+│   ├── Research Reports/           # Deep research outputs (prompts 1-7 + Gemini)
+│   ├── Whitepapers/                # Formal writeups, specs, papers
+│   ├── Signals/                    # Per-signal findings (create as needed)
+│   │   ├── signal-01-vectordb/
+│   │   ├── signal-02-dslm/
+│   │   └── ...
+│   ├── Architecture/               # Fusion design, build order, signal synergies
+│   ├── Implementation/             # Implementation notes, decisions, gotchas
+│   └── Papers/                     # Key academic papers and summaries
+├── Monetization/                   # Business model, pricing, market positioning
+└── .obsidian/                      # Vault config
+```
+
+Create folders from this structure (or variations) as content warrants. Don't create empty folders preemptively — create them when you have content to put in them.
+
+**What to write:**
+- New techniques discovered during implementation that enhance a signal
+- Design decisions and their rationale (why approach A over B)
+- Academic papers found during implementation (title, key finding, how it applies)
+- Performance benchmarks, evaluation results, comparisons
+- Failure modes discovered (what didn't work and why)
+- Cross-signal interactions discovered (Signal X improves when combined with Signal Y)
+- Implementation gotchas specific to the trading domain
+
+**Format:** Use Obsidian-compatible markdown with `[[wikilinks]]` for cross-references within the vault. YAML frontmatter with `tags`, `created`, `updated` fields.
+
 ## Cross-Cutting Rules
 
 - Cross-cutting changes (touching `wiki/` + `api/` + `app/`) ride in a single PR
