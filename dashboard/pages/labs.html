@@ -98,6 +98,7 @@
     .L-mode:hover{color:var(--bk)}
     .L-mode.on{color:var(--bk);border-bottom-color:var(--bk)}
     .L-tagline{font-size:.48rem;color:var(--gy);letter-spacing:var(--tr);text-transform:uppercase}
+    #mobile-nav{display:none}
 
     .L-view{display:none!important;overflow:hidden;position:relative}.L-view.on{display:block!important;overflow:visible}
 
@@ -286,16 +287,26 @@
 
     /* ===== MOBILE ===== */
     @media(max-width:768px){
-        /* Prevent any horizontal scroll on the page */
-        .L{overflow-x:hidden}
+        /* Lock the page to viewport width — no horizontal scroll */
+        html,body{overflow-x:hidden!important;width:100%!important}
+        .L{overflow-x:hidden;width:100%;max-width:100%}
+        .S-hero,.S-values,.S-marquee{overflow:hidden!important;max-width:100vw!important}
+        .L-view,.L-view>*,.S-site-default,.S-section,
+        .A-page,.R-page,#v-requests>div,#v-designs>div,
+        #v-apps>div,#v-tech>div,#v-workflows>div,#v-architecture>div,#v-guide>div,
+        #site-globe-always,#sticky-activity,
+        .S-cta-wrap,.S-cta,.S-kpis,.S-values,.S-footer{
+            max-width:100vw!important;box-sizing:border-box!important}
+        .L-view>div[style]{max-width:100vw!important;box-sizing:border-box!important;overflow-x:hidden!important}
 
-        /* Top bar — wrap into rows, scroll tabs */
+        /* Top bar — compact for mobile */
         .L-top{padding:8px 12px;height:auto;flex-wrap:wrap;gap:6px}
         .L-brand{font-size:.52rem}
-        .L-modes{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;order:3;scrollbar-width:none;gap:0}
-        .L-modes::-webkit-scrollbar{display:none}
-        .L-mode{white-space:nowrap;padding:8px 10px;font-size:.48rem;flex-shrink:0}
+        .L-modes{display:none!important}
         .L-tagline{display:none}
+
+        /* Mobile nav dropdown */
+        #mobile-nav{display:block!important;order:1;flex:1;min-width:0;padding:8px 12px;background:var(--wh);border:1px solid var(--bd);border-radius:4px;font-size:.68rem;font-weight:700;font-family:var(--ff);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;color:var(--bk)}
 
         /* Hero */
         .S-hero{height:60vh}
@@ -395,8 +406,8 @@
         #v-tech>div:first-child{padding:12px 16px!important}
 
         /* Theme/layout selectors in top bar */
-        .L-top>div:last-child{width:100%;order:2}
-        .L-top>div:last-child select{flex:1;min-width:0!important}
+        .L-top>div:last-child{width:100%;order:2;gap:6px!important}
+        .L-top>div:last-child select{flex:1;min-width:0!important;font-size:.55rem!important}
 
         /* New releases grid */
         .S-section div[style*="grid-template-columns:repeat(auto-fill,minmax(200px"]{
@@ -404,6 +415,20 @@
 
         /* Activity feed items */
         .S-section>div[style*="max-width:700px"]>div{gap:8px!important}
+
+        /* Force all inline-padded containers to mobile-safe padding */
+        .L-view div[style*="padding:"][style*="40px"]{padding-left:16px!important;padding-right:16px!important}
+        .L-view div[style*="max-width:1000px"],
+        .L-view div[style*="max-width:1100px"],
+        .L-view div[style*="max-width:1200px"]{max-width:100%!important;padding-left:16px!important;padding-right:16px!important}
+
+        /* All inline grids — force single or 2-col */
+        .L-view div[style*="grid-template-columns:1fr 1fr;"]{grid-template-columns:1fr!important}
+        .L-view div[style*="grid-template-columns: 1fr 1fr"]{grid-template-columns:1fr!important}
+        .L-view div[style*="grid-template-columns:repeat(auto-fill"]{grid-template-columns:1fr!important}
+
+        /* Comparison table — allow horizontal scroll */
+        .S-section>table,.S-section table{display:block;overflow-x:auto;max-width:100%}
     }
 
     /* ===== DESIGN PREVIEW MOBILE (JS-rendered inline grids) ===== */
@@ -439,7 +464,6 @@
         .S-section-title{font-size:1rem}
         .R-page{padding:16px 12px}
         .A-page{padding:16px 12px}
-        .L-mode{font-size:.44rem;padding:6px 8px}
         #sticky-activity a[href]{display:none!important}
 
         /* Design preview — single column KPIs */
@@ -452,6 +476,18 @@
 <div class="L">
     <div class="L-top">
         <div class="L-brand">LABS.INSTITUTE</div>
+        <select id="mobile-nav" onchange="switchMobileNav(this.value)">
+            <option value="site">Site Preview</option>
+            <option value="designs">Designs</option>
+            <option value="admin">Admin</option>
+            <option value="roadmap">Roadmap</option>
+            <option value="apps">Apps</option>
+            <option value="tech">Components</option>
+            <option value="workflows">Workflows</option>
+            <option value="requests">Requests</option>
+            <option value="architecture">Architecture</option>
+            <option value="guide">Guide</option>
+        </select>
         <div class="L-modes">
             <div class="L-mode on" data-v="site">Site Preview</div>
             <div class="L-mode" data-v="designs">Designs</div>
@@ -1025,16 +1061,25 @@ Social metrics → Periodic snapshots → Pattern detection
     // Tabs
     document.querySelectorAll('.L-mode').forEach(function(m){
         m.addEventListener('click',function(){
-            document.querySelectorAll('.L-mode').forEach(function(x){x.classList.remove('on')});
-            document.querySelectorAll('.L-view').forEach(function(x){x.classList.remove('on')});
-            this.classList.add('on');
-            document.getElementById('v-'+this.dataset.v).classList.add('on');
-            var isSite=this.dataset.v==='site';
-            document.getElementById('chat-toggle').style.display=isSite&&!chatPanelOpen?'flex':'none';
-            var chatOff=window.innerWidth<=768?'-100vw':'-360px';
-            document.getElementById('chat-panel').style.right=isSite&&chatPanelOpen?'0':chatOff;
+            switchView(this.dataset.v);
         });
     });
+
+    function switchView(v){
+        document.querySelectorAll('.L-mode').forEach(function(x){x.classList.remove('on')});
+        document.querySelectorAll('.L-view').forEach(function(x){x.classList.remove('on')});
+        var tab=document.querySelector('.L-mode[data-v="'+v+'"]');
+        if(tab) tab.classList.add('on');
+        document.getElementById('v-'+v).classList.add('on');
+        var isSite=v==='site';
+        document.getElementById('chat-toggle').style.display=isSite&&!chatPanelOpen?'flex':'none';
+        var chatOff=window.innerWidth<=768?'-100vw':'-360px';
+        document.getElementById('chat-panel').style.right=isSite&&chatPanelOpen?'0':chatOff;
+        var mn=document.getElementById('mobile-nav');
+        if(mn) mn.value=v;
+    }
+
+    window.switchMobileNav=function(v){ switchView(v); };
 
     // Roadmap — grouped by category
     var cats=[
