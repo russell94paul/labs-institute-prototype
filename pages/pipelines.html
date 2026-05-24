@@ -280,6 +280,9 @@
                     html += '<button class="pl-btn pl-btn-primary" onclick="advancePipeline(\'' + p.id + '\')">Advance</button>';
                     html += '<button class="pl-btn pl-btn-danger" onclick="cancelPipeline(\'' + p.id + '\')">Cancel</button>';
                 }
+                if (p.status === 'completed' && !p.merge_approved) {
+                    html += '<button class="pl-btn pl-btn-green" onclick="approveMerge(\'' + p.id + '\')">Merge</button>';
+                }
                 html += '<button class="pl-btn" onclick="showPipelineDetail(\'' + p.id + '\')">Details</button>';
                 html += '</div>';
                 html += '</div>';
@@ -397,6 +400,46 @@
             if (p.created_at) html += '<div style="font-size:0.65rem;color:var(--text-dim);margin-top:12px;">Created: ' + p.created_at + '</div>';
             if (p.cost_usd) html += '<div style="font-size:0.65rem;color:var(--text-dim);">Cost: $' + p.cost_usd.toFixed(2) + '</div>';
 
+            // Snapshot info
+            if (p.snapshot && p.snapshot.commit !== 'unknown') {
+                html += '<div style="margin-top:12px;padding:10px;border:1px solid var(--border-subtle);border-radius:8px;font-size:0.68rem;">';
+                html += '<div style="font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Snapshot</div>';
+                html += '<span style="color:var(--text-secondary);">main @ </span>';
+                html += '<span style="font-family:var(--font-mono);color:var(--accent-blue);">' + p.snapshot.commit.substring(0, 12) + '</span>';
+                html += '<span style="color:var(--text-dim);margin-left:8px;">' + (p.snapshot.timestamp || '') + '</span>';
+                html += '</div>';
+            }
+
+            // Rollback + Merge actions
+            if (p.status === 'failed' || p.status === 'completed' || p.status === 'rolled_back') {
+                html += '<div style="display:flex;gap:8px;margin-top:12px;">';
+                if (p.snapshot && p.snapshot.commit !== 'unknown' && p.status !== 'rolled_back') {
+                    html += '<button class="pl-btn pl-btn-danger" onclick="rollbackPipeline(\'' + p.id + '\')">Rollback to Snapshot</button>';
+                }
+                if (p.status === 'completed' && !p.merge_approved) {
+                    html += '<button class="pl-btn pl-btn-green" onclick="approveMerge(\'' + p.id + '\')">Approve Merge</button>';
+                }
+                if (p.merge_approved) {
+                    html += '<span style="font-size:0.65rem;color:var(--accent-green);font-weight:700;padding:4px 8px;">MERGE APPROVED</span>';
+                }
+                html += '</div>';
+            }
+
+            // Rollback history
+            if (p.rollback_history && p.rollback_history.length > 0) {
+                html += '<div style="margin-top:12px;font-size:0.65rem;">';
+                html += '<div style="font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Rollback History</div>';
+                p.rollback_history.forEach(function(rb) {
+                    html += '<div style="padding:4px 0;border-bottom:1px solid var(--border-subtle);color:var(--text-secondary);">';
+                    html += (rb.success ? '<span style="color:var(--accent-green);">OK</span>' : '<span style="color:var(--accent-red);">FAIL</span>');
+                    html += ' &rarr; ' + (rb.to_commit || '').substring(0, 12);
+                    if (rb.reason) html += ' — ' + esc(rb.reason);
+                    html += ' <span style="color:var(--text-dim);">' + (rb.timestamp || '') + '</span>';
+                    html += '</div>';
+                });
+                html += '</div>';
+            }
+
             box.innerHTML = html;
             document.getElementById('pl-detail-overlay').classList.add('active');
         };
@@ -426,6 +469,20 @@
         };
         window.approveGate = function(pid, stage) {
             postJSON(API + '/pipelines/' + pid + '/stages/' + stage + '/approve').then(function() { refresh(); showPipelineDetail(pid); });
+        };
+        window.rollbackPipeline = function(pid) {
+            var reason = prompt('Rollback reason (optional):');
+            if (reason === null) return;
+            postJSON(API + '/pipelines/' + pid + '/rollback', { reason: reason }).then(function() {
+                refresh();
+                showPipelineDetail(pid);
+            });
+        };
+        window.approveMerge = function(pid) {
+            postJSON(API + '/pipelines/' + pid + '/merge').then(function() {
+                refresh();
+                showPipelineDetail(pid);
+            });
         };
         window.createFromTemplate = function(slug) {
             var name = prompt('Pipeline name:', slug + ' pipeline');
