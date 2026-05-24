@@ -331,9 +331,15 @@
                     var cleanBody = parsed.body.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
                     content.innerHTML = cleanBody;
 
+                    // Remove old page scripts before adding new ones
+                    document.querySelectorAll('script[data-page-script]').forEach(function(old) {
+                        old.remove();
+                    });
+
                     // Execute scripts in order
                     parsed.scripts.forEach(function(s) {
                         var el = document.createElement('script');
+                        el.setAttribute('data-page-script', route);
                         if (s.src) {
                             el.src = s.src;
                         } else {

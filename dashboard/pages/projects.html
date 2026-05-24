@@ -83,7 +83,7 @@
                     var completedCount = (p.phases || []).filter(function(ph) { return ph.status === 'complete' || ph.status === 'completed'; }).length;
                     var statusClass = p.status === 'active' ? 'active' : p.status === 'parked' ? 'parked' : 'planned';
 
-                    html += '<div class="pj-card" onclick="window.navigateTo && window.navigateTo(\'phases\')">';
+                    html += '<div class="pj-card" onclick="goToProject(\'' + esc(p.slug) + '\')">';
                     html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">';
                     html += '<div class="pj-card-name">' + esc(p.name) + '</div>';
                     html += '<span class="pj-status pj-status-' + statusClass + '">' + (p.status || 'active') + '</span>';
@@ -104,6 +104,19 @@
             });
 
         function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+        window.goToProject = function(slug) {
+            if (window.navigateTo) {
+                window.navigateTo('phases');
+                setTimeout(function() {
+                    var sel = document.getElementById('project-select');
+                    if (sel) {
+                        sel.value = slug;
+                        if (typeof loadPhases === 'function') loadPhases();
+                    }
+                }, 500);
+            }
+        };
     })();
     </script>
 </body>
