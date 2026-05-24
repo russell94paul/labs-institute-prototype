@@ -1,11 +1,12 @@
 ---
 tags: [index, navigation]
 created: 2026-04-18
-updated: 2026-04-26
+updated: 2026-05-23
 last_fork: 2026-04-26-broker-integration-forked-from-journaling-ux
 last_build: 2026-04-26-phase4-deployment-complete
 last_design: 2026-04-24-phase4-coach-frontend-design
 last_ingest: 2026-04-22
+last_integration: 2026-05-23-conductor-integration-neurofusion-research
 ---
 
 # Neurospect Wiki Index
@@ -63,7 +64,14 @@ Forward-looking product roadmap (horizons: Now / Next / Later / Strategic / Rese
 - [[concepts/architecture/transcript-pipeline]] — transcript ingestion decision doc (manual + Whisper)
 - [[concepts/architecture/phase3-frontend-structure]] — **canonical frontend doc**: React 19 + TS + Vite project layout, route map, key patterns (auth, trade form, screenshot upload, analytics hooks), env vars
 - [[concepts/architecture/phase4-coach-frontend]] — AI Coach frontend: routes, hooks, component tree, polling strategy, TV token UX, Pine asset sync
-- [[concepts/architecture/frontend-codebases]] — Three frontend codebases: neurospect-ui/ (marketing), app/ (product), site/ (deprecated Astro SSG)
+- [[concepts/architecture/frontend-codebases]] — Three frontend codebases: neurospect-ui/ (marketing), app/ (product), site/ (deprecated Astro SSG — deleted 2026-05-23)
+
+### NeuroFusion-13 (SIHRE)
+
+- `research/neurofusion/README.md` — NeuroFusion-13 architecture overview: 13-signal Self-Improving Heterogeneous Reasoning Ensemble (SIHRE) for quant trading
+- `research/neurofusion/deep-research-prompts.md` — 7 deep research prompts (all completed via ChatGPT Pro + Gemini)
+- `research/neurofusion/data/` — 8 research reports (prompts 1-7 + Gemini second opinion on prompt 1)
+- `paul-wiki/decisions/DEC-001-conductor-integration.md` — Conductor integration audit, mapping decisions, gap analysis
 
 ### AI Coach
 
