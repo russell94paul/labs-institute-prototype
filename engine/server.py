@@ -27,7 +27,13 @@ from engine import events
 from engine import memory
 from engine import validation
 
+from datetime import datetime, timezone
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
+
+
+def _now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
 DASHBOARD_ROOT = REPO_ROOT / "dashboard"
 DATA_DIR = DASHBOARD_ROOT / "data"
 SESSIONS_DIR = REPO_ROOT / ".conductor-sessions"
@@ -674,6 +680,86 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
     def _handle_get_memory_stats(self, slug: str) -> None:
         self._send_json(memory.get_stats(slug))
 
+    # --- Project listing ---
+
+    def _handle_get_projects(self) -> None:
+        projects_dir = REPO_ROOT / "projects"
+        result = []
+        if projects_dir.exists():
+            for p in sorted(projects_dir.iterdir()):
+                pj = p / "project.json"
+                if pj.exists():
+                    try:
+                        data = json.loads(pj.read_text(encoding="utf-8"))
+                        result.append(data)
+                    except (json.JSONDecodeError, OSError):
+                        pass
+        self._send_json(result)
+
+    def _handle_post_projects(self) -> None:
+        body = self._json_body()
+        if not body or not body.get("slug"):
+            return self._send_error_json(400, "slug is required")
+
+        slug = body["slug"]
+        project_dir = REPO_ROOT / "projects" / slug
+        if (project_dir / "project.json").exists():
+            return self._send_error_json(409, f"Project {slug} already exists")
+
+        project_dir.mkdir(parents=True, exist_ok=True)
+        (project_dir / "wiki").mkdir(exist_ok=True)
+        (project_dir / "phases").mkdir(exist_ok=True)
+
+        project = {
+            "name": body.get("name", slug),
+            "slug": slug,
+            "description": body.get("description", ""),
+            "status": "active",
+            "created": body.get("created", _now_iso()[:10]),
+            "platform": body.get("platform", "web-responsive"),
+            "stack": body.get("stack", {}),
+            "phases": body.get("phases", []),
+        }
+        if body.get("onboarding"):
+            project["onboarding"] = body["onboarding"]
+
+        pj = project_dir / "project.json"
+        tmp = pj.with_suffix(".tmp")
+        tmp.write_text(json.dumps(project, indent=2), encoding="utf-8")
+        tmp.replace(pj)
+
+        # Add phases to phase-status.json if provided
+        if project.get("phases"):
+            from engine import bootstrap
+            existing = bootstrap.get_all_phases()
+            new_phases = []
+            for ph in project["phases"]:
+                phase_id = f"{slug[:2]}-{ph['id']}" if not ph["id"].startswith(slug[:2]) else ph["id"]
+                new_phases.append({
+                    "phaseId": phase_id,
+                    "name": ph.get("name", ""),
+                    "project": slug,
+                    "status": ph.get("status", "planned"),
+                    "dependencies": ph.get("dependencies", []),
+                    "blockedBy": [],
+                    "blocks": ph.get("blocks", []),
+                    "estimatedComplexity": ph.get("estimatedComplexity", "M"),
+                    "riskLevel": ph.get("riskLevel", "low"),
+                    "approvalRequired": ph.get("approvalRequired", False),
+                    "canRunInParallel": ph.get("canRunInParallel", False),
+                    "description": ph.get("description", ""),
+                    "lastUpdated": _now_iso()[:10],
+                })
+            all_phases = existing + new_phases
+            bootstrap._save_phases(all_phases)
+
+        events.emit("project.created", {
+            "slug": slug,
+            "name": project["name"],
+        }, source="server")
+
+        self._send_json(project, 201)
+
     # --- Project phases handlers ---
 
     def _match_project_phases_route(self) -> Optional[tuple]:
@@ -785,6 +871,8 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return self._handle_get_groovenet_sets()
         if path == "/api/groovenet/profile":
             return self._handle_get_groovenet_profile()
+        if path == "/api/projects":
+            return self._handle_get_projects()
 
         ppmatch = self._match_project_phases_route()
         if ppmatch:
@@ -855,6 +943,8 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return self._handle_post_work_guard_lock()
         if path == "/api/work-guard/heartbeat":
             return self._handle_post_work_guard_heartbeat()
+        if path == "/api/projects":
+            return self._handle_post_projects()
         if path == "/api/groovenet/events":
             return self._handle_post_groovenet_events()
         if path == "/api/groovenet/sets":
