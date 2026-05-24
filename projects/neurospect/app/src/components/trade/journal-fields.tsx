@@ -37,7 +37,7 @@ export function JournalFields({ control }: Props) {
         control={control}
         name="pre_trade_checklist"
         render={({ field }) => {
-          const checklist: Record<string, boolean> = field.value ?? {};
+          const checklist: Record<string, boolean> = (field.value as Record<string, boolean>) ?? {};
           return (
             <FormItem>
               <FormLabel>Pre-Trade Checklist</FormLabel>

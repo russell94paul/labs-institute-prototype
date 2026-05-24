@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { AlertTriangle, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SummaryCards } from '@/components/analytics/summary-cards';
 import { BreakdownTable } from '@/components/analytics/breakdown-table';
 import { DayOfWeekChart } from '@/components/analytics/day-of-week-chart';
@@ -51,6 +52,47 @@ function TodayBehaviorBanner() {
   );
 }
 
+function scoreColor(score: number, invert = false): string {
+  const effective = invert ? 100 - score : score;
+  if (effective >= 75) return 'text-green-600 dark:text-green-400';
+  if (effective >= 50) return 'text-amber-500';
+  return 'text-red-500';
+}
+
+function TodayScoreCards() {
+  const today = format(new Date(), 'yyyy-MM-dd');
+  const { data } = useBehaviorMetrics(today, today);
+
+  if (!data || data.trade_count === 0) return null;
+
+  const ruleAdherence = Math.round((1 - data.rule_breaches.rate) * 100);
+
+  const metrics = [
+    { label: 'Discipline', value: data.discipline.score, invert: false },
+    { label: 'Consistency', value: data.consistency.score, invert: false },
+    { label: 'Tilt Level', value: data.tilt.score, invert: true },
+    { label: 'Rule Adherence', value: ruleAdherence, invert: false },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      {metrics.map((m) => (
+        <Card key={m.label} className="py-3">
+          <CardHeader className="pb-1 pt-0 px-4">
+            <CardTitle className="text-xs font-medium text-muted-foreground">{m.label} · Today</CardTitle>
+          </CardHeader>
+          <CardContent className="pb-0 px-4">
+            <span className={cn('text-2xl font-semibold tabular-nums', scoreColor(m.value, m.invert))}>
+              {m.value}
+            </span>
+            <span className="ml-0.5 text-xs text-muted-foreground">/100</span>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
 export function DashboardPage() {
   const summary = useSummary();
   const bySetup = useBySetup();
@@ -84,6 +126,8 @@ export function DashboardPage() {
       </div>
 
       <TodayBehaviorBanner />
+
+      <TodayScoreCards />
 
       <SummaryCards />
 

@@ -69,7 +69,7 @@ const tradeFormSchema = z.object({
   post_trade_notes: z.string().nullable().optional(),
   // Journal (Phase 2)
   emotion_tags: z.array(z.string()).nullable().optional(),
-  pre_trade_checklist: z.record(z.boolean()).nullable().optional(),
+  pre_trade_checklist: z.record(z.string(), z.boolean()).nullable().optional(),
   setup_notes: z.string().nullable().optional(),
   execution_notes: z.string().nullable().optional(),
   risk_notes: z.string().nullable().optional(),
