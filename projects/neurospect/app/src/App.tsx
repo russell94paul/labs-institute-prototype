@@ -10,6 +10,7 @@ import { DashboardPage } from '@/pages/dashboard';
 import { CoachPage } from '@/pages/coach';
 import { CoachSetupPage } from '@/pages/coach-setup';
 import { BrokerSettingsPage } from '@/pages/settings-broker';
+import { AnalyticsPage } from '@/pages/analytics';
 import { PropShieldPage } from '@/pages/prop-shield';
 import { PropShieldNewPage } from '@/pages/prop-shield-new';
 import { PropShieldDetailPage } from '@/pages/prop-shield-detail';
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
       {
         path: '/dashboard',
         element: <DashboardPage />,
+      },
+      {
+        path: '/analytics',
+        element: <AnalyticsPage />,
       },
       {
         path: '/trades',

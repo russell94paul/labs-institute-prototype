@@ -1,9 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import type {
+  BehaviorMetricsResponse,
   BreakdownRow,
   DayOfWeekRow,
+  DrawdownResponse,
+  EquityCurveResponse,
   MistakeRow,
+  MonthlyHeatmapResponse,
   RBucket,
   SummaryStats,
 } from '@/types/api';
@@ -73,3 +77,53 @@ export const useRDistribution = () =>
         .then((r) => r.buckets),
     staleTime: STALE,
   });
+
+export const useBehaviorMetrics = (dateStart?: string, dateEnd?: string) => {
+  const params = new URLSearchParams();
+  if (dateStart) params.set('date_start', dateStart);
+  if (dateEnd) params.set('date_end', dateEnd);
+  const qs = params.toString() ? `?${params.toString()}` : '';
+  return useQuery({
+    queryKey: ['analytics', 'behavior', dateStart, dateEnd],
+    queryFn: () => api.get(`api/analytics/behavior${qs}`).json<BehaviorMetricsResponse>(),
+    staleTime: STALE,
+  });
+};
+
+export const useEquityCurve = (dateStart?: string, dateEnd?: string) => {
+  const params = new URLSearchParams();
+  if (dateStart) params.set('date_start', dateStart);
+  if (dateEnd) params.set('date_end', dateEnd);
+  const qs = params.toString() ? `?${params.toString()}` : '';
+  return useQuery({
+    queryKey: ['analytics', 'equity-curve', dateStart, dateEnd],
+    queryFn: () =>
+      api.get(`api/analytics/equity-curve${qs}`).json<EquityCurveResponse>().then((r) => r.points),
+    staleTime: STALE,
+  });
+};
+
+export const useDrawdown = (dateStart?: string, dateEnd?: string) => {
+  const params = new URLSearchParams();
+  if (dateStart) params.set('date_start', dateStart);
+  if (dateEnd) params.set('date_end', dateEnd);
+  const qs = params.toString() ? `?${params.toString()}` : '';
+  return useQuery({
+    queryKey: ['analytics', 'drawdown', dateStart, dateEnd],
+    queryFn: () => api.get(`api/analytics/drawdown${qs}`).json<DrawdownResponse>(),
+    staleTime: STALE,
+  });
+};
+
+export const useMonthlyHeatmap = (dateStart?: string, dateEnd?: string) => {
+  const params = new URLSearchParams();
+  if (dateStart) params.set('date_start', dateStart);
+  if (dateEnd) params.set('date_end', dateEnd);
+  const qs = params.toString() ? `?${params.toString()}` : '';
+  return useQuery({
+    queryKey: ['analytics', 'monthly-heatmap', dateStart, dateEnd],
+    queryFn: () =>
+      api.get(`api/analytics/monthly-heatmap${qs}`).json<MonthlyHeatmapResponse>().then((r) => r.cells),
+    staleTime: STALE,
+  });
+};

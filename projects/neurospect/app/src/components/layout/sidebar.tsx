@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, FileText, Plus, Menu, Sparkles, Shield, Settings, Globe } from 'lucide-react';
+import { LayoutDashboard, FileText, Plus, Menu, Sparkles, Shield, Settings, Globe, BarChart2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -7,6 +7,7 @@ import { useState } from 'react';
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/analytics', label: 'Analytics', icon: BarChart2 },
   { to: '/trades', label: 'Trades', icon: FileText },
   { to: '/trades/new', label: 'New Trade', icon: Plus },
   { to: '/coach', label: 'AI Coach', icon: Sparkles },

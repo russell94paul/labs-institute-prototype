@@ -23,6 +23,7 @@ import { useCreateTrade, useDeleteTrade, useUpdateTrade } from '@/hooks/use-trad
 import type { Trade, TradeStatus } from '@/types/api';
 import { CoachPrefillBanner } from './coach-prefill-banner';
 import { EntryFields } from './entry-fields';
+import { JournalFields } from './journal-fields';
 import { PostTradeFields } from './post-trade-fields';
 import { PreTradeFields } from './pre-trade-fields';
 import { StatusBadge } from './status-badge';
@@ -66,6 +67,14 @@ const tradeFormSchema = z.object({
   mistake_tags: z.array(z.string()),
   quality_grade: z.string().nullable().optional(),
   post_trade_notes: z.string().nullable().optional(),
+  // Journal (Phase 2)
+  emotion_tags: z.array(z.string()).nullable().optional(),
+  pre_trade_checklist: z.record(z.boolean()).nullable().optional(),
+  setup_notes: z.string().nullable().optional(),
+  execution_notes: z.string().nullable().optional(),
+  risk_notes: z.string().nullable().optional(),
+  psychology_notes: z.string().nullable().optional(),
+  lesson_learned: z.string().nullable().optional(),
 });
 
 export type TradeFormValues = z.infer<typeof tradeFormSchema>;
@@ -113,6 +122,14 @@ function toFormValues(trade: Trade): TradeFormValues {
     mistake_tags: trade.mistake_tags ?? [],
     quality_grade: trade.quality_grade,
     post_trade_notes: trade.post_trade_notes,
+    // Journal (Phase 2)
+    emotion_tags: trade.emotion_tags ?? [],
+    pre_trade_checklist: trade.pre_trade_checklist ?? null,
+    setup_notes: trade.setup_notes,
+    execution_notes: trade.execution_notes,
+    risk_notes: trade.risk_notes,
+    psychology_notes: trade.psychology_notes,
+    lesson_learned: trade.lesson_learned,
   };
 }
 
@@ -148,6 +165,11 @@ interface Props {
 const POST_TRADE_KEYS = new Set([
   'exit_price', 'exit_time', 'outcome', 'r_multiple', 'mae', 'mfe',
   'target_reached', 'plan_followed', 'mistake_tags', 'quality_grade', 'post_trade_notes',
+]);
+
+// These fields are only in TradeUpdate, not TradeCreate
+const JOURNAL_UPDATE_ONLY_KEYS = new Set([
+  'setup_notes', 'execution_notes', 'risk_notes', 'psychology_notes', 'lesson_learned',
 ]);
 
 export function TradeForm({ trade, onSuccess }: Props) {
@@ -195,6 +217,13 @@ export function TradeForm({ trade, onSuccess }: Props) {
           mistake_tags: [],
           quality_grade: null,
           post_trade_notes: null,
+          emotion_tags: [],
+          pre_trade_checklist: null,
+          setup_notes: null,
+          execution_notes: null,
+          risk_notes: null,
+          psychology_notes: null,
+          lesson_learned: null,
         },
   });
 
@@ -282,9 +311,9 @@ export function TradeForm({ trade, onSuccess }: Props) {
 
   const onSubmit = (values: TradeFormValues, targetStatus?: TradeStatus) => {
     if (!isEdit) {
-      // Create: exclude post-trade fields (not part of TradeCreate schema)
+      // Create: exclude post-trade fields and update-only journal note fields
       const createFields = Object.fromEntries(
-        Object.entries(values).filter(([k]) => !POST_TRADE_KEYS.has(k))
+        Object.entries(values).filter(([k]) => !POST_TRADE_KEYS.has(k) && !JOURNAL_UPDATE_ONLY_KEYS.has(k))
       );
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       createTrade.mutate(createFields as any);
@@ -349,6 +378,7 @@ export function TradeForm({ trade, onSuccess }: Props) {
               <TabsTrigger value="pre-trade" className="flex-1">Pre-Trade</TabsTrigger>
               <TabsTrigger value="entry" className="flex-1" disabled={status === 'pre_trade'}>Entry</TabsTrigger>
               <TabsTrigger value="post-trade" className="flex-1" disabled={status !== 'closed'}>Post-Trade</TabsTrigger>
+              <TabsTrigger value="journal" className="flex-1">Journal</TabsTrigger>
             </TabsList>
 
             <TabsContent value="pre-trade" className="pt-4">
@@ -383,6 +413,10 @@ export function TradeForm({ trade, onSuccess }: Props) {
                 trade={isEdit ? trade : undefined}
                 onFillApplied={isEdit ? handleExitFillApplied : undefined}
               />
+            </TabsContent>
+
+            <TabsContent value="journal" className="pt-4">
+              <JournalFields control={ctrl} />
             </TabsContent>
           </Tabs>
 

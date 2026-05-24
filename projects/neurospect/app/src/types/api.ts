@@ -106,6 +106,14 @@ export interface TradeUpdate {
   entry_pda?: PdaType | null;
   displacement_quality?: DisplacementType | null;
   smt_confirmation?: boolean | null;
+  // Journal (Phase 2)
+  emotion_tags?: string[] | null;
+  pre_trade_checklist?: Record<string, boolean> | null;
+  setup_notes?: string | null;
+  execution_notes?: string | null;
+  risk_notes?: string | null;
+  psychology_notes?: string | null;
+  lesson_learned?: string | null;
   exit_price?: number | null;
   exit_time?: string | null;
   outcome?: OutcomeType | null;
@@ -147,6 +155,8 @@ export interface FillDTO {
   bracket: BracketInfo | null;
 }
 
+export type EmotionType = 'confident' | 'fearful' | 'greedy' | 'patient' | 'impulsive' | 'revenge';
+
 export interface Trade {
   id: string;
   user_id: string;
@@ -173,6 +183,14 @@ export interface Trade {
   entry_pda: PdaType | null;
   displacement_quality: DisplacementType | null;
   smt_confirmation: boolean | null;
+  // Journal (Phase 2)
+  emotion_tags: string[] | null;
+  pre_trade_checklist: Record<string, boolean> | null;
+  setup_notes: string | null;
+  execution_notes: string | null;
+  risk_notes: string | null;
+  psychology_notes: string | null;
+  lesson_learned: string | null;
   exit_price: number | null;
   exit_time: string | null;
   outcome: OutcomeType | null;
@@ -263,6 +281,130 @@ export interface RBucket {
   r_low: number;
   r_high: number;
   count: number;
+}
+
+// ============================================================
+// Behavior metrics (mirror backend app/schemas/behavior.py)
+// ============================================================
+
+export interface TiltMetrics {
+  score: number;
+  consecutive_losses: number;
+  rapid_reentries: number;
+  position_escalations: number;
+}
+
+export interface RevengeTrade {
+  trade_id: string;
+  instrument: string;
+  minutes_after_loss: number;
+  against_bias: boolean;
+}
+
+export interface OvertradingMetrics {
+  daily_limit: number;
+  overtrading_days: number;
+  total_excess_trades: number;
+  worst_days: { date: string; count: number }[];
+}
+
+export interface RuleBreachMetrics {
+  total: number;
+  plan_not_followed: number;
+  with_mistakes: number;
+  rate: number;
+}
+
+export interface ConsistencyMetrics {
+  score: number;
+  daily_return_stddev: number | null;
+  trading_days: number;
+}
+
+export interface DisciplineMetrics {
+  score: number;
+  rule_adherence: number;
+  tilt_control: number;
+  consistency: number;
+}
+
+export interface BehaviorMetricsResponse {
+  trade_count: number;
+  date_start: string | null;
+  date_end: string | null;
+  tilt: TiltMetrics;
+  revenge_trades: RevengeTrade[];
+  overtrading: OvertradingMetrics;
+  rule_breaches: RuleBreachMetrics;
+  consistency: ConsistencyMetrics;
+  discipline: DisciplineMetrics;
+}
+
+export interface EquityCurvePoint {
+  date: string;
+  cumulative_r: number;
+  cumulative_pnl: number | null;
+  trade_count: number;
+}
+
+export interface EquityCurveResponse {
+  points: EquityCurvePoint[];
+}
+
+export interface DrawdownPoint {
+  date: string;
+  drawdown_r: number;
+  drawdown_pnl: number | null;
+  peak_r: number;
+}
+
+export interface DrawdownResponse {
+  max_drawdown_r: number;
+  max_drawdown_pnl: number | null;
+  current_drawdown_r: number;
+  points: DrawdownPoint[];
+}
+
+export interface MonthlyCell {
+  year: number;
+  month: number;
+  total_r: number;
+  total_pnl: number | null;
+  trade_count: number;
+  win_rate: number | null;
+}
+
+export interface MonthlyHeatmapResponse {
+  cells: MonthlyCell[];
+}
+
+// ============================================================
+// Reports (mirror backend app/schemas/report.py)
+// ============================================================
+
+export interface ReportStats {
+  trade_count: number;
+  closed_trades: number;
+  win_rate: number | null;
+  avg_r_multiple: number | null;
+  total_r: number;
+  total_pnl: number | null;
+  tilt_score: number;
+  discipline_score: number;
+  consistency_score: number;
+  revenge_trade_count: number;
+  overtrading_days: number;
+  rule_breach_rate: number;
+}
+
+export interface UserReportResponse {
+  id: string;
+  user_id: string;
+  period_type: string;
+  year: number;
+  period_number: number;
+  stats: ReportStats;
+  computed_at: string;
 }
 
 // ============================================================

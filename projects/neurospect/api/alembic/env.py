@@ -14,6 +14,7 @@ import app.models.trade  # noqa: F401
 import app.models.screenshot  # noqa: F401
 import app.models.tv_token  # noqa: F401
 import app.models.coaching_event  # noqa: F401
+import app.models.report  # noqa: F401
 from app.config import settings as app_settings
 
 config = context.config
