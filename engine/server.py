@@ -193,11 +193,16 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
     # --- Bootstrap handlers ---
 
     def _handle_get_bootstrap_phases(self) -> None:
-        phases = bootstrap.get_all_phases()
+        params = self._parse_query_params()
+        project = params.get("project")
+        phases = bootstrap.get_all_phases(project=project or None)
         self._send_json(phases)
 
     def _handle_get_bootstrap_summary(self) -> None:
-        summary = bootstrap.get_summary()
+        params = self._parse_query_params()
+        project = params.get("project")
+        phases = bootstrap.get_all_phases(project=project or None) if project else None
+        summary = bootstrap.get_summary(phases)
         self._send_json(summary)
 
     def _handle_get_bootstrap_phase(self, phase_id: str) -> None:

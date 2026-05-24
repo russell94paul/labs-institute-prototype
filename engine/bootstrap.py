@@ -44,7 +44,7 @@ def _phase_map(phases: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
 def get_all_phases(project: Optional[str] = None) -> List[Dict[str, Any]]:
     phases = _load_phases()
     if project:
-        return [p for p in phases if p.get("project") == project]
+        return [p for p in phases if p.get("project", "conductor") == project]
     return phases
 
 
