@@ -548,3 +548,94 @@ class TestAppIntegration:
 
     def test_link_has_noopener(self, sidebar: str):
         assert "noopener" in sidebar
+
+
+# ===========================================================================
+# 13. CI/CD Pipeline (Phase 0B)
+# ===========================================================================
+
+_GITHUB = _NS / ".github"
+_WORKFLOWS = _GITHUB / "workflows"
+
+
+class TestCICDPipeline:
+    @pytest.fixture(scope="class")
+    def ci_yml(self) -> str:
+        ci_path = _WORKFLOWS / "ci.yml"
+        assert ci_path.is_file(), "Missing .github/workflows/ci.yml"
+        return _read(ci_path)
+
+    def test_workflows_directory_exists(self):
+        assert _WORKFLOWS.is_dir()
+
+    def test_ci_workflow_file_exists(self):
+        assert (_WORKFLOWS / "ci.yml").is_file()
+
+    def test_ci_triggers_on_pull_request(self, ci_yml: str):
+        assert "pull_request" in ci_yml
+
+    def test_ci_triggers_on_push_to_main(self, ci_yml: str):
+        assert "main" in ci_yml
+
+    def test_ci_runs_lint(self, ci_yml: str):
+        ci_lower = ci_yml.lower()
+        assert "ruff" in ci_lower or "lint" in ci_lower
+
+    def test_ci_runs_pytest(self, ci_yml: str):
+        assert "pytest" in ci_yml
+
+    def test_ci_uses_python(self, ci_yml: str):
+        assert "python" in ci_yml.lower()
+
+    def test_ci_uses_python_312(self, ci_yml: str):
+        assert "3.12" in ci_yml
+
+    def test_ci_installs_dependencies(self, ci_yml: str):
+        ci_lower = ci_yml.lower()
+        assert "poetry" in ci_lower or "pip install" in ci_lower
+
+    def test_ci_working_directory_is_api(self, ci_yml: str):
+        assert "api" in ci_yml
+
+
+# ===========================================================================
+# 14. Competitive Teardown (Phase 0B)
+# ===========================================================================
+
+class TestCompetitiveTeardown:
+    @pytest.fixture(scope="class")
+    def teardown(self) -> str:
+        path = _DOCS / "competitive-teardown.md"
+        assert path.is_file(), "Missing docs/competitive-teardown.md"
+        return _read(path)
+
+    def test_competitive_teardown_doc_exists(self):
+        assert (_DOCS / "competitive-teardown.md").is_file()
+
+    def test_teardown_non_trivial(self, teardown: str):
+        assert len(teardown) > 1_000, "Competitive teardown is suspiciously short"
+
+    def test_teardown_names_competitors(self, teardown: str):
+        # At least two known trading journal platforms should be mentioned
+        competitors = ["TraderSync", "Tradezella", "Edgewonk", "Tradervue", "Journalytix"]
+        found = [c for c in competitors if c in teardown]
+        assert len(found) >= 2, f"Expected ≥2 competitors named, found: {found}"
+
+    def test_teardown_identifies_ict_gap(self, teardown: str):
+        teardown_lower = teardown.lower()
+        assert "ict" in teardown_lower or "kill zone" in teardown_lower
+
+    def test_teardown_covers_pricing(self, teardown: str):
+        # Should mention pricing tiers
+        assert "29" in teardown or "$29" in teardown
+
+    def test_teardown_has_differentiation_section(self, teardown: str):
+        teardown_lower = teardown.lower()
+        assert "differenti" in teardown_lower or "unique" in teardown_lower or "moat" in teardown_lower
+
+    def test_teardown_references_neurospect(self, teardown: str):
+        assert "NeuroSpect" in teardown or "neurospect" in teardown.lower()
+
+    def test_teardown_has_marketing_implications(self, teardown: str):
+        teardown_lower = teardown.lower()
+        assert "waitlist" in teardown_lower or "marketing" in teardown_lower or "messaging" in teardown_lower
