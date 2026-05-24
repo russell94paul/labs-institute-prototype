@@ -302,24 +302,40 @@ The SIHRE framework has a dedicated Obsidian vault at `C:\Users\PaulRussell\Docu
 2. **Create folders as needed** — organize by topic. If a finding doesn't fit an existing folder, create one. Keep the structure clean and navigable.
 3. **Restructure when necessary** — if the wiki grows disorganized, proactively reorganize folders and files. Move content to better locations, split large files, merge related small files.
 
-**Current structure:**
+**Vault structure:**
 ```
-SIHRE-Framework/                    # Obsidian vault root
-├── SIHRE Framework/                # Core framework knowledge
-│   ├── Research Reports/           # Deep research outputs (prompts 1-7 + Gemini)
-│   ├── Whitepapers/                # Formal writeups, specs, papers
-│   ├── Signals/                    # Per-signal findings (create as needed)
-│   │   ├── signal-01-vectordb/
-│   │   ├── signal-02-dslm/
-│   │   └── ...
-│   ├── Architecture/               # Fusion design, build order, signal synergies
-│   ├── Implementation/             # Implementation notes, decisions, gotchas
-│   └── Papers/                     # Key academic papers and summaries
-├── Monetization/                   # Business model, pricing, market positioning
-└── .obsidian/                      # Vault config
+SIHRE-Framework/                              # Obsidian vault root
+├── INDEX.md                                  # Master navigation — update when adding content
+├── SIHRE Framework/                          # Core framework definition
+│   ├── Overview/                             # What is SIHRE, positioning, differentiators
+│   ├── Signals/                              # Per-signal deep dives
+│   │   ├── Signal-01-VectorDB/
+│   │   ├── Signal-02-DSLM/
+│   │   ├── ...through Signal-13-Meta-Orchestrator/
+│   ├── Architecture/                         # System architecture, data flow, interfaces
+│   ├── Fusion/                               # Reasoning-level fusion techniques (RRF, HMoE, attention)
+│   ├── Governance/                           # Trust, audit, explainability, compliance
+│   ├── Research Reports/                     # Deep research outputs (prompts 1-7 + Gemini)
+│   └── Whitepapers/                          # Public whitepaper, publication memo
+├── Walkthrough/                              # In-depth educational guide (10 chapters)
+│   ├── 01-What-Is-SIHRE/ through 10-Advanced-Topics/
+├── Implementation Guide/                     # Practical engineering guide
+│   ├── Getting Started/
+│   ├── Build Order/
+│   ├── Domain Adaptations/                   # Per-domain: Trading, Robotics, Cyber, Healthcare
+│   ├── Patterns and Recipes/
+│   ├── Anti-Patterns/
+│   └── Evaluation and Benchmarking/
+├── Publication/                              # Authorship and public presence
+│   ├── Whitepaper/ Academic/ Blog Posts/ Talks/ Brand/
+├── Monetization/                             # Revenue streams and business model
+│   ├── Licensing/ SDK/ Certification/ Consulting/ Education/ Paid Research/
+├── Papers/                                   # Academic papers, competitive landscape, prior art
+├── Legal and IP/                             # Patents, trademark, licensing templates
+└── Roadmap/                                  # Framework development roadmap
 ```
 
-Create folders from this structure (or variations) as content warrants. Don't create empty folders preemptively — create them when you have content to put in them.
+Create new folders as needed when content doesn't fit existing structure. Update `INDEX.md` when adding new sections.
 
 **What to write:**
 - New techniques discovered during implementation that enhance a signal
