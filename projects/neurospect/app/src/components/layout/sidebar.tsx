@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, FileText, Plus, Menu, Sparkles, Shield, Settings } from 'lucide-react';
+import { LayoutDashboard, FileText, Plus, Menu, Sparkles, Shield, Settings, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -35,6 +35,16 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
           {label}
         </NavLink>
       ))}
+      <a
+        href="../neurospect-ui/index.html"
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={onNavigate}
+        className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+      >
+        <Globe className="h-4 w-4 shrink-0" />
+        Marketing Site
+      </a>
     </nav>
   );
 }

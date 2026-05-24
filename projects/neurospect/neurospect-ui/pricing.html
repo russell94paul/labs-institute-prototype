@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — NeuroSpect</title>
+<style>
+  :root {
+    --bg: #080d14; --bg2: #0d1520;
+    --card: rgba(255,255,255,0.03); --card-hover: rgba(255,255,255,0.05);
+    --border: rgba(255,255,255,0.06); --border-strong: rgba(255,255,255,0.12);
+    --cyan: #00d4ff; --purple: #7c3aed; --green: #10b981; --amber: #f59e0b;
+    --text: #e2e8f0; --text2: #94a3b8; --text3: #4a5568;
+    --font: 'Segoe UI', system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 56px;
+    background: rgba(8,13,20,0.95); border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-logo {
+    font-size: 1rem; font-weight: 800; letter-spacing: 0.1em;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .nav-links { display: flex; gap: 24px; }
+  .nav-links a { font-size: 0.82rem; color: var(--text2); text-decoration: none; }
+  .nav-links a:hover { color: var(--text); }
+
+  .pricing-header { text-align: center; padding: 64px 40px 40px; }
+  .pricing-header h1 { font-size: 2.4rem; font-weight: 800; color: #fff; margin-bottom: 12px; }
+  .pricing-header p { font-size: 1rem; color: var(--text2); max-width: 500px; margin: 0 auto 28px; line-height: 1.7; }
+
+  .billing-toggle {
+    display: inline-flex; background: rgba(255,255,255,0.05); border: 1px solid var(--border-strong);
+    border-radius: 8px; padding: 4px; gap: 4px;
+  }
+  .billing-btn {
+    padding: 7px 18px; border-radius: 6px; font-size: 0.82rem; font-weight: 600;
+    cursor: pointer; border: none; background: transparent; color: var(--text2);
+    font-family: var(--font); transition: all 0.15s;
+  }
+  .billing-btn.active { background: rgba(0,212,255,0.12); color: var(--cyan); border: 1px solid rgba(0,212,255,0.25); }
+  .discount-badge {
+    display: inline-block; font-size: 0.68rem; font-weight: 700; padding: 2px 8px;
+    border-radius: 100px; background: rgba(16,185,129,0.12); color: var(--green);
+    border: 1px solid rgba(16,185,129,0.25); margin-left: 6px;
+  }
+
+  .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+
+  .plan-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 32px 28px; position: relative;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .plan-card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+  .plan-card.featured {
+    border-color: rgba(0,212,255,0.35); background: rgba(0,212,255,0.04);
+    transform: translateY(-4px);
+  }
+  .plan-card.featured:hover { transform: translateY(-6px); }
+  .featured-badge {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    font-size: 0.7rem; font-weight: 700; padding: 3px 14px; border-radius: 100px;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    color: #fff; white-space: nowrap;
+  }
+  .plan-name { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text3); margin-bottom: 12px; }
+  .plan-price { margin-bottom: 8px; }
+  .plan-amount { font-size: 2.8rem; font-weight: 800; color: #fff; }
+  .plan-amount sup { font-size: 1.2rem; vertical-align: super; }
+  .plan-cycle { font-size: 0.82rem; color: var(--text2); margin-left: 4px; }
+  .plan-desc { font-size: 0.88rem; color: var(--text2); margin-bottom: 24px; line-height: 1.6; }
+  .plan-cta {
+    width: 100%; padding: 12px; border-radius: 8px; font-size: 0.9rem; font-weight: 700;
+    cursor: pointer; font-family: var(--font); transition: all 0.15s; margin-bottom: 24px;
+  }
+  .cta-primary { background: linear-gradient(135deg, var(--cyan), var(--purple)); border: none; color: #fff; }
+  .cta-primary:hover { opacity: 0.9; }
+  .cta-outline { background: transparent; border: 1px solid var(--border-strong); color: var(--text2); }
+  .cta-outline:hover { border-color: rgba(255,255,255,0.25); color: var(--text); }
+
+  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .plan-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.85rem; color: var(--text2); }
+  .plan-features li::before { content: '✓'; color: var(--green); font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+  .plan-features li.disabled { color: var(--text3); }
+  .plan-features li.disabled::before { content: '—'; color: var(--text3); }
+
+  .plan-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+  .plan-tag {
+    display: inline-block; font-size: 0.65rem; font-weight: 700; padding: 1px 8px;
+    border-radius: 4px; text-transform: uppercase; letter-spacing: 0.06em; margin-left: 6px;
+  }
+  .tag-coming { background: rgba(245,158,11,0.1); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+
+  /* COMPARISON TABLE */
+  .comparison { max-width: 1100px; margin: 64px auto; padding: 0 40px; }
+  .comparison h2 { font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 24px; text-align: center; }
+  .comp-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .comp-table thead th {
+    padding: 12px 16px; font-size: 0.78rem; font-weight: 700; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 0.12em; background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+  }
+  .comp-table tbody td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text2); }
+  .comp-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+  .comp-table tbody td:first-child { color: var(--text); font-weight: 500; }
+  .comp-check { color: var(--green); font-weight: 800; }
+  .comp-dash { color: var(--text3); }
+  .comp-partial { color: var(--amber); }
+
+  /* FAQ */
+  .faq { max-width: 760px; margin: 0 auto; padding: 0 40px 80px; }
+  .faq h2 { font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 32px; text-align: center; }
+  .faq-item { border-bottom: 1px solid var(--border); }
+  .faq-q {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 0; cursor: pointer; font-size: 0.95rem; font-weight: 600; color: #fff;
+    list-style: none;
+  }
+  .faq-q:hover { color: var(--cyan); }
+  .faq-q::after { content: '+'; font-size: 1.2rem; font-weight: 300; color: var(--text3); transition: transform 0.2s; }
+  .faq-item.open .faq-q::after { transform: rotate(45deg); color: var(--cyan); }
+  .faq-a { display: none; padding: 0 0 16px; font-size: 0.88rem; color: var(--text2); line-height: 1.8; }
+  .faq-item.open .faq-a { display: block; }
+
+  .disclaimer { max-width: 1100px; margin: 0 auto 40px; padding: 0 40px; }
+  .disclaimer-box { background: rgba(245,158,11,0.05); border: 1px solid rgba(245,158,11,0.15); border-radius: 8px; padding: 14px 20px; font-size: 0.78rem; color: var(--text3); line-height: 1.7; }
+
+  @media (max-width: 900px) {
+    .plans-grid { grid-template-columns: 1fr; }
+    .plan-card.featured { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">NEUROSPECT</a>
+  <div class="nav-links">
+    <a href="simulator.html">Simulator</a>
+    <a href="course.html">ICT Course</a>
+    <a href="research.html">EdgeLab</a>
+    <a href="guide.html">Guide</a>
+  </div>
+</nav>
+
+<div class="pricing-header">
+  <h1>Simple, Transparent Pricing</h1>
+  <p>Start free. Upgrade when you need the advanced tooling. Cancel anytime.</p>
+  <div class="billing-toggle">
+    <button class="billing-btn active" onclick="setBilling(this,'monthly')">Monthly</button>
+    <button class="billing-btn" onclick="setBilling(this,'annual')">Annual <span class="discount-badge">Save 20%</span></button>
+  </div>
+</div>
+
+<div class="plans-grid">
+
+  <!-- MENTOR -->
+  <div class="plan-card">
+    <div class="plan-name">Mentor</div>
+    <div class="plan-price">
+      <span class="plan-amount"><sup>$</sup><span id="mentor-price">29</span></span>
+      <span class="plan-cycle">/month</span>
+    </div>
+    <div class="plan-desc">AI-powered trade review and coaching for active traders who want to improve their ICT execution.</div>
+    <button class="plan-cta cta-outline" onclick="joinWaitlist()">Join Waitlist</button>
+    <ul class="plan-features">
+      <li>Trader Workspace — trade journal + analytics</li>
+      <li>Behavior metrics — tilt, discipline, consistency</li>
+      <li>NeuroSpect Mentor — AI trade review (10 reviews/mo)</li>
+      <li>ICT course access</li>
+      <li>Prop Shield — basic rule tracking</li>
+      <li class="disabled">EdgeLab backtesting</li>
+      <li class="disabled">ICT Event Engine</li>
+      <li class="disabled">NeuroScore ranking</li>
+    </ul>
+  </div>
+
+  <!-- TRADER -->
+  <div class="plan-card featured">
+    <div class="featured-badge">Most Popular</div>
+    <div class="plan-name">Trader</div>
+    <div class="plan-price">
+      <span class="plan-amount"><sup>$</sup><span id="trader-price">99</span></span>
+      <span class="plan-cycle">/month</span>
+    </div>
+    <div class="plan-desc">Full prop firm protection, unlimited AI coaching, and ICT event detection for professional futures traders.</div>
+    <button class="plan-cta cta-primary" onclick="joinWaitlist()">Join Waitlist</button>
+    <ul class="plan-features">
+      <li>Everything in Mentor</li>
+      <li>Prop Shield Pro — all prop firm rules + auto-lockouts</li>
+      <li>Tradovate integration — live drawdown monitoring</li>
+      <li>Unlimited AI trade reviews</li>
+      <li>ICT Event Engine — FVGs, OBs, sweeps, MSS detection</li>
+      <li>EdgeLab — 500 backtests/month</li>
+      <li>NeuroScore ranking (verified trades)</li>
+      <li class="disabled">NeuroFund Elite eligibility</li>
+    </ul>
+  </div>
+
+  <!-- RESEARCH -->
+  <div class="plan-card">
+    <div class="plan-name">Research</div>
+    <div class="plan-price">
+      <span class="plan-amount"><sup>$</sup><span id="research-price">199</span></span>
+      <span class="plan-cycle">/month</span>
+    </div>
+    <div class="plan-desc">Full quant research capabilities. Unlimited backtesting, Monte Carlo simulation, YAML strategy compilation, and NeuroFusion access.</div>
+    <button class="plan-cta cta-outline" onclick="joinWaitlist()">Join Waitlist</button>
+    <ul class="plan-features">
+      <li>Everything in Trader</li>
+      <li>Unlimited EdgeLab backtests</li>
+      <li>Monte Carlo + walk-forward optimization</li>
+      <li>YAML strategy compiler</li>
+      <li>Feature engineering pipeline</li>
+      <li>NeuroFusion-13 quant signal access <span class="plan-tag tag-coming">Phase 11</span></li>
+      <li>NeuroFund Elite eligibility</li>
+      <li>Priority support + beta features</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- COMPARISON TABLE -->
+<div class="comparison">
+  <h2>Full Feature Comparison</h2>
+  <table class="comp-table">
+    <thead>
+      <tr>
+        <th style="text-align:left; width:40%;">Feature</th>
+        <th>Mentor</th>
+        <th>Trader</th>
+        <th>Research</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Trader Workspace (Journal + Analytics)</td><td class="comp-check">✓</td><td class="comp-check">✓</td><td class="comp-check">✓</td></tr>
+      <tr><td>Behavior Metrics (Tilt, Discipline)</td><td class="comp-check">✓</td><td class="comp-check">✓</td><td class="comp-check">✓</td></tr>
+      <tr><td>ICT Course (5 modules, 18 lessons)</td><td class="comp-check">✓</td><td class="comp-check">✓</td><td class="comp-check">✓</td></tr>
+      <tr><td>AI Trade Reviews / month</td><td>10</td><td>Unlimited</td><td>Unlimited</td></tr>
+      <tr><td>Prop Shield (basic rule tracking)</td><td class="comp-check">✓</td><td class="comp-check">✓</td><td class="comp-check">✓</td></tr>
+      <tr><td>Prop Shield Pro (all rules + lockouts)</td><td class="comp-dash">—</td><td class="comp-check">✓</td><td class="comp-check">✓</td></tr>
+      <tr><td>Tradovate Integration</td><td class="comp-dash">—</td><td class="comp-check">✓</td><td class="comp-check">✓</td></tr>
+      <tr><td>ICT Event Engine (FVG, OB, Sweep, MSS)</td><td class="comp-dash">—</td><td class="comp-check">✓</td><td class="comp-check">✓</td></tr>
+      <tr><td>EdgeLab Backtests / month</td><td class="comp-dash">—</td><td>500</td><td>Unlimited</td></tr>
+      <tr><td>Monte Carlo Simulation</td><td class="comp-dash">—</td><td class="comp-dash">—</td><td class="comp-check">✓</td></tr>
+      <tr><td>Walk-Forward Optimization</td><td class="comp-dash">—</td><td class="comp-dash">—</td><td class="comp-check">✓</td></tr>
+      <tr><td>YAML Strategy Compiler</td><td class="comp-dash">—</td><td class="comp-partial">Basic</td><td class="comp-check">✓</td></tr>
+      <tr><td>NeuroScore (Verified Ranking)</td><td class="comp-dash">—</td><td class="comp-check">✓</td><td class="comp-check">✓</td></tr>
+      <tr><td>NeuroFund Elite Eligibility</td><td class="comp-dash">—</td><td class="comp-dash">—</td><td class="comp-check">✓</td></tr>
+      <tr><td>NeuroFusion-13 Signal Access</td><td class="comp-dash">—</td><td class="comp-dash">—</td><td class="comp-partial">Phase 11</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FAQ -->
+<div class="faq">
+  <h2>Frequently Asked Questions</h2>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">When will NeuroSpect be available?</div>
+    <div class="faq-a">We are currently in private beta, building phase by phase. Prop Shield (Phase 3) is the first paid feature — targeting release later in 2026. Join the waitlist to get early access and be notified when your tier is ready.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What is NeuroFund Elite?</div>
+    <div class="faq-a">NeuroFund Elite is a company-sponsored reward and recognition program for top-ranked traders on NeuroScore. It is funded from NeuroSpect's revenue. <strong>It is NOT a prop firm, NOT pooled capital, and NOT an investment vehicle.</strong> Eligible traders may receive recognition rewards and access to advanced research tooling.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Can I use NeuroSpect with any prop firm?</div>
+    <div class="faq-a">Prop Shield is designed to work with the major CME futures prop firms. We support Tradovate integration (TopstepTrader, Apex, etc.) and can track custom prop firm rules. More integrations are added each phase.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Is the AI coach trained on ICT concepts?</div>
+    <div class="faq-a">Yes. NeuroSpect Mentor uses a RAG (Retrieval-Augmented Generation) system that pulls from our ICT knowledge wiki, your personal playbooks, and your trading history. All coaching citations link back to the original source material.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Does NeuroSpect provide trade signals?</div>
+    <div class="faq-a">No. NeuroSpect is an analytical, educational, and research tool. The ICT Event Engine detects and classifies events — it does not tell you to buy or sell. All trading decisions are entirely your own. See our full risk disclaimer below.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Can I cancel anytime?</div>
+    <div class="faq-a">Yes. No contracts, no lock-ins. Cancel anytime from your account settings. Annual plans are refunded pro-rata for unused months.</div>
+  </div>
+</div>
+
+<!-- DISCLAIMER -->
+<div class="disclaimer">
+  <div class="disclaimer-box">
+    <strong>Risk Disclosure:</strong> All trading involves substantial risk of loss. NeuroSpect is an analytical and educational tool — it does not provide financial advice, investment recommendations, or trade signals. Past performance of any strategy, backtest, or simulation is hypothetical and not indicative of future results. Backtesting has inherent limitations and does not account for slippage, liquidity, or real-world execution constraints. NeuroFund Elite is a reward program, not an investment vehicle.
+  </div>
+</div>
+
+<script>
+let billing = 'monthly';
+const prices = {
+  monthly: { mentor: 29, trader: 99, research: 199 },
+  annual: { mentor: 23, trader: 79, research: 159 }
+};
+
+function setBilling(btn, mode) {
+  billing = mode;
+  document.querySelectorAll('.billing-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const p = prices[mode];
+  document.getElementById('mentor-price').textContent = p.mentor;
+  document.getElementById('trader-price').textContent = p.trader;
+  document.getElementById('research-price').textContent = p.research;
+}
+
+function toggleFaq(q) {
+  const item = q.parentElement;
+  item.classList.toggle('open');
+}
+
+function joinWaitlist() {
+  window.location.href = 'index.html#waitlist';
+}
+</script>
+</body>
+</html>

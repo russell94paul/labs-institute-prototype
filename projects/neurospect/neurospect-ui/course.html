@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICT Course — NeuroSpect</title>
+<style>
+  :root {
+    --bg: #080d14; --bg2: #0d1520; --bg3: #111c2a;
+    --card: rgba(255,255,255,0.03); --card-hover: rgba(255,255,255,0.05);
+    --border: rgba(255,255,255,0.06); --border-strong: rgba(255,255,255,0.12);
+    --cyan: #00d4ff; --purple: #7c3aed; --green: #10b981;
+    --amber: #f59e0b; --red: #ef4444;
+    --text: #e2e8f0; --text2: #94a3b8; --text3: #4a5568;
+    --font: 'Segoe UI', system-ui, sans-serif;
+    --mono: Consolas, 'Cascadia Code', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 56px;
+    background: rgba(8,13,20,0.95); border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-logo {
+    font-size: 1rem; font-weight: 800; letter-spacing: 0.1em;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .nav-back { font-size: 0.82rem; color: var(--text2); text-decoration: none; }
+  .nav-back:hover { color: var(--text); }
+
+  .course-layout { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 56px); }
+
+  /* SIDEBAR */
+  .course-sidebar {
+    background: var(--bg2); border-right: 1px solid var(--border);
+    overflow-y: auto; padding: 20px 0;
+  }
+  .sidebar-header { padding: 0 20px 16px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+  .sidebar-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text3); }
+  .progress-bar-wrap { margin-top: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; height: 4px; }
+  .progress-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--cyan), var(--purple)); transition: width 0.4s; }
+  .progress-label { font-size: 0.72rem; color: var(--text2); margin-top: 5px; }
+
+  .module-group { margin-bottom: 4px; }
+  .module-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 20px; cursor: pointer; transition: background 0.15s;
+    font-size: 0.82rem; font-weight: 700; color: var(--text);
+  }
+  .module-header:hover { background: var(--card-hover); }
+  .module-header.active { background: rgba(0,212,255,0.06); }
+  .module-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%; font-size: 0.7rem;
+    font-weight: 800; font-family: var(--mono); flex-shrink: 0; margin-right: 8px;
+    background: rgba(255,255,255,0.06); color: var(--text2);
+  }
+  .module-num.done { background: rgba(16,185,129,0.15); color: var(--green); }
+  .module-num.active { background: rgba(0,212,255,0.12); color: var(--cyan); }
+  .module-chevron { color: var(--text3); font-size: 0.7rem; transition: transform 0.2s; }
+  .module-header.open .module-chevron { transform: rotate(90deg); }
+
+  .lesson-list { display: none; }
+  .lesson-list.open { display: block; }
+  .lesson-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 20px 8px 36px; font-size: 0.82rem; color: var(--text2);
+    cursor: pointer; transition: background 0.15s;
+  }
+  .lesson-item:hover { background: var(--card-hover); color: var(--text); }
+  .lesson-item.active { background: rgba(0,212,255,0.07); color: var(--cyan); }
+  .lesson-item.done { color: var(--green); }
+  .lesson-check { font-size: 0.7rem; flex-shrink: 0; }
+
+  /* CONTENT */
+  .course-content { overflow-y: auto; padding: 40px; }
+
+  .lesson-header { margin-bottom: 32px; }
+  .lesson-module-tag {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em;
+    color: var(--cyan); background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.18);
+    padding: 3px 12px; border-radius: 100px; display: inline-block; margin-bottom: 12px;
+  }
+  .lesson-title { font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 8px; line-height: 1.2; }
+  .lesson-meta { font-size: 0.82rem; color: var(--text3); display: flex; gap: 16px; align-items: center; }
+
+  .lesson-body { max-width: 780px; }
+  .lesson-body p { font-size: 0.95rem; color: var(--text2); line-height: 1.8; margin-bottom: 16px; }
+  .lesson-body h3 { font-size: 1.1rem; font-weight: 700; color: #fff; margin: 24px 0 10px; }
+
+  .concept-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 24px; margin: 16px 0;
+  }
+  .concept-title { font-size: 0.88rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .concept-body { font-size: 0.88rem; color: var(--text2); line-height: 1.7; }
+  .concept-tag {
+    display: inline-block; font-size: 0.68rem; font-weight: 700; padding: 2px 10px;
+    border-radius: 100px; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;
+  }
+  .tag-fvg { background: rgba(16,185,129,0.1); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
+  .tag-ob { background: rgba(0,212,255,0.08); color: var(--cyan); border: 1px solid rgba(0,212,255,0.2); }
+  .tag-liq { background: rgba(245,158,11,0.08); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+  .tag-struct { background: rgba(124,58,237,0.1); color: var(--purple); border: 1px solid rgba(124,58,237,0.25); }
+
+  .key-terms { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 20px 0; }
+  .term-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px;
+  }
+  .term-name { font-size: 0.82rem; font-weight: 700; color: var(--cyan); margin-bottom: 4px; font-family: var(--mono); }
+  .term-def { font-size: 0.82rem; color: var(--text2); line-height: 1.55; }
+
+  /* ASSESSMENT TYPES */
+  .assessment-section { margin-top: 32px; }
+  .assessment-title { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .assessment-type-badge {
+    font-size: 0.68rem; font-weight: 700; padding: 2px 10px; border-radius: 100px;
+    background: rgba(124,58,237,0.1); color: var(--purple); border: 1px solid rgba(124,58,237,0.2);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+
+  /* QUIZ */
+  .quiz-question { font-size: 0.95rem; font-weight: 600; color: #fff; margin-bottom: 14px; line-height: 1.5; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .quiz-option {
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    cursor: pointer; transition: all 0.15s; font-size: 0.88rem; color: var(--text2);
+  }
+  .quiz-option:hover { border-color: var(--border-strong); color: var(--text); background: var(--card-hover); }
+  .quiz-option.selected { border-color: var(--cyan); background: rgba(0,212,255,0.07); color: var(--text); }
+  .quiz-option.correct { border-color: var(--green); background: rgba(16,185,129,0.1); color: var(--green); }
+  .quiz-option.wrong { border-color: var(--red); background: rgba(239,68,68,0.08); color: var(--red); }
+  .quiz-letter {
+    width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 800; background: rgba(255,255,255,0.06); flex-shrink: 0;
+  }
+
+  /* FILL IN BLANK */
+  .fill-blank-prompt { font-size: 0.95rem; color: var(--text2); line-height: 1.9; margin-bottom: 8px; }
+  .blank-input {
+    display: inline-block; border-bottom: 2px solid var(--cyan); background: transparent;
+    color: var(--cyan); font-family: var(--mono); font-size: 0.92rem; font-weight: 700;
+    width: 140px; text-align: center; outline: none; padding: 2px 4px;
+  }
+
+  /* SCENARIO / CHART ID */
+  .scenario-chart {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 20px; margin-bottom: 16px; position: relative;
+    font-family: var(--mono); font-size: 0.8rem; color: var(--text3);
+  }
+  .sc-canvas { width: 100%; height: 160px; border-radius: 6px; }
+  .sc-labels { display: flex; justify-content: space-between; margin-top: 8px; font-size: 0.72rem; }
+
+  /* NAV BUTTONS */
+  .lesson-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); }
+  .nav-lesson-btn {
+    padding: 10px 20px; border-radius: 8px; font-size: 0.88rem; font-weight: 600;
+    cursor: pointer; font-family: var(--font); transition: all 0.15s;
+  }
+  .btn-prev { background: transparent; border: 1px solid var(--border-strong); color: var(--text2); }
+  .btn-prev:hover { border-color: rgba(255,255,255,0.25); color: var(--text); }
+  .btn-next { background: linear-gradient(135deg, var(--cyan), var(--purple)); border: none; color: #fff; }
+  .btn-next:hover { opacity: 0.9; transform: translateX(2px); }
+  .btn-check { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: var(--green); }
+  .btn-check:hover { background: rgba(16,185,129,0.2); }
+
+  .feedback-msg { font-size: 0.88rem; padding: 10px 14px; border-radius: 7px; margin-top: 10px; display: none; }
+  .feedback-correct { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); color: var(--green); }
+  .feedback-wrong { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: var(--red); }
+
+  @media (max-width: 768px) {
+    .course-layout { grid-template-columns: 1fr; }
+    .course-sidebar { display: none; }
+    .course-content { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">NEUROSPECT</a>
+  <a class="nav-back" href="index.html">← Back</a>
+</nav>
+
+<div class="course-layout">
+
+  <!-- SIDEBAR -->
+  <div class="course-sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">ICT Course</div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width: 8%"></div></div>
+      <div class="progress-label" id="progress-label">1 / 18 lessons complete</div>
+    </div>
+
+    <div class="module-group">
+      <div class="module-header open active" onclick="toggleModule(this)">
+        <span class="module-num active">1</span> Market Structure
+        <span class="module-chevron">▶</span>
+      </div>
+      <div class="lesson-list open">
+        <div class="lesson-item active" onclick="loadLesson(0)"><span class="lesson-check">○</span> What Is Market Structure?</div>
+        <div class="lesson-item" onclick="loadLesson(1)"><span class="lesson-check">○</span> Swing Highs and Lows</div>
+        <div class="lesson-item" onclick="loadLesson(2)"><span class="lesson-check">○</span> Market Structure Shifts</div>
+        <div class="lesson-item" onclick="loadLesson(3)"><span class="lesson-check">○</span> Higher Time Frame Bias</div>
+      </div>
+    </div>
+
+    <div class="module-group">
+      <div class="module-header" onclick="toggleModule(this)">
+        <span class="module-num">2</span> Order Blocks
+        <span class="module-chevron">▶</span>
+      </div>
+      <div class="lesson-list">
+        <div class="lesson-item" onclick="loadLesson(4)"><span class="lesson-check">○</span> What Is an Order Block?</div>
+        <div class="lesson-item" onclick="loadLesson(5)"><span class="lesson-check">○</span> Bullish vs Bearish OBs</div>
+        <div class="lesson-item" onclick="loadLesson(6)"><span class="lesson-check">○</span> Breaker Blocks</div>
+        <div class="lesson-item" onclick="loadLesson(7)"><span class="lesson-check">○</span> OB Identification Quiz</div>
+      </div>
+    </div>
+
+    <div class="module-group">
+      <div class="module-header" onclick="toggleModule(this)">
+        <span class="module-num">3</span> Fair Value Gaps
+        <span class="module-chevron">▶</span>
+      </div>
+      <div class="lesson-list">
+        <div class="lesson-item" onclick="loadLesson(8)"><span class="lesson-check">○</span> Understanding FVGs</div>
+        <div class="lesson-item" onclick="loadLesson(9)"><span class="lesson-check">○</span> FVG Mitigation Models</div>
+        <div class="lesson-item" onclick="loadLesson(10)"><span class="lesson-check">○</span> IFVG (Inverse FVG)</div>
+        <div class="lesson-item" onclick="loadLesson(11)"><span class="lesson-check">○</span> FVG Trade Identification</div>
+      </div>
+    </div>
+
+    <div class="module-group">
+      <div class="module-header" onclick="toggleModule(this)">
+        <span class="module-num">4</span> Liquidity
+        <span class="module-chevron">▶</span>
+      </div>
+      <div class="lesson-list">
+        <div class="lesson-item" onclick="loadLesson(12)"><span class="lesson-check">○</span> Buy-Side and Sell-Side Liquidity</div>
+        <div class="lesson-item" onclick="loadLesson(13)"><span class="lesson-check">○</span> Liquidity Sweeps</div>
+        <div class="lesson-item" onclick="loadLesson(14)"><span class="lesson-check">○</span> Stop Hunt Identification</div>
+      </div>
+    </div>
+
+    <div class="module-group">
+      <div class="module-header" onclick="toggleModule(this)">
+        <span class="module-num">5</span> Kill Zones
+        <span class="module-chevron">▶</span>
+      </div>
+      <div class="lesson-list">
+        <div class="lesson-item" onclick="loadLesson(15)"><span class="lesson-check">○</span> The Four Kill Zones</div>
+        <div class="lesson-item" onclick="loadLesson(16)"><span class="lesson-check">○</span> NY AM Open Strategy</div>
+        <div class="lesson-item" onclick="loadLesson(17)"><span class="lesson-check">○</span> Final Assessment</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="course-content" id="course-content">
+    <!-- Content is dynamically loaded by JS -->
+  </div>
+</div>
+
+<script>
+const lessons = [
+  // MODULE 1: MARKET STRUCTURE
+  {
+    module: 'Module 1 — Market Structure',
+    title: 'What Is Market Structure?',
+    meta: '8 min read · Foundational',
+    type: 'reading',
+    content: `
+      <p>Market structure is the framework through which institutional traders — "smart money" — organize price delivery. Understanding market structure is the first step to reading why price moves, not just where it has been.</p>
+      <p>In the ICT (Inner Circle Trader) methodology, market structure is defined by the relationship between swing highs and swing lows on any given time frame. Price is always doing one of three things:</p>
+      <div class="key-terms">
+        <div class="term-card">
+          <div class="term-name">Bullish Structure</div>
+          <div class="term-def">Series of Higher Highs (HH) and Higher Lows (HL). Smart money is accumulating and distributing at higher prices.</div>
+        </div>
+        <div class="term-card">
+          <div class="term-name">Bearish Structure</div>
+          <div class="term-def">Series of Lower Highs (LH) and Lower Lows (LL). Smart money is distributing and accumulating at lower prices.</div>
+        </div>
+        <div class="term-card">
+          <div class="term-name">Range / Consolidation</div>
+          <div class="term-def">Price oscillating between established highs and lows. Institutions are accumulating before the next directional move.</div>
+        </div>
+      </div>
+      <h3>Why Structure Matters</h3>
+      <p>Every trading decision in the ICT framework is anchored to a structural bias. Before you look for an entry, you must first determine whether the higher time frame (HTF) structure is bullish or bearish. This gives you a "why" behind every trade — you're not just entering at a random level, you're participating in the delivery of price to the next HTF target.</p>
+      <h3>The Fractal Nature of Structure</h3>
+      <p>Market structure exists on every time frame simultaneously. The weekly structure provides context for the daily, the daily for the 4H, and so on down to the 1-minute chart. A bullish swing on a 5-minute chart means nothing if the 1-hour chart is in bearish structure — all it represents is a temporary pullback.</p>
+      <div class="concept-card">
+        <div class="concept-tag tag-struct">Key Concept</div>
+        <div class="concept-title">Always trade in the direction of the Higher Time Frame</div>
+        <div class="concept-body">Lower time frame setups should align with the HTF bias. If the daily chart is bullish, only take long entries on the 5m and 15m charts. Counter-trend trades on low time frames against HTF structure have a much lower probability of success.</div>
+      </div>
+    `,
+    assessment: null
+  },
+  {
+    module: 'Module 1 — Market Structure',
+    title: 'Swing Highs and Lows',
+    meta: '6 min read · Foundational',
+    type: 'quiz',
+    content: `
+      <p>A swing high is a candle whose high is higher than the candles immediately before and after it. A swing low is the inverse. ICT distinguishes between different classes of swings based on significance and time frame.</p>
+      <h3>Classes of Swing Points</h3>
+      <div class="key-terms">
+        <div class="term-card">
+          <div class="term-name">Intermediate High / Low</div>
+          <div class="term-def">A swing point that defines short-term structure. Breaking it signals a change in that time frame's delivery direction.</div>
+        </div>
+        <div class="term-card">
+          <div class="term-name">Significant High / Low</div>
+          <div class="term-def">A major swing point with strong displacement away from it. These levels attract price for future liquidity engineering.</div>
+        </div>
+      </div>
+      <p>When an intermediate high is broken, the market has made a "Market Structure Shift" (MSS) or a "Change of Character" (CHoCH) — covered in lesson 3.</p>
+    `,
+    assessment: {
+      type: 'quiz',
+      question: 'A market is making Higher Highs and Higher Lows on the 1-hour chart, but the 4-hour chart shows a series of Lower Highs and Lower Lows. You see a bullish FVG on the 15-minute chart. What is the correct bias for a trade?',
+      options: [
+        'Long — the 15m FVG is a clear entry signal',
+        'Short — the HTF (4H) structure is bearish; 1H and 15m moves are counter-trend pullbacks',
+        'Long — the 1H structure is bullish and overrides the 4H',
+        'No trade — never trade when time frames are in conflict',
+      ],
+      correct: 1,
+      explanation: 'The 4H chart is the higher time frame context. Bearish structure on the 4H means you should only be looking for short entries. The 1H bullish move and 15m FVG are counter-trend — they represent a pullback within the bearish leg, not a reversal entry.'
+    }
+  },
+  {
+    module: 'Module 1 — Market Structure',
+    title: 'Market Structure Shifts',
+    meta: '7 min read + Identification Exercise',
+    type: 'fill-blank',
+    content: `
+      <p>A Market Structure Shift (MSS) is the breaking of a prior swing high in a bearish market, or a prior swing low in a bullish market. It signals that the current directional delivery may be changing and that smart money may be repositioning.</p>
+      <h3>MSS vs CHoCH</h3>
+      <p>In ICT, there's a distinction between a MSS and a Change of Character (CHoCH). A CHoCH occurs on the same time frame as the trade — it's the initial signal. A MSS is confirmed by a CHoCH that breaks structure on a meaningful level, often accompanied by a displacement candle and a Fair Value Gap (FVG).</p>
+      <div class="concept-card">
+        <div class="concept-tag tag-struct">Trading Application</div>
+        <div class="concept-title">The MSS Entry Model</div>
+        <div class="concept-body">1. Identify HTF bearish structure. 2. Wait for price to sweep sell-side liquidity (SSL). 3. Watch for a bullish MSS on the lower time frame — price breaks a prior LTF high with displacement. 4. Look for an FVG or OB created during the displacement candle. 5. Enter on the retracement into that FVG/OB. Target: buy-side liquidity above.</div>
+      </div>
+    `,
+    assessment: {
+      type: 'fill-blank',
+      prompt: 'A Market Structure Shift occurs when price breaks a prior ________ in a bearish market, indicating potential reversal. The displacement candle that causes the MSS typically creates a ________ that can be used as an entry point on the retracement.',
+      blanks: ['swing high', 'Fair Value Gap'],
+      inputs: ['', ''],
+    }
+  },
+  {
+    module: 'Module 1 — Market Structure',
+    title: 'Higher Time Frame Bias',
+    meta: '10 min read · Critical Concept',
+    type: 'scenario',
+    content: `
+      <p>The HTF bias is the single most important filter in ICT trading. It is determined by identifying the current market structure on at least two higher time frames and confirming they are aligned.</p>
+      <h3>Bias Determination Checklist</h3>
+      <div class="concept-card">
+        <div class="concept-tag tag-struct">Process</div>
+        <div class="concept-title">Top-Down Analysis</div>
+        <div class="concept-body">
+          <strong>1. Weekly Chart:</strong> Is price above or below the weekly midpoint? Are swing highs or lows being taken out?<br><br>
+          <strong>2. Daily Chart:</strong> What is the current structure? Where are the daily FVGs and order blocks?<br><br>
+          <strong>3. 4H Chart:</strong> Is this an expansion or consolidation? What is the last displacement?<br><br>
+          <strong>4. Entry TF (15m / 5m):</strong> Where is the confirmation? FVG, OB, or MSS entry only.
+        </div>
+      </div>
+      <p>Only trade when at least the daily and 4H charts agree on direction. If they are in conflict, reduce size or skip the trade.</p>
+    `,
+    assessment: {
+      type: 'scenario',
+      question: 'Based on the chart pattern below, which structure is most consistent with a BULLISH MSS entry setup?',
+      options: ['Pattern A — Lower Low then break of prior swing high with gap', 'Pattern B — Equal highs swept then price collapses', 'Pattern C — Higher High continuation', 'Pattern D — Double bottom with no displacement'],
+      correct: 0,
+      explanation: 'Pattern A shows the classic MSS entry: price sweeps sell-side liquidity (lower low), then breaks a prior swing high with displacement. The gap created is a bullish FVG — the entry zone.'
+    }
+  },
+  // MODULE 2: ORDER BLOCKS
+  {
+    module: 'Module 2 — Order Blocks',
+    title: 'What Is an Order Block?',
+    meta: '8 min read · Core Concept',
+    type: 'reading',
+    content: `
+      <p>An Order Block (OB) is the last opposing candle before a strong, impulsive move. It represents an area where institutional orders are believed to have been placed. When price returns to that area, it often reacts because the same institutions are protecting or extending their positions.</p>
+      <h3>Identifying a Bullish Order Block</h3>
+      <div class="concept-card">
+        <div class="concept-tag tag-ob">Order Block</div>
+        <div class="concept-title">Bullish Order Block Rules</div>
+        <div class="concept-body">
+          1. Find a strong bullish impulse (displacement) to the upside.<br>
+          2. Look at the last down-close candle immediately before the impulse.<br>
+          3. That candle's body (open to close) is the bullish order block zone.<br>
+          4. When price returns to this zone, watch for a reaction and potential entry.
+        </div>
+      </div>
+      <p>The logic is straightforward: smart money placed buy orders in that last bearish candle zone. When price returns, those orders are still there as support.</p>
+      <div class="key-terms">
+        <div class="term-card">
+          <div class="term-name">OB Body</div>
+          <div class="term-def">The open-to-close range of the OB candle. The primary reaction zone.</div>
+        </div>
+        <div class="term-card">
+          <div class="term-name">OB Wicks</div>
+          <div class="term-def">Extensions beyond the body. Price may wick into this area before reacting.</div>
+        </div>
+        <div class="term-card">
+          <div class="term-name">Refined OB</div>
+          <div class="term-def">Using the 50% level of the OB or the FVG within the OB for a more precise entry.</div>
+        </div>
+      </div>
+    `,
+    assessment: null
+  },
+  {
+    module: 'Module 2 — Order Blocks',
+    title: 'Bullish vs Bearish OBs',
+    meta: '6 min read · Core Concept',
+    type: 'quiz',
+    content: `
+      <p>Bullish and bearish order blocks are mirror images of each other. The key is always to identify the last opposing candle before the impulsive move, then look for price to return to that zone.</p>
+      <h3>Bearish Order Block</h3>
+      <p>The last up-close candle before a strong bearish displacement. When price rallies back into this zone, look for short entries with a stop above the high of the OB.</p>
+    `,
+    assessment: {
+      type: 'quiz',
+      question: 'Price has made a strong bearish move down. The last candle before that move closed UP (bullish candle). This candle is a:',
+      options: [
+        'Bullish Order Block — because it was a bullish candle',
+        'Bearish Order Block — because it preceded the bearish impulse',
+        'Fair Value Gap — because displacement occurred after it',
+        'Not an order block — order blocks only form at swing lows',
+      ],
+      correct: 1,
+      explanation: 'A Bearish Order Block is the last UP-CLOSE (bullish) candle immediately before a bearish impulse. When price rallies back into this zone, institutions may sell again, making it a short entry opportunity. The classification is based on the DIRECTION of the subsequent impulse, not the candle direction.'
+    }
+  },
+  {
+    module: 'Module 2 — Order Blocks',
+    title: 'Breaker Blocks',
+    meta: '9 min read · Advanced',
+    type: 'reading',
+    content: `
+      <p>A Breaker Block is a former Order Block that has been violated (price has moved through it). When an OB fails to hold, it "flips" and becomes a Breaker — now acting as resistance (bullish OB → breaker resistance) or support (bearish OB → breaker support).</p>
+      <div class="concept-card">
+        <div class="concept-tag tag-ob">Advanced Concept</div>
+        <div class="concept-title">Why Breakers Work</div>
+        <div class="concept-body">When institutional orders at an OB are consumed and price breaks through, those institutions now have losing positions. On the next return to that zone, they are forced to exit at breakeven (creating a reaction) or add to their new position in the opposite direction.</div>
+      </div>
+      <h3>Trading Breaker Blocks</h3>
+      <p>Breakers are high-probability because they combine: (1) a failed OB — showing institutional positioning, (2) a liquidity sweep above/below, (3) a structural shift. When all three align with HTF bias, breakers can offer excellent R:R entries.</p>
+    `,
+    assessment: null
+  },
+  {
+    module: 'Module 2 — Order Blocks',
+    title: 'OB Identification Quiz',
+    meta: 'Assessment · 5 questions',
+    type: 'quiz',
+    content: `<p>Test your understanding of Order Block identification with these scenario questions.</p>`,
+    assessment: {
+      type: 'quiz',
+      question: 'Price creates a strong bullish displacement from the 18,200 area. Before the displacement, there are three candles: a bullish candle, then a bearish candle, then the impulse begins. Which is the Order Block?',
+      options: [
+        'The bullish candle before the bearish candle',
+        'The bearish candle immediately before the impulse',
+        'The entire consolidation range',
+        'The first candle of the impulse move',
+      ],
+      correct: 1,
+      explanation: 'The Order Block is the LAST opposing candle before the impulse. For a bullish move, that is the last BEARISH (down-close) candle. This is where institutional buy orders are concentrated.'
+    }
+  },
+  // MODULE 3: FVGs
+  {
+    module: 'Module 3 — Fair Value Gaps',
+    title: 'Understanding FVGs',
+    meta: '8 min read · Core Concept',
+    type: 'reading',
+    content: `
+      <p>A Fair Value Gap (FVG) is a three-candle formation where the wicks of the first and third candles do not overlap, leaving a "gap" of pure price action. This gap represents an imbalance in price delivery — price moved so quickly that it skipped over a range, leaving unfilled orders.</p>
+      <h3>How FVGs Form</h3>
+      <p>When institutions deliver price aggressively (strong displacement), the speed of movement creates candles that do not fully overlap. The three-candle sequence looks like this:</p>
+      <div class="concept-card">
+        <div class="concept-tag tag-fvg">FVG Formation</div>
+        <div class="concept-title">Three-Candle Rule</div>
+        <div class="concept-body">
+          <strong>Candle 1:</strong> Any direction. Its HIGH (for bullish FVG) or LOW (for bearish FVG) is the boundary.<br>
+          <strong>Candle 2:</strong> The displacement candle. Large, impulsive, closes above Candle 1's high (bullish) or below Candle 1's low (bearish).<br>
+          <strong>Candle 3:</strong> Follow-through. Its LOW (bullish) or HIGH (bearish) does NOT reach back into Candle 2's range.<br><br>
+          The FVG is the space between Candle 1's high and Candle 3's low (bullish) or Candle 1's low and Candle 3's high (bearish).
+        </div>
+      </div>
+    `,
+    assessment: null
+  },
+  {
+    module: 'Module 3 — Fair Value Gaps',
+    title: 'FVG Mitigation Models',
+    meta: '7 min read · Entry Models',
+    type: 'quiz',
+    content: `
+      <p>Price is drawn to return to FVGs for "mitigation" — filling in the imbalance. This predictable behavior is the basis for many ICT entry models.</p>
+      <h3>Types of Mitigation</h3>
+      <div class="key-terms">
+        <div class="term-card"><div class="term-name">Full Mitigation</div><div class="term-def">Price returns to fill the entire FVG before continuing in the original direction.</div></div>
+        <div class="term-card"><div class="term-name">50% Mitigation</div><div class="term-def">Price returns to the midpoint of the FVG. Often the best entry with tight SL.</div></div>
+        <div class="term-card"><div class="term-name">Entry Point</div><div class="term-def">For a bullish FVG, enter as price returns to the upper edge of the gap. SL below the OB below.</div></div>
+      </div>
+    `,
+    assessment: {
+      type: 'quiz',
+      question: 'A bullish FVG is created between 18,280 (Candle 1 high) and 18,320 (Candle 3 low). Price has since moved to 18,400. What is the 50% mitigation level and the best entry zone?',
+      options: [
+        '50% = 18,300. Enter at 18,320 on return, SL below 18,280',
+        '50% = 18,340. Enter at 18,380, SL at 18,320',
+        '50% = 18,300. Enter at 18,280, SL at 18,240',
+        'FVGs cannot be traded at 50% — must wait for full mitigation',
+      ],
+      correct: 0,
+      explanation: 'The FVG spans 18,280 to 18,320. The 50% level is (18,280 + 18,320) / 2 = 18,300. For a bullish FVG, you enter as price returns to the upper edge of the FVG (18,320) or the 50% level (18,300), with a stop-loss below the entire FVG (below 18,280) or below the OB beneath the FVG.'
+    }
+  },
+  {
+    module: 'Module 3 — Fair Value Gaps',
+    title: 'IFVG (Inverse FVG)',
+    meta: '6 min read · Advanced',
+    type: 'reading',
+    content: `
+      <p>An Inverse Fair Value Gap (IFVG) forms when a standard FVG is violated — price moves back through the gap in the opposite direction with displacement. The FVG "flips" and the former imbalance zone now acts as resistance (bullish FVG → IFVG resistance) or support (bearish FVG → IFVG support).</p>
+      <div class="concept-card">
+        <div class="concept-tag tag-fvg">Advanced</div>
+        <div class="concept-title">IFVG vs Breaker Block</div>
+        <div class="concept-body">An IFVG is similar to a Breaker Block in concept — both are "flipped" levels. The difference: a Breaker involves an OB being violated, while an IFVG involves an FVG being violated. Both are valid entry zones when they align with HTF bias and have a structural reason (liquidity sweep) for the flip.</div>
+      </div>
+    `,
+    assessment: null
+  },
+  {
+    module: 'Module 3 — Fair Value Gaps',
+    title: 'FVG Trade Identification',
+    meta: 'Assessment · Scenario',
+    type: 'quiz',
+    content: `<p>Apply FVG concepts to a real trading scenario.</p>`,
+    assessment: {
+      type: 'quiz',
+      question: 'You are looking at a 15-minute NQ chart during the NY AM session. You see: daily chart is bullish. 4H has a bullish FVG at 18,240–18,270. Price has dropped from 18,380 into this zone. Current price is 18,255. What is your trade plan?',
+      options: [
+        'Short — price is falling, momentum is down',
+        'Long entry at 18,255 (inside FVG), SL below 18,240, TP at 18,380 or higher (daily target)',
+        'Wait for price to fully close the FVG before entering',
+        'No trade — FVGs on the 4H chart cannot be used for 15m entries',
+      ],
+      correct: 1,
+      explanation: 'This is a textbook HTF FVG entry: daily is bullish, 4H FVG provides the entry zone, and price has returned to that zone during the NY AM kill zone. Enter inside the FVG at current price (18,255), stop below the FVG (18,235-ish), target the swing high at 18,380 or the next daily target. R:R is approximately 1:6.'
+    }
+  },
+  // MODULE 4: LIQUIDITY
+  {
+    module: 'Module 4 — Liquidity',
+    title: 'Buy-Side and Sell-Side Liquidity',
+    meta: '8 min read · Core Concept',
+    type: 'reading',
+    content: `
+      <p>Liquidity in the ICT framework refers to clusters of stop-loss orders that become the targets for institutional buying and selling. Smart money needs counterparty orders to fill their large positions — retail traders' stop losses provide exactly that.</p>
+      <div class="key-terms">
+        <div class="term-card"><div class="term-name">Buy-Side Liquidity (BSL)</div><div class="term-def">Stop-loss orders from short sellers, sitting ABOVE swing highs, equal highs, and trend lines. Institutions hunt BSL to fill short positions.</div></div>
+        <div class="term-card"><div class="term-name">Sell-Side Liquidity (SSL)</div><div class="term-def">Stop-loss orders from long buyers, sitting BELOW swing lows, equal lows, and trend lines. Institutions hunt SSL to fill long positions.</div></div>
+        <div class="term-card"><div class="term-name">Internal Liquidity</div><div class="term-def">FVGs and order blocks within a range. Price often rebalances these before targeting external liquidity.</div></div>
+        <div class="term-card"><div class="term-name">External Liquidity</div><div class="term-def">Swing highs/lows and equal highs/lows outside the current range. These are the primary targets for smart money.</div></div>
+      </div>
+    `,
+    assessment: null
+  },
+  {
+    module: 'Module 4 — Liquidity',
+    title: 'Liquidity Sweeps',
+    meta: '7 min read + Quiz',
+    type: 'quiz',
+    content: `
+      <p>A liquidity sweep occurs when price briefly trades above a swing high (sweeping BSL) or below a swing low (sweeping SSL), then quickly reverses. The sweep is what institutional traders needed to fill their opposing position.</p>
+      <div class="concept-card">
+        <div class="concept-tag tag-liq">Entry Model</div>
+        <div class="concept-title">Sweep + Reverse Model</div>
+        <div class="concept-body">1. Identify SSL below a swing low in a bullish HTF market.<br>2. Wait for price to sweep below that low (triggering retail stop losses).<br>3. Watch for a quick reversal candle with displacement back above the low.<br>4. Enter on the first pullback into the FVG created by the displacement.<br>5. Stop below the sweep low. Target: BSL above.</div>
+      </div>
+    `,
+    assessment: {
+      type: 'quiz',
+      question: 'Price sweeps below a significant equal low at 18,150 during the London session, then immediately reverses with a strong bullish candle that creates a bullish FVG between 18,165 and 18,185. HTF is bullish. What is the signal?',
+      options: [
+        'Bearish continuation — the lows broke, structural bias is now bearish',
+        'Bullish entry signal — SSL was swept, displacement occurred, enter in the FVG on pullback',
+        'Neutral — wait for more confirmation before taking a side',
+        'The move is already done — the FVG will not be revisited',
+      ],
+      correct: 1,
+      explanation: 'This is a classic SSL sweep reversal entry: (1) Equal lows = SSL target, (2) Sweep confirms smart money hunted that liquidity, (3) Immediate reversal with displacement = confirmation of direction, (4) FVG on the reversal candle is the entry zone. Enter in the 18,165–18,185 FVG, SL below 18,150, target BSL above.'
+    }
+  },
+  {
+    module: 'Module 4 — Liquidity',
+    title: 'Stop Hunt Identification',
+    meta: '6 min read · Pattern Recognition',
+    type: 'fill-blank',
+    content: `
+      <p>Identifying stop hunts in real time is a skill that comes with pattern recognition practice. The key markers are: (1) a clean level with obvious stops, (2) a wick that just breaches that level, (3) a fast reversal, (4) a displacement candle creating a new FVG.</p>
+    `,
+    assessment: {
+      type: 'fill-blank',
+      prompt: 'A stop hunt on sell-side liquidity is where price briefly trades ________ a prior swing low, triggering retail stop-losses, before reversing ________. The candle that causes the reversal typically creates a ________ that can be used as a bullish entry.',
+      blanks: ['below', 'higher', 'Fair Value Gap'],
+      inputs: ['', '', ''],
+    }
+  },
+  // MODULE 5: KILL ZONES
+  {
+    module: 'Module 5 — Kill Zones',
+    title: 'The Four Kill Zones',
+    meta: '8 min read · Timing',
+    type: 'reading',
+    content: `
+      <p>Kill Zones are specific times of day when institutional trading activity is highest and ICT setups have their best probability. Outside these windows, price action is often random and not worth trading.</p>
+      <div class="key-terms">
+        <div class="term-card"><div class="term-name">Asia Kill Zone</div><div class="term-def">20:00 – 00:00 ET. Creates the overnight range. Often sets up London's AMD cycle.</div></div>
+        <div class="term-card"><div class="term-name">London Open</div><div class="term-def">02:00 – 05:00 ET. First major session. Often reverses the Asia range and sets the day's directional bias.</div></div>
+        <div class="term-card"><div class="term-name">NY AM Open</div><div class="term-def">07:00 – 10:00 ET (core: 08:30-10:00). Highest volume session. Trap reversals, continuation, and NWOG setups.</div></div>
+        <div class="term-card"><div class="term-name">NY PM / London Close</div><div class="term-def">13:30 – 16:00 ET. Often quieter. Can reverse the AM session or provide trend continuation.</div></div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-tag tag-struct">AMD Cycle</div>
+        <div class="concept-title">Accumulation → Manipulation → Distribution</div>
+        <div class="concept-body">The AMD cycle repeats within each kill zone and across the trading day. Asia accumulates. London often manipulates (fake move to hunt stops). New York distributes (true directional move). Recognizing where you are in the AMD cycle determines whether you chase or wait.</div>
+      </div>
+    `,
+    assessment: null
+  },
+  {
+    module: 'Module 5 — Kill Zones',
+    title: 'NY AM Open Strategy',
+    meta: '10 min read · Strategy',
+    type: 'quiz',
+    content: `
+      <p>The New York AM open (7:00–10:00 ET, core window 8:30–10:00) is the most important session for CME futures traders. Economic reports, high volume, and institutional repositioning create the highest probability ICT setups.</p>
+      <h3>NY Open Playbook</h3>
+      <div class="concept-card">
+        <div class="concept-tag tag-struct">Playbook</div>
+        <div class="concept-title">The NY AM FVG Entry</div>
+        <div class="concept-body">
+          1. Check overnight and London high/low (Asia range). Where is BSL and SSL?<br>
+          2. Determine 4H bias from overnight structure.<br>
+          3. At 8:30 (news release), watch for a false move against bias (manipulation).<br>
+          4. If price sweeps the manipulation stop hunt level and reverses, look for the FVG on the reversal displacement.<br>
+          5. Enter on the 5m or 15m chart inside the FVG. SL beyond sweep. TP: opposite range or next HTF target.
+        </div>
+      </div>
+    `,
+    assessment: {
+      type: 'quiz',
+      question: 'At 8:30 ET on a CPI release day, NQ spikes down 80 points, sweeping the overnight low at 18,150, then immediately reverses. By 8:33, price has moved back above 18,200 and a bullish FVG exists between 18,190 and 18,210. HTF is bullish. What is the correct action?',
+      options: [
+        'Sell — the breakdown was real and should be trusted',
+        'Wait — news events make ICT setups invalid for 30 minutes',
+        'Long entry inside the FVG (18,190–18,210), SL below 18,150 sweep, target AM session highs',
+        'Long only if price makes a new high above pre-news levels first',
+      ],
+      correct: 2,
+      explanation: 'This is the classic news-release manipulation entry: (1) 8:30 spike down sweeps overnight low (SSL hunt), (2) immediate reversal with strong displacement = smart money bought the sweep, (3) bullish FVG on the reversal is the precision entry zone. Enter at 18,190–18,210, SL below 18,150 with buffer. This is a high-probability setup with built-in confluence: HTF bullish + kill zone + liquidity sweep + FVG.'
+    }
+  },
+  {
+    module: 'Module 5 — Kill Zones',
+    title: 'Final Assessment',
+    meta: 'Course Completion · 5 Questions',
+    type: 'quiz',
+    content: `<p>Congratulations on completing the ICT Foundations course. This final assessment covers all five modules. Pass with 4/5 to earn your completion badge.</p>`,
+    assessment: {
+      type: 'quiz',
+      question: 'A trader sees: Daily chart bullish structure. 4H shows a bearish FVG at 18,350–18,380. Price is at 18,370. London swept the overnight high at 18,320. During NY open, price dumps to 18,200 creating a bullish displacement with FVG at 18,240–18,265. What is the full trade context?',
+      options: [
+        'Short into the 4H bearish FVG — the 4H structure is more important than the sweep',
+        'No trade — too many conflicting signals',
+        'Long from the bullish FVG (18,240–18,265) — SSL sweep, bullish displacement, daily bias aligned. Target: 4H bearish FVG (18,350) and above',
+        'Long only after price closes above the London high at 18,320',
+      ],
+      correct: 2,
+      explanation: 'Full confluence entry: (1) Daily bullish — buy bias, (2) BSL at overnight high swept (London manipulation complete), (3) SSL sweep at 18,200 confirms smart money bought, (4) Bullish displacement with FVG at 18,240–18,265 is the precision entry, (5) 4H bearish FVG at 18,350 is the first target. This is a multi-confluence ICT entry with all elements aligned.'
+    }
+  }
+];
+
+let currentLesson = 0;
+let completedLessons = new Set();
+let quizAnswered = false;
+let selectedOption = -1;
+
+function toggleModule(header) {
+  header.classList.toggle('open');
+  const list = header.nextElementSibling;
+  list.classList.toggle('open');
+}
+
+function loadLesson(idx) {
+  currentLesson = idx;
+  quizAnswered = false;
+  selectedOption = -1;
+
+  document.querySelectorAll('.lesson-item').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+
+  const lesson = lessons[idx];
+  const content = document.getElementById('course-content');
+
+  let assessmentHtml = '';
+  if (lesson.assessment) {
+    const a = lesson.assessment;
+    if (a.type === 'quiz') {
+      assessmentHtml = `
+        <div class="assessment-section">
+          <div class="assessment-title">
+            Knowledge Check
+            <span class="assessment-type-badge">Quiz</span>
+          </div>
+          <div class="quiz-question">${a.question}</div>
+          <div class="quiz-options">
+            ${a.options.map((opt, i) => `
+              <div class="quiz-option" onclick="selectOption(${i})" id="opt-${i}">
+                <div class="quiz-letter">${['A','B','C','D'][i]}</div>
+                ${opt}
+              </div>
+            `).join('')}
+          </div>
+          <div id="quiz-feedback" class="feedback-msg"></div>
+          <div class="lesson-nav" style="margin-top:16px; padding-top:16px;">
+            ${idx > 0 ? `<button class="nav-lesson-btn btn-prev" onclick="loadLesson(${idx-1})">← Previous</button>` : '<span></span>'}
+            <button class="nav-lesson-btn btn-check" onclick="checkQuiz(${a.correct}, '${a.explanation.replace(/'/g,"\\'")}')">Check Answer ✓</button>
+            ${idx < lessons.length - 1 ? `<button class="nav-lesson-btn btn-next" id="next-btn" onclick="loadLesson(${idx+1})">Next Lesson →</button>` : '<button class="nav-lesson-btn btn-next" onclick="completeCourse()">Complete Course 🎓</button>'}
+          </div>
+        </div>
+      `;
+    } else if (a.type === 'fill-blank') {
+      const prompt = a.prompt.split('________');
+      let promptHtml = prompt[0];
+      for (let i = 1; i < prompt.length; i++) {
+        promptHtml += `<input class="blank-input" id="blank-${i-1}" placeholder="?" oninput="checkBlanks()">` + prompt[i];
+      }
+      assessmentHtml = `
+        <div class="assessment-section">
+          <div class="assessment-title">Fill in the Blank <span class="assessment-type-badge">Completion</span></div>
+          <div class="fill-blank-prompt">${promptHtml}</div>
+          <div id="blank-feedback" class="feedback-msg"></div>
+          <div class="lesson-nav" style="margin-top:16px; padding-top:16px;">
+            ${idx > 0 ? `<button class="nav-lesson-btn btn-prev" onclick="loadLesson(${idx-1})">← Previous</button>` : '<span></span>'}
+            <button class="nav-lesson-btn btn-check" onclick="checkFillBlank(${JSON.stringify(a.blanks)})">Check ✓</button>
+            ${idx < lessons.length - 1 ? `<button class="nav-lesson-btn btn-next" onclick="loadLesson(${idx+1})">Next →</button>` : ''}
+          </div>
+        </div>
+      `;
+    } else if (a.type === 'scenario') {
+      assessmentHtml = `
+        <div class="assessment-section">
+          <div class="assessment-title">Scenario Assessment <span class="assessment-type-badge">Chart ID</span></div>
+          <div class="scenario-chart">
+            <canvas id="sc-canvas" class="sc-canvas"></canvas>
+            <div class="sc-labels"><span>← Earlier</span><span>Now →</span></div>
+          </div>
+          <div class="quiz-question">${a.question}</div>
+          <div class="quiz-options">
+            ${a.options.map((opt, i) => `
+              <div class="quiz-option" onclick="selectOption(${i})" id="opt-${i}">
+                <div class="quiz-letter">${['A','B','C','D'][i]}</div>
+                ${opt}
+              </div>
+            `).join('')}
+          </div>
+          <div id="quiz-feedback" class="feedback-msg"></div>
+          <div class="lesson-nav" style="margin-top:16px; padding-top:16px;">
+            ${idx > 0 ? `<button class="nav-lesson-btn btn-prev" onclick="loadLesson(${idx-1})">← Previous</button>` : '<span></span>'}
+            <button class="nav-lesson-btn btn-check" onclick="checkQuiz(${a.correct}, '${a.explanation.replace(/'/g,"\\'")}')">Check Answer ✓</button>
+            ${idx < lessons.length - 1 ? `<button class="nav-lesson-btn btn-next" onclick="loadLesson(${idx+1})">Next →</button>` : ''}
+          </div>
+        </div>
+      `;
+    }
+  } else {
+    assessmentHtml = `
+      <div class="lesson-nav">
+        ${idx > 0 ? `<button class="nav-lesson-btn btn-prev" onclick="loadLesson(${idx-1})">← Previous</button>` : '<span></span>'}
+        <button class="nav-lesson-btn btn-next" onclick="markComplete(${idx})">Mark Complete →</button>
+      </div>
+    `;
+  }
+
+  content.innerHTML = `
+    <div class="lesson-header">
+      <div class="lesson-module-tag">${lesson.module}</div>
+      <h1 class="lesson-title">${lesson.title}</h1>
+      <div class="lesson-meta"><span>⏱ ${lesson.meta}</span></div>
+    </div>
+    <div class="lesson-body">${lesson.content}</div>
+    ${assessmentHtml}
+  `;
+
+  if (lesson.assessment?.type === 'scenario') {
+    requestAnimationFrame(drawScenarioChart);
+  }
+
+  content.scrollTop = 0;
+}
+
+function selectOption(i) {
+  if (quizAnswered) return;
+  selectedOption = i;
+  document.querySelectorAll('.quiz-option').forEach((el, j) => {
+    el.classList.toggle('selected', j === i);
+  });
+}
+
+function checkQuiz(correct, explanation) {
+  if (selectedOption === -1) { alert('Please select an answer first.'); return; }
+  quizAnswered = true;
+  document.querySelectorAll('.quiz-option').forEach((el, j) => {
+    if (j === correct) el.classList.add('correct');
+    else if (j === selectedOption) el.classList.add('wrong');
+  });
+  const fb = document.getElementById('quiz-feedback');
+  fb.style.display = 'block';
+  if (selectedOption === correct) {
+    fb.className = 'feedback-msg feedback-correct';
+    fb.textContent = '✓ Correct! ' + explanation;
+    markComplete(currentLesson);
+  } else {
+    fb.className = 'feedback-msg feedback-wrong';
+    fb.textContent = '✗ Incorrect. ' + explanation;
+  }
+}
+
+function checkFillBlank(blanks) {
+  const correct = blanks.every((b, i) => {
+    const val = (document.getElementById('blank-' + i)?.value || '').trim().toLowerCase();
+    return val === b.toLowerCase() || b.toLowerCase().includes(val);
+  });
+  const fb = document.getElementById('blank-feedback');
+  fb.style.display = 'block';
+  if (correct) {
+    fb.className = 'feedback-msg feedback-correct';
+    fb.textContent = '✓ Correct! Great understanding of the concept.';
+    markComplete(currentLesson);
+  } else {
+    fb.className = 'feedback-msg feedback-wrong';
+    fb.textContent = '✗ Not quite. Expected: ' + blanks.join(' · ');
+  }
+}
+
+function markComplete(idx) {
+  completedLessons.add(idx);
+  updateProgress();
+  document.querySelectorAll('.lesson-item')[idx]?.classList.add('done');
+  if (idx < lessons.length - 1) loadLesson(idx + 1);
+}
+
+function completeCourse() {
+  markComplete(currentLesson);
+  alert('🎓 Course Complete! You\'ve mastered ICT Foundations. Access EdgeLab and the live simulator to apply these concepts.');
+}
+
+function updateProgress() {
+  const pct = Math.round(completedLessons.size / lessons.length * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = completedLessons.size + ' / ' + lessons.length + ' lessons complete';
+}
+
+function checkBlanks() { /* live feedback optional */ }
+
+function drawScenarioChart() {
+  const canvas = document.getElementById('sc-canvas');
+  if (!canvas) return;
+  canvas.width = canvas.parentElement.clientWidth - 40;
+  canvas.height = 160;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  ctx.fillStyle = '#0d1520'; ctx.fillRect(0, 0, W, H);
+
+  // Draw Pattern A — MSS with FVG
+  const patterns = [
+    [20,100, 60,60, 40,110, 80,50, 100,90, 140,40],  // Pattern A: sweep low, then MSS up
+  ];
+  const pts = patterns[0];
+  ctx.strokeStyle = 'rgba(0,212,255,0.6)'; ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let i = 0; i < pts.length; i += 2) {
+    const x = pts[i] / 160 * W, y = pts[i+1] / 120 * H;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // Labels
+  ctx.fillStyle = '#10b981'; ctx.font = '700 10px Consolas'; ctx.textAlign = 'center';
+  ctx.fillText('MSS ↑', W * 0.55, H * 0.35);
+  ctx.fillStyle = '#f59e0b';
+  ctx.fillText('SSL Sweep', W * 0.27, H * 0.98);
+  ctx.fillStyle = 'rgba(16,185,129,0.4)';
+  ctx.fillRect(W * 0.52, H * 0.45, W * 0.1, H * 0.15);
+  ctx.fillStyle = '#10b981'; ctx.font = '700 9px Consolas';
+  ctx.fillText('FVG', W * 0.57, H * 0.55);
+}
+
+// Load first lesson
+loadLesson(0);
+</script>
+</body>
+</html>

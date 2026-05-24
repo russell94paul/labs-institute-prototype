@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Guide — NeuroSpect</title>
+<style>
+  :root {
+    --bg: #080d14; --bg2: #0d1520;
+    --card: rgba(255,255,255,0.03); --card-hover: rgba(255,255,255,0.05);
+    --border: rgba(255,255,255,0.06); --border-strong: rgba(255,255,255,0.12);
+    --cyan: #00d4ff; --purple: #7c3aed; --green: #10b981; --amber: #f59e0b;
+    --text: #e2e8f0; --text2: #94a3b8; --text3: #4a5568;
+    --font: 'Segoe UI', system-ui, sans-serif;
+    --mono: Consolas, 'Cascadia Code', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 56px;
+    background: rgba(8,13,20,0.95); border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-logo {
+    font-size: 1rem; font-weight: 800; letter-spacing: 0.1em;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .nav-links { display: flex; gap: 24px; }
+  .nav-links a { font-size: 0.82rem; color: var(--text2); text-decoration: none; }
+  .nav-links a:hover { color: var(--text); }
+
+  .guide-layout { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 56px); }
+
+  .guide-toc {
+    background: var(--bg2); border-right: 1px solid var(--border);
+    padding: 24px 0; position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto;
+  }
+  .toc-section { margin-bottom: 4px; }
+  .toc-heading { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text3); padding: 8px 20px 4px; }
+  .toc-link { display: block; padding: 6px 20px; font-size: 0.82rem; color: var(--text2); text-decoration: none; transition: all 0.15s; }
+  .toc-link:hover { color: var(--text); background: var(--card-hover); }
+  .toc-link.active { color: var(--cyan); background: rgba(0,212,255,0.06); border-left: 2px solid var(--cyan); }
+
+  .guide-content { padding: 48px 56px; max-width: 820px; }
+  .guide-content h1 { font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 8px; }
+  .guide-content h2 { font-size: 1.3rem; font-weight: 700; color: #fff; margin: 40px 0 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+  .guide-content h3 { font-size: 1rem; font-weight: 700; color: #fff; margin: 24px 0 10px; }
+  .guide-content p { font-size: 0.92rem; color: var(--text2); line-height: 1.85; margin-bottom: 14px; }
+  .guide-content ul, .guide-content ol { padding-left: 20px; margin-bottom: 14px; }
+  .guide-content li { font-size: 0.92rem; color: var(--text2); line-height: 1.85; margin-bottom: 6px; }
+  .guide-content strong { color: var(--text); font-weight: 600; }
+  .guide-content code { font-family: var(--mono); font-size: 0.85rem; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; color: var(--cyan); }
+
+  .component-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 24px; margin: 16px 0;
+  }
+  .component-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .component-icon { font-size: 1.5rem; }
+  .component-name { font-size: 1rem; font-weight: 700; color: #fff; }
+  .component-phase {
+    font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .phase-live { background: rgba(16,185,129,0.1); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
+  .phase-beta { background: rgba(0,212,255,0.08); color: var(--cyan); border: 1px solid rgba(0,212,255,0.2); }
+  .phase-soon { background: rgba(255,255,255,0.04); color: var(--text3); border: 1px solid var(--border-strong); }
+  .component-desc { font-size: 0.88rem; color: var(--text2); line-height: 1.65; }
+
+  .callout {
+    padding: 16px 20px; border-radius: 8px; margin: 16px 0; font-size: 0.88rem; line-height: 1.7;
+  }
+  .callout-info { background: rgba(0,212,255,0.06); border: 1px solid rgba(0,212,255,0.15); color: var(--text2); border-left: 3px solid var(--cyan); }
+  .callout-warn { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15); color: var(--text2); border-left: 3px solid var(--amber); }
+  .callout-title { font-weight: 700; color: var(--cyan); margin-bottom: 6px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; }
+  .callout-warn .callout-title { color: var(--amber); }
+
+  .breadcrumb { font-size: 0.78rem; color: var(--text3); margin-bottom: 20px; }
+  .breadcrumb a { color: var(--text3); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--text2); }
+
+  @media (max-width: 768px) {
+    .guide-layout { grid-template-columns: 1fr; }
+    .guide-toc { display: none; }
+    .guide-content { padding: 32px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">NEUROSPECT</a>
+  <div class="nav-links">
+    <a href="simulator.html">Simulator</a>
+    <a href="course.html">ICT Course</a>
+    <a href="pricing.html">Pricing</a>
+  </div>
+</nav>
+
+<div class="guide-layout">
+  <!-- TOC -->
+  <div class="guide-toc">
+    <div class="toc-section">
+      <div class="toc-heading">Overview</div>
+      <a class="toc-link active" href="#overview">What is NeuroSpect?</a>
+      <a class="toc-link" href="#philosophy">Design Philosophy</a>
+      <a class="toc-link" href="#build-order">Build Order</a>
+    </div>
+    <div class="toc-section">
+      <div class="toc-heading">Core Features</div>
+      <a class="toc-link" href="#workspace">Trader Workspace</a>
+      <a class="toc-link" href="#prop-shield">Prop Shield</a>
+      <a class="toc-link" href="#ict-engine">ICT Event Engine</a>
+      <a class="toc-link" href="#edgelab">EdgeLab</a>
+      <a class="toc-link" href="#mentor">NeuroSpect Mentor</a>
+    </div>
+    <div class="toc-section">
+      <div class="toc-heading">Advanced</div>
+      <a class="toc-link" href="#neurograph">NeuroGraph</a>
+      <a class="toc-link" href="#neuroscore">NeuroScore</a>
+      <a class="toc-link" href="#neurofund">NeuroFund Elite</a>
+    </div>
+    <div class="toc-section">
+      <div class="toc-heading">ICT Concepts</div>
+      <a class="toc-link" id="concepts" href="#ict-overview">ICT Overview</a>
+      <a class="toc-link" href="#setups">Setup Library</a>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="guide-content">
+    <div class="breadcrumb"><a href="index.html">NeuroSpect</a> › Product Guide</div>
+    <h1 id="overview">NeuroSpect Product Guide</h1>
+    <p>NeuroSpect is a professional AI trading intelligence platform for CME futures traders. It is built on an ICT-native, data-foundation-first architecture: every feature layer is built on verified, structured trading data from the layer below.</p>
+
+    <h2 id="philosophy">Design Philosophy</h2>
+    <p>Most trading tools fail for one of three reasons: they surface data without intelligence, they provide intelligence without grounding in real trade data, or they make performance promises that lead traders astray. NeuroSpect is designed to avoid all three.</p>
+    <ul>
+      <li><strong>Data first.</strong> Every insight is grounded in your verified trade history — not generic market commentary.</li>
+      <li><strong>ICT-native.</strong> The platform understands FVGs, order blocks, sweeps, and kill zones as first-class concepts. The event engine speaks the language of the framework you trade.</li>
+      <li><strong>No promises.</strong> NeuroSpect is an analytical tool. It detects, classifies, and reviews. Trading decisions are always yours.</li>
+    </ul>
+
+    <div class="callout callout-warn">
+      <div class="callout-title">Important Disclaimer</div>
+      NeuroSpect does not provide financial advice, investment recommendations, or trade signals. All trading involves substantial risk of loss. EdgeLab backtests are hypothetical and do not guarantee future results.
+    </div>
+
+    <h2 id="build-order">Build Order — Why This Sequence</h2>
+    <p>NeuroSpect is built in a deliberate phase sequence where each phase depends on the verified data foundation of the previous phase.</p>
+    <p>The sequence is: <strong>Verified Data → Risk Engine → Event Detection → Backtesting → AI Review → Pattern Mining → Ranking → Rewards → Quant ML</strong></p>
+    <p>This order is not arbitrary. A backtesting engine without verified data produces noise. An AI coach without your real trade history gives generic advice. A leaderboard without verified trades can be gamed. The foundation has to come first.</p>
+
+    <h2 id="workspace">Trader Workspace</h2>
+    <div class="component-card">
+      <div class="component-card-header">
+        <div class="component-icon">📊</div>
+        <div class="component-name">Trader Workspace</div>
+        <span class="component-phase phase-beta">Phase 1–2</span>
+      </div>
+      <div class="component-desc">The daily engagement layer. Professional trade journal, session analytics, behavior metrics (tilt index, discipline score, consistency rating), and trader profile. All data is structured and verified — the foundation for every other feature.</div>
+    </div>
+    <h3>Trade Journal</h3>
+    <p>The journal captures 100+ structured fields per trade, organized across the trade lifecycle: pre-trade plan, entry, active management, exit, and post-trade review. Fields include ICT-specific metadata: setup type (FVG, OB, sweep), session, kill zone, HTF bias, market structure context, and psychological state.</p>
+    <h3>Behavior Metrics</h3>
+    <p>Three behavioral metrics are computed automatically from your trade data:</p>
+    <ul>
+      <li><strong>Tilt Index:</strong> Detects revenge trading, impulsive re-entries, and size escalation after losses.</li>
+      <li><strong>Discipline Score:</strong> Measures adherence to your own pre-trade plan criteria.</li>
+      <li><strong>Consistency Rating:</strong> Tracks whether your winning behaviors are consistent or random.</li>
+    </ul>
+
+    <h2 id="prop-shield">Prop Shield</h2>
+    <div class="component-card">
+      <div class="component-card-header">
+        <div class="component-icon">🛡️</div>
+        <div class="component-name">Prop Shield</div>
+        <span class="component-phase phase-beta">Phase 3 — First Revenue</span>
+      </div>
+      <div class="component-desc">Real-time prop firm rule tracking with automated protection. Trailing drawdown monitoring, daily loss limit tracking, tilt lockouts, maximum position size enforcement, and Tradovate API integration for live account state.</div>
+    </div>
+    <p>Prop Shield tracks the rules for your specific firm and account type. When you approach a limit, it alerts you. When you breach a limit, it can automatically block new trades via the Tradovate integration. This protects both your account and the discipline you've built.</p>
+    <div class="callout callout-info">
+      <div class="callout-title">Tilt Lockout</div>
+      When the tilt index exceeds your configured threshold (e.g., 3 losses within 2 hours), Prop Shield activates a configurable cooling-off period. No new trades can be placed until the lockout expires. Traders consistently credit this feature as their most valuable.
+    </div>
+
+    <h2 id="ict-engine">ICT Event Engine</h2>
+    <div class="component-card">
+      <div class="component-card-header">
+        <div class="component-icon">⚡</div>
+        <div class="component-name">ICT Event Engine</div>
+        <span class="component-phase phase-beta">Phase 4</span>
+      </div>
+      <div class="component-desc">Programmable detection of 13 ICT event types as structured, queryable data. FVGs, order blocks, breaker blocks, rejection blocks, liquidity sweeps, market structure shifts, kill zones, and more. All events are tagged with metadata and linked to your trade journal.</div>
+    </div>
+    <h3>Detected Event Types</h3>
+    <ul>
+      <li><code>fvg_created</code> — Fair Value Gap with HTF context and displacement metadata</li>
+      <li><code>order_block</code> — Bullish and bearish OBs with quality scoring</li>
+      <li><code>breaker_block</code> — Former OBs that have been flipped</li>
+      <li><code>liquidity_sweep</code> — BSL and SSL sweeps with reversal confirmation signal</li>
+      <li><code>mss</code> — Market Structure Shift with time frame classification</li>
+      <li><code>killzone_open</code> — Session boundary events (Asia, London, NY AM, NY PM)</li>
+      <li><code>displacement</code> — Impulsive candles with minimum displacement filter</li>
+    </ul>
+
+    <h2 id="edgelab">EdgeLab Research Studio</h2>
+    <div class="component-card">
+      <div class="component-card-header">
+        <div class="component-icon">🔬</div>
+        <div class="component-name">EdgeLab</div>
+        <span class="component-phase phase-beta">Phase 5A/5B/5C</span>
+      </div>
+      <div class="component-desc">Full quant research environment. Event-driven backtesting on ICT events, YAML strategy compilation, Monte Carlo simulation, walk-forward optimization, and an experiment registry for tracking all your research runs.</div>
+    </div>
+    <p>EdgeLab strategies are defined in YAML and compiled to event queries. A strategy specifies: the ICT event trigger, required HTF context, kill zone filter, entry model, exit rules (TP/SL/trailing), and any additional confluence requirements.</p>
+    <p>The backtesting engine is event-driven — it replays detected ICT events chronologically and applies your strategy rules, producing a full trade log with metrics including net P&L, win rate, average R, profit factor, maximum drawdown, and Sharpe ratio.</p>
+    <div class="callout callout-warn">
+      <div class="callout-title">Backtest Limitations</div>
+      All backtest results are hypothetical. They assume ideal execution at specified price levels, do not account for slippage or liquidity constraints, and cannot reflect real-time psychological factors. Use backtests for hypothesis validation, not performance projection.
+    </div>
+
+    <h2 id="mentor">NeuroSpect Mentor</h2>
+    <div class="component-card">
+      <div class="component-card-header">
+        <div class="component-icon">🧠</div>
+        <div class="component-name">NeuroSpect Mentor</div>
+        <span class="component-phase phase-beta">Phase 6</span>
+      </div>
+      <div class="component-desc">AI-powered trade review with RAG citations. Structured analysis across six dimensions: setup quality, execution, risk management, psychology, rule adherence, and improvement opportunities. Every insight cites the specific wiki or playbook passage it's grounded in.</div>
+    </div>
+    <p>The Mentor is not a generic chatbot. It has access to your full trade history, your ICT wiki (structured knowledge base), your personal playbooks, and the EdgeLab backtest results for your setups. When it reviews a trade, it cross-references your actual historical outcomes for similar setups.</p>
+
+    <h2 id="neurograph">NeuroGraph</h2>
+    <div class="component-card">
+      <div class="component-card-header">
+        <div class="component-icon">🕸️</div>
+        <div class="component-name">NeuroGraph</div>
+        <span class="component-phase phase-soon">Phase 3-NG</span>
+      </div>
+      <div class="component-desc">Persistent trading intelligence graph. Nodes: trades, events, patterns, setups, concepts, market regimes. Edges: causal relationships, temporal proximity, statistical correlation. Compounds with every interaction. Temporal reasoning with confidence decay.</div>
+    </div>
+    <p>NeuroGraph is the compounding moat. It starts with the ICT wiki corpus and your trade history, then every new trade, coaching interaction, backtest result, and market event adds to the graph. Over time, it develops a model of how your specific setups perform under different market conditions, what your recurring mistakes are, and what conditions predict your best performance.</p>
+
+    <h2 id="neuroscore">NeuroScore</h2>
+    <div class="component-card">
+      <div class="component-card-header">
+        <div class="component-icon">🏆</div>
+        <div class="component-name">NeuroScore</div>
+        <span class="component-phase phase-soon">Phase 8</span>
+      </div>
+      <div class="component-desc">Risk-adjusted trader ranking verified against broker records. Scoring considers: performance (CAGR), drawdown discipline, rule adherence (via Prop Shield), consistency rating, tilt control, and execution quality. Broker-verified trades only.</div>
+    </div>
+
+    <h2 id="neurofund">NeuroFund Elite</h2>
+    <div class="component-card">
+      <div class="component-card-header">
+        <div class="component-icon">💎</div>
+        <div class="component-name">NeuroFund Elite</div>
+        <span class="component-phase phase-soon">Phase 9</span>
+      </div>
+      <div class="component-desc">Company-sponsored rewards and recognition program for top NeuroScore-ranked traders. Funded from NeuroSpect revenue. NOT pooled user capital. NOT an investment vehicle. NOT a prop firm. Premium recognition + advanced tooling for elite tier.</div>
+    </div>
+    <div class="callout callout-warn">
+      <div class="callout-title">NeuroFund Elite — Important</div>
+      NeuroFund Elite is a reward and recognition program, not a fund or investment vehicle. No user capital is pooled, managed, or at risk. Rewards are funded from NeuroSpect subscription revenue and are discretionary. This program does not constitute securities activity.
+    </div>
+
+    <h2 id="ict-overview">ICT Concepts Overview</h2>
+    <p>NeuroSpect is built on the ICT (Inner Circle Trader) methodology for reading institutional order flow in CME futures markets. The core concepts that underpin the platform:</p>
+    <ul>
+      <li><strong>Market Structure:</strong> Price delivers in Higher Highs / Higher Lows (bullish) or Lower Highs / Lower Lows (bearish). Always establish HTF bias before seeking entry.</li>
+      <li><strong>Fair Value Gaps (FVG):</strong> Three-candle formations where displacement creates a price imbalance. Price is drawn to return and "mitigate" these gaps.</li>
+      <li><strong>Order Blocks:</strong> The last opposing candle before a strong impulse move. Where institutional orders are concentrated.</li>
+      <li><strong>Liquidity:</strong> Stop-loss clusters above swing highs (BSL) and below swing lows (SSL). Smart money hunts these pools before reversing.</li>
+      <li><strong>Kill Zones:</strong> Session-specific windows (London Open: 02:00–05:00 ET, NY AM: 07:00–10:00 ET) where institutional activity and setup probability are highest.</li>
+    </ul>
+
+    <h2 id="setups">Setup Library</h2>
+    <p>The platform recognizes and can backtest the following ICT setup classes:</p>
+    <ul>
+      <li><strong>FVG Mitigation Entry:</strong> Enter on return to an FVG with HTF bias and session filter.</li>
+      <li><strong>Order Block Reaction:</strong> Enter on OB retest with rejection candle confirmation.</li>
+      <li><strong>Liquidity Sweep + Reversal:</strong> Enter after SSL/BSL sweep with displacement and FVG.</li>
+      <li><strong>MSS Entry Model:</strong> Enter after a Market Structure Shift with OB/FVG confluence.</li>
+      <li><strong>Model 2022 OTE:</strong> Optimal Trade Entry using Fibonacci retracement into displacement FVG.</li>
+      <li><strong>London Reversal:</strong> Fade the London manipulation move at NY open with structure confirmation.</li>
+      <li><strong>Daily Bias Model:</strong> Determine daily direction from Asia range and London relationship.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+// Active TOC tracking
+const sections = document.querySelectorAll('[id]');
+const tocLinks = document.querySelectorAll('.toc-link');
+
+function updateTOC() {
+  let current = '';
+  sections.forEach(section => {
+    const top = section.getBoundingClientRect().top;
+    if (top < 120) current = section.id;
+  });
+  tocLinks.forEach(link => {
+    link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+  });
+}
+
+document.querySelector('.guide-content').addEventListener('scroll', updateTOC);
+window.addEventListener('scroll', updateTOC);
+</script>
+</body>
+</html>

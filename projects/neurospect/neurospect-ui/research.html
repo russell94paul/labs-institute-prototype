@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EdgeLab Research Studio — NeuroSpect</title>
+<style>
+  :root {
+    --bg: #080d14; --bg2: #0d1520; --bg3: #111c2a;
+    --card: rgba(255,255,255,0.03); --card-hover: rgba(255,255,255,0.05);
+    --border: rgba(255,255,255,0.06); --border-strong: rgba(255,255,255,0.12);
+    --cyan: #00d4ff; --purple: #7c3aed; --green: #10b981;
+    --amber: #f59e0b; --red: #ef4444;
+    --text: #e2e8f0; --text2: #94a3b8; --text3: #4a5568;
+    --font: 'Segoe UI', system-ui, sans-serif;
+    --mono: Consolas, 'Cascadia Code', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 56px;
+    background: rgba(8,13,20,0.95); border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-logo {
+    font-size: 1rem; font-weight: 800; letter-spacing: 0.1em;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .nav-links { display: flex; gap: 20px; align-items: center; }
+  .nav-links a { font-size: 0.82rem; color: var(--text2); text-decoration: none; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a.active { color: var(--cyan); }
+
+  .page-header { padding: 40px 40px 0; max-width: 1200px; margin: 0 auto; }
+  .page-eyebrow {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em;
+    color: var(--cyan); margin-bottom: 10px;
+  }
+  .page-title { font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 8px; }
+  .page-sub { font-size: 0.95rem; color: var(--text2); max-width: 560px; line-height: 1.7; }
+
+  /* TABS */
+  .engine-tabs { display: flex; gap: 2px; padding: 24px 40px 0; max-width: 1200px; margin: 0 auto; border-bottom: 1px solid var(--border); }
+  .engine-tab {
+    padding: 10px 20px; font-size: 0.88rem; font-weight: 600; cursor: pointer;
+    border-radius: 8px 8px 0 0; border: 1px solid transparent; border-bottom: none;
+    color: var(--text2); background: transparent; font-family: var(--font);
+    transition: all 0.15s; position: relative; bottom: -1px;
+  }
+  .engine-tab:hover { color: var(--text); }
+  .engine-tab.active { background: var(--bg2); border-color: var(--border); color: var(--cyan); border-bottom-color: var(--bg2); }
+
+  .engine-content { display: none; padding: 32px 40px; max-width: 1200px; margin: 0 auto; }
+  .engine-content.active { display: block; }
+
+  /* ===================== ENGINE 1: STRATEGY BACKTEST ===================== */
+  .backtest-layout { display: grid; grid-template-columns: 300px 1fr; gap: 24px; }
+
+  .panel { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .panel-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text3); margin-bottom: 16px; }
+
+  .form-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+  .form-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); }
+  .form-select, .form-input {
+    padding: 9px 12px; background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-strong); border-radius: 7px;
+    color: var(--text); font-size: 0.88rem; font-family: var(--font);
+    outline: none; cursor: pointer; transition: border-color 0.2s; width: 100%;
+  }
+  .form-select:focus, .form-input:focus { border-color: var(--cyan); }
+  .form-row-inline { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .strategy-yaml {
+    background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px; font-family: var(--mono); font-size: 0.78rem; line-height: 1.7;
+    color: var(--text2); white-space: pre; overflow-x: auto; margin-bottom: 14px;
+  }
+  .yaml-k { color: var(--cyan); }
+  .yaml-v { color: var(--green); }
+  .yaml-comment { color: var(--text3); }
+
+  .btn-run {
+    width: 100%; padding: 12px; border-radius: 8px; border: none;
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    color: #fff; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+    font-family: var(--font); transition: opacity 0.15s;
+  }
+  .btn-run:hover { opacity: 0.9; }
+
+  /* RESULTS */
+  .results-area { display: flex; flex-direction: column; gap: 16px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .kpi-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .kpi-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); margin-bottom: 6px; }
+  .kpi-val { font-size: 1.4rem; font-weight: 800; font-family: var(--mono); }
+  .kpi-val.pos { color: var(--green); }
+  .kpi-val.neg { color: var(--red); }
+  .kpi-val.cyan { color: var(--cyan); }
+  .kpi-sub { font-size: 0.72rem; color: var(--text3); margin-top: 3px; }
+
+  .equity-chart-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .equity-canvas { width: 100%; height: 200px; }
+
+  .trades-table { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .table-header { display: grid; grid-template-columns: 60px 1fr 80px 80px 80px 80px; padding: 10px 16px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); }
+  .trade-row { display: grid; grid-template-columns: 60px 1fr 80px 80px 80px 80px; padding: 10px 16px; border-bottom: 1px solid var(--border); font-size: 0.82rem; align-items: center; }
+  .trade-row:last-child { border-bottom: none; }
+  .trade-row:hover { background: var(--card-hover); }
+  .trade-id { font-family: var(--mono); color: var(--text3); font-size: 0.75rem; }
+  .trade-setup { font-size: 0.82rem; }
+  .trade-val { font-family: var(--mono); }
+
+  /* ===================== ENGINE 2: FEATURE EXPLORER ===================== */
+  .feature-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .feature-heatmap { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 12px; }
+  .heatmap-cell {
+    aspect-ratio: 1; border-radius: 4px; display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem; font-weight: 700; font-family: var(--mono);
+    cursor: pointer; transition: transform 0.15s;
+  }
+  .heatmap-cell:hover { transform: scale(1.08); }
+  .feature-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+  .feature-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; font-size: 0.82rem; }
+  .feature-name { font-family: var(--mono); color: var(--text); }
+  .feature-score { font-family: var(--mono); font-weight: 700; }
+  .importance-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; margin: 0 12px; }
+  .importance-fill { height: 100%; border-radius: 2px; }
+
+  .scatter-canvas { width: 100%; height: 280px; background: rgba(0,0,0,0.2); border-radius: 8px; }
+  .axis-label { font-size: 0.72rem; color: var(--text3); text-align: center; margin-top: 6px; }
+  .legend { display: flex; gap: 16px; margin-top: 10px; font-size: 0.78rem; color: var(--text2); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ===================== ENGINE 3: MONTE CARLO ===================== */
+  .mc-layout { display: grid; grid-template-columns: 300px 1fr; gap: 24px; }
+  .mc-chart-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .mc-canvas { width: 100%; height: 220px; }
+  .risk-metrics { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+  .risk-row { display: flex; justify-content: space-between; padding: 10px 14px; background: var(--card); border: 1px solid var(--border); border-radius: 7px; font-size: 0.85rem; }
+  .risk-label { color: var(--text2); }
+  .risk-val { font-family: var(--mono); font-weight: 700; }
+  .risk-val.danger { color: var(--red); }
+  .risk-val.safe { color: var(--green); }
+  .risk-val.warn { color: var(--amber); }
+
+  .progress-sim { margin-top: 16px; }
+  .progress-sim-bar { background: rgba(255,255,255,0.06); border-radius: 4px; height: 6px; overflow: hidden; margin-top: 6px; }
+  .progress-sim-fill { height: 100%; border-radius: 4px; transition: width 0.1s; }
+  .progress-sim-label { font-size: 0.75rem; color: var(--text3); margin-top: 4px; }
+
+  @media (max-width: 900px) {
+    .backtest-layout, .feature-layout, .mc-layout { grid-template-columns: 1fr; }
+    .engine-content { padding: 20px; }
+    .page-header, .engine-tabs { padding-left: 20px; padding-right: 20px; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">NEUROSPECT</a>
+  <div class="nav-links">
+    <a href="simulator.html">Simulator</a>
+    <a href="course.html">ICT Course</a>
+    <a href="research.html" class="active">EdgeLab</a>
+    <a href="pricing.html">Pricing</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-eyebrow">Research Platform</div>
+  <h1 class="page-title">EdgeLab Research Studio</h1>
+  <p class="page-sub">Three interactive research engines: strategy backtesting, ICT feature exploration, and Monte Carlo risk simulation. All with real-time interactive controls.</p>
+</div>
+
+<div class="engine-tabs">
+  <button class="engine-tab active" onclick="switchEngine(this, 'backtest')">⚙️ Strategy Backtester</button>
+  <button class="engine-tab" onclick="switchEngine(this, 'features')">🔬 Feature Explorer</button>
+  <button class="engine-tab" onclick="switchEngine(this, 'montecarlo')">🎲 Monte Carlo Simulator</button>
+</div>
+
+<!-- ===================== ENGINE 1: BACKTEST ===================== -->
+<div class="engine-content active" id="engine-backtest">
+  <div class="backtest-layout">
+    <!-- CONFIG -->
+    <div>
+      <div class="panel" style="margin-bottom: 16px;">
+        <div class="panel-title">Strategy Config</div>
+        <div class="form-row">
+          <label class="form-label">Instrument</label>
+          <select class="form-select" id="bt-instrument">
+            <option>NQ — Nasdaq 100 Futures</option>
+            <option>ES — S&P 500 Futures</option>
+            <option>CL — Crude Oil Futures</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="form-label">ICT Setup Type</label>
+          <select class="form-select" id="bt-setup" onchange="updateYaml()">
+            <option value="fvg">FVG Mitigation Entry</option>
+            <option value="ob">Order Block Reaction</option>
+            <option value="sweep">Liquidity Sweep + Reversal</option>
+            <option value="mss">MSS + OB Combo</option>
+          </select>
+        </div>
+        <div class="form-row-inline">
+          <div class="form-row" style="margin-bottom:0;">
+            <label class="form-label">From</label>
+            <input class="form-input" type="date" value="2024-01-01">
+          </div>
+          <div class="form-row" style="margin-bottom:0;">
+            <label class="form-label">To</label>
+            <input class="form-input" type="date" value="2024-12-31">
+          </div>
+        </div>
+        <div class="form-row-inline" style="margin-top: 14px;">
+          <div class="form-row" style="margin-bottom:0;">
+            <label class="form-label">TP (ticks)</label>
+            <input class="form-input" type="number" value="40" id="bt-tp">
+          </div>
+          <div class="form-row" style="margin-bottom:0;">
+            <label class="form-label">SL (ticks)</label>
+            <input class="form-input" type="number" value="20" id="bt-sl">
+          </div>
+        </div>
+        <div class="form-row" style="margin-top: 14px;">
+          <label class="form-label">Kill Zone Filter</label>
+          <select class="form-select">
+            <option>All Sessions</option>
+            <option selected>NY AM Only (07:00–10:00 ET)</option>
+            <option>London Open Only (02:00–05:00 ET)</option>
+            <option>London + NY AM</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Strategy YAML</div>
+        <div class="strategy-yaml" id="strategy-yaml"></div>
+        <button class="btn-run" onclick="runBacktest()">▶ Run Backtest</button>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results-area" id="bt-results">
+      <div style="display:flex; align-items:center; justify-content:center; height:400px; color:var(--text3); font-size:0.9rem; background:var(--bg2); border:1px solid var(--border); border-radius:12px;">
+        Configure a strategy and click Run Backtest to see results
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== ENGINE 2: FEATURES ===================== -->
+<div class="engine-content" id="engine-features">
+  <div class="feature-layout">
+    <div>
+      <div class="panel">
+        <div class="panel-title">Feature Correlation Heatmap</div>
+        <p style="font-size:0.82rem; color:var(--text2); margin-bottom:12px;">Pairwise correlation between ICT features and trade outcome (green = positive correlation, red = negative).</p>
+        <div class="feature-heatmap" id="heatmap"></div>
+        <div style="margin-top: 12px; display:flex; gap:16px; font-size:0.72rem; color:var(--text3); align-items:center;">
+          <span style="width:10px;height:10px;border-radius:2px;background:#10b981;display:inline-block;"></span> Strong positive
+          <span style="width:10px;height:10px;border-radius:2px;background:#ef4444;display:inline-block;"></span> Negative
+          <span style="width:10px;height:10px;border-radius:2px;background:#4a5568;display:inline-block;"></span> Neutral
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="panel" style="margin-bottom:16px;">
+        <div class="panel-title">Feature Importance Ranking</div>
+        <div class="feature-list" id="feature-list"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">FVG Size vs Win Rate (Scatter)</div>
+        <canvas id="scatter-canvas" class="scatter-canvas"></canvas>
+        <div class="axis-label">FVG Size (ticks) → Win Rate (%)</div>
+        <div class="legend">
+          <div style="display:flex;align-items:center;gap:4px;"><div class="legend-dot" style="background:var(--green);"></div> Win</div>
+          <div style="display:flex;align-items:center;gap:4px;"><div class="legend-dot" style="background:var(--red);"></div> Loss</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== ENGINE 3: MONTE CARLO ===================== -->
+<div class="engine-content" id="engine-montecarlo">
+  <div class="mc-layout">
+    <div>
+      <div class="panel">
+        <div class="panel-title">Simulation Parameters</div>
+        <div class="form-row">
+          <label class="form-label">Starting Capital ($)</label>
+          <input class="form-input" type="number" value="50000" id="mc-capital">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Win Rate (%)</label>
+          <input class="form-input" type="number" value="55" min="10" max="90" id="mc-wr">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Avg R:R</label>
+          <input class="form-input" type="number" value="1.8" step="0.1" min="0.5" id="mc-rr">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Risk per Trade (%)</label>
+          <input class="form-input" type="number" value="1" step="0.1" min="0.1" max="5" id="mc-risk">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Trades per Year</label>
+          <input class="form-input" type="number" value="200" id="mc-trades">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Simulations</label>
+          <select class="form-select" id="mc-sims">
+            <option value="100">100 paths</option>
+            <option value="500" selected>500 paths</option>
+            <option value="1000">1,000 paths</option>
+          </select>
+        </div>
+        <button class="btn-run" onclick="runMonteCarlo()" style="margin-top:4px;">▶ Run Monte Carlo</button>
+        <div class="progress-sim" id="mc-progress" style="display:none;">
+          <div class="progress-sim-bar"><div class="progress-sim-fill" id="mc-prog-fill" style="width:0%;background:linear-gradient(90deg,var(--cyan),var(--purple));"></div></div>
+          <div class="progress-sim-label" id="mc-prog-label">Running...</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="mc-chart-wrap">
+        <div class="panel">
+          <div class="panel-title">Equity Curve Distribution</div>
+          <canvas id="mc-equity-canvas" class="mc-canvas"></canvas>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Max Drawdown Distribution</div>
+          <canvas id="mc-dd-canvas" class="mc-canvas"></canvas>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:16px;">
+        <div class="panel-title">Risk Metrics — Percentile Summary</div>
+        <div class="risk-metrics" id="mc-risk-metrics">
+          <div style="font-size:0.82rem; color:var(--text3); padding:8px 0;">Run a simulation to see risk metrics.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================== BACKTEST ENGINE =====================
+const setupYamls = {
+  fvg: `<span class="yaml-k">strategy:</span> <span class="yaml-v">fvg_mitigation_v1</span>
+<span class="yaml-k">instrument:</span> <span class="yaml-v">NQ</span>
+<span class="yaml-k">session_filter:</span> <span class="yaml-v">ny_am</span>
+<span class="yaml-comment"># Entry conditions</span>
+<span class="yaml-k">entry:</span>
+  <span class="yaml-k">event:</span> <span class="yaml-v">fvg_created</span>
+  <span class="yaml-k">htf_bias_required:</span> <span class="yaml-v">true</span>
+  <span class="yaml-k">displacement_min_ticks:</span> <span class="yaml-v">15</span>
+  <span class="yaml-k">entry_zone:</span> <span class="yaml-v">fvg_50pct</span>
+<span class="yaml-k">exit:</span>
+  <span class="yaml-k">tp_ticks:</span> <span class="yaml-v">40</span>
+  <span class="yaml-k">sl_ticks:</span> <span class="yaml-v">20</span>
+  <span class="yaml-k">trailing:</span> <span class="yaml-v">false</span>`,
+  ob: `<span class="yaml-k">strategy:</span> <span class="yaml-v">order_block_reaction_v1</span>
+<span class="yaml-k">instrument:</span> <span class="yaml-v">NQ</span>
+<span class="yaml-k">session_filter:</span> <span class="yaml-v">ny_am</span>
+<span class="yaml-k">entry:</span>
+  <span class="yaml-k">event:</span> <span class="yaml-v">ob_retest</span>
+  <span class="yaml-k">ob_type:</span> <span class="yaml-v">bullish</span>
+  <span class="yaml-k">htf_bias_required:</span> <span class="yaml-v">true</span>
+  <span class="yaml-k">confirmation:</span> <span class="yaml-v">rejection_candle</span>
+<span class="yaml-k">exit:</span>
+  <span class="yaml-k">tp_ticks:</span> <span class="yaml-v">40</span>
+  <span class="yaml-k">sl_ticks:</span> <span class="yaml-v">20</span>`,
+  sweep: `<span class="yaml-k">strategy:</span> <span class="yaml-v">ssl_sweep_reversal_v1</span>
+<span class="yaml-k">instrument:</span> <span class="yaml-v">NQ</span>
+<span class="yaml-k">session_filter:</span> <span class="yaml-v">london_open</span>
+<span class="yaml-k">entry:</span>
+  <span class="yaml-k">event:</span> <span class="yaml-v">ssl_sweep</span>
+  <span class="yaml-k">reversal_required:</span> <span class="yaml-v">true</span>
+  <span class="yaml-k">fvg_on_reversal:</span> <span class="yaml-v">required</span>
+  <span class="yaml-k">htf_bias_required:</span> <span class="yaml-v">true</span>
+<span class="yaml-k">exit:</span>
+  <span class="yaml-k">tp:</span> <span class="yaml-v">bsl_above</span>
+  <span class="yaml-k">sl_ticks:</span> <span class="yaml-v">25</span>`,
+  mss: `<span class="yaml-k">strategy:</span> <span class="yaml-v">mss_ob_combo_v1</span>
+<span class="yaml-k">instrument:</span> <span class="yaml-v">NQ</span>
+<span class="yaml-k">session_filter:</span> <span class="yaml-v">ny_am</span>
+<span class="yaml-k">entry:</span>
+  <span class="yaml-k">event:</span> <span class="yaml-v">mss_confirmed</span>
+  <span class="yaml-k">ob_alignment:</span> <span class="yaml-v">required</span>
+  <span class="yaml-k">fvg_in_displacement:</span> <span class="yaml-v">required</span>
+  <span class="yaml-k">htf_bias_required:</span> <span class="yaml-v">true</span>
+<span class="yaml-k">exit:</span>
+  <span class="yaml-k">tp_ticks:</span> <span class="yaml-v">60</span>
+  <span class="yaml-k">sl_ticks:</span> <span class="yaml-v">20</span>`
+};
+
+function updateYaml() {
+  const setup = document.getElementById('bt-setup').value;
+  document.getElementById('strategy-yaml').innerHTML = setupYamls[setup];
+}
+updateYaml();
+
+const btResults = {
+  fvg: { wr: 58, totalTrades: 142, netPnl: 28450, maxDD: -4200, avgR: 1.72, profitFactor: 2.1 },
+  ob: { wr: 52, totalTrades: 198, netPnl: 18700, maxDD: -6800, avgR: 1.45, profitFactor: 1.65 },
+  sweep: { wr: 61, totalTrades: 89, netPnl: 34100, maxDD: -3100, avgR: 2.18, profitFactor: 2.8 },
+  mss: { wr: 55, totalTrades: 114, netPnl: 22600, maxDD: -5400, avgR: 1.91, profitFactor: 2.2 },
+};
+
+function runBacktest() {
+  const setup = document.getElementById('bt-setup').value;
+  const r = btResults[setup];
+  const btn = document.querySelector('.btn-run');
+  btn.textContent = '⏳ Running...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    btn.textContent = '▶ Run Backtest';
+    btn.disabled = false;
+
+    const trades = generateSampleTrades(r.wr / 100, 10);
+    const resultsHtml = `
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Net P&L</div>
+          <div class="kpi-val pos">$${r.netPnl.toLocaleString()}</div>
+          <div class="kpi-sub">${r.totalTrades} trades · 1 year</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Win Rate</div>
+          <div class="kpi-val cyan">${r.wr}%</div>
+          <div class="kpi-sub">Avg R: ${r.avgR}</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Max Drawdown</div>
+          <div class="kpi-val neg">-$${Math.abs(r.maxDD).toLocaleString()}</div>
+          <div class="kpi-sub">${((r.maxDD / 50000) * 100).toFixed(1)}% of account</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Profit Factor</div>
+          <div class="kpi-val pos">${r.profitFactor}</div>
+          <div class="kpi-sub">Gross profit / loss ratio</div>
+        </div>
+      </div>
+      <div class="equity-chart-wrap">
+        <div class="panel-title">Equity Curve</div>
+        <canvas id="equity-canvas" class="equity-canvas"></canvas>
+      </div>
+      <div class="trades-table">
+        <div class="table-header">
+          <span>#</span><span>Setup</span><span>Entry</span><span>Exit</span><span>PnL</span><span>R</span>
+        </div>
+        ${trades.map((t, i) => `
+          <div class="trade-row">
+            <span class="trade-id">#${i+1}</span>
+            <span>${t.setup}</span>
+            <span class="trade-val">${t.entry}</span>
+            <span class="trade-val">${t.exit}</span>
+            <span class="trade-val ${t.pnl > 0 ? 'pos' : 'neg'}" style="color: ${t.pnl > 0 ? 'var(--green)' : 'var(--red)'}">$${t.pnl}</span>
+            <span class="trade-val" style="color: ${t.r > 0 ? 'var(--green)' : 'var(--red)'}">${t.r > 0 ? '+' : ''}${t.r}R</span>
+          </div>
+        `).join('')}
+      </div>
+      <div style="font-size:0.78rem; color:var(--text3); padding:8px 0; font-style:italic;">
+        ⚠ Hypothetical results based on simulated data. Past performance does not guarantee future results.
+      </div>
+    `;
+    document.getElementById('bt-results').innerHTML = resultsHtml;
+    setTimeout(drawEquityCurve, 50);
+  }, 1200);
+}
+
+function generateSampleTrades(wr, count) {
+  const setups = ['FVG Mitigation', 'OB Reaction', 'Sweep+Reverse', 'MSS+OB'];
+  const prices = [18240, 18265, 18308, 18322, 18341, 18289, 18375, 18298, 18312, 18356];
+  return Array.from({length: count}, (_, i) => {
+    const win = Math.random() < wr;
+    const entry = prices[i];
+    const tp = document.getElementById('bt-tp').value;
+    const sl = document.getElementById('bt-sl').value;
+    const tickVal = 5;
+    const pnl = win ? tp * tickVal : -(sl * tickVal);
+    const r = win ? (tp / sl).toFixed(2) : -1;
+    return { setup: setups[i % setups.length], entry, exit: win ? entry + parseInt(tp)*0.25 : entry - parseInt(sl)*0.25, pnl, r };
+  });
+}
+
+function drawEquityCurve() {
+  const canvas = document.getElementById('equity-canvas');
+  if (!canvas) return;
+  canvas.width = canvas.parentElement.clientWidth - 32;
+  canvas.height = 200;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.fillStyle = 'transparent'; ctx.fillRect(0, 0, W, H);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) { const y = H * (i/4); ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  // Generate equity curve
+  let equity = 50000;
+  const setup = document.getElementById('bt-setup').value;
+  const r = btResults[setup];
+  const points = [equity];
+  for (let i = 0; i < 100; i++) {
+    const win = Math.random() < r.wr / 100;
+    equity += win ? 500 * r.avgR : -500;
+    points.push(equity);
+  }
+  const minE = Math.min(...points); const maxE = Math.max(...points);
+  const scaleY = e => H - ((e - minE) / (maxE - minE)) * (H - 16) - 8;
+
+  // Fill area
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, 'rgba(16,185,129,0.25)');
+  grad.addColorStop(1, 'rgba(16,185,129,0.02)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.moveTo(0, scaleY(points[0]));
+  points.forEach((p, i) => ctx.lineTo(i / (points.length-1) * W, scaleY(p)));
+  ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
+
+  // Line
+  ctx.strokeStyle = '#10b981'; ctx.lineWidth = 2;
+  ctx.beginPath();
+  points.forEach((p, i) => {
+    const x = i / (points.length-1) * W, y = scaleY(p);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+}
+
+// ===================== FEATURE EXPLORER =====================
+const featureNames = ['FVG Size', 'HTF Bias', 'Kill Zone', 'OB Quality', 'Liq Sweep', 'MSS Confirm', 'Displacement', 'Session', 'News Time', 'Tilt Index', 'R:R Ratio', 'Spread'];
+const featureScores = [0.72, 0.85, 0.68, 0.64, 0.79, 0.71, 0.63, 0.55, 0.42, 0.38, 0.69, 0.28];
+
+function initFeatureExplorer() {
+  const heatmap = document.getElementById('heatmap');
+  heatmap.innerHTML = '';
+  featureScores.forEach((score, i) => {
+    const r = Math.round(score > 0.5 ? (1-score)*2*200 : 200);
+    const g = Math.round(score > 0.5 ? 200 : score*2*200);
+    const cell = document.createElement('div');
+    cell.className = 'heatmap-cell';
+    cell.style.background = `rgba(${r},${g},80,${0.3 + Math.abs(score-0.5)})`;
+    cell.style.border = `1px solid rgba(${r},${g},80,0.3)`;
+    cell.title = featureNames[i] + ': ' + (score * 100).toFixed(0) + '%';
+    cell.textContent = featureNames[i].slice(0,3);
+    heatmap.appendChild(cell);
+  });
+
+  const sorted = featureScores.map((s,i) => ({ name: featureNames[i], score: s })).sort((a,b) => b.score - a.score);
+  document.getElementById('feature-list').innerHTML = sorted.map(f => `
+    <div class="feature-row">
+      <span class="feature-name">${f.name}</span>
+      <div class="importance-bar">
+        <div class="importance-fill" style="width:${f.score*100}%; background: ${f.score > 0.65 ? 'var(--green)' : f.score > 0.5 ? 'var(--cyan)' : 'var(--amber)'}"></div>
+      </div>
+      <span class="feature-score" style="color:${f.score > 0.65 ? 'var(--green)' : f.score > 0.5 ? 'var(--cyan)' : 'var(--amber)'}">${(f.score * 100).toFixed(0)}%</span>
+    </div>
+  `).join('');
+
+  setTimeout(drawScatter, 100);
+}
+
+function drawScatter() {
+  const canvas = document.getElementById('scatter-canvas');
+  if (!canvas) return;
+  canvas.width = canvas.parentElement.clientWidth - 40;
+  canvas.height = 280;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 1;
+  for (let i = 0; i < 5; i++) {
+    const x = W * (i/4); ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke();
+    const y = H * (i/4); ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+  }
+
+  for (let i = 0; i < 80; i++) {
+    const fvgSize = 5 + Math.random() * 45;
+    const win = Math.random() < (0.35 + fvgSize/100);
+    const x = (fvgSize / 50) * (W - 20) + 10;
+    const y = H - Math.random() * (win ? H * 0.5 : H * 0.4) - (win ? H*0.4 : 0);
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = win ? 'rgba(16,185,129,0.7)' : 'rgba(239,68,68,0.6)';
+    ctx.fill();
+  }
+
+  // Trend line
+  ctx.strokeStyle = 'rgba(0,212,255,0.4)'; ctx.lineWidth = 2;
+  ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(10, H * 0.8); ctx.lineTo(W-10, H * 0.25); ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+// ===================== MONTE CARLO =====================
+function runMonteCarlo() {
+  const capital = parseFloat(document.getElementById('mc-capital').value);
+  const wr = parseFloat(document.getElementById('mc-wr').value) / 100;
+  const rr = parseFloat(document.getElementById('mc-rr').value);
+  const risk = parseFloat(document.getElementById('mc-risk').value) / 100;
+  const trades = parseInt(document.getElementById('mc-trades').value);
+  const sims = parseInt(document.getElementById('mc-sims').value);
+
+  const prog = document.getElementById('mc-progress');
+  const progFill = document.getElementById('mc-prog-fill');
+  const progLabel = document.getElementById('mc-prog-label');
+  prog.style.display = 'block';
+
+  const finalEquities = [];
+  const maxDrawdowns = [];
+  const paths = [];
+  const batchSize = 50;
+  let done = 0;
+
+  function runBatch() {
+    for (let b = 0; b < batchSize && done < sims; b++, done++) {
+      let eq = capital;
+      let peak = capital;
+      let maxDD = 0;
+      const path = [eq];
+      for (let t = 0; t < trades; t++) {
+        const win = Math.random() < wr;
+        const riskAmt = eq * risk;
+        eq += win ? riskAmt * rr : -riskAmt;
+        if (eq > peak) peak = eq;
+        const dd = (peak - eq) / peak;
+        if (dd > maxDD) maxDD = dd;
+        if (done < 60) path.push(eq);
+      }
+      finalEquities.push(eq);
+      maxDrawdowns.push(maxDD);
+      if (path.length) paths.push(path);
+    }
+    const pct = done / sims * 100;
+    progFill.style.width = pct + '%';
+    progLabel.textContent = `Running: ${done}/${sims} simulations`;
+
+    if (done < sims) {
+      requestAnimationFrame(runBatch);
+    } else {
+      prog.style.display = 'none';
+      finalEquities.sort((a,b) => a-b);
+      maxDrawdowns.sort((a,b) => a-b);
+
+      const p5 = finalEquities[Math.floor(sims * 0.05)];
+      const p25 = finalEquities[Math.floor(sims * 0.25)];
+      const p50 = finalEquities[Math.floor(sims * 0.50)];
+      const p75 = finalEquities[Math.floor(sims * 0.75)];
+      const p95 = finalEquities[Math.floor(sims * 0.95)];
+      const ddP95 = maxDrawdowns[Math.floor(sims * 0.95)];
+      const ddP50 = maxDrawdowns[Math.floor(sims * 0.50)];
+      const ddP5 = maxDrawdowns[Math.floor(sims * 0.05)];
+
+      document.getElementById('mc-risk-metrics').innerHTML = `
+        <div class="risk-row"><span class="risk-label">Median Final Equity (P50)</span><span class="risk-val ${p50 > capital ? 'safe' : 'danger'}">$${Math.round(p50).toLocaleString()}</span></div>
+        <div class="risk-row"><span class="risk-label">5th Percentile (Worst 5%)</span><span class="risk-val danger">$${Math.round(p5).toLocaleString()}</span></div>
+        <div class="risk-row"><span class="risk-label">95th Percentile (Best 5%)</span><span class="risk-val safe">$${Math.round(p95).toLocaleString()}</span></div>
+        <div class="risk-row"><span class="risk-label">Median Max Drawdown</span><span class="risk-val warn">${(ddP50 * 100).toFixed(1)}%</span></div>
+        <div class="risk-row"><span class="risk-label">95th %ile Max Drawdown</span><span class="risk-val danger">${(ddP95 * 100).toFixed(1)}%</span></div>
+        <div class="risk-row"><span class="risk-label">Probability of Ruin (&lt;50% acc)</span><span class="risk-val ${p25 < capital*0.5 ? 'danger' : 'safe'}">${(finalEquities.filter(e=>e<capital*0.5).length/sims*100).toFixed(1)}%</span></div>
+        <div class="risk-row"><span class="risk-label">Edge Ratio (Expectancy/Risk)</span><span class="risk-val cyan">${((wr * rr - (1-wr)) * 100).toFixed(1)}%</span></div>
+      `;
+
+      drawMCCharts(finalEquities, maxDrawdowns, paths, capital);
+    }
+  }
+  runBatch();
+}
+
+function drawMCCharts(equities, drawdowns, paths, capital) {
+  // Equity distribution
+  const eCanvas = document.getElementById('mc-equity-canvas');
+  if (!eCanvas) return;
+  eCanvas.width = eCanvas.parentElement.clientWidth - 40;
+  eCanvas.height = 220;
+  const eCtx = eCanvas.getContext('2d');
+  const W = eCanvas.width, H = eCanvas.height;
+
+  eCtx.fillStyle = 'rgba(0,0,0,0.2)'; eCtx.fillRect(0,0,W,H);
+  const minE = equities[0]; const maxE = equities[equities.length-1];
+  const bins = 30; const binW = (maxE - minE) / bins;
+  const counts = new Array(bins).fill(0);
+  equities.forEach(e => {
+    const bin = Math.min(bins-1, Math.floor((e - minE) / binW));
+    counts[bin]++;
+  });
+  const maxCount = Math.max(...counts);
+  const barW = W / bins;
+  counts.forEach((count, i) => {
+    const x = i * barW;
+    const h = (count / maxCount) * (H - 20);
+    const binCenter = minE + (i + 0.5) * binW;
+    const color = binCenter > capital ? 'rgba(16,185,129,0.7)' : 'rgba(239,68,68,0.6)';
+    eCtx.fillStyle = color;
+    eCtx.fillRect(x+1, H-h-4, barW-2, h);
+  });
+
+  // Capital line
+  const capX = ((capital - minE) / (maxE - minE)) * W;
+  eCtx.strokeStyle = 'rgba(245,158,11,0.8)'; eCtx.lineWidth = 2; eCtx.setLineDash([4,4]);
+  eCtx.beginPath(); eCtx.moveTo(capX, 0); eCtx.lineTo(capX, H); eCtx.stroke();
+  eCtx.setLineDash([]); eCtx.fillStyle = '#f59e0b'; eCtx.font = '700 10px Consolas'; eCtx.textAlign = 'center';
+  eCtx.fillText('Start', capX, 14);
+
+  // Drawdown distribution
+  const dCanvas = document.getElementById('mc-dd-canvas');
+  dCanvas.width = dCanvas.parentElement.clientWidth - 40;
+  dCanvas.height = 220;
+  const dCtx = dCanvas.getContext('2d');
+  const DW = dCanvas.width, DH = dCanvas.height;
+
+  dCtx.fillStyle = 'rgba(0,0,0,0.2)'; dCtx.fillRect(0,0,DW,DH);
+  const maxDD = drawdowns[drawdowns.length-1];
+  const dBins = 30; const dBinW = maxDD / dBins;
+  const dCounts = new Array(dBins).fill(0);
+  drawdowns.forEach(d => { const bin = Math.min(dBins-1, Math.floor(d / dBinW)); dCounts[bin]++; });
+  const maxDCount = Math.max(...dCounts);
+  const dBarW = DW / dBins;
+  dCounts.forEach((count, i) => {
+    const x = i * dBarW;
+    const h = (count / maxDCount) * (DH - 20);
+    const pct = (i / dBins);
+    const r = Math.round(255 * pct); const g = Math.round(200 * (1-pct));
+    dCtx.fillStyle = `rgba(${r},${g},80,0.7)`;
+    dCtx.fillRect(x+1, DH-h-4, dBarW-2, h);
+  });
+  dCtx.fillStyle = '#94a3b8'; dCtx.font = '700 9px Consolas'; dCtx.textAlign = 'center';
+  dCtx.fillText('0%', 10, DH-8);
+  dCtx.fillText((maxDD*100).toFixed(0)+'%', DW-20, DH-8);
+}
+
+// ===================== TAB SWITCHING =====================
+function switchEngine(tab, engine) {
+  document.querySelectorAll('.engine-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.engine-content').forEach(c => c.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById('engine-' + engine).classList.add('active');
+
+  if (engine === 'features') initFeatureExplorer();
+}
+
+// Init
+</script>
+</body>
+</html>
