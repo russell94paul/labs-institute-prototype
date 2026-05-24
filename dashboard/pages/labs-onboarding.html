@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
     /* === Labs Institute Design System === */
     /* Dark chrome aesthetic matching labs.institute */
@@ -314,18 +315,30 @@
     }
 
     @media (max-width: 900px) {
-        .labs-layout { flex-direction: column; }
+        .labs-layout { flex-direction: column; overflow: hidden; }
         .labs-nav {
-            width: 100%; position: static; height: auto;
+            width: 100%; max-width: 100vw; position: static; height: auto;
             border-right: none; border-bottom: 1px solid var(--labs-border);
             display: flex; overflow-x: auto; padding: 10px 20px; gap: 0;
+            scrollbar-width: none;
         }
+        .labs-nav::-webkit-scrollbar { display: none; }
         .labs-nav-title { display: none; }
         .labs-nav-item { white-space: nowrap; border-left: none; padding: 8px 12px; }
         .labs-main { padding: 20px; }
         .labs-topbar { padding: 16px 20px; }
         .labs-grid-2, .labs-grid-3, .labs-svc-grid { grid-template-columns: 1fr; }
         .labs-kpi-grid { grid-template-columns: 1fr 1fr; }
+        .labs-social-row { grid-template-columns: 1fr; gap: 4px; }
+    }
+
+    @media (max-width: 480px) {
+        .labs-main { padding: 16px 12px; }
+        .labs-topbar { padding: 12px 14px; }
+        .labs-brand { font-size: 0.62rem; }
+        .labs-kpi-grid { grid-template-columns: 1fr; }
+        .labs-section { margin-bottom: 28px; padding-bottom: 28px; }
+        .labs-btn { width: 100%; justify-content: center; }
     }
 </style>
 </head>
