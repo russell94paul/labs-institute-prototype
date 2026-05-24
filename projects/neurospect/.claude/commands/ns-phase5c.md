@@ -7,12 +7,12 @@ You are working on **NeuroSpect Phase 5C** (EdgeLab Core — Dashboard + Null Te
 
 ## Boot Procedure
 
-1. Read `C:\Users\PaulRussell\repos\neurospect\CLAUDE.md`
-2. Read `C:\Users\PaulRussell\repos\neurospect\app\CLAUDE.md`
+1. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\CLAUDE.md`
+2. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\app\CLAUDE.md`
 3. Read Phase 5A/5B EdgeLab API — `api/app/routers/edgelab.py` (all endpoints)
 4. Read Phase 5A engine — `api/app/edgelab/engine/` (data flow for dashboard)
 5. Read Phase 5B risk modules — `api/app/edgelab/risk/` (Monte Carlo, walk-forward)
-6. Read `C:\Users\PaulRussell\repos\neurospect\roadmap\plan.md` lines 1454-1481 — EdgeLab UI/product implications
+6. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\roadmap\plan.md` lines 1454-1481 — EdgeLab UI/product implications
 
 ## Goal
 
@@ -83,6 +83,11 @@ Build the EdgeLab frontend dashboard (experiment list, backtest detail, charts, 
 - [ ] Statistical significance documented (p-value for each strategy)
 - [ ] Null test results written to `research/phase-5-edgelab/null-test-results.md`
 - [ ] Go/no-go gate clearly communicated for Phase 11 viability
+
+## NeuroFusion-13 Research Context
+
+Before implementation, read the following SIHRE research reports for techniques that should be incorporated:
+- `research/neurofusion/data/prompt-4-quant-trading-tech.md` — Monte Carlo fan chart methodology, walk-forward efficiency ratio visualization, and null test statistical significance design
 
 ## When done
 

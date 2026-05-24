@@ -7,13 +7,13 @@ You are working on **NeuroSpect Phase 8** (NeuroScore + Verified Leaderboard).
 
 ## Boot Procedure
 
-1. Read `C:\Users\PaulRussell\repos\neurospect\CLAUDE.md`
-2. Read `C:\Users\PaulRussell\repos\neurospect\api\CLAUDE.md`
+1. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\CLAUDE.md`
+2. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\CLAUDE.md`
 3. Read Phase 1 BrokerAccount model (account types, verification status)
 4. Read Phase 2 behavior metrics service (tilt, discipline, consistency scores)
 5. Read Phase 3 Prop Shield rule engine (rule adherence tracking)
 6. Read Phase 2 analytics service — `api/app/services/analytics.py` (performance data)
-7. Read `C:\Users\PaulRussell\repos\neurospect\api\app\models\user.py` — user model
+7. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\models\user.py` — user model
 
 ## Goal
 

@@ -7,12 +7,12 @@ You are working on **NeuroSpect Phase 5A** (EdgeLab Core — Engine + Data Pipel
 
 ## Boot Procedure
 
-1. Read `C:\Users\PaulRussell\repos\neurospect\CLAUDE.md`
-2. Read `C:\Users\PaulRussell\repos\neurospect\api\CLAUDE.md`
+1. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\CLAUDE.md`
+2. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\CLAUDE.md`
 3. Read Phase 4 detector code — `api/app/edgelab/detectors/` (all detector files)
 4. Read Phase 4 market data code — `api/app/edgelab/data/` (bar model, import pipeline)
-5. Read `C:\Users\PaulRussell\repos\neurospect\wiki\concepts\entry-models\` — all 7 strategy YAMLs
-6. Read `C:\Users\PaulRussell\repos\neurospect\roadmap\plan.md` lines 1209-1290 — Phase 7 (old numbering) deliverables and architecture
+5. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\wiki\concepts\entry-models\` — all 7 strategy YAMLs
+6. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\roadmap\plan.md` lines 1209-1290 — Phase 7 (old numbering) deliverables and architecture
 
 ## Goal
 
@@ -81,6 +81,11 @@ Trade Records → PostgreSQL (experiments, runs, trades, metrics)
 - [ ] Backtest metrics (win rate, avg R, drawdown, Sharpe, expectancy) calculated correctly
 - [ ] All EdgeLab tables created via Alembic migration
 - [ ] Tests pass for engine, anti-lookahead, Parquet I/O, and experiment lifecycle
+
+## NeuroFusion-13 Research Context
+
+Before implementation, read the following SIHRE research reports for techniques that should be incorporated:
+- `research/neurofusion/data/prompt-4-quant-trading-tech.md` — Monte Carlo methodology, walk-forward anti-lookahead enforcement, and backtest engine design patterns relevant to the core engine
 
 ## When done
 

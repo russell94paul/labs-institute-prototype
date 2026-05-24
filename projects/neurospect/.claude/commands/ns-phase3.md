@@ -7,12 +7,12 @@ You are working on **NeuroSpect Phase 3** (Prop Shield). This is the **FIRST REV
 
 ## Boot Procedure
 
-1. Read `C:\Users\PaulRussell\repos\neurospect\CLAUDE.md`
-2. Read `C:\Users\PaulRussell\repos\neurospect\api\CLAUDE.md`
-3. Read `C:\Users\PaulRussell\repos\neurospect\api\app\routers\tradovate.py` — existing Tradovate integration
-4. Read `C:\Users\PaulRussell\repos\neurospect\api\app\services\tradovate.py` — Tradovate service
-5. Read `C:\Users\PaulRussell\repos\neurospect\api\app\services\crypto.py` — credential encryption
-6. Read `C:\Users\PaulRussell\repos\neurospect\api\app\models\broker_credential.py` — broker credentials
+1. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\CLAUDE.md`
+2. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\CLAUDE.md`
+3. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\routers\tradovate.py` — existing Tradovate integration
+4. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\services\tradovate.py` — Tradovate service
+5. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\services\crypto.py` — credential encryption
+6. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\models\broker_credential.py` — broker credentials
 7. Read Phase 1 BrokerAccount model (from Phase 1 deliverables)
 8. Read Phase 2 behavior metrics service (for tilt detection integration)
 

@@ -7,13 +7,13 @@ You are working on **NeuroSpect Phase 4** (ICT Event Intelligence).
 
 ## Boot Procedure
 
-1. Read `C:\Users\PaulRussell\repos\neurospect\CLAUDE.md`
-2. Read `C:\Users\PaulRussell\repos\neurospect\api\CLAUDE.md`
-3. Read `C:\Users\PaulRussell\repos\neurospect\wiki\CLAUDE.md`
-4. Read `C:\Users\PaulRussell\repos\neurospect\api\app\models\enums.py` — 17 ICT-specific enums
-5. Read all files in `C:\Users\PaulRussell\repos\neurospect\wiki\concepts\entry-models\` — 7 strategies with YAML blocks
-6. Read all files in `C:\Users\PaulRussell\repos\neurospect\wiki\concepts\business-logic\` — 8 ICT concept docs
-7. Read `C:\Users\PaulRussell\repos\neurospect\api\app\models\trade.py` — trade model for event-trade association
+1. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\CLAUDE.md`
+2. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\CLAUDE.md`
+3. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\wiki\CLAUDE.md`
+4. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\models\enums.py` — 17 ICT-specific enums
+5. Read all files in `C:\Users\PaulRussell\repos\conductor\projects\neurospect\wiki\concepts\entry-models\` — 7 strategies with YAML blocks
+6. Read all files in `C:\Users\PaulRussell\repos\conductor\projects\neurospect\wiki\concepts\business-logic\` — 8 ICT concept docs
+7. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\models\trade.py` — trade model for event-trade association
 
 ## Goal
 
@@ -86,6 +86,12 @@ Convert ICT concepts (FVGs, liquidity sweeps, order blocks, sessions, market str
 - [ ] Events can be associated with trades (nearest events to entry/exit)
 - [ ] Tests prove detector behavior on fixture data with known expected events
 - [ ] Anti-lookahead enforced — detectors never access future bars
+
+## NeuroFusion-13 Research Context
+
+Before implementation, read the following SIHRE research reports for techniques that should be incorporated:
+- `research/neurofusion/data/prompt-4-quant-trading-tech.md` — event detection techniques, signal primitives, and institutional order flow research relevant to ICT event detection
+- `research/neurofusion/data/prompt-5-extended-signals.md` — extended signal types and fundamental data integration relevant to event detection coverage
 
 ## When done
 

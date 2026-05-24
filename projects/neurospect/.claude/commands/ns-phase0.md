@@ -7,11 +7,11 @@ You are working on **NeuroSpect Phase 0** (Marketing + Demo + Technical Validati
 
 ## Boot Procedure
 
-1. Read `C:\Users\PaulRussell\repos\neurospect\CLAUDE.md`
-2. Read `C:\Users\PaulRussell\repos\neurospect\roadmap\phases\phase-0-marketing-demo\README.md`
-3. Read `C:\Users\PaulRussell\repos\neurospect\roadmap\phases\phase-0-marketing-demo\deviations.md`
-4. Read `C:\Users\PaulRussell\repos\neurospect\neurospect-ui\index.html` — current marketing site shell
-5. Read `C:\Users\PaulRussell\repos\neurospect\docs\neurospect_product_overview_user_guide.md` (first 200 lines — product context)
+1. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\CLAUDE.md`
+2. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\roadmap\phases\phase-0-marketing-demo\README.md`
+3. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\roadmap\phases\phase-0-marketing-demo\deviations.md`
+4. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\neurospect-ui\index.html` — current marketing site shell
+5. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\docs\neurospect_product_overview_user_guide.md` (first 200 lines — product context)
 
 ## Goal
 

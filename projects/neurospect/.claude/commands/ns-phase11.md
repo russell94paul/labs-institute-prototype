@@ -9,13 +9,13 @@ You are working on **NeuroSpect Phase 11** (Advanced ML Research). This is the f
 
 ## Boot Procedure
 
-1. Read `C:\Users\PaulRussell\repos\neurospect\CLAUDE.md`
-2. Read `C:\Users\PaulRussell\repos\neurospect\api\CLAUDE.md`
+1. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\CLAUDE.md`
+2. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\CLAUDE.md`
 3. Read Phase 5 EdgeLab engine — `api/app/edgelab/engine/` (experiment runner, feature store)
 4. Read Phase 5 null test results — `research/phase-5-edgelab/null-test-results.md` — **HARD GATE: if null test failed (p > 0.05), NeuroTrader is NOT viable**
 5. Read Phase 6 NeuroCore — `api/app/coach/rag/` (retrieval for NSLM context)
 6. Read Phase 5 feature store — `api/app/edgelab/features/` (quant + ICT features)
-7. Read `C:\Users\PaulRussell\repos\neurospect\roadmap\plan.md` lines 1303-1475 — old Phase 8-10 + EdgeLab UI
+7. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\roadmap\plan.md` lines 1303-1475 — old Phase 8-10 + EdgeLab UI
 
 ## Goal
 
@@ -124,6 +124,15 @@ Build the advanced ML research layer: NSLM prompt/model versioning and evaluatio
 - [ ] Shadow signals logged with full reasoning
 - [ ] Discord notifications fire for detected setups
 - [ ] No real or paper trades executed
+
+## NeuroFusion-13 Research Context
+
+Before implementation, read ALL SIHRE research reports — this is where NeuroFusion-13 comes together:
+- `research/neurofusion/data/prompt-1-ensemble-architecture.md` — 13-signal heterogeneous ensemble architecture and signal fusion design for NeuroQuant
+- `research/neurofusion/data/prompt-2-dslm-quant-hybrid.md` — DSLM design, ICT-aware model family architecture, and quant-hybrid model patterns for NSLM
+- `research/neurofusion/data/prompt-3-knowledge-graph.md` — temporal knowledge graph integration, confidence decay, and GNN patterns relevant to NeuroGraph feeding NeuroQuant
+- `research/neurofusion/data/prompt-4-quant-trading-tech.md` — Monte Carlo, walk-forward, anti-lookahead, and feature engineering for the full ML pipeline
+- `research/neurofusion/data/prompt-5-extended-signals.md` — extended signal types, fundamental data, and regime-conditional model selection for NeuroQuant
 
 ## When done
 

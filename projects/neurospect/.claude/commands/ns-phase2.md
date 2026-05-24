@@ -7,13 +7,13 @@ You are working on **NeuroSpect Phase 2** (Trader Workspace).
 
 ## Boot Procedure
 
-1. Read `C:\Users\PaulRussell\repos\neurospect\CLAUDE.md`
-2. Read `C:\Users\PaulRussell\repos\neurospect\api\CLAUDE.md`
-3. Read `C:\Users\PaulRussell\repos\neurospect\api\app\services\analytics.py` — existing 7 analytics endpoints
-4. Read `C:\Users\PaulRussell\repos\neurospect\api\app\routers\analytics.py` — analytics router
-5. Read `C:\Users\PaulRussell\repos\neurospect\api\app\routers\trades.py` — trade CRUD
-6. Read `C:\Users\PaulRussell\repos\neurospect\api\app\models\trade.py` — trade model (extended in Phase 1)
-7. Read `C:\Users\PaulRussell\repos\neurospect\app\CLAUDE.md` — frontend context
+1. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\CLAUDE.md`
+2. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\CLAUDE.md`
+3. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\services\analytics.py` — existing 7 analytics endpoints
+4. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\routers\analytics.py` — analytics router
+5. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\routers\trades.py` — trade CRUD
+6. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\models\trade.py` — trade model (extended in Phase 1)
+7. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\app\CLAUDE.md` — frontend context
 
 ## Goal
 

@@ -7,8 +7,8 @@ You are working on **NeuroSpect Phase 7** (Edge Forensics).
 
 ## Boot Procedure
 
-1. Read `C:\Users\PaulRussell\repos\neurospect\CLAUDE.md`
-2. Read `C:\Users\PaulRussell\repos\neurospect\api\CLAUDE.md`
+1. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\CLAUDE.md`
+2. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\CLAUDE.md`
 3. Read Phase 2 analytics service — `api/app/services/analytics.py` (trade breakdown data)
 4. Read Phase 2 behavior metrics service (tilt, discipline, consistency)
 5. Read Phase 4 event models — `api/app/models/market_event.py` (event-trade associations)

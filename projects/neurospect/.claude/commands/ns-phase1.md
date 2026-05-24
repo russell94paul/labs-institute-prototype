@@ -7,14 +7,14 @@ You are working on **NeuroSpect Phase 1** (Trading Data Foundation).
 
 ## Boot Procedure
 
-1. Read `C:\Users\PaulRussell\repos\neurospect\CLAUDE.md`
-2. Read `C:\Users\PaulRussell\repos\neurospect\api\CLAUDE.md`
-3. Read `C:\Users\PaulRussell\repos\neurospect\api\app\models\trade.py` — existing 100+ field trade model
-4. Read `C:\Users\PaulRussell\repos\neurospect\api\app\models\enums.py` — 17 ICT-specific enums
-5. Read `C:\Users\PaulRussell\repos\neurospect\api\app\models\broker_credential.py` — existing broker credential model
-6. Read `C:\Users\PaulRussell\repos\neurospect\api\app\routers\tradovate.py` — existing Tradovate integration
-7. Read `C:\Users\PaulRussell\repos\neurospect\api\app\services\tradovate.py` — Tradovate service layer
-8. Read `C:\Users\PaulRussell\repos\neurospect\api\app\routers\trades.py` — trade CRUD
+1. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\CLAUDE.md`
+2. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\CLAUDE.md`
+3. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\models\trade.py` — existing 100+ field trade model
+4. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\models\enums.py` — 17 ICT-specific enums
+5. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\models\broker_credential.py` — existing broker credential model
+6. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\routers\tradovate.py` — existing Tradovate integration
+7. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\services\tradovate.py` — Tradovate service layer
+8. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\routers\trades.py` — trade CRUD
 
 ## Goal
 

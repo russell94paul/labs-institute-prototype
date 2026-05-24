@@ -7,12 +7,12 @@ You are working on **NeuroSpect Phase 9** (NeuroFund Elite Rewards MVP). This is
 
 ## Boot Procedure
 
-1. Read `C:\Users\PaulRussell\repos\neurospect\CLAUDE.md`
-2. Read `C:\Users\PaulRussell\repos\neurospect\api\CLAUDE.md`
+1. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\CLAUDE.md`
+2. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\CLAUDE.md`
 3. Read Phase 8 NeuroScore service — `api/app/services/neuroscore.py`
 4. Read Phase 8 leaderboard — `api/app/routers/leaderboard.py`
-5. Read `C:\Users\PaulRussell\repos\neurospect\api\app\models\user.py` — user model
-6. Read `C:\Users\PaulRussell\repos\neurospect\roadmap\roadmap-change-integration\roadmap-changes-v2.md` — NeuroFund compliance language reference
+5. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\models\user.py` — user model
+6. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\roadmap\roadmap-change-integration\roadmap-changes-v2.md` — NeuroFund compliance language reference
 
 ## Goal
 

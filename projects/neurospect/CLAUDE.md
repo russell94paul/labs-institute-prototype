@@ -268,6 +268,30 @@ Before ending this session:
 6. Check file references and wikilinks resolve
 7. Flag stale artifacts that may need updating
 
+## NeuroFusion-13 (SIHRE) — Advanced Quant Architecture
+
+NeuroSpect's advanced tier is powered by NeuroFusion-13, a Self-Improving Heterogeneous Reasoning Ensemble (SIHRE) — a 13-signal quant architecture that fuses heterogeneous reasoning modalities (statistical, semantic, causal, adversarial, generative, self-supervised, evolutionary, meta-learned) at the reasoning level.
+
+The AI coach (Mentor) is a **separate feature** — it does NOT use the NeuroFusion model. NeuroFusion powers systematic signal generation, strategy discovery, and automated decision-making for advanced-tier subscribers only.
+
+### Research Reports
+
+Deep research reports are at `research/neurofusion/data/` (7 ChatGPT Pro + 1 Gemini). Architecture overview at `research/neurofusion/README.md`. Technical spec at `research/neurofusion/architecture/signal-fusion-design.md` (when created).
+
+### Deep Research Flagging
+
+**When implementing any phase, proactively identify components that could benefit from deeper research.** If a technique, algorithm, or architecture decision could be significantly improved by exploring academic papers, alternative approaches, or cutting-edge methods, flag it inline:
+
+`🔬 Deep research opportunity: <description of what could be researched and why>`
+
+Accumulate these as you work. At session end, present them to Paul as potential ChatGPT Deep Research prompts. Focus on areas where:
+- The current approach is "good enough" but a researched approach could be 10x better
+- There are known academic papers or techniques that could apply but haven't been explored
+- A design decision has multiple viable paths and research could identify the optimal one
+- The implementation touches a NeuroFusion-13 signal and the research reports suggest specific techniques
+
+Do NOT flag trivial optimizations or well-understood patterns. Flag only where deep research would meaningfully change the implementation approach.
+
 ## Cross-Cutting Rules
 
 - Cross-cutting changes (touching `wiki/` + `api/` + `app/`) ride in a single PR

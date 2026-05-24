@@ -7,13 +7,13 @@ You are working on **NeuroSpect Phase 6** (AI Trade Review + RAG). This builds N
 
 ## Boot Procedure
 
-1. Read `C:\Users\PaulRussell\repos\neurospect\CLAUDE.md`
-2. Read `C:\Users\PaulRussell\repos\neurospect\api\CLAUDE.md`
-3. Read `C:\Users\PaulRussell\repos\neurospect\wiki\CLAUDE.md`
-4. Read `C:\Users\PaulRussell\repos\neurospect\api\app\coach\claude_client.py` — existing Claude integration
-5. Read `C:\Users\PaulRussell\repos\neurospect\api\app\coach\prompt_loader.py` — system prompt assembly
-6. Read `C:\Users\PaulRussell\repos\neurospect\api\app\coach\prompts\system-prompt-template.md` — current system prompt
-7. Read `C:\Users\PaulRussell\repos\neurospect\api\app\models\coaching_event.py` — existing coaching model
+1. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\CLAUDE.md`
+2. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\CLAUDE.md`
+3. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\wiki\CLAUDE.md`
+4. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\coach\claude_client.py` — existing Claude integration
+5. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\coach\prompt_loader.py` — system prompt assembly
+6. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\coach\prompts\system-prompt-template.md` — current system prompt
+7. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\models\coaching_event.py` — existing coaching model
 8. Read Phase 2 behavior metrics service (for trade review context)
 9. Read Phase 4 event models (for event context in reviews)
 
@@ -105,6 +105,12 @@ Ground AI coaching in methodology docs and actual trade data. Build NeuroCore (h
 - [ ] Hallucination rate < 15% on evaluation dataset
 - [ ] Response latency < 5s (p95)
 - [ ] Tests cover retrieval quality, chat lifecycle, and review output structure
+
+## NeuroFusion-13 Research Context
+
+Before implementation, read the following SIHRE research reports for techniques that should be incorporated:
+- `research/neurofusion/data/prompt-1-ensemble-architecture.md` — hybrid retrieval architecture, signal fusion via Reciprocal Rank Fusion, and multi-signal ensemble design for NeuroCore
+- `research/neurofusion/data/prompt-2-dslm-quant-hybrid.md` — DSLM (Domain-Specific Language Model) design patterns and quant-hybrid retrieval relevant to NSLM/NeuroCore integration
 
 ## When done
 

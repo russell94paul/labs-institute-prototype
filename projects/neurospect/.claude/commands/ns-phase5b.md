@@ -7,8 +7,8 @@ You are working on **NeuroSpect Phase 5B** (EdgeLab Core — Strategy Compiler +
 
 ## Boot Procedure
 
-1. Read `C:\Users\PaulRussell\repos\neurospect\CLAUDE.md`
-2. Read `C:\Users\PaulRussell\repos\neurospect\api\CLAUDE.md`
+1. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\CLAUDE.md`
+2. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\CLAUDE.md`
 3. Read Phase 5A engine code — `api/app/edgelab/engine/` (all files)
 4. Read Phase 5A strategy compiler — `api/app/edgelab/strategies/strategy_compiler.py`
 5. Read all 7 entry model YAMLs in `wiki/concepts/entry-models/`
@@ -78,6 +78,11 @@ Compile all 7 ICT entry models into backtestable strategies, add Monte Carlo sim
 - [ ] Feature importance ranking works via permutation importance
 - [ ] All EdgeLab REST endpoints return correct data
 - [ ] Tests cover each strategy on fixture data, Monte Carlo edge cases, and walk-forward window logic
+
+## NeuroFusion-13 Research Context
+
+Before implementation, read the following SIHRE research reports for techniques that should be incorporated:
+- `research/neurofusion/data/prompt-4-quant-trading-tech.md` — Monte Carlo permutation testing, walk-forward optimization windows, anti-lookahead enforcement, and deflated Sharpe ratio methodology
 
 ## When done
 

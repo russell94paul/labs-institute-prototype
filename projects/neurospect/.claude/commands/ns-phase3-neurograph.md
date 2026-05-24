@@ -9,14 +9,14 @@ You are working on **NeuroSpect Phase 3-NG** (NeuroGraph Planning). This is a **
 
 ## Boot Procedure
 
-1. Read `C:\Users\PaulRussell\repos\neurospect\CLAUDE.md`
-2. Read `C:\Users\PaulRussell\repos\neurospect\api\CLAUDE.md`
-3. Read `C:\Users\PaulRussell\repos\neurospect\wiki\CLAUDE.md` — wiki corpus structure
-4. Read `C:\Users\PaulRussell\repos\neurospect\api\app\models\trade.py` — trade data model (100+ fields)
-5. Read `C:\Users\PaulRussell\repos\neurospect\api\app\models\enums.py` — 17 ICT enums
-6. Read `C:\Users\PaulRussell\repos\neurospect\wiki\concepts\entry-models\` — 7 strategy YAMLs
-7. Read `C:\Users\PaulRussell\repos\neurospect\wiki\concepts\business-logic\` — 8 ICT concept docs
-8. Read `C:\Users\PaulRussell\repos\neurospect\wiki\concepts\course\` — 5 course modules
+1. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\CLAUDE.md`
+2. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\CLAUDE.md`
+3. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\wiki\CLAUDE.md` — wiki corpus structure
+4. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\models\trade.py` — trade data model (100+ fields)
+5. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\api\app\models\enums.py` — 17 ICT enums
+6. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\wiki\concepts\entry-models\` — 7 strategy YAMLs
+7. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\wiki\concepts\business-logic\` — 8 ICT concept docs
+8. Read `C:\Users\PaulRussell\repos\conductor\projects\neurospect\wiki\concepts\course\` — 5 course modules
 9. Read Zeus Memory architecture at `C:\Users\PaulRussell\repos\wiki` for pattern reference
 
 ## What is NeuroGraph
@@ -164,6 +164,11 @@ Recommendation: Start with PostgreSQL + JSONB (same DB, no new infra). Migrate t
 - [ ] Technology recommendation with tradeoffs
 - [ ] Implementation plan with effort estimates
 - [ ] External data source API research (availability, cost, rate limits)
+
+## NeuroFusion-13 Research Context
+
+Before implementation, read the following SIHRE research reports for techniques that should be incorporated:
+- `research/neurofusion/data/prompt-3-knowledge-graph.md` — temporal knowledge graph design, confidence decay and reinforcement, GNN architecture for trading intelligence, and graph query patterns relevant to NeuroGraph schema and accumulation strategy
 
 ## When done
 
