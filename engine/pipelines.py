@@ -531,6 +531,7 @@ def _check_pipeline_completion(pipeline: Dict[str, Any]) -> None:
             "name": pipeline.get("name"),
         }, source="pipelines")
     pipeline["ended_at"] = _now_iso()
+    _sync_phase_status(pipeline)
 
 
 # ---------------------------------------------------------------------------
@@ -638,6 +639,7 @@ def cancel_pipeline(pid: str) -> Tuple[bool, str]:
         "name": pipeline.get("name"),
     }, source="pipelines")
 
+    _sync_phase_status(pipeline)
     return True, "cancelled"
 
 
@@ -648,6 +650,25 @@ def get_pipeline(pid: str) -> Optional[Dict[str, Any]]:
     with _lock:
         p = _pipelines.get(pid)
         return dict(p) if p else None
+
+
+def _sync_phase_status(pipeline: Dict[str, Any]) -> None:
+    """Update phase status in bootstrap when a pipeline completes/fails/cancels."""
+    try:
+        from engine import bootstrap
+        pid = pipeline.get("id", "")
+        all_phases = bootstrap._load_phases()
+        for phase in all_phases:
+            if phase.get("activeSessionId") == pid:
+                if pipeline["status"] == "completed":
+                    phase["status"] = "completed"
+                elif pipeline["status"] in ("failed", "cancelled", "rolled_back"):
+                    phase["status"] = "in-progress"
+                phase["activeSessionId"] = None
+                phase["lastUpdated"] = _now_iso()[:10]
+        bootstrap._save_phases(all_phases)
+    except Exception:
+        pass
 
 
 _STATUS_ORDER = {"running": 0, "pending": 1, "completed": 2, "failed": 3, "rolled_back": 4, "cancelled": 5}
@@ -827,6 +848,9 @@ def rollback_pipeline(pid: str, reason: str = "") -> Tuple[bool, str]:
         "reason": reason,
         "success": result.success,
     }, source="pipelines")
+
+    if result.success:
+        _sync_phase_status(pipeline)
 
     return result.success, result.summary or result.error or "Unknown error"
 
