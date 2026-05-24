@@ -629,12 +629,18 @@
                 </div>
             </div>
             <div class="cd-header-right">
+                <select id="cd-project-filter" onchange="loadLiveData()" style="font-size:0.72rem;font-weight:600;padding:5px 10px;border-radius:8px;border:1px solid var(--border-light);background:rgba(255,255,255,0.04);color:var(--text-secondary);cursor:pointer;">
+                    <option value="">All Projects</option>
+                    <option value="neurospect">NeuroSpect</option>
+                    <option value="labs-institute">Labs Institute</option>
+                    <option value="groovenet">GrooveNet</option>
+                    <option value="conductor">Conductor</option>
+                </select>
                 <div class="cd-agent-indicator">
                     <span class="cd-agent-dot"></span>
-                    <span id="cd-active-agents">6 agents active</span>
+                    <span id="cd-active-agents">0 sessions</span>
                 </div>
                 <div class="cd-env-badge">Local</div>
-                <div class="cd-release-badge" id="cd-release">v2.4.0-rc1</div>
                 <input type="text" class="cd-search-box" placeholder="Search tasks..." readonly>
             </div>
         </div>
@@ -733,297 +739,136 @@
         { id: 'approval-bot', name: 'ApprovalBot', lane: 'approvals', status: 'idle' }
     ];
 
-    var TASKS = [
-        {
-            id: 'TASK-001', title: 'User profile data export',
-            description: 'Allow users to export their profile data as JSON or CSV for compliance and portability.',
-            lane: 'requests', column: 'scoped', priority: 'high',
-            assigneeAgent: 'request-bot', humanOwner: 'Paul Russell',
-            dependencies: [], blockedBy: [], linkedPR: null, environment: null,
-            riskLevel: 'medium', approvalRequired: false, approvalStatus: null,
-            recommendation: 'Classify as feature request. Consider splitting export formats into separate tasks.',
-            filesChanged: [], createdAt: '2026-05-15T09:00:00Z', updatedAt: '2026-05-16T14:30:00Z', completedAt: null,
-            acceptanceCriteria: ['User can export profile as JSON', 'User can export profile as CSV', 'Export includes all PII fields'],
-            testStatus: null, reviewFindings: []
-        },
-        {
-            id: 'TASK-002', title: 'Login timeout on mobile Safari',
-            description: 'Users report session timeout after 30s of inactivity on iOS Safari. Likely related to background tab throttling.',
-            lane: 'requests', column: 'in_progress', priority: 'critical',
-            assigneeAgent: 'request-bot', humanOwner: 'Paul Russell',
-            dependencies: [], blockedBy: [], linkedPR: 'PR-188', environment: 'production',
-            riskLevel: 'high', approvalRequired: false, approvalStatus: null,
-            recommendation: 'Investigate Safari background tab behavior. Consider heartbeat mechanism.',
-            filesChanged: ['src/auth/session.ts', 'src/hooks/useKeepAlive.ts'], createdAt: '2026-05-14T11:00:00Z', updatedAt: '2026-05-17T08:00:00Z', completedAt: null,
-            acceptanceCriteria: ['Session persists for 10+ min background', 'No timeout on iOS Safari 17+'],
-            testStatus: 'failing', reviewFindings: []
-        },
-        {
-            id: 'TASK-003', title: 'Export API specification',
-            description: 'Define OpenAPI spec for profile export endpoints including auth, rate limits, and response schemas.',
-            lane: 'requirements', column: 'done', priority: 'high',
-            assigneeAgent: 'spec-writer', humanOwner: 'Paul Russell',
-            dependencies: [], blockedBy: [], linkedPR: null, environment: null,
-            riskLevel: 'low', approvalRequired: false, approvalStatus: null,
-            recommendation: 'Specification complete. Ready for implementation.',
-            filesChanged: ['docs/api/export-spec.yaml'], createdAt: '2026-05-12T10:00:00Z', updatedAt: '2026-05-14T16:00:00Z', completedAt: '2026-05-14T16:00:00Z',
-            acceptanceCriteria: ['OpenAPI 3.1 spec defined', 'Auth requirements documented', 'Rate limits specified'],
-            testStatus: null, reviewFindings: []
-        },
-        {
-            id: 'TASK-004', title: 'Sprint 4 scope and planning',
-            description: 'Define sprint 4 scope, assign tasks to agents, identify critical path and parallelizable work.',
-            lane: 'planning', column: 'in_progress', priority: 'medium',
-            assigneeAgent: 'planner', humanOwner: 'Paul Russell',
-            dependencies: ['TASK-003'], blockedBy: [], linkedPR: null, environment: null,
-            riskLevel: 'low', approvalRequired: false, approvalStatus: null,
-            recommendation: 'Frontend and backend implementation can proceed in parallel after planning.',
-            filesChanged: [], createdAt: '2026-05-15T09:00:00Z', updatedAt: '2026-05-17T10:00:00Z', completedAt: null,
-            acceptanceCriteria: ['All sprint tasks scoped', 'Dependencies mapped', 'Agent assignments confirmed'],
-            testStatus: null, reviewFindings: []
-        },
-        {
-            id: 'TASK-005', title: 'Profile page redesign',
-            description: 'Redesign profile page with export button, data preview, and format selector.',
-            lane: 'frontend', column: 'in_progress', priority: 'high',
-            assigneeAgent: 'ui-builder', humanOwner: null,
-            dependencies: ['TASK-003'], blockedBy: [], linkedPR: 'PR-182', environment: null,
-            riskLevel: 'medium', approvalRequired: false, approvalStatus: null,
-            recommendation: 'Add loading and error states. Verify accessibility for export controls.',
-            filesChanged: ['src/pages/Profile.tsx', 'src/components/ExportPanel.tsx', 'src/styles/profile.css'],
-            createdAt: '2026-05-15T14:00:00Z', updatedAt: '2026-05-17T09:00:00Z', completedAt: null,
-            acceptanceCriteria: ['Export button visible on profile', 'Format selector works', 'Loading state shown during export'],
-            testStatus: 'passing', reviewFindings: []
-        },
-        {
-            id: 'TASK-006', title: 'Export API endpoint',
-            description: 'Implement /api/v2/profile/export endpoint with JSON and CSV support, auth, and rate limiting.',
-            lane: 'backend', column: 'review', priority: 'high',
-            assigneeAgent: 'api-builder', humanOwner: null,
-            dependencies: ['TASK-003'], blockedBy: [], linkedPR: 'PR-184', environment: null,
-            riskLevel: 'medium', approvalRequired: false, approvalStatus: null,
-            recommendation: 'Rate limit at 10 req/min per user. Add audit logging for compliance.',
-            filesChanged: ['src/api/export.ts', 'src/middleware/rateLimit.ts', 'src/services/profileExport.ts'],
-            createdAt: '2026-05-15T14:00:00Z', updatedAt: '2026-05-16T18:00:00Z', completedAt: null,
-            acceptanceCriteria: ['GET /api/v2/profile/export returns JSON', 'CSV format supported via Accept header', 'Rate limited to 10/min'],
-            testStatus: 'passing', reviewFindings: ['Add input validation for query params']
-        },
-        {
-            id: 'TASK-007', title: 'CDN configuration for static assets',
-            description: 'Configure CloudFront distribution for static asset caching with proper invalidation rules.',
-            lane: 'infrastructure', column: 'approved', priority: 'medium',
-            assigneeAgent: 'infra-bot', humanOwner: null,
-            dependencies: [], blockedBy: [], linkedPR: 'PR-186', environment: 'staging',
-            riskLevel: 'low', approvalRequired: false, approvalStatus: null,
-            recommendation: 'Verify cache TTL settings before production. Test invalidation flow.',
-            filesChanged: ['infra/cloudfront.tf', 'infra/variables.tf'],
-            createdAt: '2026-05-13T10:00:00Z', updatedAt: '2026-05-16T12:00:00Z', completedAt: null,
-            acceptanceCriteria: ['CloudFront distribution configured', 'Cache invalidation tested', 'HTTPS enforced'],
-            testStatus: 'passing', reviewFindings: []
-        },
-        {
-            id: 'TASK-008', title: 'Regression test suite v2.4',
-            description: 'Update and run full regression test suite for v2.4.0 release candidate.',
-            lane: 'qa', column: 'in_progress', priority: 'high',
-            assigneeAgent: 'qa-bot', humanOwner: null,
-            dependencies: ['TASK-005', 'TASK-006'], blockedBy: [], linkedPR: 'PR-190', environment: null,
-            riskLevel: 'medium', approvalRequired: false, approvalStatus: null,
-            recommendation: 'Prioritize export flow E2E tests. Add mobile Safari regression test.',
-            filesChanged: ['tests/e2e/export.spec.ts', 'tests/integration/api-export.test.ts'],
-            createdAt: '2026-05-16T09:00:00Z', updatedAt: '2026-05-17T11:00:00Z', completedAt: null,
-            acceptanceCriteria: ['All existing tests pass', 'New export E2E tests added', 'Mobile Safari test added'],
-            testStatus: 'running', reviewFindings: []
-        },
-        {
-            id: 'TASK-009', title: 'Code review: Export API (PR #184)',
-            description: 'Review PR #184 for code quality, security, performance, and test coverage.',
-            lane: 'code_review', column: 'review', priority: 'high',
-            assigneeAgent: 'review-bot', humanOwner: 'Paul Russell',
-            dependencies: ['TASK-006'], blockedBy: [], linkedPR: 'PR-184', environment: null,
-            riskLevel: 'medium', approvalRequired: true, approvalStatus: 'pending',
-            recommendation: 'Review rate limiting implementation. Verify SQL injection prevention in export query.',
-            filesChanged: [],
-            createdAt: '2026-05-16T18:00:00Z', updatedAt: '2026-05-17T09:00:00Z', completedAt: null,
-            acceptanceCriteria: ['No critical security issues', 'Test coverage above 80%', 'No performance regressions'],
-            testStatus: null, reviewFindings: ['Add input validation for query params', 'Consider pagination for large exports']
-        },
-        {
-            id: 'TASK-010', title: 'Merge PR #182 — Profile redesign',
-            description: 'PR #182 has been approved. Ready for merge into main.',
-            lane: 'code_review', column: 'approved', priority: 'medium',
-            assigneeAgent: 'review-bot', humanOwner: 'Paul Russell',
-            dependencies: ['TASK-009'], blockedBy: [], linkedPR: 'PR-182', environment: null,
-            riskLevel: 'low', approvalRequired: true, approvalStatus: 'approved',
-            recommendation: 'Safe to merge. No conflicts detected. All checks passing.',
-            filesChanged: [],
-            createdAt: '2026-05-16T10:00:00Z', updatedAt: '2026-05-17T08:00:00Z', completedAt: null,
-            acceptanceCriteria: ['All CI checks pass', 'No merge conflicts', 'Approved by reviewer'],
-            testStatus: 'passing', reviewFindings: []
-        },
-        {
-            id: 'TASK-011', title: 'Deploy v2.4.0-rc1 to staging',
-            description: 'Deploy release candidate to staging environment for smoke testing and QA validation.',
-            lane: 'deployment', column: 'deployed', priority: 'high',
-            assigneeAgent: 'deploy-bot', humanOwner: null,
-            dependencies: ['TASK-010'], blockedBy: [], linkedPR: null, environment: 'staging',
-            riskLevel: 'medium', approvalRequired: false, approvalStatus: null,
-            recommendation: 'Staging deploy complete. Run smoke tests before requesting production approval.',
-            filesChanged: [],
-            createdAt: '2026-05-17T06:00:00Z', updatedAt: '2026-05-17T07:30:00Z', completedAt: null,
-            acceptanceCriteria: ['Staging deploy succeeds', 'Health checks pass', 'Smoke tests pass'],
-            testStatus: 'passing', reviewFindings: []
-        },
-        {
-            id: 'TASK-012', title: 'Production deploy approval',
-            description: 'Request human approval for v2.3.1 production deployment after staging validation.',
-            lane: 'approvals', column: 'review', priority: 'critical',
-            assigneeAgent: 'approval-bot', humanOwner: 'Paul Russell',
-            dependencies: ['TASK-011'], blockedBy: [], linkedPR: null, environment: 'production',
-            riskLevel: 'high', approvalRequired: true, approvalStatus: 'pending',
-            recommendation: 'Staging healthy for 2h. Recommend canary deploy to 5% before full rollout.',
-            filesChanged: [],
-            createdAt: '2026-05-17T08:00:00Z', updatedAt: '2026-05-17T10:00:00Z', completedAt: null,
-            acceptanceCriteria: ['Staging verified healthy', 'Rollback plan documented', 'Human approval granted'],
-            testStatus: null, reviewFindings: []
-        },
-        {
-            id: 'TASK-013', title: 'v2.3.0 health monitoring',
-            description: 'Monitor production health for v2.3.0 release. Track error rates, latency, and user reports.',
-            lane: 'monitoring', column: 'monitoring', priority: 'medium',
-            assigneeAgent: 'monitor-bot', humanOwner: null,
-            dependencies: ['TASK-011'], blockedBy: [], linkedPR: null, environment: 'production',
-            riskLevel: 'low', approvalRequired: false, approvalStatus: null,
-            recommendation: 'All metrics nominal. P99 latency stable at 180ms. No error spike detected.',
-            filesChanged: [],
-            createdAt: '2026-05-16T12:00:00Z', updatedAt: '2026-05-17T11:00:00Z', completedAt: null,
-            acceptanceCriteria: ['Error rate below 0.1%', 'P99 latency below 500ms', 'No critical alerts'],
-            testStatus: null, reviewFindings: []
-        },
-        {
-            id: 'TASK-014', title: 'Database migration review',
-            description: 'Review and validate database migration for user export audit log table.',
-            lane: 'infrastructure', column: 'blocked', priority: 'high',
-            assigneeAgent: 'infra-bot', humanOwner: 'Paul Russell',
-            dependencies: [], blockedBy: ['TASK-012'], linkedPR: null, environment: 'staging',
-            riskLevel: 'high', approvalRequired: true, approvalStatus: 'pending',
-            recommendation: 'Blocked until production approval. Migration requires backup verification.',
-            filesChanged: ['migrations/0042_export_audit_log.sql'],
-            createdAt: '2026-05-16T14:00:00Z', updatedAt: '2026-05-17T09:00:00Z', completedAt: null,
-            acceptanceCriteria: ['Migration is reversible', 'Backup verified', 'No data loss risk'],
-            testStatus: null, reviewFindings: ['Verify index strategy for audit log queries']
-        },
-        {
-            id: 'TASK-015', title: 'E2E test automation setup',
-            description: 'Set up Playwright E2E test infrastructure for automated regression testing.',
-            lane: 'qa', column: 'planned', priority: 'medium',
-            assigneeAgent: 'qa-bot', humanOwner: null,
-            dependencies: [], blockedBy: [], linkedPR: null, environment: null,
-            riskLevel: 'low', approvalRequired: false, approvalStatus: null,
-            recommendation: 'Low risk. Can proceed in parallel with other QA work.',
-            filesChanged: [],
-            createdAt: '2026-05-15T10:00:00Z', updatedAt: '2026-05-15T10:00:00Z', completedAt: null,
-            acceptanceCriteria: ['Playwright configured', 'CI integration working', 'Sample test passes'],
-            testStatus: null, reviewFindings: []
-        }
-    ];
+    var TASKS = []; // Populated by loadLiveData()
+    var PRS = [];
+    var MILESTONES = [];
+    var DEPLOYMENT = { release: '', environments: [], stages: [], checks: [] };
 
-    var PRS = [
-        {
-            id: 'PR-182', title: 'Profile page component refactor',
-            status: 'approved', author: 'UIBuilder', branch: 'feat/profile-redesign',
-            filesChanged: 8, additions: 342, deletions: 128,
-            riskLevel: 'low', testsPass: true, lintPass: true,
-            reviewers: ['ReviewBot', 'Paul Russell'], approvals: 2, required: 2,
-            mergeScore: 95, linkedTask: 'TASK-005',
-            findings: []
-        },
-        {
-            id: 'PR-184', title: 'Add export API endpoint',
-            status: 'in_review', author: 'APIBuilder', branch: 'feat/export-api',
-            filesChanged: 6, additions: 485, deletions: 12,
-            riskLevel: 'medium', testsPass: true, lintPass: true,
-            reviewers: ['ReviewBot'], approvals: 0, required: 2,
-            mergeScore: 62, linkedTask: 'TASK-006',
-            findings: ['Add input validation for query params', 'Consider pagination for large exports']
-        },
-        {
-            id: 'PR-186', title: 'CDN configuration for static assets',
-            status: 'approved', author: 'InfraBot', branch: 'infra/cdn-config',
-            filesChanged: 3, additions: 89, deletions: 4,
-            riskLevel: 'low', testsPass: true, lintPass: true,
-            reviewers: ['ReviewBot', 'Paul Russell'], approvals: 2, required: 2,
-            mergeScore: 90, linkedTask: 'TASK-007',
-            findings: []
-        },
-        {
-            id: 'PR-188', title: 'Fix mobile Safari login timeout',
-            status: 'draft', author: 'APIBuilder', branch: 'fix/safari-timeout',
-            filesChanged: 2, additions: 67, deletions: 8,
-            riskLevel: 'high', testsPass: false, lintPass: true,
-            reviewers: [], approvals: 0, required: 2,
-            mergeScore: 25, linkedTask: 'TASK-002',
-            findings: []
-        },
-        {
-            id: 'PR-190', title: 'Regression test updates for v2.4',
-            status: 'changes_requested', author: 'QABot', branch: 'test/regression-v24',
-            filesChanged: 4, additions: 256, deletions: 45,
-            riskLevel: 'low', testsPass: false, lintPass: true,
-            reviewers: ['ReviewBot'], approvals: 0, required: 1,
-            mergeScore: 40, linkedTask: 'TASK-008',
-            findings: ['Fix flaky timeout assertion in export test', 'Add retry logic for network calls']
-        }
-    ];
+    var _mockDataReplaced = true; // Flag: we use live data now
 
-    var MILESTONES = [
-        { id: 'MS-1', name: 'Requirements Locked', date: '2026-05-14', status: 'done', tasks: ['TASK-003'],
-          reco: 'All specifications finalized and approved.' },
-        { id: 'MS-2', name: 'UI Foundation Complete', date: '2026-05-18', status: 'active', tasks: ['TASK-005'],
-          reco: 'Frontend and backend tasks can proceed in parallel.' },
-        { id: 'MS-3', name: 'Backend Contracts Implemented', date: '2026-05-20', status: 'pending', tasks: ['TASK-006'],
-          reco: 'API endpoint in review. Expect completion after code review.' },
-        { id: 'MS-4', name: 'Infrastructure Ready', date: '2026-05-21', status: 'pending', tasks: ['TASK-007', 'TASK-014'],
-          reco: 'Infrastructure changes require staging verification before merge.' },
-        { id: 'MS-5', name: 'QA Complete', date: '2026-05-23', status: 'pending', tasks: ['TASK-008', 'TASK-015'],
-          reco: 'Deployment is blocked until QA validation and PR approval complete.' },
-        { id: 'MS-6', name: 'PRs Approved', date: '2026-05-24', status: 'pending', tasks: ['TASK-009', 'TASK-010'],
-          reco: 'Two PRs pending review. Prioritize security-sensitive PR-184.' },
-        { id: 'MS-7', name: 'Staging Deployed', date: '2026-05-25', status: 'pending', tasks: ['TASK-011'],
-          reco: 'Current RC deployed to staging. Awaiting smoke test results.' },
-        { id: 'MS-8', name: 'Production Deployed', date: '2026-05-27', status: 'pending', tasks: ['TASK-012', 'TASK-013'],
-          reco: 'Production deploy requires human approval and canary validation.' }
-    ];
-
-    var DEPLOYMENT = {
-        release: 'v2.4.0-rc1',
-        environments: [
-            { name: 'Local', status: 'running', version: 'v2.4.0-dev', healthy: true },
-            { name: 'Dev', status: 'deployed', version: 'v2.4.0-rc1', healthy: true },
-            { name: 'Staging', status: 'deploying', version: 'v2.4.0-rc1', healthy: true, active: true },
-            { name: 'Production', status: 'stable', version: 'v2.3.0', healthy: true }
-        ],
-        stages: [
-            { name: 'Build Artifact', status: 'done' },
-            { name: 'Staging Deploy', status: 'done' },
-            { name: 'Smoke Tests', status: 'active' },
-            { name: 'Awaiting Approval', status: 'blocked' },
-            { name: 'Production Deploy', status: 'pending' },
-            { name: 'Health Checks', status: 'pending' },
-            { name: 'Monitoring', status: 'pending' },
-            { name: 'Release Complete', status: 'pending' }
-        ],
-        checks: [
-            { name: 'Tests passed', passed: true },
-            { name: 'Lint passed', passed: true },
-            { name: 'Typecheck passed', passed: true },
-            { name: 'Migrations reviewed', passed: false },
-            { name: 'Env vars configured', passed: true },
-            { name: 'Rollback plan exists', passed: true },
-            { name: 'Monitoring enabled', passed: true },
-            { name: 'Approval granted', passed: false }
-        ]
+    // Column mapping for pipeline stage status → kanban column
+    var _stageToColumn = {
+        pending: 'planned', ready: 'ready', running: 'in_progress',
+        completed: 'done', failed: 'blocked', blocked: 'blocked',
+        waiting_for_approval: 'review', cancelled: 'done', skipped: 'done'
     };
 
+    // Lane mapping for stage type/name
+    var _stageToLane = {
+        plan: 'planning', 'plan-review': 'approvals', implement: 'backend',
+        test: 'qa', review: 'code_review', deploy: 'deployment'
+    };
+
+    function loadLiveData() {
+        var project = document.getElementById('cd-project-filter').value;
+        var phasesUrl = project ? '/api/projects/' + project + '/phases' : '/api/bootstrap/phases';
+        var pipesUrl = '/api/pipelines' + (project ? '?project=' + project : '');
+        var sessionsUrl = '/api/sessions';
+        var requestsUrl = project ? '/api/projects/' + project + '/requests' : null;
+
+        Promise.all([
+            fetch(phasesUrl).then(function(r) { return r.json(); }),
+            fetch(pipesUrl).then(function(r) { return r.json(); }),
+            fetch(sessionsUrl).then(function(r) { return r.json(); }),
+            requestsUrl ? fetch(requestsUrl).then(function(r) { return r.json(); }).catch(function() { return []; }) : Promise.resolve([])
+        ]).then(function(results) {
+            var phasesData = results[0];
+            var pipes = results[1] || [];
+            var sessData = results[2];
+            var requests = results[3] || [];
+
+            var phases = Array.isArray(phasesData) ? phasesData : (phasesData.phases || []);
+            var sessions = (sessData && sessData.sessions) ? sessData.sessions : [];
+            if (!Array.isArray(pipes)) pipes = [];
+
+            TASKS = [];
+            PRS = [];
+            MILESTONES = [];
+
+            // Map pipeline stages to tasks
+            var taskNum = 0;
+            pipes.forEach(function(pipe) {
+                (pipe.stages || []).forEach(function(stage) {
+                    taskNum++;
+                    var col = _stageToColumn[stage.status] || 'planned';
+                    var lane = _stageToLane[stage.name] || 'backend';
+                    TASKS.push({
+                        id: (stage.session_id || pipe.id + '/' + stage.name),
+                        title: stage.label || stage.name,
+                        description: 'Pipeline: ' + pipe.name + ' | Stage: ' + stage.name,
+                        lane: lane, column: col,
+                        priority: stage.status === 'failed' ? 'critical' : stage.status === 'running' ? 'high' : 'medium',
+                        assigneeAgent: null, humanOwner: null,
+                        dependencies: (stage.depends_on || []).map(function(d) { return pipe.id + '/' + d; }),
+                        blockedBy: [], linkedPR: null,
+                        environment: null, riskLevel: 'low',
+                        approvalRequired: stage.type === 'gate',
+                        approvalStatus: stage.status === 'waiting_for_approval' ? 'pending' : null,
+                        recommendation: stage.error || '',
+                        filesChanged: [],
+                        createdAt: stage.started_at || pipe.created_at || '',
+                        updatedAt: stage.ended_at || stage.started_at || '',
+                        completedAt: stage.status === 'completed' ? (stage.ended_at || '') : null,
+                        acceptanceCriteria: [],
+                        testStatus: null, reviewFindings: []
+                    });
+                });
+            });
+
+            // Map project requests to tasks
+            requests.forEach(function(req) {
+                TASKS.push({
+                    id: req.id || 'REQ-' + requests.indexOf(req),
+                    title: req.title || 'Untitled request',
+                    description: req.description || '',
+                    lane: 'requests',
+                    column: req.status === 'open' ? 'intake' : req.status === 'closed' ? 'done' : 'scoped',
+                    priority: req.priority || 'medium',
+                    assigneeAgent: null, humanOwner: req.author || null,
+                    dependencies: [], blockedBy: [], linkedPR: null,
+                    environment: null, riskLevel: 'low',
+                    approvalRequired: false, approvalStatus: null,
+                    recommendation: '', filesChanged: [],
+                    createdAt: req.created || '', updatedAt: req.created || '', completedAt: null,
+                    acceptanceCriteria: [], testStatus: null, reviewFindings: []
+                });
+            });
+
+            // Map phases to milestones
+            phases.forEach(function(ph, i) {
+                MILESTONES.push({
+                    id: 'MS-' + (i + 1),
+                    name: ph.name || ph.phaseId,
+                    date: ph.lastUpdated || '',
+                    status: ph.status === 'completed' ? 'done' : (ph.status === 'in-progress' || ph.status === 'running') ? 'active' : 'pending',
+                    tasks: [],
+                    reco: ph.description || ''
+                });
+            });
+
+            // Build deployment from latest running pipeline
+            var runningPipe = pipes.find(function(p) { return p.status === 'running'; });
+            if (runningPipe) {
+                DEPLOYMENT.release = runningPipe.name;
+                DEPLOYMENT.stages = (runningPipe.stages || []).map(function(s) {
+                    return {
+                        name: s.label || s.name,
+                        status: s.status === 'completed' ? 'done' : s.status === 'running' ? 'active' : s.status === 'waiting_for_approval' ? 'blocked' : 'pending'
+                    };
+                });
+            }
+
+            // Update agent count
+            var activeSessions = sessions.filter(function(s) { return s.status === 'running'; }).length;
+            document.getElementById('cd-active-agents').textContent = activeSessions + ' session' + (activeSessions !== 1 ? 's' : '') + ' active';
+
+            renderAll();
+        }).catch(function(err) {
+            console.error('loadLiveData failed:', err);
+        });
+    }
+
+    // Mock data removed — see git history for original mock TASKS/PRS/MILESTONES/DEPLOYMENT
     /* ================================================================
        State
        ================================================================ */
@@ -1624,16 +1469,22 @@
     /* ================================================================
        Init
        ================================================================ */
-    function init() {
+    function renderAll() {
         renderKPIs();
+        renderBoard();
+        if (activeView === 'roadmap') renderRoadmap();
+        if (activeView === 'deploy') renderDeploy();
+        if (activeView === 'review') renderReview();
+    }
 
+    function init() {
         document.querySelectorAll('.cd-tab').forEach(function(tab) {
             tab.addEventListener('click', function() {
                 switchView(this.dataset.view);
             });
         });
 
-        renderBoard();
+        loadLiveData();
     }
 
     init();
