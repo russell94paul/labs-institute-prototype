@@ -662,8 +662,10 @@ def _sync_phase_status(pipeline: Dict[str, Any]) -> None:
             if phase.get("activeSessionId") == pid:
                 if pipeline["status"] == "completed":
                     phase["status"] = "completed"
+                    phase.pop("_pre_run_status", None)
                 elif pipeline["status"] in ("failed", "cancelled", "rolled_back"):
-                    phase["status"] = "in-progress"
+                    restore = phase.pop("_pre_run_status", None)
+                    phase["status"] = restore or "planned"
                 phase["activeSessionId"] = None
                 phase["lastUpdated"] = _now_iso()[:10]
         bootstrap._save_phases(all_phases)

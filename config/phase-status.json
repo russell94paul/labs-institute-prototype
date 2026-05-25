@@ -1011,7 +1011,7 @@
     "phaseId": "ns-P0",
     "name": "Marketing + Demo",
     "project": "neurospect",
-    "status": "completed",
+    "status": "in-progress",
     "dependencies": [],
     "blockedBy": [],
     "blocks": [],
@@ -1022,7 +1022,7 @@
     "description": "Validate market interest through interactive marketing site, live simulator, ICT course, and EdgeLab demo.",
     "command": "/ns-phase0",
     "lastUpdated": "2026-05-24",
-    "activeSessionId": "pipe_c7d29624"
+    "activeSessionId": null
   },
   {
     "phaseId": "ns-P1",
@@ -1047,7 +1047,7 @@
     "phaseId": "ns-P2",
     "name": "Trader Workspace",
     "project": "neurospect",
-    "status": "completed",
+    "status": "planned",
     "dependencies": [
       "ns-P1"
     ],
@@ -1091,7 +1091,7 @@
     "phaseId": "ns-P4",
     "name": "ICT Event Intelligence",
     "project": "neurospect",
-    "status": "planned",
+    "status": "running",
     "dependencies": [
       "ns-P3"
     ],
@@ -1106,7 +1106,7 @@
     "description": "Programmable ICT event detection: FVGs, sweeps, order blocks, market structure, sessions as queryable events.",
     "command": "/ns-phase4",
     "lastUpdated": "2026-05-23",
-    "activeSessionId": null
+    "activeSessionId": "pipe_f5757c58"
   },
   {
     "phaseId": "ns-P5A",

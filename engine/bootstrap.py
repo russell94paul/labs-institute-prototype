@@ -185,6 +185,8 @@ def update_phase_status(phase_id: str, new_status: str, **kwargs) -> Optional[Di
     for p in phases:
         if p["phaseId"] == phase_id:
             old_status = p.get("status", "not_started")
+            if new_status == "running" and old_status != "running":
+                p["_pre_run_status"] = old_status
             p["status"] = new_status
             if "nextRecommendedAction" in kwargs:
                 p["nextRecommendedAction"] = kwargs["nextRecommendedAction"]
