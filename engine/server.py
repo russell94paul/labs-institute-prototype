@@ -26,6 +26,7 @@ from engine import work_guard
 from engine import events
 from engine import memory
 from engine import validation
+from engine import audit
 
 from datetime import datetime, timezone
 
@@ -327,6 +328,7 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
         ok, msg = pipelines.cancel_pipeline(pid)
         if not ok:
             return self._send_error_json(409, msg)
+        audit.record_pipeline_cancelled(pid)
         self._send_json({"ok": True, "message": msg})
 
     def _handle_post_stage_retry(self, pid: str, stage_name: str) -> None:
@@ -342,9 +344,12 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
         self._send_json({"ok": True, "message": msg})
 
     def _handle_post_gate_approve(self, pid: str, stage_name: str) -> None:
-        ok, msg = pipelines.approve_gate(pid, stage_name, session_launcher=_pipeline_session_launcher)
+        body = self._json_body() or {}
+        notes = body.get("notes", "")
+        ok, msg = pipelines.approve_gate(pid, stage_name, notes=notes, session_launcher=_pipeline_session_launcher)
         if not ok:
             return self._send_error_json(409, msg)
+        audit.record_gate_approved(pid, stage_name, notes)
         self._send_json({"ok": True, "message": msg})
 
     def _handle_post_pipeline_rollback(self, pid: str) -> None:
@@ -969,6 +974,10 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
                 return self._handle_get_pipeline_summary(pid)
             if action == "snapshot":
                 return self._handle_get_pipeline_snapshot(pid)
+            if action == "audit":
+                if not pipelines.get_pipeline(pid):
+                    return self._send_error_json(404, f"Pipeline {pid} not found")
+                return self._send_json(audit.get_audit(pid))
             return self._send_error_json(404, f"Unknown action: {action}")
 
         bmatch = self._match_bootstrap_route()
@@ -1159,6 +1168,7 @@ def _pipeline_session_launcher(pipeline: Dict[str, Any], stage: Dict[str, Any]) 
 
     def _on_complete(sess):
         success = sess.get("status") == "succeeded"
+        report_dict = None
 
         if success and sess.get("use_worktree"):
             checks = validation.default_checks(sess)
@@ -1167,6 +1177,13 @@ def _pipeline_session_launcher(pipeline: Dict[str, Any], stage: Dict[str, Any]) 
                 validation.apply_to_quality_gates(sess, report)
                 if pipeline.get("project_slug"):
                     validation.store_evidence(pipeline["project_slug"], sess["id"], report)
+                report_dict = {
+                    "all_passed": report.all_passed,
+                    "results": [{"check_name": r.check_name, "passed": r.passed,
+                                 "output": r.output, "duration_ms": r.duration_ms}
+                                for r in report.results],
+                }
+                audit.record_validation_ran(pipeline["id"], stage["name"], report_dict)
                 events.emit("session.validated", {
                     "sessionId": sess["id"],
                     "allPassed": report.all_passed,
@@ -1174,6 +1191,8 @@ def _pipeline_session_launcher(pipeline: Dict[str, Any], stage: Dict[str, Any]) 
                 }, source="validation")
                 if not report.all_passed:
                     success = False
+
+        audit.record_stage_completed(pipeline["id"], stage["name"], sess, report_dict)
 
         pipelines.handle_stage_complete(
             pid=pipeline["id"],
@@ -1183,6 +1202,10 @@ def _pipeline_session_launcher(pipeline: Dict[str, Any], stage: Dict[str, Any]) 
             cost_usd=sess.get("cost_usd", 0.0),
             session_launcher=_pipeline_session_launcher,
         )
+
+        pipe = pipelines.get_pipeline(pipeline["id"])
+        if pipe and pipe.get("status") in ("completed", "failed"):
+            audit.record_pipeline_completed(pipe["id"], pipe["status"], pipe.get("cost_usd", 0.0))
 
     sessions.set_on_complete_for(session["id"], _on_complete)
     return session["id"]
@@ -1224,6 +1247,21 @@ def main() -> None:
     pipelines.load_state()
 
     validation.configure(data_dir=DATA_DIR)
+    audit.configure(data_dir=DATA_DIR)
+
+    def _on_stage_transition(pipeline, stage, old_status, new_status):
+        pid = pipeline.get("id", "")
+        name = stage.get("name", "")
+        if new_status == "running":
+            audit.record_stage_started(pid, name, stage.get("prompt", ""))
+        elif new_status == "failed":
+            audit.record_stage_failed(pid, name, stage.get("error", ""))
+        elif new_status == "skipped":
+            audit.record_stage_skipped(pid, name)
+        elif new_status == "cancelled":
+            audit.record_stage_skipped(pid, name)
+
+    pipelines.set_on_stage_transition(_on_stage_transition)
 
     events.configure(max_events=500)
     events.emit("system.startup", {"port": PORT}, source="server")

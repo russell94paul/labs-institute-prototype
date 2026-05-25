@@ -537,7 +537,7 @@ def _check_pipeline_completion(pipeline: Dict[str, Any]) -> None:
 # ---------------------------------------------------------------------------
 # Gate advancement
 # ---------------------------------------------------------------------------
-def approve_gate(pid: str, stage_name: str, session_launcher: Optional[Callable] = None) -> Tuple[bool, str]:
+def approve_gate(pid: str, stage_name: str, notes: str = "", session_launcher: Optional[Callable] = None) -> Tuple[bool, str]:
     """Approve a gate stage, marking it completed and advancing the pipeline."""
     with _lock:
         pipeline = _pipelines.get(pid)
@@ -551,6 +551,8 @@ def approve_gate(pid: str, stage_name: str, session_launcher: Optional[Callable]
             return False, f"Stage is {stage['status']}, not waiting for approval"
 
         _transition_stage(pipeline, stage_name, "completed")
+        stage["approved_at"] = _now_iso()
+        stage["approved_notes"] = notes
         _flush_state()
 
     return advance_pipeline(pid, session_launcher)
