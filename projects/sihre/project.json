@@ -1,0 +1,302 @@
+{
+  "name": "SIHRE Platform",
+  "slug": "sihre",
+  "description": "Public research platform, marketing website, and internal management workspace for the SIHRE (Self-Improving Heterogeneous Reasoning Ensemble) framework. Covers artifact management, content production, public website deployment, auth portal, monetization, and the SIHRE Control Plane SaaS product.",
+  "status": "active",
+  "created": "2026-05-25",
+  "platform": "web-responsive",
+  "stack": {
+    "frontend": "Next.js 14 (App Router) + Tailwind CSS",
+    "backend": "FastAPI (Python) \u2014 reuses Conductor engine patterns",
+    "database": "Supabase (PostgreSQL + Auth + Storage)",
+    "cms": "MDX files in GitHub + Conductor artifact manager",
+    "hosting": "Vercel (public site) + existing Conductor runtime (admin portal)",
+    "analytics": "Plausible Analytics (privacy-first)",
+    "payments": "Stripe (research packs, consulting intake, memberships)",
+    "search": "Supabase full-text (MVP) \u2192 Algolia (post-launch)",
+    "email": "Resend (transactional + newsletter)",
+    "ai_assistant": "Claude API with RAG over public-safe SIHRE docs (P7+)"
+  },
+  "phases": [
+    {
+      "id": "P0",
+      "name": "SIHRE Project Bootstrap",
+      "description": "Create SIHRE project in Conductor. Migrate all 94 SIHRE_Wiki artifacts into structured Conductor artifacts with correct classification taxonomy (public-safe / public-after-review / internal-only / private-sensitive). Establish artifact types, status tags, and hard public/private boundary rules derived from PUBLIC_PRIVATE_MAP.md. Fix all SIRE naming errors in existing Conductor assets.",
+      "status": "planned",
+      "complexity": "S",
+      "risk": "low",
+      "dependencies": [],
+      "deliverables": [
+        "SIHRE project registered in Conductor with correct name",
+        "Artifact taxonomy: 4-tier classification matching PUBLIC_PRIVATE_MAP.md",
+        "All 94 SIHRE_Wiki files mapped to Conductor artifact records",
+        "Public/private boundary rules enforced in data model",
+        "SIHRE phase roadmap (P0\u2013P8) defined in Conductor"
+      ],
+      "acceptance_criteria": [
+        "No artifact classified 'private-sensitive' is reachable from a public route",
+        "NeuroFusion-13 references appear zero times in any public-safe artifact",
+        "All existing 'SIRE' references in Conductor renamed to 'SIHRE'",
+        "Conductor project page shows SIHRE with correct phase count"
+      ]
+    },
+    {
+      "id": "P1",
+      "name": "Artifact Manager",
+      "description": "New Conductor dashboard capability: create, edit, organize, and classify all SIHRE artifacts. Markdown editor with live preview. Filter and sort by type (doc / research / GTM / social / roadmap / tracker / template), status (draft / review / final / published), and classification (public-safe / public-after-review / internal-only / private-sensitive). Replaces the Obsidian vault as the primary working surface.",
+      "status": "planned",
+      "complexity": "M",
+      "risk": "low",
+      "dependencies": [
+        "P0"
+      ],
+      "deliverables": [
+        "Artifacts page in Conductor dashboard (/artifacts)",
+        "Markdown editor with live preview panel",
+        "Classification badge: public-safe / public-after-review / internal-only / private-sensitive",
+        "Filter/sort: type, status, classification, updated date",
+        "All 94 SIHRE artifacts accessible, editable, and tagged",
+        "YAML frontmatter fields surfaced as form fields (tags, status, classification, source)"
+      ],
+      "acceptance_criteria": [
+        "Can open any of the 94 SIHRE_Wiki files, edit, and save from Conductor",
+        "Classification filter correctly narrows the artifact list",
+        "Markdown editor renders Mermaid diagrams (used in Diagram_Pack_Mermaid.md)",
+        "Artifact count per classification matches PUBLIC_PRIVATE_MAP.md (9 / 16 / 58 / 11)"
+      ]
+    },
+    {
+      "id": "P2",
+      "name": "Roadmap & Action Items",
+      "description": "Visual SIHRE roadmap and sequenced action item tracker inside Conductor. Maps to the 7-phase monetization roadmap (Monetization_Roadmap.md) and the tiered artifact backlog (Artifact_Roadmap.md, Comprehensive_Artifact_Backlog.md). Tracks what needs to happen, in what order, with dependencies and owners.",
+      "status": "planned",
+      "complexity": "S",
+      "risk": "low",
+      "dependencies": [
+        "P1"
+      ],
+      "deliverables": [
+        "SIHRE roadmap view: phase cards with status, complexity, risk",
+        "Action items with sequence number, priority, owner, status, due date",
+        "Dependency graph visualization between action items",
+        "Pre-publication checklist (from Publication_Checklist.md and Whitepaper_Release_Checklist.md) as live tracker",
+        "Artifact completion tracker: 94 total, status per item",
+        "Research backlog view sourced from Research_Backlog.md"
+      ],
+      "acceptance_criteria": [
+        "Can create, edit, reorder, and complete action items",
+        "Roadmap phases link to artifact tracker filtered by phase",
+        "Pre-publication checklist items each have a status and owner",
+        "Artifact completion percentage visible on project overview"
+      ]
+    },
+    {
+      "id": "P3",
+      "name": "Content & GTM Workspace",
+      "description": "Structured workspace for executing the SIHRE GTM plan. The 11 public website drafts (02_Public_Website), newsletter, press kit, social calendar, and outreach templates all live here as editable artifacts. Export to Markdown/PDF for distribution. This is where public content moves from 'draft' to 'final' before P4 deployment.",
+      "status": "planned",
+      "complexity": "M",
+      "risk": "low",
+      "dependencies": [
+        "P1"
+      ],
+      "deliverables": [
+        "All 11 Public_Website artifacts editable and export-ready",
+        "Social content calendar (sourced from Public_Content_Calendar.md)",
+        "Newsletter_Issue_1.md editable and exportable as HTML/Markdown",
+        "Press_Kit.md accessible with export to PDF",
+        "GTM outreach templates (email, pitch) from Offer_Ladder.md and Consulting_Audit_Template.md",
+        "Content status pipeline: draft \u2192 review \u2192 final \u2192 queued for publish",
+        "Export artifacts to Markdown and PDF"
+      ],
+      "acceptance_criteria": [
+        "Each of the 11 public website drafts has a status of 'final' or 'review' before P4 starts",
+        "Newsletter Issue 1 exports cleanly as HTML for Resend delivery",
+        "Press kit PDF export includes SIHRE one-liner, taglines, and key facts",
+        "Social calendar shows at least 4 weeks of scheduled content at P4 launch"
+      ]
+    },
+    {
+      "id": "P4",
+      "name": "Public Website \u2014 SIHRE.ai",
+      "description": "Deploy the SIHRE public marketing site using the 11 already-drafted pages from 02_Public_Website. Next.js 14 + Vercel. Pages: Homepage, About, Architecture, Applications, Meta-Orchestrator, Whitepaper (PDF download + DOI citation block), FAQ, Blog/Announcements, Press Kit, Contact. Waitlist capture with email confirmation via Resend. SEO baseline. Evidence-level labels on all claims. NeuroFusion-13 boundary enforced \u2014 zero private-sensitive content reachable from public routes.",
+      "status": "planned",
+      "complexity": "M",
+      "risk": "medium",
+      "dependencies": [
+        "P3"
+      ],
+      "deliverables": [
+        "sihre.ai live on Vercel (domain registration: sihre.ai, sihre.org, sihre.dev per Trademark_Checklist.md)",
+        "Homepage (Homepage_Draft.md), About (About_SIHRE.md), Architecture (Architecture_Page.md)",
+        "Applications (Applications_Page.md), Meta-Orchestrator (Meta_Orchestrator_Page.md)",
+        "Whitepaper page (Whitepaper_Page.md) with PDF download + DOI citation block",
+        "FAQ (FAQ.md), Blog with launch post (Blog_Post_Announcement.md)",
+        "Press Kit page (Press_Kit.md), Contact/waitlist page",
+        "Waitlist email capture \u2192 Resend confirmation email",
+        "SEO metadata + Open Graph per page",
+        "Plausible Analytics installed",
+        "Evidence-level label system: Framework / Proposed / Research-backed",
+        "Non_Goals.md content surfaced as 'What SIHRE is not' section (credibility)",
+        "Public/private boundary enforced: zero private-sensitive artifact content on any public page"
+      ],
+      "acceptance_criteria": [
+        "All 11 public website pages live and rendering correctly",
+        "Whitepaper PDF downloadable with correct DOI citation block",
+        "Waitlist form submits, user receives confirmation email via Resend",
+        "Plausible analytics recording pageviews",
+        "Lighthouse score \u2265 85 on performance, \u2265 90 on accessibility",
+        "Zero references to NeuroFusion-13, NeuroSpect, or private trading details on any public page",
+        "Evidence-level labels visible on Architecture and Meta-Orchestrator pages"
+      ]
+    },
+    {
+      "id": "P5",
+      "name": "Portal & Auth",
+      "description": "Login layer accessible from sihre.ai nav and footer. Supabase Auth (signup, login, password reset). Protected /portal route. Role model: admin (Paul), beta-client, subscriber. Foundation for consulting client dashboards and paid research pack delivery. Admin manages users and content from Conductor.",
+      "status": "planned",
+      "complexity": "M",
+      "risk": "medium",
+      "dependencies": [
+        "P4"
+      ],
+      "deliverables": [
+        "Supabase Auth integrated with sihre.ai",
+        "Login CTA in public site nav and footer",
+        "Protected /portal route (redirects to login if unauthenticated)",
+        "Role-based access: admin / beta-client / subscriber",
+        "Session persistence across page reloads",
+        "Admin can view user list and assign roles from Conductor",
+        "Password reset flow via Resend email"
+      ],
+      "acceptance_criteria": [
+        "Unauthenticated user hitting /portal is redirected to /login",
+        "Admin role has access to all portal content",
+        "Subscriber and beta-client roles have correctly scoped access",
+        "Session survives browser refresh",
+        "Password reset email delivered within 60 seconds"
+      ]
+    },
+    {
+      "id": "P6",
+      "name": "Monetization Layer",
+      "description": "Revenue-enabling features mapped to Phase 2 of Monetization_Roadmap.md. Architecture Audit offer live as a bookable service (Consulting_Audit_Template.md). Research packs purchasable via Stripe (Paid_Research_Assets from Offer_Ladder.md). Consulting inquiry intake with email notification. Pricing page live. First paid offer bookable at launch.",
+      "status": "planned",
+      "complexity": "M",
+      "risk": "medium",
+      "dependencies": [
+        "P5"
+      ],
+      "deliverables": [
+        "Pricing page on sihre.ai (Offer_Ladder.md tiers: free \u2192 research pack \u2192 audit \u2192 retainer)",
+        "Architecture Audit offer page with inquiry/booking form \u2192 email to Paul via Resend",
+        "Paid research pack delivery: Stripe payment \u2192 protected download link in /portal",
+        "Consulting inquiry intake form \u2192 email notification + Conductor action item created",
+        "Client onboarding artifact template in Conductor (from Consulting_Audit_Template.md)",
+        "First paid offer live, tested, and bookable"
+      ],
+      "acceptance_criteria": [
+        "Pricing page live with at least 3 offer tiers per Offer_Ladder.md",
+        "Architecture Audit inquiry form submits and triggers email to paul.russell@aldc.io",
+        "Stripe test payment for research pack succeeds, download link delivered",
+        "Paid download links require authenticated /portal session",
+        "Conductor creates an action item when a consulting inquiry is submitted"
+      ]
+    },
+    {
+      "id": "P7",
+      "name": "Knowledge Base & Research Hub",
+      "description": "Searchable public knowledge base built from SIHRE's public-safe and public-after-review artifact library (25 files per PUBLIC_PRIVATE_MAP.md). Article pages for Architecture, Meta-Orchestrator, Evaluation, Governance, Glossary. Evidence-level labels on all claims. Internal search. Related article linking. AI documentation assistant (Claude RAG over public docs) as stretch goal.",
+      "status": "planned",
+      "complexity": "M",
+      "risk": "low",
+      "dependencies": [
+        "P4"
+      ],
+      "deliverables": [
+        "/docs or /research section on sihre.ai",
+        "Architecture, Meta-Orchestrator, Evaluation_Framework, Reliability_and_Governance article pages",
+        "Glossary page sourced from Glossary.md (public-safe)",
+        "Public_Safe_Examples.md as interactive examples section",
+        "Evidence-level labels on all article claims: Framework / Proposed / Research-backed",
+        "Internal search: Supabase full-text over public docs",
+        "Related article linking between docs pages",
+        "AI docs assistant: Claude API + RAG over public-safe artifact set (stretch goal)"
+      ],
+      "acceptance_criteria": [
+        "All 25 public-safe + public-after-review artifacts accessible as /docs pages",
+        "Evidence labels visible and explained to users",
+        "Search returns relevant results for terms from Glossary.md",
+        "No private-sensitive content reachable from /docs",
+        "Related articles surfaced on each docs page"
+      ]
+    },
+    {
+      "id": "P8",
+      "name": "SIHRE Control Plane MVP",
+      "description": "The first production-grade SIHRE product: a reasoning governance dashboard for enterprise AI teams. Spec sourced from SIHRE_Control_Plane_PRD.md. Expert registry, task routing log, uncertainty summaries, disagreement detection, drift indicators, verification escalation log, expert reliability history, audit-ready decision trace export. Deployed as gated SaaS behind P5 auth at pilot pricing ($1k\u2013$10k/mo per Pricing_Experiments.md).",
+      "status": "planned",
+      "complexity": "XL",
+      "risk": "high",
+      "dependencies": [
+        "P5",
+        "P6"
+      ],
+      "deliverables": [
+        "Expert/modality registry: register and manage reasoning components",
+        "Task routing log with full decision trace",
+        "Uncertainty and disagreement summary dashboards",
+        "Drift indicator panel",
+        "Verification and simulation escalation log",
+        "Expert reliability history charts",
+        "Audit-ready decision trace export (PDF + JSON)",
+        "Pilot pricing gate: $1k\u2013$10k/mo per Pricing_Experiments.md",
+        "First pilot client onboarded and active"
+      ],
+      "acceptance_criteria": [
+        "Expert registry CRUD functional",
+        "Task routing log records and displays full decision trace",
+        "Uncertainty and disagreement dashboards display with synthetic data",
+        "Audit export generates valid PDF and JSON",
+        "At least one pilot client onboarded and paying",
+        "No SIHRE internal IP (NeuroFusion-13) exposed in client-facing views"
+      ]
+    }
+  ],
+  "onboarding": {
+    "method": "chat",
+    "session_id": "onb_14d8f9e8fea1",
+    "decisions": [
+      {
+        "topic": "Database",
+        "choice": "Supabase (PostgreSQL + Auth + Storage)",
+        "reason": "Fastest path to auth, storage, and full-text search with a single hosted service. Aligns with Next.js on Vercel. Avoids managing a separate auth service. Upgrade path to self-hosted is clear."
+      },
+      {
+        "topic": "CMS",
+        "choice": "MDX files in GitHub + Conductor artifact manager",
+        "reason": "Content is already in Markdown. Conductor manages the editorial workflow internally. Public site reads from MDX files version-controlled in the SIHRE repo \u2014 no third-party CMS dependency, no vendor lock-in."
+      },
+      {
+        "topic": "Public/private boundary enforcement",
+        "choice": "Classification field on every artifact, enforced at API and route level",
+        "reason": "PUBLIC_PRIVATE_MAP.md defines 11 private-sensitive files whose disclosure would compromise NeuroFusion-13 IP and provisional patent strategy. This boundary is non-negotiable and must be structural, not procedural."
+      },
+      {
+        "topic": "Naming",
+        "choice": "SIHRE throughout \u2014 no abbreviation to SIRE",
+        "reason": "SIRE is an error. The canonical acronym is SIHRE (Self-Improving Heterogeneous Reasoning Ensemble). Branding consistency required from P0 forward."
+      },
+      {
+        "topic": "Monetization sequencing",
+        "choice": "Consulting and research packs before SaaS (P6 before P8)",
+        "reason": "Per Monetization_Roadmap.md, Architecture Audits ($7.5k\u2013$15k) and research packs are immediate revenue with no SaaS build required. Consulting funds the Control Plane build. Never build P8 before validating demand through P6."
+      },
+      {
+        "topic": "Analytics",
+        "choice": "Plausible Analytics",
+        "reason": "Privacy-first, GDPR-compliant, no cookie banner required. Consistent with SIHRE's governance and trust positioning. Avoids Google Analytics' credibility risk for a research-oriented brand."
+      }
+    ]
+  }
+}

@@ -27,6 +27,7 @@ from engine import events
 from engine import memory
 from engine import validation
 from engine import audit
+from engine import onboarding
 
 from datetime import datetime, timezone
 
@@ -895,6 +896,53 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
 
         self._send_json({"phase": phase, "pipeline": pipe}, 201)
 
+    # --- Onboarding handlers ---
+
+    def _match_onboarding_route(self) -> Optional[tuple]:
+        path = self.path.split("?")[0]
+        m = re.match(r"^/api/onboarding(?:/([a-zA-Z0-9_]+))?(?:/(\w+))?$", path)
+        if m:
+            return m.group(1), m.group(2)
+        return None
+
+    def _handle_post_onboarding_chat(self) -> None:
+        body = self._json_body()
+        if not body:
+            return self._send_error_json(400, "Request body required")
+        sid = body.get("session_id", "")
+        message = body.get("message", "")
+        if not message:
+            return self._send_error_json(400, "message is required")
+        if not sid:
+            session = onboarding.create_session()
+            sid = session["id"]
+        try:
+            result = onboarding.chat(sid, message)
+        except Exception as exc:
+            return self._send_error_json(500, str(exc))
+        if result.get("error"):
+            return self._send_error_json(400, result["error"])
+        result["session_id"] = sid
+        self._send_json(result)
+
+    def _handle_get_onboarding_session(self, sid: str) -> None:
+        session = onboarding.get_session(sid)
+        if not session:
+            return self._send_error_json(404, f"Onboarding session {sid} not found")
+        self._send_json(session)
+
+    def _handle_post_onboarding_create(self, sid: str) -> None:
+        result = onboarding.create_project_from_blueprint(sid)
+        if result.get("error"):
+            status = 409 if "already exists" in result["error"] else 400
+            return self._send_error_json(status, result["error"])
+        events.emit("project.created", {
+            "slug": result["slug"],
+            "name": result["project"]["name"],
+            "method": "chat-onboarding",
+        }, source="onboarding")
+        self._send_json(result, 201)
+
     # --- Config handler ---
 
     def _handle_get_config(self) -> None:
@@ -937,6 +985,13 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return self._handle_get_groovenet_profile()
         if path == "/api/projects":
             return self._handle_get_projects()
+
+        onb_match = self._match_onboarding_route()
+        if onb_match:
+            sid, action = onb_match
+            if sid and action is None:
+                return self._handle_get_onboarding_session(sid)
+            return self._send_error_json(404, "Not found")
 
         ppmatch = self._match_project_phases_route()
         if ppmatch:
@@ -1013,6 +1068,14 @@ class ConductorHandler(http.server.SimpleHTTPRequestHandler):
             return self._handle_post_work_guard_heartbeat()
         if path == "/api/projects":
             return self._handle_post_projects()
+        if path == "/api/onboarding/chat":
+            return self._handle_post_onboarding_chat()
+        onb_match = self._match_onboarding_route()
+        if onb_match:
+            sid, action = onb_match
+            if sid and action == "create":
+                return self._handle_post_onboarding_create(sid)
+            return self._send_error_json(404, "Not found")
         if path == "/api/groovenet/events":
             return self._handle_post_groovenet_events()
         if path == "/api/groovenet/sets":

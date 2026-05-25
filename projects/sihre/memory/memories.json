@@ -1,0 +1,86 @@
+[
+  {
+    "id": "mem_cbbcc461",
+    "type": "decision",
+    "content": "Project SIHRE Platform created via AI chat onboarding",
+    "source": "onboarding",
+    "tags": [
+      "onboarding",
+      "project-creation"
+    ],
+    "status": "active",
+    "created": "2026-05-25T05:06:34.468558+00:00"
+  },
+  {
+    "id": "mem_89f822bd",
+    "type": "decision",
+    "content": "Database: Supabase (PostgreSQL + Auth + Storage) \u2014 Fastest path to auth, storage, and full-text search with a single hosted service. Aligns with Next.js on Vercel. Avoids managing a separate auth service. Upgrade path to self-hosted is clear.",
+    "source": "onboarding",
+    "tags": [
+      "onboarding",
+      "architecture"
+    ],
+    "status": "active",
+    "created": "2026-05-25T05:06:34.468558+00:00"
+  },
+  {
+    "id": "mem_0382b705",
+    "type": "decision",
+    "content": "CMS: MDX files in GitHub + Conductor artifact manager \u2014 Content is already in Markdown. Conductor manages the editorial workflow internally. Public site reads from MDX files version-controlled in the SIHRE repo \u2014 no third-party CMS dependency, no vendor lock-in.",
+    "source": "onboarding",
+    "tags": [
+      "onboarding",
+      "architecture"
+    ],
+    "status": "active",
+    "created": "2026-05-25T05:06:34.468558+00:00"
+  },
+  {
+    "id": "mem_89b67423",
+    "type": "decision",
+    "content": "Public/private boundary enforcement: Classification field on every artifact, enforced at API and route level \u2014 PUBLIC_PRIVATE_MAP.md defines 11 private-sensitive files whose disclosure would compromise NeuroFusion-13 IP and provisional patent strategy. This boundary is non-negotiable and must be structural, not procedural.",
+    "source": "onboarding",
+    "tags": [
+      "onboarding",
+      "architecture"
+    ],
+    "status": "active",
+    "created": "2026-05-25T05:06:34.468558+00:00"
+  },
+  {
+    "id": "mem_e1d0ddce",
+    "type": "decision",
+    "content": "Naming: SIHRE throughout \u2014 no abbreviation to SIRE \u2014 SIRE is an error. The canonical acronym is SIHRE (Self-Improving Heterogeneous Reasoning Ensemble). Branding consistency required from P0 forward.",
+    "source": "onboarding",
+    "tags": [
+      "onboarding",
+      "architecture"
+    ],
+    "status": "active",
+    "created": "2026-05-25T05:06:34.468558+00:00"
+  },
+  {
+    "id": "mem_e95fea9d",
+    "type": "decision",
+    "content": "Monetization sequencing: Consulting and research packs before SaaS (P6 before P8) \u2014 Per Monetization_Roadmap.md, Architecture Audits ($7.5k\u2013$15k) and research packs are immediate revenue with no SaaS build required. Consulting funds the Control Plane build. Never build P8 before validating demand through P6.",
+    "source": "onboarding",
+    "tags": [
+      "onboarding",
+      "architecture"
+    ],
+    "status": "active",
+    "created": "2026-05-25T05:06:34.468558+00:00"
+  },
+  {
+    "id": "mem_74553bad",
+    "type": "decision",
+    "content": "Analytics: Plausible Analytics \u2014 Privacy-first, GDPR-compliant, no cookie banner required. Consistent with SIHRE's governance and trust positioning. Avoids Google Analytics' credibility risk for a research-oriented brand.",
+    "source": "onboarding",
+    "tags": [
+      "onboarding",
+      "architecture"
+    ],
+    "status": "active",
+    "created": "2026-05-25T05:06:34.468558+00:00"
+  }
+]

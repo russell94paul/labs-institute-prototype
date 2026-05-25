@@ -24,6 +24,318 @@
     }
     .onb-header-right { display: flex; align-items: center; gap: 8px; }
 
+    /* Mode selector */
+    .onb-mode-bar {
+        display: flex; gap: 4px; padding: 0 24px 14px;
+    }
+    .onb-mode-btn {
+        padding: 8px 20px; font-size: 0.78rem; font-weight: 700;
+        border-radius: 8px; border: 1px solid var(--border-medium);
+        background: transparent; color: var(--text-dim);
+        cursor: pointer; transition: all 0.2s;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .onb-mode-btn:hover { border-color: rgba(56,189,248,0.3); color: var(--text-secondary); }
+    .onb-mode-btn.active {
+        background: rgba(56,189,248,0.1); border-color: var(--accent-blue);
+        color: var(--accent-blue);
+    }
+    .onb-mode-btn .mode-icon { font-size: 1rem; }
+    .onb-mode-content { display: none; }
+    .onb-mode-content.active { display: block; }
+
+    /* Chat UI */
+    .chat-container {
+        display: flex; height: calc(100vh - 140px); min-height: 500px;
+    }
+    .chat-main {
+        flex: 1; display: flex; flex-direction: column; min-width: 0;
+    }
+    .chat-messages {
+        flex: 1; overflow-y: auto; padding: 20px 24px;
+        display: flex; flex-direction: column; gap: 16px;
+    }
+    .chat-msg {
+        max-width: 80%; animation: fadeIn 0.25s ease;
+    }
+    .chat-msg.user {
+        align-self: flex-end;
+    }
+    .chat-msg.assistant {
+        align-self: flex-start;
+    }
+    .chat-msg-bubble {
+        padding: 12px 16px; border-radius: 14px;
+        font-size: 0.85rem; line-height: 1.7; color: var(--text-primary);
+        word-wrap: break-word;
+    }
+    .chat-msg.user .chat-msg-bubble {
+        background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.2);
+        border-bottom-right-radius: 4px;
+    }
+    .chat-msg.assistant .chat-msg-bubble {
+        background: rgba(255,255,255,0.04); border: 1px solid var(--border-light);
+        border-bottom-left-radius: 4px;
+    }
+    .chat-msg-time {
+        font-size: 0.58rem; color: var(--text-faint); margin-top: 4px;
+        padding: 0 4px;
+    }
+    .chat-msg.user .chat-msg-time { text-align: right; }
+
+    .chat-msg-bubble p { margin: 0 0 8px; }
+    .chat-msg-bubble p:last-child { margin-bottom: 0; }
+    .chat-msg-bubble strong { color: #fff; }
+    .chat-msg-bubble code {
+        background: rgba(255,255,255,0.06); padding: 1px 5px;
+        border-radius: 3px; font-family: var(--font-mono); font-size: 0.82rem;
+        color: var(--accent-blue);
+    }
+    .chat-msg-bubble ul, .chat-msg-bubble ol {
+        margin: 6px 0; padding-left: 20px;
+    }
+    .chat-msg-bubble li { margin-bottom: 4px; }
+
+    /* Structured cards in chat */
+    .chat-card {
+        background: var(--card-gradient); border: 1px solid var(--border-medium);
+        border-radius: 12px; padding: 16px 18px; margin: 10px 0;
+    }
+    .chat-card-header {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    .chat-card-title {
+        font-size: 0.82rem; font-weight: 700; color: #fff;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .chat-card-badge {
+        font-size: 0.55rem; font-weight: 800; padding: 2px 8px;
+        border-radius: 6px; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+
+    /* Phase cards */
+    .chat-phase-list { display: flex; flex-direction: column; gap: 8px; }
+    .chat-phase-card {
+        background: rgba(255,255,255,0.02); border: 1px solid var(--border-light);
+        border-radius: 10px; padding: 12px 14px;
+        display: flex; align-items: flex-start; gap: 12px;
+        transition: border-color 0.15s;
+    }
+    .chat-phase-card:hover { border-color: rgba(56,189,248,0.2); }
+    .chat-phase-id {
+        font-family: var(--font-mono); font-size: 0.68rem; font-weight: 800;
+        color: var(--accent-blue); background: rgba(56,189,248,0.1);
+        padding: 2px 8px; border-radius: 6px; white-space: nowrap;
+    }
+    .chat-phase-body { flex: 1; min-width: 0; }
+    .chat-phase-name {
+        font-size: 0.82rem; font-weight: 700; color: var(--text-primary);
+        margin-bottom: 3px;
+    }
+    .chat-phase-desc {
+        font-size: 0.72rem; color: var(--text-muted); line-height: 1.5;
+    }
+    .chat-phase-meta {
+        display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap;
+    }
+    .chat-phase-tag {
+        font-size: 0.55rem; font-weight: 700; padding: 2px 7px;
+        border-radius: 6px; text-transform: uppercase; letter-spacing: 0.03em;
+    }
+    .chat-phase-tag.complexity { background: rgba(167,139,250,0.15); color: var(--accent-purple); }
+    .chat-phase-tag.risk-low { background: rgba(74,222,128,0.15); color: var(--accent-green); }
+    .chat-phase-tag.risk-medium { background: rgba(251,191,36,0.15); color: var(--accent-gold); }
+    .chat-phase-tag.risk-high { background: rgba(248,113,113,0.15); color: var(--accent-red); }
+    .chat-phase-actions {
+        display: flex; gap: 4px; flex-shrink: 0; align-self: center;
+    }
+    .chat-phase-btn {
+        font-size: 0.6rem; padding: 3px 8px; border-radius: 6px;
+        border: 1px solid var(--border-light); background: transparent;
+        color: var(--text-dim); cursor: pointer; transition: all 0.15s;
+    }
+    .chat-phase-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+    .chat-phase-btn.remove:hover { border-color: var(--accent-red); color: var(--accent-red); }
+
+    /* Architecture card */
+    .chat-arch-stack {
+        display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0;
+    }
+    .chat-arch-chip {
+        font-size: 0.65rem; font-weight: 600; padding: 4px 10px;
+        border-radius: 8px; background: rgba(56,189,248,0.1);
+        border: 1px solid rgba(56,189,248,0.2); color: var(--accent-blue);
+    }
+    .chat-arch-chip .chip-label {
+        color: var(--text-dim); font-weight: 400; margin-right: 4px;
+    }
+    .chat-arch-components {
+        margin-top: 8px;
+    }
+    .chat-arch-component {
+        display: flex; gap: 8px; padding: 6px 0;
+        border-bottom: 1px solid var(--border-subtle);
+        font-size: 0.72rem;
+    }
+    .chat-arch-component:last-child { border-bottom: none; }
+    .chat-arch-comp-name { font-weight: 700; color: var(--text-secondary); white-space: nowrap; }
+    .chat-arch-comp-purpose { color: var(--text-muted); }
+
+    /* Blueprint card */
+    .chat-blueprint-card {
+        border-color: rgba(74,222,128,0.3);
+        box-shadow: 0 0 20px rgba(74,222,128,0.08);
+    }
+    .chat-blueprint-actions {
+        display: flex; gap: 8px; margin-top: 14px;
+    }
+
+    /* Typing indicator */
+    .chat-typing {
+        display: none; align-self: flex-start; padding: 12px 16px;
+        background: rgba(255,255,255,0.04); border: 1px solid var(--border-light);
+        border-radius: 14px; border-bottom-left-radius: 4px;
+    }
+    .chat-typing.visible { display: flex; }
+    .chat-typing-dots {
+        display: flex; gap: 4px; align-items: center;
+    }
+    .chat-typing-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: var(--text-dim);
+        animation: typingPulse 1.4s infinite;
+    }
+    .chat-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .chat-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingPulse {
+        0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); }
+        30% { opacity: 1; transform: scale(1); }
+    }
+
+    /* Chat input */
+    .chat-input-bar {
+        padding: 12px 24px 16px; border-top: 1px solid var(--border-light);
+        display: flex; gap: 10px; align-items: flex-end;
+    }
+    .chat-input-wrapper {
+        flex: 1; position: relative;
+    }
+    .chat-input {
+        width: 100%; padding: 12px 16px; border-radius: 12px;
+        background: rgba(255,255,255,0.04); border: 1px solid var(--border-strong);
+        color: var(--text-primary); font-size: 0.88rem;
+        font-family: var(--font-family); resize: none;
+        min-height: 44px; max-height: 160px; line-height: 1.5;
+    }
+    .chat-input:focus {
+        outline: none; border-color: var(--accent-blue);
+        background: rgba(56,189,248,0.04);
+    }
+    .chat-input::placeholder { color: var(--text-faint); }
+    .chat-send-btn {
+        padding: 10px 18px; border-radius: 10px;
+        background: var(--accent-blue); color: #fff;
+        border: none; font-size: 0.82rem; font-weight: 700;
+        cursor: pointer; transition: background 0.15s;
+        white-space: nowrap; height: 44px;
+        font-family: var(--font-family);
+    }
+    .chat-send-btn:hover { background: var(--accent-blue-dark); }
+    .chat-send-btn:disabled {
+        opacity: 0.4; cursor: not-allowed;
+        background: var(--accent-blue);
+    }
+
+    /* Blueprint panel */
+    .blueprint-panel {
+        width: 320px; border-left: 1px solid var(--border-light);
+        background: rgba(255,255,255,0.015); display: flex;
+        flex-direction: column; overflow: hidden;
+        transition: width 0.3s ease;
+    }
+    .blueprint-panel.collapsed { width: 44px; }
+    .blueprint-panel-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 14px 16px; border-bottom: 1px solid var(--border-light);
+        flex-shrink: 0;
+    }
+    .blueprint-panel-title {
+        font-size: 0.72rem; font-weight: 700; color: var(--text-label);
+        text-transform: uppercase; letter-spacing: 0.06em;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .blueprint-panel.collapsed .blueprint-panel-title {
+        writing-mode: vertical-rl; transform: rotate(180deg);
+        padding: 12px 0; letter-spacing: 0.08em;
+    }
+    .blueprint-toggle {
+        width: 24px; height: 24px; border-radius: 6px;
+        background: rgba(255,255,255,0.04); border: 1px solid var(--border-light);
+        color: var(--text-dim); cursor: pointer; font-size: 0.7rem;
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.15s; flex-shrink: 0;
+    }
+    .blueprint-toggle:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+    .blueprint-panel-body {
+        flex: 1; overflow-y: auto; padding: 14px 16px;
+    }
+    .blueprint-panel.collapsed .blueprint-panel-body { display: none; }
+    .bp-section {
+        margin-bottom: 16px;
+    }
+    .bp-label {
+        font-size: 0.6rem; font-weight: 700; color: var(--text-dim);
+        text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px;
+    }
+    .bp-value {
+        font-size: 0.78rem; color: var(--text-secondary); font-weight: 600;
+    }
+    .bp-chip-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+    .bp-chip {
+        font-size: 0.58rem; font-weight: 600; padding: 2px 7px;
+        border-radius: 6px; background: rgba(56,189,248,0.1);
+        color: var(--accent-blue);
+    }
+    .bp-phase-mini {
+        padding: 6px 0; border-bottom: 1px solid var(--border-subtle);
+        font-size: 0.68rem;
+    }
+    .bp-phase-mini:last-child { border-bottom: none; }
+    .bp-phase-mini-id {
+        font-family: var(--font-mono); font-size: 0.58rem; font-weight: 800;
+        color: var(--accent-blue); margin-right: 6px;
+    }
+    .bp-phase-mini-name { color: var(--text-secondary); font-weight: 600; }
+    .bp-decisions-list { margin-top: 4px; }
+    .bp-decision {
+        font-size: 0.68rem; color: var(--text-muted); padding: 4px 0;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+    .bp-decision:last-child { border-bottom: none; }
+    .bp-decision strong { color: var(--text-secondary); }
+    .bp-empty {
+        font-size: 0.72rem; color: var(--text-faint); font-style: italic;
+        padding: 20px 0; text-align: center;
+    }
+
+    /* Responsive chat */
+    @media (max-width: 900px) {
+        .chat-container { flex-direction: column; height: auto; min-height: auto; }
+        .blueprint-panel {
+            width: 100% !important; border-left: none;
+            border-top: 1px solid var(--border-light);
+            max-height: 300px;
+        }
+        .blueprint-panel.collapsed { width: 100% !important; max-height: 44px; }
+        .blueprint-panel.collapsed .blueprint-panel-title {
+            writing-mode: horizontal-tb; transform: none;
+        }
+        .chat-msg { max-width: 95%; }
+        .chat-messages { padding: 14px 16px; }
+        .chat-input-bar { padding: 10px 16px 14px; }
+    }
+
     .onb-progress-bar {
         display: flex; align-items: center; gap: 2px;
         padding: 0 24px 14px;
@@ -339,6 +651,57 @@
             </div>
         </div>
 
+        <div class="onb-mode-bar">
+            <button class="onb-mode-btn active" data-mode="form">
+                <span class="mode-icon">&#9776;</span> Guided Form
+            </button>
+            <button class="onb-mode-btn" data-mode="chat">
+                <span class="mode-icon">&#128172;</span> Chat Onboarding
+            </button>
+        </div>
+
+        <!-- Chat Mode -->
+        <div class="onb-mode-content" id="mode-chat">
+            <div class="chat-container">
+                <div class="chat-main">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="chat-msg assistant">
+                            <div class="chat-msg-bubble">
+                                <p><strong>Welcome to Chat Onboarding.</strong></p>
+                                <p>I'm your technical architect. Tell me about what you're building — the problem you're solving, who it's for, and what you're imagining. We'll work through the details together and I'll help you shape a phased project plan.</p>
+                                <p>What are you building?</p>
+                            </div>
+                            <div class="chat-msg-time">Just now</div>
+                        </div>
+                    </div>
+                    <div class="chat-typing" id="chat-typing">
+                        <div class="chat-typing-dots">
+                            <div class="chat-typing-dot"></div>
+                            <div class="chat-typing-dot"></div>
+                            <div class="chat-typing-dot"></div>
+                        </div>
+                    </div>
+                    <div class="chat-input-bar">
+                        <div class="chat-input-wrapper">
+                            <textarea class="chat-input" id="chat-input" rows="1" placeholder="Describe your project..."></textarea>
+                        </div>
+                        <button class="chat-send-btn" id="chat-send-btn">Send</button>
+                    </div>
+                </div>
+                <div class="blueprint-panel" id="blueprint-panel">
+                    <div class="blueprint-panel-header">
+                        <span class="blueprint-panel-title">Blueprint</span>
+                        <button class="blueprint-toggle" id="blueprint-toggle" title="Toggle panel">&#9664;</button>
+                    </div>
+                    <div class="blueprint-panel-body" id="blueprint-body">
+                        <div class="bp-empty">Start a conversation to build your project blueprint.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guided Form Mode -->
+        <div class="onb-mode-content active" id="mode-form">
         <div class="onb-progress-bar" id="onb-progress">
             <div class="onb-progress-step" data-step="0"></div>
             <div class="onb-progress-step" data-step="1"></div>
@@ -729,11 +1092,474 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div><!-- /mode-form -->
+    </div><!-- /onb-shell -->
 
     <script>
     (function() {
         'use strict';
+
+        // --- Mode switching ---
+        document.querySelectorAll('.onb-mode-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var mode = this.dataset.mode;
+                document.querySelectorAll('.onb-mode-btn').forEach(function(b) { b.classList.remove('active'); });
+                this.classList.add('active');
+                document.querySelectorAll('.onb-mode-content').forEach(function(c) { c.classList.remove('active'); });
+                var target = document.getElementById('mode-' + mode);
+                if (target) target.classList.add('active');
+            });
+        });
+
+        // --- Chat Onboarding ---
+        var CHAT = {
+            sessionId: null,
+            blueprint: null,
+            sending: false,
+
+            init: function() {
+                var saved = localStorage.getItem('conductor_chat_onboarding');
+                if (saved) {
+                    try {
+                        var data = JSON.parse(saved);
+                        this.sessionId = data.sessionId;
+                        if (data.messages && data.messages.length) {
+                            this.restoreMessages(data.messages);
+                        }
+                        if (data.blueprint) {
+                            this.blueprint = data.blueprint;
+                            this.renderBlueprint();
+                        }
+                    } catch(e) {}
+                }
+
+                var self = this;
+                var input = document.getElementById('chat-input');
+                var sendBtn = document.getElementById('chat-send-btn');
+
+                sendBtn.addEventListener('click', function() { self.send(); });
+
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        self.send();
+                    }
+                });
+
+                input.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = Math.min(this.scrollHeight, 160) + 'px';
+                });
+
+                document.getElementById('blueprint-toggle').addEventListener('click', function() {
+                    var panel = document.getElementById('blueprint-panel');
+                    panel.classList.toggle('collapsed');
+                    this.textContent = panel.classList.contains('collapsed') ? '▶' : '◄';
+                });
+            },
+
+            send: function() {
+                if (this.sending) return;
+                var input = document.getElementById('chat-input');
+                var msg = input.value.trim();
+                if (!msg) return;
+
+                input.value = '';
+                input.style.height = 'auto';
+                this.addMessage('user', msg);
+                this.sending = true;
+                this.setLoading(true);
+
+                var self = this;
+                var body = { message: msg };
+                if (this.sessionId) body.session_id = this.sessionId;
+
+                fetch('/api/onboarding/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                })
+                .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+                .then(function(result) {
+                    self.sending = false;
+                    self.setLoading(false);
+                    if (!result.ok) {
+                        self.addMessage('assistant', 'Error: ' + (result.data.error || 'Something went wrong'));
+                        return;
+                    }
+                    if (result.data.session_id) self.sessionId = result.data.session_id;
+                    if (result.data.blueprint) {
+                        self.blueprint = result.data.blueprint;
+                        self.renderBlueprint();
+                    }
+                    self.addMessage('assistant', result.data.message, result.data.structured);
+                    self.saveState();
+                })
+                .catch(function(err) {
+                    self.sending = false;
+                    self.setLoading(false);
+                    self.addMessage('assistant', 'Network error: ' + err.message);
+                });
+            },
+
+            addMessage: function(role, content, structured) {
+                var container = document.getElementById('chat-messages');
+                var div = document.createElement('div');
+                div.className = 'chat-msg ' + role;
+
+                var bubble = document.createElement('div');
+                bubble.className = 'chat-msg-bubble';
+
+                if (role === 'assistant') {
+                    bubble.innerHTML = this.renderMarkdown(content, structured);
+                } else {
+                    bubble.textContent = content;
+                }
+
+                var time = document.createElement('div');
+                time.className = 'chat-msg-time';
+                time.textContent = this.formatTime(new Date());
+
+                div.appendChild(bubble);
+                div.appendChild(time);
+                container.appendChild(div);
+                container.scrollTop = container.scrollHeight;
+            },
+
+            renderMarkdown: function(text, structured) {
+                var cleaned = text.replace(/```json\s*\n\{[\s\S]*?\}\n```/g, '');
+                cleaned = cleaned.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                cleaned = cleaned.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+                var lines = cleaned.split('\n');
+                var html = '';
+                var inList = false;
+                var listType = '';
+
+                for (var i = 0; i < lines.length; i++) {
+                    var line = lines[i];
+                    var ulMatch = line.match(/^[\s]*[-*]\s+(.*)/);
+                    var olMatch = line.match(/^[\s]*\d+\.\s+(.*)/);
+
+                    if (ulMatch) {
+                        if (!inList || listType !== 'ul') {
+                            if (inList) html += '</' + listType + '>';
+                            html += '<ul>';
+                            inList = true; listType = 'ul';
+                        }
+                        html += '<li>' + ulMatch[1] + '</li>';
+                    } else if (olMatch) {
+                        if (!inList || listType !== 'ol') {
+                            if (inList) html += '</' + listType + '>';
+                            html += '<ol>';
+                            inList = true; listType = 'ol';
+                        }
+                        html += '<li>' + olMatch[1] + '</li>';
+                    } else {
+                        if (inList) { html += '</' + listType + '>'; inList = false; }
+                        var trimmed = line.trim();
+                        if (trimmed === '') {
+                            if (html && !html.endsWith('</p>') && !html.endsWith('</ul>') && !html.endsWith('</ol>')) {
+                                html += '</p>';
+                            }
+                        } else if (line.match(/^###\s+(.*)/)) {
+                            html += '<p><strong>' + line.replace(/^###\s+/, '') + '</strong></p>';
+                        } else if (line.match(/^##\s+(.*)/)) {
+                            html += '<p><strong>' + line.replace(/^##\s+/, '') + '</strong></p>';
+                        } else {
+                            if (!html.endsWith('>') || html.endsWith('</p>') || html.endsWith('</ul>') || html.endsWith('</ol>')) {
+                                html += '<p>' + trimmed;
+                            } else {
+                                html += ' ' + trimmed;
+                            }
+                        }
+                    }
+                }
+                if (inList) html += '</' + listType + '>';
+                if (html && !html.endsWith('>')) html += '</p>';
+
+                if (structured && structured.length) {
+                    for (var j = 0; j < structured.length; j++) {
+                        html += this.renderStructuredCard(structured[j]);
+                    }
+                }
+
+                return html;
+            },
+
+            renderStructuredCard: function(block) {
+                var type = block.type;
+                if (type === 'phase_proposal') return this.renderPhaseProposal(block);
+                if (type === 'architecture') return this.renderArchitecture(block);
+                if (type === 'blueprint') return this.renderBlueprintCard(block);
+                return '';
+            },
+
+            renderPhaseProposal: function(block) {
+                var phases = block.phases || [];
+                var html = '<div class="chat-card">';
+                html += '<div class="chat-card-header">';
+                html += '<div class="chat-card-title"><span class="chat-card-badge" style="background:rgba(167,139,250,0.15);color:var(--accent-purple);">Proposal</span> Phase Plan</div>';
+                html += '<span style="font-size:0.62rem;color:var(--text-dim);">' + phases.length + ' phases</span>';
+                html += '</div>';
+                html += '<div class="chat-phase-list">';
+                for (var i = 0; i < phases.length; i++) {
+                    var ph = phases[i];
+                    var riskClass = 'risk-' + (ph.risk || 'low');
+                    html += '<div class="chat-phase-card" data-phase-idx="' + i + '">';
+                    html += '<span class="chat-phase-id">' + (ph.id || 'P' + i) + '</span>';
+                    html += '<div class="chat-phase-body">';
+                    html += '<div class="chat-phase-name">' + this.esc(ph.name || '') + '</div>';
+                    html += '<div class="chat-phase-desc">' + this.esc(ph.description || '') + '</div>';
+                    html += '<div class="chat-phase-meta">';
+                    html += '<span class="chat-phase-tag complexity">' + (ph.complexity || 'M') + '</span>';
+                    html += '<span class="chat-phase-tag ' + riskClass + '">' + (ph.risk || 'low') + '</span>';
+                    if (ph.dependencies && ph.dependencies.length) {
+                        html += '<span class="chat-phase-tag" style="background:rgba(255,255,255,0.04);color:var(--text-dim);">deps: ' + ph.dependencies.join(', ') + '</span>';
+                    }
+                    html += '</div>';
+                    if (ph.deliverables && ph.deliverables.length) {
+                        html += '<div style="margin-top:6px;font-size:0.65rem;color:var(--text-dim);">';
+                        for (var d = 0; d < ph.deliverables.length; d++) {
+                            html += '<span style="margin-right:8px;">' + this.esc(ph.deliverables[d]) + '</span>';
+                        }
+                        html += '</div>';
+                    }
+                    html += '</div>';
+                    html += '</div>';
+                }
+                html += '</div></div>';
+                return html;
+            },
+
+            renderArchitecture: function(block) {
+                var html = '<div class="chat-card">';
+                html += '<div class="chat-card-header">';
+                html += '<div class="chat-card-title"><span class="chat-card-badge" style="background:rgba(56,189,248,0.15);color:var(--accent-blue);">Architecture</span> ' + this.esc(block.title || 'Proposed Architecture') + '</div>';
+                html += '</div>';
+
+                if (block.stack) {
+                    html += '<div class="chat-arch-stack">';
+                    var keys = Object.keys(block.stack);
+                    for (var i = 0; i < keys.length; i++) {
+                        html += '<span class="chat-arch-chip"><span class="chip-label">' + this.esc(keys[i]) + ':</span> ' + this.esc(block.stack[keys[i]]) + '</span>';
+                    }
+                    html += '</div>';
+                }
+
+                if (block.components && block.components.length) {
+                    html += '<div class="chat-arch-components">';
+                    for (var j = 0; j < block.components.length; j++) {
+                        var c = block.components[j];
+                        html += '<div class="chat-arch-component">';
+                        html += '<span class="chat-arch-comp-name">' + this.esc(c.name || '') + '</span>';
+                        html += '<span class="chat-arch-comp-purpose">' + this.esc(c.purpose || '') + '</span>';
+                        html += '</div>';
+                    }
+                    html += '</div>';
+                }
+
+                if (block.rationale) {
+                    html += '<p style="font-size:0.72rem;color:var(--text-muted);margin-top:10px;line-height:1.5;">' + this.esc(block.rationale) + '</p>';
+                }
+
+                html += '</div>';
+                return html;
+            },
+
+            renderBlueprintCard: function(block) {
+                var html = '<div class="chat-card chat-blueprint-card">';
+                html += '<div class="chat-card-header">';
+                html += '<div class="chat-card-title"><span class="chat-card-badge" style="background:rgba(74,222,128,0.15);color:var(--accent-green);">Final</span> Project Blueprint</div>';
+                html += '</div>';
+
+                html += '<div style="font-size:0.82rem;font-weight:700;color:#fff;margin-bottom:4px;">' + this.esc(block.name || '') + '</div>';
+                if (block.description) {
+                    html += '<p style="font-size:0.72rem;color:var(--text-muted);line-height:1.5;margin-bottom:10px;">' + this.esc(block.description) + '</p>';
+                }
+
+                if (block.stack) {
+                    html += '<div class="chat-arch-stack" style="margin-bottom:10px;">';
+                    var keys = Object.keys(block.stack);
+                    for (var i = 0; i < keys.length; i++) {
+                        html += '<span class="chat-arch-chip"><span class="chip-label">' + this.esc(keys[i]) + ':</span> ' + this.esc(block.stack[keys[i]]) + '</span>';
+                    }
+                    html += '</div>';
+                }
+
+                html += '<div style="font-size:0.68rem;color:var(--text-dim);margin-bottom:6px;">' + (block.phases || []).length + ' phases defined</div>';
+
+                html += '<div class="chat-blueprint-actions">';
+                html += '<button class="btn btn-sm" style="background:rgba(74,222,128,0.15);color:var(--accent-green);border:1px solid rgba(74,222,128,0.3);font-weight:700;" onclick="CHAT.createProject()">Create Project</button>';
+                html += '<button class="btn btn-ghost btn-sm" onclick="CHAT.copyBlueprint()">Copy JSON</button>';
+                html += '</div>';
+
+                html += '</div>';
+                return html;
+            },
+
+            renderBlueprint: function() {
+                var body = document.getElementById('blueprint-body');
+                var bp = this.blueprint;
+                if (!bp || (!bp.name && !bp.phases && !bp.stack)) {
+                    body.innerHTML = '<div class="bp-empty">Start a conversation to build your project blueprint.</div>';
+                    return;
+                }
+
+                var html = '';
+
+                if (bp.name) {
+                    html += '<div class="bp-section"><div class="bp-label">Project</div><div class="bp-value">' + this.esc(bp.name) + '</div></div>';
+                }
+                if (bp.description) {
+                    html += '<div class="bp-section"><div class="bp-label">Description</div><div style="font-size:0.72rem;color:var(--text-muted);line-height:1.5;">' + this.esc(bp.description) + '</div></div>';
+                }
+                if (bp.stack && Object.keys(bp.stack).length) {
+                    html += '<div class="bp-section"><div class="bp-label">Stack</div><div class="bp-chip-list">';
+                    var keys = Object.keys(bp.stack);
+                    for (var i = 0; i < keys.length; i++) {
+                        html += '<span class="bp-chip">' + this.esc(keys[i]) + ': ' + this.esc(bp.stack[keys[i]]) + '</span>';
+                    }
+                    html += '</div></div>';
+                }
+                if (bp.phases && bp.phases.length) {
+                    html += '<div class="bp-section"><div class="bp-label">Phases (' + bp.phases.length + ')</div>';
+                    for (var j = 0; j < bp.phases.length; j++) {
+                        var ph = bp.phases[j];
+                        html += '<div class="bp-phase-mini"><span class="bp-phase-mini-id">' + (ph.id || 'P' + j) + '</span>';
+                        html += '<span class="bp-phase-mini-name">' + this.esc(ph.name || '') + '</span></div>';
+                    }
+                    html += '</div>';
+                }
+                if (bp.decisions && bp.decisions.length) {
+                    html += '<div class="bp-section"><div class="bp-label">Decisions</div><div class="bp-decisions-list">';
+                    for (var k = 0; k < bp.decisions.length; k++) {
+                        var d = bp.decisions[k];
+                        html += '<div class="bp-decision"><strong>' + this.esc(d.topic || '') + ':</strong> ' + this.esc(d.choice || '') + '</div>';
+                    }
+                    html += '</div></div>';
+                }
+
+                body.innerHTML = html;
+                var title = document.querySelector('.blueprint-panel-title');
+                title.textContent = 'Blueprint' + (bp.phases ? ': ' + bp.phases.length + ' phases' : '');
+            },
+
+            createProject: function() {
+                if (!this.sessionId) return alert('No active session');
+                var btn = event.target;
+                btn.disabled = true;
+                btn.textContent = 'Creating...';
+
+                var self = this;
+                fetch('/api/onboarding/' + this.sessionId + '/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+                .then(function(result) {
+                    if (result.ok) {
+                        btn.textContent = 'Project Created!';
+                        btn.style.background = 'rgba(74,222,128,0.3)';
+                        self.addMessage('assistant', 'Project **' + result.data.slug + '** has been created successfully with ' + (result.data.project.phases || []).length + ' phases. You can now find it in the project list and start executing phases.');
+                        localStorage.removeItem('conductor_chat_onboarding');
+                        setTimeout(function() {
+                            if (window.navigateTo) window.navigateTo('projects');
+                        }, 2000);
+                    } else {
+                        btn.disabled = false;
+                        btn.textContent = 'Create Project';
+                        alert(result.data.error || 'Failed to create project');
+                    }
+                })
+                .catch(function(err) {
+                    btn.disabled = false;
+                    btn.textContent = 'Create Project';
+                    alert('Network error: ' + err.message);
+                });
+            },
+
+            copyBlueprint: function() {
+                if (!this.blueprint) return;
+                var json = JSON.stringify(this.blueprint, null, 2);
+                navigator.clipboard.writeText(json).then(function() {
+                    var btn = event.target;
+                    btn.textContent = 'Copied!';
+                    setTimeout(function() { btn.textContent = 'Copy JSON'; }, 1500);
+                });
+            },
+
+            setLoading: function(on) {
+                var typing = document.getElementById('chat-typing');
+                typing.classList.toggle('visible', on);
+                document.getElementById('chat-send-btn').disabled = on;
+                if (on) {
+                    var container = document.getElementById('chat-messages');
+                    container.scrollTop = container.scrollHeight;
+                }
+            },
+
+            saveState: function() {
+                var msgs = [];
+                document.querySelectorAll('#chat-messages .chat-msg').forEach(function(el) {
+                    var role = el.classList.contains('user') ? 'user' : 'assistant';
+                    var bubble = el.querySelector('.chat-msg-bubble');
+                    msgs.push({ role: role, html: bubble.innerHTML, time: el.querySelector('.chat-msg-time').textContent });
+                });
+                localStorage.setItem('conductor_chat_onboarding', JSON.stringify({
+                    sessionId: this.sessionId,
+                    blueprint: this.blueprint,
+                    messages: msgs
+                }));
+            },
+
+            restoreMessages: function(msgs) {
+                var container = document.getElementById('chat-messages');
+                container.innerHTML = '';
+                for (var i = 0; i < msgs.length; i++) {
+                    var m = msgs[i];
+                    var div = document.createElement('div');
+                    div.className = 'chat-msg ' + m.role;
+                    var bubble = document.createElement('div');
+                    bubble.className = 'chat-msg-bubble';
+                    bubble.innerHTML = m.html;
+                    var time = document.createElement('div');
+                    time.className = 'chat-msg-time';
+                    time.textContent = m.time;
+                    div.appendChild(bubble);
+                    div.appendChild(time);
+                    container.appendChild(div);
+                }
+                container.scrollTop = container.scrollHeight;
+            },
+
+            formatTime: function(d) {
+                var h = d.getHours(); var m = d.getMinutes();
+                var ampm = h >= 12 ? 'PM' : 'AM';
+                h = h % 12 || 12;
+                return h + ':' + (m < 10 ? '0' : '') + m + ' ' + ampm;
+            },
+
+            esc: function(s) {
+                var d = document.createElement('div');
+                d.textContent = s;
+                return d.innerHTML;
+            },
+
+            reset: function() {
+                if (!confirm('Clear conversation and start over?')) return;
+                this.sessionId = null;
+                this.blueprint = null;
+                localStorage.removeItem('conductor_chat_onboarding');
+                var container = document.getElementById('chat-messages');
+                container.innerHTML = '';
+                this.addMessage('assistant', '**Welcome to Chat Onboarding.**\n\nI\'m your technical architect. Tell me about what you\'re building — the problem you\'re solving, who it\'s for, and what you\'re imagining. We\'ll work through the details together and I\'ll help you shape a phased project plan.\n\nWhat are you building?');
+                this.renderBlueprint();
+            }
+        };
+
+        window.CHAT = CHAT;
+        CHAT.init();
 
         var FEATURES = {
             core: [

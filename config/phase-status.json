@@ -57,7 +57,7 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": false,
-    "parallelizationReason": "Modifies repo structure — must be serialized",
+    "parallelizationReason": "Modifies repo structure \u2014 must be serialized",
     "lastUpdated": "2026-05-18",
     "nextRecommendedAction": null
   },
@@ -90,7 +90,7 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": false,
-    "parallelizationReason": "Modifies repo structure — must be serialized",
+    "parallelizationReason": "Modifies repo structure \u2014 must be serialized",
     "lastUpdated": "2026-05-18",
     "nextRecommendedAction": null
   },
@@ -122,7 +122,7 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": true,
-    "parallelizationReason": "Docs-only — can run alongside other docs work",
+    "parallelizationReason": "Docs-only \u2014 can run alongside other docs work",
     "lastUpdated": "2026-05-18",
     "nextRecommendedAction": null
   },
@@ -156,7 +156,7 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": false,
-    "parallelizationReason": "Adds API endpoints and dashboard page — must be serialized with engine changes",
+    "parallelizationReason": "Adds API endpoints and dashboard page \u2014 must be serialized with engine changes",
     "lastUpdated": "2026-05-18",
     "nextRecommendedAction": null
   },
@@ -196,13 +196,13 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": false,
-    "parallelizationReason": "Core engine — must be serialized",
+    "parallelizationReason": "Core engine \u2014 must be serialized",
     "lastUpdated": "2026-05-18",
     "nextRecommendedAction": null
   },
   {
     "phaseId": "p0-5-repo-work-guard-session-lock",
-    "name": "P0.5 — Repo Work Guard, Session Lock, and Execution Queue",
+    "name": "P0.5 \u2014 Repo Work Guard, Session Lock, and Execution Queue",
     "description": "Adds repo/session safety checks, lock model, queue policy, and dirty-tree gates before semi-autonomous or parallel execution.",
     "status": "completed",
     "priority": "P0.5",
@@ -235,7 +235,7 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": false,
-    "parallelizationReason": "Safety layer — must be serialized before autonomous execution features",
+    "parallelizationReason": "Safety layer \u2014 must be serialized before autonomous execution features",
     "supports": [
       "autonomous execution",
       "parallel phase execution",
@@ -387,7 +387,7 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": false,
-    "parallelizationReason": "Modifies engine execution model — must be serialized",
+    "parallelizationReason": "Modifies engine execution model \u2014 must be serialized",
     "relatedDecisions": [
       "DEC-003",
       "DEC-004"
@@ -396,11 +396,11 @@
       "Topic 02"
     ],
     "decisionGating": {
-      "DEC-003": "Approved 2026-05-19 — worktree model confirmed for template execution isolation",
-      "DEC-004": "Approved 2026-05-19 — JSONL event persistence confirmed for execution audit trail"
+      "DEC-003": "Approved 2026-05-19 \u2014 worktree model confirmed for template execution isolation",
+      "DEC-004": "Approved 2026-05-19 \u2014 JSONL event persistence confirmed for execution audit trail"
     },
     "lastUpdated": "2026-05-19",
-    "nextRecommendedAction": "Start P3 — decision gate cleared"
+    "nextRecommendedAction": "Start P3 \u2014 decision gate cleared"
   },
   {
     "phaseId": "P4-agent-runtime",
@@ -440,7 +440,7 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": false,
-    "parallelizationReason": "Core execution layer — must be serialized",
+    "parallelizationReason": "Core execution layer \u2014 must be serialized",
     "relatedDecisions": [
       "DEC-003"
     ],
@@ -448,7 +448,7 @@
       "Topic 02"
     ],
     "decisionGating": {
-      "DEC-003": "Must be approved — worktree isolation model is the foundation of this phase"
+      "DEC-003": "Must be approved \u2014 worktree isolation model is the foundation of this phase"
     },
     "lastUpdated": "2026-05-19",
     "nextRecommendedAction": null
@@ -456,7 +456,7 @@
   {
     "phaseId": "P5-context-memory",
     "name": "Context + Memory Core MVP",
-    "description": "Memory ledger (candidate lifecycle), context retrieval engine, embedding pipeline, project context packs, and memory governance UI. Moved up from master sequence position 11 — research already synthesized.",
+    "description": "Memory ledger (candidate lifecycle), context retrieval engine, embedding pipeline, project context packs, and memory governance UI. Moved up from master sequence position 11 \u2014 research already synthesized.",
     "status": "not_started",
     "priority": "P5",
     "dependencies": [
@@ -493,7 +493,7 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": false,
-    "parallelizationReason": "Foundational data layer — must be serialized",
+    "parallelizationReason": "Foundational data layer \u2014 must be serialized",
     "relatedDecisions": [
       "DEC-005",
       "DEC-006",
@@ -505,10 +505,10 @@
       "Topic 08"
     ],
     "decisionGating": {
-      "DEC-005": "Must be approved — vector store technology choice drives implementation",
-      "DEC-006": "Should be approved — wiki repo role affects context ingestion design",
-      "DEC-007": "Should be approved — memory provider pattern drives interface design",
-      "DEC-008": "Must be approved — memory store scope defines MVP table set"
+      "DEC-005": "Must be approved \u2014 vector store technology choice drives implementation",
+      "DEC-006": "Should be approved \u2014 wiki repo role affects context ingestion design",
+      "DEC-007": "Should be approved \u2014 memory provider pattern drives interface design",
+      "DEC-008": "Must be approved \u2014 memory store scope defines MVP table set"
     },
     "lastUpdated": "2026-05-19",
     "nextRecommendedAction": null
@@ -541,7 +541,7 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": true,
-    "parallelizationReason": "Dashboard-only — no engine changes, can parallelize with P3-P5",
+    "parallelizationReason": "Dashboard-only \u2014 no engine changes, can parallelize with P3-P5",
     "relatedDecisions": [],
     "relatedResearchTopics": [],
     "decisionGating": {},
@@ -551,7 +551,7 @@
   {
     "phaseId": "P7-security-foundation",
     "name": "Multi-Tenant Security Foundation",
-    "description": "Tenant hierarchy (tenant → org → workspace → project), RLS policies, principal types (internal/portal/agent/service/connector), audit trail, and secrets broker abstraction.",
+    "description": "Tenant hierarchy (tenant \u2192 org \u2192 workspace \u2192 project), RLS policies, principal types (internal/portal/agent/service/connector), audit trail, and secrets broker abstraction.",
     "status": "not_started",
     "priority": "P7",
     "dependencies": [
@@ -589,7 +589,7 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": false,
-    "parallelizationReason": "Security layer — must be serialized before any client-facing features",
+    "parallelizationReason": "Security layer \u2014 must be serialized before any client-facing features",
     "relatedDecisions": [
       "DEC-001",
       "DEC-002"
@@ -599,8 +599,8 @@
       "Topic 06"
     ],
     "decisionGating": {
-      "DEC-001": "Must be approved — tenancy model is the foundation of this phase",
-      "DEC-002": "Must be approved — secrets management drives the broker abstraction"
+      "DEC-001": "Must be approved \u2014 tenancy model is the foundation of this phase",
+      "DEC-002": "Must be approved \u2014 secrets management drives the broker abstraction"
     },
     "lastUpdated": "2026-05-19",
     "nextRecommendedAction": null
@@ -641,7 +641,7 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": false,
-    "parallelizationReason": "Depends on security foundation — must be serialized",
+    "parallelizationReason": "Depends on security foundation \u2014 must be serialized",
     "relatedDecisions": [
       "DEC-001"
     ],
@@ -650,7 +650,7 @@
       "Topic 03"
     ],
     "decisionGating": {
-      "DEC-001": "Already required by P7 — tenancy model must be in place"
+      "DEC-001": "Already required by P7 \u2014 tenancy model must be in place"
     },
     "lastUpdated": "2026-05-19",
     "nextRecommendedAction": null
@@ -658,7 +658,7 @@
   {
     "phaseId": "P9-trust-access",
     "name": "Trust-Aware Discovery & Access Manager",
-    "description": "Progressive 5-level access model (manual intake → docs → metadata → read-only → managed execution), vault/OAuth credential flow, access validation, and trust-level UI.",
+    "description": "Progressive 5-level access model (manual intake \u2192 docs \u2192 metadata \u2192 read-only \u2192 managed execution), vault/OAuth credential flow, access validation, and trust-level UI.",
     "status": "not_started",
     "priority": "P9",
     "dependencies": [
@@ -693,7 +693,7 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": false,
-    "parallelizationReason": "Depends on security + portal — must be serialized",
+    "parallelizationReason": "Depends on security + portal \u2014 must be serialized",
     "relatedDecisions": [
       "DEC-002"
     ],
@@ -701,7 +701,7 @@
       "Topic 06"
     ],
     "decisionGating": {
-      "DEC-002": "Must be implemented — secrets management drives vault integration"
+      "DEC-002": "Must be implemented \u2014 secrets management drives vault integration"
     },
     "lastUpdated": "2026-05-19",
     "nextRecommendedAction": null
@@ -744,7 +744,7 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": false,
-    "parallelizationReason": "End-to-end migration workflow — must be serialized",
+    "parallelizationReason": "End-to-end migration workflow \u2014 must be serialized",
     "relatedDecisions": [],
     "relatedResearchTopics": [
       "Topic 04"
@@ -788,7 +788,7 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": true,
-    "parallelizationReason": "Independent feature — can parallelize with P9-P10 if dependencies met",
+    "parallelizationReason": "Independent feature \u2014 can parallelize with P9-P10 if dependencies met",
     "relatedDecisions": [],
     "relatedResearchTopics": [
       "Topic 07"
@@ -834,7 +834,7 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": true,
-    "parallelizationReason": "Infrastructure track — can parallelize with P8-P10 feature track",
+    "parallelizationReason": "Infrastructure track \u2014 can parallelize with P8-P10 feature track",
     "relatedDecisions": [],
     "relatedResearchTopics": [],
     "decisionGating": {},
@@ -878,7 +878,7 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": false,
-    "parallelizationReason": "Depends on memory + infrastructure — must be serialized",
+    "parallelizationReason": "Depends on memory + infrastructure \u2014 must be serialized",
     "relatedDecisions": [
       "DEC-009",
       "DEC-010"
@@ -887,8 +887,8 @@
       "Topic 05"
     ],
     "decisionGating": {
-      "DEC-009": "Must be approved — extraction trigger model defines the improvement pipeline",
-      "DEC-010": "Must be approved — evaluation harness scope defines quality gate depth"
+      "DEC-009": "Must be approved \u2014 extraction trigger model defines the improvement pipeline",
+      "DEC-010": "Must be approved \u2014 evaluation harness scope defines quality gate depth"
     },
     "lastUpdated": "2026-05-19",
     "nextRecommendedAction": null
@@ -932,7 +932,7 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": true,
-    "parallelizationReason": "Packaging track — can parallelize with P10-P11 feature track",
+    "parallelizationReason": "Packaging track \u2014 can parallelize with P10-P11 feature track",
     "relatedDecisions": [
       "DEC-001"
     ],
@@ -940,7 +940,7 @@
       "Topic 01"
     ],
     "decisionGating": {
-      "DEC-001": "Must be fully implemented — tenancy model is the foundation of SaaS packaging"
+      "DEC-001": "Must be fully implemented \u2014 tenancy model is the foundation of SaaS packaging"
     },
     "lastUpdated": "2026-05-19",
     "nextRecommendedAction": null
@@ -980,7 +980,7 @@
     "branchName": "conductor-platform-rebuild",
     "activeSessionId": null,
     "canRunInParallel": false,
-    "parallelizationReason": "Capstone phase — depends on all platform capabilities",
+    "parallelizationReason": "Capstone phase \u2014 depends on all platform capabilities",
     "relatedDecisions": [
       "DEC-001",
       "DEC-002",
@@ -1110,7 +1110,7 @@
   },
   {
     "phaseId": "ns-P5A",
-    "name": "EdgeLab Core — Engine",
+    "name": "EdgeLab Core \u2014 Engine",
     "project": "neurospect",
     "status": "planned",
     "dependencies": [
@@ -1130,7 +1130,7 @@
   },
   {
     "phaseId": "ns-P5B",
-    "name": "EdgeLab Core — Detectors",
+    "name": "EdgeLab Core \u2014 Detectors",
     "project": "neurospect",
     "status": "planned",
     "dependencies": [
@@ -1150,7 +1150,7 @@
   },
   {
     "phaseId": "ns-P5C",
-    "name": "EdgeLab Core — Dashboard",
+    "name": "EdgeLab Core \u2014 Dashboard",
     "project": "neurospect",
     "status": "planned",
     "dependencies": [
@@ -1347,7 +1347,7 @@
   },
   {
     "phaseId": "li-P2",
-    "name": "DJ Portal — Content + Calendar",
+    "name": "DJ Portal \u2014 Content + Calendar",
     "project": "labs-institute",
     "status": "planned",
     "dependencies": [
@@ -1380,7 +1380,7 @@
     "riskLevel": "medium",
     "approvalRequired": false,
     "canRunInParallel": true,
-    "description": "Contract templates, booking lifecycle (inquiry → quote → contract → confirm), status tracking.",
+    "description": "Contract templates, booking lifecycle (inquiry \u2192 quote \u2192 contract \u2192 confirm), status tracking.",
     "lastUpdated": "2026-05-23"
   },
   {
@@ -1399,12 +1399,12 @@
     "riskLevel": "medium",
     "approvalRequired": false,
     "canRunInParallel": false,
-    "description": "Founder ↔ DJ messaging. AI assistant answers from Lab-Wiki + Lab-Intelligence context.",
+    "description": "Founder \u2194 DJ messaging. AI assistant answers from Lab-Wiki + Lab-Intelligence context.",
     "lastUpdated": "2026-05-23"
   },
   {
     "phaseId": "li-P5",
-    "name": "Lab-Intelligence — AI Growth Engine",
+    "name": "Lab-Intelligence \u2014 AI Growth Engine",
     "project": "labs-institute",
     "status": "planned",
     "dependencies": [
@@ -1423,7 +1423,7 @@
   },
   {
     "phaseId": "li-P6",
-    "name": "Lab-Wiki — Knowledge Base",
+    "name": "Lab-Wiki \u2014 Knowledge Base",
     "project": "labs-institute",
     "status": "planned",
     "dependencies": [
@@ -1520,7 +1520,7 @@
     "riskLevel": "low",
     "approvalRequired": false,
     "canRunInParallel": true,
-    "description": "Core event feed for DJs — discover gigs, track sets, ensure recordings get posted.",
+    "description": "Core event feed for DJs \u2014 discover gigs, track sets, ensure recordings get posted.",
     "lastUpdated": "2026-05-24",
     "activeSessionId": "pipe_6e4cbe28"
   },
@@ -1613,7 +1613,159 @@
     "riskLevel": "medium",
     "approvalRequired": false,
     "canRunInParallel": false,
-    "description": "Learn from past events — what worked, audience patterns, optimal pricing.",
+    "description": "Learn from past events \u2014 what worked, audience patterns, optimal pricing.",
     "lastUpdated": "2026-05-23"
+  },
+  {
+    "phaseId": "si-P0",
+    "name": "SIHRE Project Bootstrap",
+    "project": "sihre",
+    "status": "planned",
+    "dependencies": [],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "S",
+    "riskLevel": "low",
+    "approvalRequired": false,
+    "canRunInParallel": false,
+    "description": "Create SIHRE project in Conductor. Migrate all 94 SIHRE_Wiki artifacts into structured Conductor artifacts with correct classification taxonomy (public-safe / public-after-review / internal-only / private-sensitive). Establish artifact types, status tags, and hard public/private boundary rules derived from PUBLIC_PRIVATE_MAP.md. Fix all SIRE naming errors in existing Conductor assets.",
+    "lastUpdated": "2026-05-25"
+  },
+  {
+    "phaseId": "si-P1",
+    "name": "Artifact Manager",
+    "project": "sihre",
+    "status": "planned",
+    "dependencies": [
+      "P0"
+    ],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "M",
+    "riskLevel": "low",
+    "approvalRequired": false,
+    "canRunInParallel": false,
+    "description": "New Conductor dashboard capability: create, edit, organize, and classify all SIHRE artifacts. Markdown editor with live preview. Filter and sort by type (doc / research / GTM / social / roadmap / tracker / template), status (draft / review / final / published), and classification (public-safe / public-after-review / internal-only / private-sensitive). Replaces the Obsidian vault as the primary working surface.",
+    "lastUpdated": "2026-05-25"
+  },
+  {
+    "phaseId": "si-P2",
+    "name": "Roadmap & Action Items",
+    "project": "sihre",
+    "status": "planned",
+    "dependencies": [
+      "P1"
+    ],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "S",
+    "riskLevel": "low",
+    "approvalRequired": false,
+    "canRunInParallel": true,
+    "description": "Visual SIHRE roadmap and sequenced action item tracker inside Conductor. Maps to the 7-phase monetization roadmap (Monetization_Roadmap.md) and the tiered artifact backlog (Artifact_Roadmap.md, Comprehensive_Artifact_Backlog.md). Tracks what needs to happen, in what order, with dependencies and owners.",
+    "lastUpdated": "2026-05-25"
+  },
+  {
+    "phaseId": "si-P3",
+    "name": "Content & GTM Workspace",
+    "project": "sihre",
+    "status": "planned",
+    "dependencies": [
+      "P1"
+    ],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "M",
+    "riskLevel": "low",
+    "approvalRequired": false,
+    "canRunInParallel": true,
+    "description": "Structured workspace for executing the SIHRE GTM plan. The 11 public website drafts (02_Public_Website), newsletter, press kit, social calendar, and outreach templates all live here as editable artifacts. Export to Markdown/PDF for distribution. This is where public content moves from 'draft' to 'final' before P4 deployment.",
+    "lastUpdated": "2026-05-25"
+  },
+  {
+    "phaseId": "si-P4",
+    "name": "Public Website \u2014 SIHRE.ai",
+    "project": "sihre",
+    "status": "planned",
+    "dependencies": [
+      "P3"
+    ],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "M",
+    "riskLevel": "medium",
+    "approvalRequired": false,
+    "canRunInParallel": false,
+    "description": "Deploy the SIHRE public marketing site using the 11 already-drafted pages from 02_Public_Website. Next.js 14 + Vercel. Pages: Homepage, About, Architecture, Applications, Meta-Orchestrator, Whitepaper (PDF download + DOI citation block), FAQ, Blog/Announcements, Press Kit, Contact. Waitlist capture with email confirmation via Resend. SEO baseline. Evidence-level labels on all claims. NeuroFusion-13 boundary enforced \u2014 zero private-sensitive content reachable from public routes.",
+    "lastUpdated": "2026-05-25"
+  },
+  {
+    "phaseId": "si-P5",
+    "name": "Portal & Auth",
+    "project": "sihre",
+    "status": "planned",
+    "dependencies": [
+      "P4"
+    ],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "M",
+    "riskLevel": "medium",
+    "approvalRequired": false,
+    "canRunInParallel": false,
+    "description": "Login layer accessible from sihre.ai nav and footer. Supabase Auth (signup, login, password reset). Protected /portal route. Role model: admin (Paul), beta-client, subscriber. Foundation for consulting client dashboards and paid research pack delivery. Admin manages users and content from Conductor.",
+    "lastUpdated": "2026-05-25"
+  },
+  {
+    "phaseId": "si-P6",
+    "name": "Monetization Layer",
+    "project": "sihre",
+    "status": "planned",
+    "dependencies": [
+      "P5"
+    ],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "M",
+    "riskLevel": "medium",
+    "approvalRequired": false,
+    "canRunInParallel": false,
+    "description": "Revenue-enabling features mapped to Phase 2 of Monetization_Roadmap.md. Architecture Audit offer live as a bookable service (Consulting_Audit_Template.md). Research packs purchasable via Stripe (Paid_Research_Assets from Offer_Ladder.md). Consulting inquiry intake with email notification. Pricing page live. First paid offer bookable at launch.",
+    "lastUpdated": "2026-05-25"
+  },
+  {
+    "phaseId": "si-P7",
+    "name": "Knowledge Base & Research Hub",
+    "project": "sihre",
+    "status": "planned",
+    "dependencies": [
+      "P4"
+    ],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "M",
+    "riskLevel": "low",
+    "approvalRequired": false,
+    "canRunInParallel": true,
+    "description": "Searchable public knowledge base built from SIHRE's public-safe and public-after-review artifact library (25 files per PUBLIC_PRIVATE_MAP.md). Article pages for Architecture, Meta-Orchestrator, Evaluation, Governance, Glossary. Evidence-level labels on all claims. Internal search. Related article linking. AI documentation assistant (Claude RAG over public docs) as stretch goal.",
+    "lastUpdated": "2026-05-25"
+  },
+  {
+    "phaseId": "si-P8",
+    "name": "SIHRE Control Plane MVP",
+    "project": "sihre",
+    "status": "planned",
+    "dependencies": [
+      "P5",
+      "P6"
+    ],
+    "blockedBy": [],
+    "blocks": [],
+    "estimatedComplexity": "XL",
+    "riskLevel": "high",
+    "approvalRequired": false,
+    "canRunInParallel": false,
+    "description": "The first production-grade SIHRE product: a reasoning governance dashboard for enterprise AI teams. Spec sourced from SIHRE_Control_Plane_PRD.md. Expert registry, task routing log, uncertainty summaries, disagreement detection, drift indicators, verification escalation log, expert reliability history, audit-ready decision trace export. Deployed as gated SaaS behind P5 auth at pilot pricing ($1k\u2013$10k/mo per Pricing_Experiments.md).",
+    "lastUpdated": "2026-05-25"
   }
 ]

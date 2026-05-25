@@ -294,10 +294,6 @@
             </div>
             <div class="ph-header-right">
                 <select class="ph-project-select" id="project-select" onchange="loadPhases()">
-                    <option value="neurospect">NeuroSpect</option>
-                    <option value="labs-institute">Labs Institute</option>
-                    <option value="groovenet">GrooveNet</option>
-                    <option value="conductor">Conductor</option>
                 </select>
             </div>
         </div>
@@ -921,7 +917,23 @@
 
     document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeDetail(); });
 
-    try { loadPhases(); } catch(e) { console.error('loadPhases failed:', e); }
+    function populateProjectDropdown(cb) {
+        fetch('/api/projects').then(function(r) { return r.json(); }).then(function(projects) {
+            var sel = document.getElementById('project-select');
+            sel.innerHTML = '';
+            projects.forEach(function(p) {
+                var opt = document.createElement('option');
+                opt.value = p.slug;
+                opt.textContent = p.name;
+                sel.appendChild(opt);
+            });
+            var hash = window.location.hash;
+            var projMatch = hash && hash.match(/project=([a-zA-Z0-9_-]+)/);
+            if (projMatch) sel.value = projMatch[1];
+            if (cb) cb();
+        }).catch(function(e) { if (cb) cb(); });
+    }
+    try { populateProjectDropdown(function() { loadPhases(); }); } catch(e) { console.error('loadPhases failed:', e); }
     try { connectSSE(); } catch(e) { console.error('connectSSE failed:', e); }
     try { requestNotifyPermission(); } catch(e) {}
     </script>

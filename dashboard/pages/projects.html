@@ -107,14 +107,8 @@
 
         window.goToProject = function(slug) {
             if (window.navigateTo) {
+                window.location.hash = 'phases&project=' + slug;
                 window.navigateTo('phases');
-                setTimeout(function() {
-                    var sel = document.getElementById('project-select');
-                    if (sel) {
-                        sel.value = slug;
-                        if (typeof loadPhases === 'function') loadPhases();
-                    }
-                }, 500);
             }
         };
     })();

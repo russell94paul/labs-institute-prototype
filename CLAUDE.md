@@ -16,6 +16,7 @@ conductor/
 │   ├── context.py          # Pluggable context enrichment
 │   ├── events.py           # Event system + SSE pub/sub
 │   ├── scaffolder.py       # Project bootstrapping
+│   ├── onboarding.py       # AI chat onboarding (Claude API or CLI)
 │   └── stage_scripts/      # Pipeline automation scripts
 ├── dashboard/              # Vanilla HTML/CSS/JS SPA
 │   ├── index.html          # SPA shell
@@ -79,6 +80,11 @@ python engine/server.py
 - `POST   /api/projects/{slug}/memory/{id}/evidence` — link evidence to a memory
 - `GET    /api/projects/{slug}/memory/stats` — memory store statistics
 
+### Onboarding (AI chat)
+- `POST   /api/onboarding/chat` — send message, get Claude response (creates session if no session_id)
+- `GET    /api/onboarding/{session_id}` — get conversation state + blueprint
+- `POST   /api/onboarding/{session_id}/create` — create project from finalized blueprint
+
 ### GrooveNet (project-specific)
 - `GET    /api/groovenet/events` — list events
 - `POST   /api/groovenet/events` — create event
@@ -97,6 +103,7 @@ All state persisted as JSON:
 - `projects/<slug>/memory/memories.json` — per-project memory ledger
 - `projects/<slug>/memory/evidence.json` — memory evidence links
 - `projects/<slug>/memory/retrieval_log.json` — retrieval audit trail
+- `dashboard/data/onboarding-sessions.json` — AI onboarding chat sessions
 
 ## Key Patterns
 
